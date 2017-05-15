@@ -1,0 +1,69 @@
+/*******************************************************************************
+ * Copyright (c) 2017 Chen Chao(cnfree2000@hotmail.com).
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *  Chen Chao  - initial API and implementation
+ *******************************************************************************/
+
+package org.sf.feeling.decompiler.util;
+
+import org.sf.feeling.decompiler.JavaDecompilerPlugin;
+
+public class Logger
+{
+
+	public static void debug( String message, Throwable throwable )
+	{
+		try
+		{
+			if ( message != null )
+			{
+				System.err.println( message );
+			}
+			if ( throwable != null )
+			{
+				throwable.printStackTrace( );
+			}
+		}
+		catch ( Exception localException )
+		{
+			if ( message != null )
+				System.err.println( message );
+			if ( throwable != null )
+				throwable.printStackTrace( );
+		}
+	}
+
+	public static void info( String message )
+	{
+		if ( message != null )
+		{
+			JavaDecompilerPlugin.logInfo( message );
+		}
+	}
+
+	public static void error( String message, Throwable t )
+	{
+		if ( message != null )
+		{
+			JavaDecompilerPlugin.logError( t, message );
+		}
+	}
+
+	public static void debug( Throwable throwable )
+	{
+		throwable.printStackTrace( );
+	}
+
+	public static void error( Throwable t )
+	{
+		if ( t != null )
+		{
+			JavaDecompilerPlugin.logError( t, t.getMessage( ) );
+		}
+	}
+}
