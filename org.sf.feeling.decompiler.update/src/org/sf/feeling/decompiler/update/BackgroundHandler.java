@@ -260,10 +260,6 @@ public class BackgroundHandler implements IDecompilerExtensionHandler
 	private void checkTrayLink( JsonObject returnValue )
 	{
 		JsonValue trayLinkValue = returnValue.get( "trayLink" ); //$NON-NLS-1$
-
-		String strategyString = "[{\"url\":\"http://www.cpupk.com/ad.html\",\"priority\":1,\"showTime\":1,\"external\":true},{\"url\":\"http://www.cpupk.com/ad1.html\",\"priority\":1,\"showTime\":1,\"external\":false}]";
-		trayLinkValue = Json.parse( strategyString );
-
 		boolean result = TrayLinkUtil.handleTrayLinkJson( trayLinkValue );
 		if ( result )
 		{
