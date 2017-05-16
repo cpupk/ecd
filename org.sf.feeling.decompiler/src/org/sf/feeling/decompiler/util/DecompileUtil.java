@@ -98,7 +98,7 @@ public class DecompileUtil
 	public static String checkAndUpdateCopyright( IClassFile cf,
 			String origSrc ) throws JavaModelException
 	{
-		if ( !MarkUtil.containsSourceMark( origSrc ) )
+		if ( !MarkUtil.containsSourceMark( origSrc ) && !MarkUtil.containsMark( origSrc ) )
 		{
 			IBuffer buffer = cf.getBuffer( );
 			ReflectionUtils.invokeMethod( buffer, "setReadOnly", new Class[]{

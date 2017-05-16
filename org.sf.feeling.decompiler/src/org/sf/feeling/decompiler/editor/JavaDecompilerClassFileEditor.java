@@ -520,7 +520,7 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 									boolean fActive = (Boolean) ReflectionUtils
 											.getFieldValue( fHyperlinkManager,
 													"fActive" );
-									if ( !fActive )
+									if ( !fActive && !text.isDisposed( ) )
 									{
 										text.removePaintListener(
 												listeners[0] );

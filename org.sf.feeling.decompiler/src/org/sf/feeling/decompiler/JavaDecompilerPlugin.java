@@ -22,9 +22,16 @@ import java.util.TreeMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.eclipse.core.resources.IMarkerDelta;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IBreakpointListener;
+import org.eclipse.debug.core.IBreakpointManager;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -35,12 +42,16 @@ import org.osgi.framework.BundleContext;
 import org.sf.feeling.decompiler.editor.DecompilerType;
 import org.sf.feeling.decompiler.editor.IDecompilerDescriptor;
 import org.sf.feeling.decompiler.editor.JavaDecompilerBufferManager;
+import org.sf.feeling.decompiler.editor.JavaDecompilerClassFileEditor;
 import org.sf.feeling.decompiler.extension.DecompilerAdapterManager;
 import org.sf.feeling.decompiler.extension.IDecompilerExtensionHandler;
+import org.sf.feeling.decompiler.i18n.Messages;
 import org.sf.feeling.decompiler.source.attach.IAttachSourceHandler;
 import org.sf.feeling.decompiler.update.IDecompilerUpdateHandler;
 import org.sf.feeling.decompiler.util.Logger;
+import org.sf.feeling.decompiler.util.MarkUtil;
 import org.sf.feeling.decompiler.util.SortMemberUtil;
+import org.sf.feeling.decompiler.util.UIUtil;
 
 public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 		IPropertyChangeListener
@@ -71,6 +82,67 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 	private AtomicInteger decompileCount = new AtomicInteger( 0 );
 	private boolean isDebugMode = false;
 	private boolean enableExtension = false;
+
+	private IBreakpointListener breakpintListener = new IBreakpointListener( ) {
+
+		@Override
+		public void breakpointRemoved( IBreakpoint breakpoint,
+				IMarkerDelta delta )
+		{
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void breakpointChanged( IBreakpoint breakpoint,
+				IMarkerDelta delta )
+		{
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void breakpointAdded( IBreakpoint breakpoint )
+		{
+			JavaDecompilerClassFileEditor editor = UIUtil
+					.getActiveDecompilerEditor( );
+			if ( editor != null )
+			{
+				String source = editor.getDocumentProvider( )
+						.getDocument( editor.getEditorInput( ) )
+						.get( );
+
+				if ( MarkUtil.containsSourceMark( source ) )
+					return;
+
+				if ( MarkUtil.containsMark( source ) && UIUtil.isDebug( ) )
+					return;
+
+				try
+				{
+					Display.getDefault( ).asyncExec( new Runnable( ) {
+
+						public void run( )
+						{
+							MessageDialog.openInformation(
+									Display.getDefault( ).getActiveShell( ),
+									Messages.getString("JavaDecompilerPlugin.BreakpoingDialog.Title"), //$NON-NLS-1$
+									Messages.getString("JavaDecompilerPlugin.BreakpoingDialog.Message") ); //$NON-NLS-1$
+						}
+					} );
+					breakpoint.delete( );
+				}
+				catch ( CoreException e )
+				{
+					Logger.debug( e );
+				}
+			}
+
+		}
+	};
+
+	private IBreakpointManager manager = DebugPlugin.getDefault( )
+			.getBreakpointManager( );
 
 	public AtomicInteger getDecompileCount( )
 	{
@@ -201,6 +273,8 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 		SortMemberUtil.deleteDecompilerProject( );
 		decompileCount.set( getPreferenceStore( ).getInt( DECOMPILE_COUNT ) );
 		Display.getDefault( ).asyncExec( new SetupRunnable( ) );
+
+		manager.addBreakpointListener( breakpintListener );
 	}
 
 	private void checkEnableExtension( )
@@ -238,7 +312,7 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 						decompilerType );
 				if ( descriptor == null )
 				{
-					preferenceStore.setValue( DECOMPILER_TYPE,
+					preferenceStore.setDefault( DECOMPILER_TYPE,
 							getDefalutDecompilerType( ) );
 				}
 			}
@@ -249,6 +323,7 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 
 	public void stop( BundleContext context ) throws Exception
 	{
+		manager.removeBreakpointListener( breakpintListener );
 		getPreferenceStore( ).setValue( DECOMPILE_COUNT,
 				decompileCount.get( ) );
 		super.stop( context );
@@ -261,11 +336,10 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 		return Boolean.valueOf(
 				getPreferenceStore( ).getBoolean( PREF_DISPLAY_LINE_NUMBERS ) );
 	}
-	
+
 	public Boolean isDebug( )
 	{
-		return Boolean.valueOf(
-				getPreferenceStore( ).getBoolean( ALIGN ) );
+		return Boolean.valueOf( getPreferenceStore( ).getBoolean( ALIGN ) );
 	}
 
 	public void displayLineNumber( Boolean display )
