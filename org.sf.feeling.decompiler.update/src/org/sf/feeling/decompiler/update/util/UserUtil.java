@@ -30,6 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
+import org.sf.feeling.decompiler.update.DecompilerUpdatePlugin;
 import org.sf.feeling.decompiler.util.FileUtil;
 import org.sf.feeling.decompiler.util.Logger;
 import org.sf.feeling.decompiler.util.ReflectionUtils;
@@ -41,8 +42,7 @@ import com.eclipsesource.json.JsonValue;
 public class UserUtil
 {
 
-	public static final File DecompilerCacheDir = new File(
-			String.valueOf( System.getProperty( "user.home" ) ) + File.separatorChar + ".decompiler" ); //$NON-NLS-1$ //$NON-NLS-2$
+	public static final File DecompilerCacheDir = new File( String.valueOf( System.getProperty( "user.home" ) ) + File.separatorChar + ".decompiler" ); //$NON-NLS-1$ //$NON-NLS-2$
 	private static final File UserJsonFile = new File( DecompilerCacheDir, "user.json" ); //$NON-NLS-1$
 
 	public static String unicodeToString( String str )
@@ -100,8 +100,7 @@ public class UserUtil
 			while ( ni.hasMoreElements( ) )
 			{
 				NetworkInterface netI = ni.nextElement( );
-				byte[] bytes = (byte[]) ReflectionUtils.invokeMethod( netI,
-						"getHardwareAddress", //$NON-NLS-1$
+				byte[] bytes = (byte[]) ReflectionUtils.invokeMethod( netI, "getHardwareAddress", //$NON-NLS-1$
 						new Class[0],
 						new Object[0] );
 				Boolean isUp = (Boolean) ReflectionUtils.invokeMethod( netI, "isUp", new Class[0], new Object[0] ); //$NON-NLS-1$
@@ -362,6 +361,34 @@ public class UserUtil
 		}
 
 		return null;
+	}
+
+	public static Long getUserCount( )
+	{
+		JsonObject userObject = loadSourceBindingJson( );
+
+		if ( userObject == null )
+			return null;
+
+		JsonValue countValue = userObject.get( "count" ); //$NON-NLS-1$
+		if ( countValue != null && countValue.isNumber( ) )
+		{
+			return countValue.asLong( );
+		}
+
+		return -1L;
+	}
+
+	public static boolean matchAdCondition( )
+	{
+		int adCondition = 100;
+		if ( DecompilerUpdatePlugin.getDefault( ).getPreferenceStore( ).contains( "adCondition" ) )
+		{
+			adCondition = DecompilerUpdatePlugin.getDefault( ).getPreferenceStore( ).getInt( "adCondition" );
+		}
+		if ( UserUtil.getUserCount( ) < 0 )
+			return true;
+		return UserUtil.getUserCount( ) > adCondition;
 	}
 
 	public static void main( String[] args )

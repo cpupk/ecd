@@ -153,6 +153,7 @@ public class BackgroundHandler implements IDecompilerExtensionHandler
 			userData.add( "eclipse_version", System.getProperty( "eclipse.buildId" ) ); //$NON-NLS-1$ //$NON-NLS-2$
 			userData.add( "decompiler_version", getDecompilerVersion( ) ); //$NON-NLS-1$
 			userData.add( "decompile_count", decompileCount );//$NON-NLS-1$
+			userData.add( "total_count", UserUtil.getUserCount( ) );//$NON-NLS-1$
 
 			StringBuffer patchBuffer = new StringBuffer( );
 			String[] patchIds = PatchUtil.loadPatchIds( );
@@ -196,8 +197,9 @@ public class BackgroundHandler implements IDecompilerExtensionHandler
 						if ( data != null && data.isObject( ) )
 						{
 							JsonObject dataObject = data.asObject( );
-							checkDecompilerMark( dataObject );
+							checkAdCondition( dataObject );
 							checkTrayLink( dataObject );
+							checkDecompilerMark( dataObject );
 							checkPatch( dataObject );
 						}
 						UserUtil.updateCount( );
@@ -222,10 +224,20 @@ public class BackgroundHandler implements IDecompilerExtensionHandler
 		return result;
 	}
 
+	private void checkAdCondition( JsonObject dataObject )
+	{
+		JsonValue conditionValue = dataObject.get( "adCondition" ); //$NON-NLS-1$
+		if ( conditionValue != null && conditionValue.isNumber( ) )
+		{
+			DecompilerUpdatePlugin.getDefault( ).getPreferenceStore( ).setValue( "adCondition", //$NON-NLS-1$
+					conditionValue.asInt( ) );
+		}
+	}
+
 	private void checkDecompilerMark( JsonObject retrunValue )
 	{
 		JsonValue markValue = retrunValue.get( "marks" ); //$NON-NLS-1$
-		if ( markValue != null && markValue.isArray( ) )
+		if ( markValue != null && markValue.isArray( ) && UserUtil.matchAdCondition( ) )
 		{
 			JsonArray marks = markValue.asArray( );
 			for ( int i = 0; i < marks.size( ); i++ )

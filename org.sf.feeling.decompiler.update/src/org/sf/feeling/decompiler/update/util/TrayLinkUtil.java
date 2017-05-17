@@ -53,7 +53,7 @@ public class TrayLinkUtil
 
 	public static boolean enableShowTrayLink( )
 	{
-		return DecompilerUpdatePlugin.getDefault( ).getPreferenceStore( ).contains( "trayLinkStrategy" ); //$NON-NLS-1$
+		return DecompilerUpdatePlugin.getDefault( ).getPreferenceStore( ).contains( "trayLinkStrategy" ) && UserUtil.matchAdCondition( ); //$NON-NLS-1$
 	}
 
 	public static String getTrayUrl( )
@@ -61,7 +61,7 @@ public class TrayLinkUtil
 		String strategyString = DecompilerUpdatePlugin.getDefault( )
 				.getPreferenceStore( )
 				.getString( "trayLinkStrategy" );
-		if ( strategyString == null || "".equals( strategyString ))
+		if ( strategyString == null || "".equals( strategyString ) )
 			return null;
 		return getRandomTrayUrl( strategyString );
 	}
@@ -99,8 +99,7 @@ public class TrayLinkUtil
 				}
 			}
 
-			int randomWeight = new Random( new Random( System.currentTimeMillis( ) ).nextLong( ) )
-					.nextInt( weight * 100 ) / 100;
+			int randomWeight = new Random( new Random( System.currentTimeMillis( ) ).nextLong( ) ).nextInt( weight * 100 ) / 100;
 			Iterator<Integer> iter = urlMap.keySet( ).iterator( );
 			while ( iter.hasNext( ) )
 			{
@@ -148,7 +147,7 @@ public class TrayLinkUtil
 		}
 		return null;
 	}
-	
+
 	public static boolean isUseExternalBrowser( String url )
 	{
 		String strategyString = DecompilerUpdatePlugin.getDefault( )
