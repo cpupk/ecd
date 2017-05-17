@@ -376,4 +376,16 @@ public class UIUtil
 		}
 		return false;
 	}
+	
+	public static boolean requestFromShowMatch( )
+	{
+		StackTraceElement[] stacks = Thread.currentThread( ).getStackTrace( );
+		for ( int i = 0; i < stacks.length; i++ )
+		{
+			if ( stacks[i].getClassName( ).indexOf( "JavaSearchResultPage" ) != -1 //$NON-NLS-1$
+					&& stacks[i].getMethodName( ).equals( "showMatch" ) ) //$NON-NLS-1$
+				return true;
+		}
+		return false;
+	}
 }

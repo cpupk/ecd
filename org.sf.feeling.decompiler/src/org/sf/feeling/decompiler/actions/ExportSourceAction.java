@@ -47,6 +47,7 @@ import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.i18n.Messages;
 import org.sf.feeling.decompiler.util.DecompileUtil;
 import org.sf.feeling.decompiler.util.FileUtil;
+import org.sf.feeling.decompiler.util.Logger;
 import org.sf.feeling.decompiler.util.UIUtil;
 
 public class ExportSourceAction extends Action
@@ -211,7 +212,7 @@ public class ExportSourceAction extends Action
 						}
 						catch ( IOException e )
 						{
-							e.printStackTrace( );
+							Logger.debug( e );
 						}
 					}
 				}

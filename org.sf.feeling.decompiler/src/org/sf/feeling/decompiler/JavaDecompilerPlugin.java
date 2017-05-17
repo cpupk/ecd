@@ -236,7 +236,7 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 		}
 		catch ( MalformedURLException e )
 		{
-			e.printStackTrace( );
+			Logger.debug( e );
 		}
 		ImageDescriptor actionIcon = null;
 		if ( url != null )

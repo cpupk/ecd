@@ -179,6 +179,22 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 		return false;
 	}
 
+	public void selectAndReveal( int start, int length )
+	{
+		if ( UIUtil.requestFromShowMatch( ) )
+		{
+			super.selectAndReveal( start
+					+ MarkUtil.getMark( this.getDocumentProvider( )
+							.getDocument( this.getEditorInput( ) )
+							.get( ) ).length( ),
+					length );
+		}
+		else
+		{
+			super.selectAndReveal( start, length );
+		}
+	}
+
 	public static boolean debugOptionChange( String source )
 	{
 		return isDebug( source ) != ClassUtil.isDebug( );
