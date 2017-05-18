@@ -38,7 +38,7 @@ public class MarkUtil
 		{
 			return false;
 		}
-		int index = source.indexOf( "\n" );
+		int index = source.indexOf( "\n" ); //$NON-NLS-1$
 		if ( index != -1 )
 		{
 			source = source.substring( 0, index );
@@ -60,7 +60,7 @@ public class MarkUtil
 		{
 			return false;
 		}
-		int index = source.indexOf( "\n" );
+		int index = source.indexOf( "\n" ); //$NON-NLS-1$
 		if ( index != -1 )
 		{
 			source = source.substring( 0, index );
@@ -80,9 +80,9 @@ public class MarkUtil
 	{
 		if ( source == null )
 		{
-			return "";
+			return ""; //$NON-NLS-1$
 		}
-		int index = source.indexOf( "\n" );
+		int index = source.indexOf( "\n" ); //$NON-NLS-1$
 		if ( index != -1 )
 		{
 			source = source.substring( 0, index );
@@ -95,7 +95,16 @@ public class MarkUtil
 			if ( source.startsWith( mark ) )
 				return mark;
 		}
-		return "";
+
+		marks = MARKS.keySet( ).iterator( );
+		while ( marks.hasNext( ) )
+		{
+			String mark = marks.next( );
+			if ( source.startsWith( mark ) )
+				return mark;
+		}
+
+		return ""; //$NON-NLS-1$
 	}
 
 	public static String getRandomSourceMark( )

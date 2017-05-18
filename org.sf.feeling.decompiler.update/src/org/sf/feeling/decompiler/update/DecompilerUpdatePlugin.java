@@ -84,7 +84,7 @@ public class DecompilerUpdatePlugin extends AbstractUIPlugin implements IPropert
 		{
 			try
 			{
-				Bundle bundle = (Bundle) ReflectionUtils.invokeMethod( context, "getBundle", new Class[]{
+				Bundle bundle = (Bundle) ReflectionUtils.invokeMethod( context, "getBundle", new Class[]{ //$NON-NLS-1$
 					String.class
 				}, new Object[]{
 					patchFile.toURI( ).toString( )

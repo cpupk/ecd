@@ -21,6 +21,7 @@
             extensions="class"
             class="org.sf.feeling.decompiler.editor.JavaDecompilerClassFileEditor"
             id="org.sf.feeling.decompiler.ClassFileEditor"
+            symbolicFontName="org.eclipse.jdt.ui.editors.textfont"
             filenames="*.class without source">
             <contentTypeBinding
                contentTypeId="org.eclipse.jdt.core.javaClass"
@@ -131,6 +132,14 @@
                menubarPath="org.eclipse.jdt.ui.refactoring.menu"
                id="org.sf.feeling.decompiler.actions.ExportSourceAction"
                icon="icons/etool16/export_wiz.gif"
+               >
+         </action>
+         <action
+               label="%DebugMode"
+               class="org.sf.feeling.decompiler.actions.DebugModeActionDelegate"
+               menubarPath="org.eclipse.jdt.ui.refactoring.menu"
+               id="org.sf.feeling.decompiler.actions.DebugModeAction"
+               style="toggle"
                >
          </action>
       </viewerContribution>

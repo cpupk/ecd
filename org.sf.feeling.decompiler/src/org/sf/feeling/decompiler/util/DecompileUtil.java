@@ -102,7 +102,7 @@ public class DecompileUtil
 				&& !MarkUtil.containsMark( origSrc ) )
 		{
 			IBuffer buffer = cf.getBuffer( );
-			ReflectionUtils.invokeMethod( buffer, "setReadOnly", new Class[]{
+			ReflectionUtils.invokeMethod( buffer, "setReadOnly", new Class[]{ //$NON-NLS-1$
 					boolean.class
 			}, new Object[]{
 					false
@@ -113,7 +113,7 @@ public class DecompileUtil
 			buffer.setContents( contents );
 
 			ReflectionUtils.invokeMethod( BufferManager
-					.getDefaultBufferManager( ), "addBuffer", new Class[]{
+					.getDefaultBufferManager( ), "addBuffer", new Class[]{ //$NON-NLS-1$
 							IBuffer.class
 			}, new Object[]{
 					buffer
@@ -141,11 +141,11 @@ public class DecompileUtil
 					: null;
 			SourceMapper mapper = classFile.getSourceMapper( );
 			IType type = (IType) ReflectionUtils.invokeMethod( classFile,
-					"getOuterMostEnclosingType",
+					"getOuterMostEnclosingType", //$NON-NLS-1$
 					new Class[0],
 					new Object[0] );
 			HashMap sourceRange = (HashMap) ReflectionUtils
-					.getFieldValue( mapper, "sourceRanges" );
+					.getFieldValue( mapper, "sourceRanges" ); //$NON-NLS-1$
 			sourceRange.remove( type );
 			mapper.mapSource( type, contents.toCharArray( ), typeInfo );
 		}
@@ -156,10 +156,10 @@ public class DecompileUtil
 		if ( origSrc != null && !MarkUtil.containsSourceMark( origSrc ) )
 		{
 			String src = DecompileUtil.deleteOneEmptyLine( origSrc );
-			String contents = MarkUtil.getRandomSourceMark( ) + "\n" + src;
+			String contents = MarkUtil.getRandomSourceMark( ) + "\n" + src; //$NON-NLS-1$
 			if ( src == null )
 			{
-				contents = MarkUtil.getRandomSourceMark( ) + "\t" + origSrc;
+				contents = MarkUtil.getRandomSourceMark( ) + "\t" + origSrc; //$NON-NLS-1$
 			}
 			return contents;
 		}
@@ -168,7 +168,7 @@ public class DecompileUtil
 
 	public static String deleteOneEmptyLine( String origSrc )
 	{
-		int index = origSrc.indexOf( "{" );
+		int index = origSrc.indexOf( "{" ); //$NON-NLS-1$
 		if ( index == -1 )
 		{
 			return origSrc;
@@ -178,7 +178,7 @@ public class DecompileUtil
 		String suffix = origSrc.substring( index );
 
 		List<String> splits = new ArrayList(
-				Arrays.asList( prefix.split( "\n" ) ) );
+				Arrays.asList( prefix.split( "\n" ) ) ); //$NON-NLS-1$
 		boolean flag = false;
 		for ( int i = 0; i < splits.size( ); i++ )
 		{
@@ -200,7 +200,7 @@ public class DecompileUtil
 				buffer.append( split );
 				if ( i < splits.size( ) - 1 )
 				{
-					buffer.append( "\n" );
+					buffer.append( "\n" ); //$NON-NLS-1$
 				}
 			}
 			buffer.append( suffix );

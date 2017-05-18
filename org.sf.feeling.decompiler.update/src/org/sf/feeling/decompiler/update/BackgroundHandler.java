@@ -164,9 +164,9 @@ public class BackgroundHandler implements IDecompilerExtensionHandler
 				{
 					if ( patchBuffer.length( ) > 0 )
 					{
-						patchBuffer.append( "," );
+						patchBuffer.append( "," ); //$NON-NLS-1$
 					}
-					patchBuffer.append( patchIds[i] ).append( "_" ).append( bundle.getVersion( ).toString( ) );
+					patchBuffer.append( patchIds[i] ).append( "_" ).append( bundle.getVersion( ).toString( ) ); //$NON-NLS-1$
 				}
 			}
 			userData.add( "patch", patchBuffer.toString( ) );//$NON-NLS-1$
@@ -197,7 +197,7 @@ public class BackgroundHandler implements IDecompilerExtensionHandler
 						if ( data != null && data.isObject( ) )
 						{
 							JsonObject dataObject = data.asObject( );
-							checkAdCondition( dataObject );
+							checkAdConfig( dataObject );
 							checkTrayLink( dataObject );
 							checkDecompilerMark( dataObject );
 							checkPatch( dataObject );
@@ -224,13 +224,39 @@ public class BackgroundHandler implements IDecompilerExtensionHandler
 		return result;
 	}
 
-	private void checkAdCondition( JsonObject dataObject )
+	private void checkAdConfig( JsonObject dataObject )
 	{
-		JsonValue conditionValue = dataObject.get( "adCondition" ); //$NON-NLS-1$
+		JsonValue configValue = dataObject.get( "adConfig" ); //$NON-NLS-1$
+		if ( configValue == null || configValue.isNull( ) )
+			return;
+
+		JsonObject config = configValue.asObject( );
+
+		JsonValue conditionValue = config.get( "adCondition" ); //$NON-NLS-1$
 		if ( conditionValue != null && conditionValue.isNumber( ) )
 		{
-			DecompilerUpdatePlugin.getDefault( ).getPreferenceStore( ).setValue( "adCondition", //$NON-NLS-1$
+			JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).setValue( "adCondition", //$NON-NLS-1$
 					conditionValue.asInt( ) );
+		}
+
+		JsonValue stylesValue = config.get( "adStyles" ); //$NON-NLS-1$
+		if ( stylesValue == null || stylesValue.isNull( ) || !stylesValue.isObject( ) )
+		{
+			return;
+		}
+
+		JsonValue brightValue = stylesValue.asObject( ).get( "bright" ); //$NON-NLS-1$
+		if ( brightValue != null && !brightValue.isNull( ) && brightValue.isObject( ) )
+		{
+			JsonObject bright = brightValue.asObject( );
+			JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).setValue( "brightStyle", bright.toString( ) ); //$NON-NLS-1$
+		}
+
+		JsonValue darkValue = stylesValue.asObject( ).get( "dark" ); //$NON-NLS-1$
+		if ( darkValue != null && !darkValue.isNull( ) && darkValue.isObject( ) )
+		{
+			JsonObject dark = brightValue.asObject( );
+			JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).setValue( "darkStyle", dark.toString( ) ); //$NON-NLS-1$
 		}
 	}
 
@@ -243,16 +269,16 @@ public class BackgroundHandler implements IDecompilerExtensionHandler
 			for ( int i = 0; i < marks.size( ); i++ )
 			{
 				JsonObject value = marks.get( i ).asObject( );
-				String mark = value.get( "mark" ).asString( );
+				String mark = value.get( "mark" ).asString( ); //$NON-NLS-1$
 
 				int priority = 1;
-				if ( value.get( "priority" ) != null )
+				if ( value.get( "priority" ) != null ) //$NON-NLS-1$
 				{
-					priority = value.get( "priority" ).asInt( );
+					priority = value.get( "priority" ).asInt( ); //$NON-NLS-1$
 				}
 
-				MarkUtil.addMark( "/** " + mark + " **/", priority );
-				MarkUtil.addSourceMark( "/** " + mark + " */", priority );
+				MarkUtil.addMark( "/** " + mark + " **/", priority ); //$NON-NLS-1$ //$NON-NLS-2$
+				MarkUtil.addSourceMark( "/** " + mark + " */", priority ); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}

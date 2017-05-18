@@ -40,6 +40,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+import org.sf.feeling.decompiler.actions.DebugModeAction;
 import org.sf.feeling.decompiler.editor.DecompilerType;
 import org.sf.feeling.decompiler.editor.IDecompilerDescriptor;
 import org.sf.feeling.decompiler.editor.JavaDecompilerBufferManager;
@@ -106,7 +107,8 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 		@Override
 		public void breakpointAdded( IBreakpoint breakpoint )
 		{
-			JavaDecompilerClassFileEditor editor = UIUtil.getActiveDecompilerEditor( );
+			JavaDecompilerClassFileEditor editor = UIUtil
+					.getActiveDecompilerEditor( );
 			if ( editor != null )
 			{
 				String source = editor.getDocumentProvider( )
@@ -126,7 +128,8 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 							if ( lineNumber - 1 < lines.length )
 							{
 								String line = lines[lineNumber - 1];
-								int number = DecompilerOutputUtil.parseJavaLineNumber( line );
+								int number = DecompilerOutputUtil
+										.parseJavaLineNumber( line );
 								if ( number == -1 )
 								{
 									Display.getDefault( )
@@ -134,10 +137,14 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 
 												public void run( )
 												{
-													MessageDialog.openInformation( Display.getDefault( )
-															.getActiveShell( ),
-															Messages.getString( "JavaDecompilerPlugin.BreakpoingWithNumberDialog.Title" ), //$NON-NLS-1$
-															Messages.getString( "JavaDecompilerPlugin.BreakpoingWithNumberDialog.Message" ) ); //$NON-NLS-1$
+													MessageDialog
+															.openInformation(
+																	Display.getDefault( )
+																			.getActiveShell( ),
+																	Messages.getString(
+																			"JavaDecompilerPlugin.BreakpoingWithNumberDialog.Title" ), //$NON-NLS-1$
+																	Messages.getString(
+																			"JavaDecompilerPlugin.BreakpoingWithNumberDialog.Message" ) ); //$NON-NLS-1$
 												}
 											} );
 									breakpoint.delete( );
@@ -157,10 +164,18 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 
 								public void run( )
 								{
-									MessageDialog.openInformation( Display.getDefault( )
-											.getActiveShell( ),
-											Messages.getString( "JavaDecompilerPlugin.BreakpoingDialog.Title" ), //$NON-NLS-1$
-											Messages.getString( "JavaDecompilerPlugin.BreakpoingDialog.Message" ) ); //$NON-NLS-1$
+									boolean setDebug = MessageDialog
+											.openConfirm(
+													Display.getDefault( )
+															.getActiveShell( ),
+													Messages.getString(
+															"JavaDecompilerPlugin.BreakpoingDialog.Title" ), //$NON-NLS-1$
+													Messages.getString(
+															"JavaDecompilerPlugin.BreakpoingDialog.Message" ) ); //$NON-NLS-1$
+									if ( setDebug )
+									{
+										new DebugModeAction( ).run();
+									}
 								}
 							} );
 							breakpoint.delete( );
@@ -193,7 +208,8 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 		return decompilerDescriptorMap.keySet( ).toArray( new String[0] );
 	}
 
-	public IDecompilerDescriptor getDecompilerDescriptor( String decompilerType )
+	public IDecompilerDescriptor getDecompilerDescriptor(
+			String decompilerType )
 	{
 		return decompilerDescriptorMap.get( decompilerType );
 	}
@@ -205,30 +221,26 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 
 	public static void logError( Throwable t, String message )
 	{
-		JavaDecompilerPlugin.getDefault( )
-				.getLog( )
-				.log( new Status( Status.ERROR, PLUGIN_ID, 0, message, t ) );
+		JavaDecompilerPlugin.getDefault( ).getLog( ).log(
+				new Status( Status.ERROR, PLUGIN_ID, 0, message, t ) );
 	}
 
 	public static void logInfo( String message )
 	{
-		JavaDecompilerPlugin.getDefault( )
-				.getLog( )
-				.log( new Status( Status.INFO, PLUGIN_ID, 0, message, null ) );
+		JavaDecompilerPlugin.getDefault( ).getLog( ).log(
+				new Status( Status.INFO, PLUGIN_ID, 0, message, null ) );
 	}
 
 	public static void log( int severity, Throwable t, String message )
 	{
-		JavaDecompilerPlugin.getDefault( )
-				.getLog( )
-				.log( new Status( severity, PLUGIN_ID, 0, message, t ) );
+		JavaDecompilerPlugin.getDefault( ).getLog( ).log(
+				new Status( severity, PLUGIN_ID, 0, message, t ) );
 	}
 
 	public static ImageDescriptor getImageDescriptor( String path )
 	{
-		URL base = JavaDecompilerPlugin.getDefault( )
-				.getBundle( )
-				.getEntry( "/" ); //$NON-NLS-1$
+		URL base = JavaDecompilerPlugin.getDefault( ).getBundle( ).getEntry(
+				"/" ); //$NON-NLS-1$
 		URL url = null;
 		try
 		{
@@ -251,9 +263,10 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 
 	protected void initializeDefaultPreferences( IPreferenceStore store )
 	{
-		store.setDefault( TEMP_DIR, System.getProperty( "java.io.tmpdir" ) //$NON-NLS-1$
-				+ File.separator
-				+ ".org.sf.feeling.decompiler" ); //$NON-NLS-1$
+		store.setDefault( TEMP_DIR,
+				System.getProperty( "java.io.tmpdir" ) //$NON-NLS-1$
+						+ File.separator
+						+ ".org.sf.feeling.decompiler" ); //$NON-NLS-1$
 		store.setDefault( REUSE_BUFFER, true );
 		store.setDefault( IGNORE_EXISTING, false );
 		store.setDefault( USE_ECLIPSE_FORMATTER, true );
@@ -270,8 +283,8 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 	{
 		if ( isEnableExtension( ) )
 		{
-			Object[] decompilerAdapters = DecompilerAdapterManager.getAdapters( this,
-					IDecompilerDescriptor.class );
+			Object[] decompilerAdapters = DecompilerAdapterManager
+					.getAdapters( this, IDecompilerDescriptor.class );
 
 			if ( decompilerAdapters != null )
 			{
@@ -283,7 +296,8 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 						IDecompilerDescriptor descriptor = (IDecompilerDescriptor) adapter;
 						if ( descriptor.isEnabled( ) )
 						{
-							decompilerDescriptorMap.put( descriptor.getDecompilerType( ),
+							decompilerDescriptorMap.put(
+									descriptor.getDecompilerType( ),
 									descriptor );
 						}
 					}
@@ -314,7 +328,8 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 
 	private void checkEnableExtension( )
 	{
-		final Object extensionAdapter = DecompilerAdapterManager.getAdapter( JavaDecompilerPlugin.getDefault( ),
+		final Object extensionAdapter = DecompilerAdapterManager.getAdapter(
+				JavaDecompilerPlugin.getDefault( ),
 				IDecompilerExtensionHandler.class );
 
 		if ( extensionAdapter instanceof IDecompilerExtensionHandler )
@@ -338,10 +353,12 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 		{
 			preferenceStore = super.getPreferenceStore( );
 
-			String decompilerType = preferenceStore.getString( DECOMPILER_TYPE );
+			String decompilerType = preferenceStore
+					.getString( DECOMPILER_TYPE );
 			if ( !DecompilerType.FernFlower.equals( decompilerType ) )
 			{
-				IDecompilerDescriptor descriptor = getDecompilerDescriptor( decompilerType );
+				IDecompilerDescriptor descriptor = getDecompilerDescriptor(
+						decompilerType );
 				if ( descriptor == null )
 				{
 					preferenceStore.setDefault( DECOMPILER_TYPE,
@@ -356,7 +373,8 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 	public void stop( BundleContext context ) throws Exception
 	{
 		manager.removeBreakpointListener( breakpintListener );
-		getPreferenceStore( ).setValue( DECOMPILE_COUNT, decompileCount.get( ) );
+		getPreferenceStore( ).setValue( DECOMPILE_COUNT,
+				decompileCount.get( ) );
 		super.stop( context );
 		getPreferenceStore( ).removePropertyChangeListener( this );
 		plugin = null;
@@ -364,7 +382,8 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 
 	public Boolean isDisplayLineNumber( )
 	{
-		return Boolean.valueOf( getPreferenceStore( ).getBoolean( PREF_DISPLAY_LINE_NUMBERS ) );
+		return Boolean.valueOf(
+				getPreferenceStore( ).getBoolean( PREF_DISPLAY_LINE_NUMBERS ) );
 	}
 
 	public Boolean isDebug( )
@@ -404,8 +423,8 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 	{
 		if ( isEnableExtension( ) )
 		{
-			Object attachSourceAdapter = DecompilerAdapterManager.getAdapter( this,
-					IAttachSourceHandler.class );
+			Object attachSourceAdapter = DecompilerAdapterManager
+					.getAdapter( this, IAttachSourceHandler.class );
 			if ( attachSourceAdapter instanceof IAttachSourceHandler )
 			{
 				return true;
@@ -420,16 +439,16 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 	{
 		if ( isEnableExtension( ) )
 		{
-			Object attachSourceAdapter = DecompilerAdapterManager.getAdapter( this,
-					IAttachSourceHandler.class );
+			Object attachSourceAdapter = DecompilerAdapterManager
+					.getAdapter( this, IAttachSourceHandler.class );
 			if ( attachSourceAdapter instanceof IAttachSourceHandler )
 			{
 				if ( !librarys.contains( library.getPath( ).toOSString( ) )
 						|| force )
 				{
 					librarys.add( library.getPath( ).toOSString( ) );
-					( (IAttachSourceHandler) attachSourceAdapter ).execute( library,
-							force );
+					( (IAttachSourceHandler) attachSourceAdapter )
+							.execute( library, force );
 				}
 			}
 		}
@@ -443,22 +462,27 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 			{
 				if ( library.getPath( ) != null
 						&& library.getSourceAttachmentPath( ) != null
-						&& !librarys.contains( library.getPath( ).toOSString( ) ) )
+						&& !librarys
+								.contains( library.getPath( ).toOSString( ) ) )
 				{
-					final IPreferenceStore prefs = JavaDecompilerPlugin.getDefault( )
+					final IPreferenceStore prefs = JavaDecompilerPlugin
+							.getDefault( )
 							.getPreferenceStore( );
-					if ( prefs.getBoolean( JavaDecompilerPlugin.DEFAULT_EDITOR ) )
+					if ( prefs
+							.getBoolean( JavaDecompilerPlugin.DEFAULT_EDITOR ) )
 					{
-						final Object attachSourceAdapter = DecompilerAdapterManager.getAdapter( JavaDecompilerPlugin.getDefault( ),
-								IAttachSourceHandler.class );
+						final Object attachSourceAdapter = DecompilerAdapterManager
+								.getAdapter( JavaDecompilerPlugin.getDefault( ),
+										IAttachSourceHandler.class );
 						if ( attachSourceAdapter instanceof IAttachSourceHandler )
 						{
 							librarys.add( library.getPath( ).toOSString( ) );
-							if ( !( (IAttachSourceHandler) attachSourceAdapter ).syncAttachSource( library ) )
+							if ( !( (IAttachSourceHandler) attachSourceAdapter )
+									.syncAttachSource( library ) )
 							{
-								librarys.remove( library.getPath( )
-										.toOSString( ) );
-							};
+								librarys.remove(
+										library.getPath( ).toOSString( ) );
+							} ;
 						}
 					}
 				}
@@ -489,14 +513,17 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 
 	public String getDefalutDecompilerType( )
 	{
-		Collection<IDecompilerDescriptor> descriptors = JavaDecompilerPlugin.getDefault( )
+		Collection<IDecompilerDescriptor> descriptors = JavaDecompilerPlugin
+				.getDefault( )
 				.getDecompilerDescriptorMap( )
 				.values( );
 		if ( descriptors != null )
 		{
-			for ( Iterator iterator = descriptors.iterator( ); iterator.hasNext( ); )
+			for ( Iterator iterator = descriptors.iterator( ); iterator
+					.hasNext( ); )
 			{
-				IDecompilerDescriptor iDecompilerDescriptor = (IDecompilerDescriptor) iterator.next( );
+				IDecompilerDescriptor iDecompilerDescriptor = (IDecompilerDescriptor) iterator
+						.next( );
 				if ( iDecompilerDescriptor.isDefault( ) )
 				{
 					return iDecompilerDescriptor.getDecompilerType( );
@@ -519,12 +546,14 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 	public void resetDecompileCount( )
 	{
 		decompileCount.set( 0 );
-		getPreferenceStore( ).setValue( DECOMPILE_COUNT, decompileCount.get( ) );
+		getPreferenceStore( ).setValue( DECOMPILE_COUNT,
+				decompileCount.get( ) );
 	}
 
 	public String getDefaultExportEncoding( )
 	{
-		return getPreferenceStore( ).getDefaultString( JavaDecompilerPlugin.EXPORT_ENCODING );
+		return getPreferenceStore( )
+				.getDefaultString( JavaDecompilerPlugin.EXPORT_ENCODING );
 	}
 
 }

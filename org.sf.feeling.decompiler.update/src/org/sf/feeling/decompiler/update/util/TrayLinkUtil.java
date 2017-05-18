@@ -18,7 +18,7 @@ import java.util.Random;
 import java.util.TreeMap;
 
 import org.eclipse.swt.widgets.Display;
-import org.sf.feeling.decompiler.update.DecompilerUpdatePlugin;
+import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.update.widget.LinkTrimChecker;
 
 import com.eclipsesource.json.Json;
@@ -44,7 +44,7 @@ public class TrayLinkUtil
 	{
 		if ( trayLinkValue != null )
 		{
-			DecompilerUpdatePlugin.getDefault( ).getPreferenceStore( ).setValue( "trayLinkStrategy", //$NON-NLS-1$
+			JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).setValue( "trayLinkStrategy", //$NON-NLS-1$
 					trayLinkValue.toString( ) );
 			return true;
 		}
@@ -53,15 +53,15 @@ public class TrayLinkUtil
 
 	public static boolean enableShowTrayLink( )
 	{
-		return DecompilerUpdatePlugin.getDefault( ).getPreferenceStore( ).contains( "trayLinkStrategy" ) && UserUtil.matchAdCondition( ); //$NON-NLS-1$
+		return JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).contains( "trayLinkStrategy" ) && UserUtil.matchAdCondition( ); //$NON-NLS-1$
 	}
 
 	public static String getTrayUrl( )
 	{
-		String strategyString = DecompilerUpdatePlugin.getDefault( )
+		String strategyString = JavaDecompilerPlugin.getDefault( )
 				.getPreferenceStore( )
-				.getString( "trayLinkStrategy" );
-		if ( strategyString == null || "".equals( strategyString ) )
+				.getString( "trayLinkStrategy" ); //$NON-NLS-1$
+		if ( strategyString == null || "".equals( strategyString ) ) //$NON-NLS-1$
 			return null;
 		return getRandomTrayUrl( strategyString );
 	}
@@ -72,9 +72,9 @@ public class TrayLinkUtil
 		if ( strategyValue.isObject( ) )
 		{
 			JsonObject strategy = strategyValue.asObject( );
-			if ( strategy.get( "url" ) != null )
+			if ( strategy.get( "url" ) != null ) //$NON-NLS-1$
 			{
-				return strategy.get( "url" ).asString( );
+				return strategy.get( "url" ).asString( ); //$NON-NLS-1$
 			}
 		}
 		else if ( strategyValue.isArray( ) )
@@ -86,13 +86,13 @@ public class TrayLinkUtil
 			for ( int i = 0; i < values.size( ); i++ )
 			{
 				JsonObject strategy = values.get( i ).asObject( );
-				if ( strategy.get( "url" ) != null )
+				if ( strategy.get( "url" ) != null ) //$NON-NLS-1$
 				{
-					String url = strategy.get( "url" ).asString( );
+					String url = strategy.get( "url" ).asString( ); //$NON-NLS-1$
 					int priority = 1;
-					if ( strategy.get( "priority" ) != null )
+					if ( strategy.get( "priority" ) != null ) //$NON-NLS-1$
 					{
-						priority = strategy.get( "priority" ).asInt( );
+						priority = strategy.get( "priority" ).asInt( ); //$NON-NLS-1$
 					}
 					weight += priority;
 					urlMap.put( weight, url );
@@ -115,18 +115,18 @@ public class TrayLinkUtil
 
 	public static Integer getTrayUrlDisplayTime( String url )
 	{
-		String strategyString = DecompilerUpdatePlugin.getDefault( )
+		String strategyString = JavaDecompilerPlugin.getDefault( )
 				.getPreferenceStore( )
-				.getString( "trayLinkStrategy" );
+				.getString( "trayLinkStrategy" ); //$NON-NLS-1$
 		if ( strategyString == null )
 			return null;
 		JsonValue strategyValue = Json.parse( strategyString );
 		if ( strategyValue.isObject( ) )
 		{
 			JsonObject strategy = strategyValue.asObject( );
-			if ( strategy.get( "showTime" ) != null )
+			if ( strategy.get( "showTime" ) != null ) //$NON-NLS-1$
 			{
-				return strategy.get( "showTime" ).asInt( );
+				return strategy.get( "showTime" ).asInt( ); //$NON-NLS-1$
 			}
 		}
 		else if ( strategyValue.isArray( ) )
@@ -136,11 +136,11 @@ public class TrayLinkUtil
 			for ( int i = 0; i < values.size( ); i++ )
 			{
 				JsonObject strategy = values.get( i ).asObject( );
-				if ( strategy.get( "url" ) != null && url.equals( strategy.get( "url" ).asString( ) ) )
+				if ( strategy.get( "url" ) != null && url.equals( strategy.get( "url" ).asString( ) ) ) //$NON-NLS-1$ //$NON-NLS-2$
 				{
-					if ( strategy.get( "showTime" ) != null )
+					if ( strategy.get( "showTime" ) != null ) //$NON-NLS-1$
 					{
-						return strategy.get( "showTime" ).asInt( );
+						return strategy.get( "showTime" ).asInt( ); //$NON-NLS-1$
 					}
 				}
 			}
@@ -150,18 +150,18 @@ public class TrayLinkUtil
 
 	public static boolean isUseExternalBrowser( String url )
 	{
-		String strategyString = DecompilerUpdatePlugin.getDefault( )
+		String strategyString = JavaDecompilerPlugin.getDefault( )
 				.getPreferenceStore( )
-				.getString( "trayLinkStrategy" );
+				.getString( "trayLinkStrategy" ); //$NON-NLS-1$
 		if ( strategyString == null )
 			return true;
 		JsonValue strategyValue = Json.parse( strategyString );
 		if ( strategyValue.isObject( ) )
 		{
 			JsonObject strategy = strategyValue.asObject( );
-			if ( strategy.get( "external" ) != null )
+			if ( strategy.get( "external" ) != null ) //$NON-NLS-1$
 			{
-				return strategy.get( "external" ).asBoolean( );
+				return strategy.get( "external" ).asBoolean( ); //$NON-NLS-1$
 			}
 		}
 		else if ( strategyValue.isArray( ) )
@@ -171,11 +171,11 @@ public class TrayLinkUtil
 			for ( int i = 0; i < values.size( ); i++ )
 			{
 				JsonObject strategy = values.get( i ).asObject( );
-				if ( strategy.get( "url" ) != null && url.equals( strategy.get( "url" ).asString( ) ) )
+				if ( strategy.get( "url" ) != null && url.equals( strategy.get( "url" ).asString( ) ) ) //$NON-NLS-1$ //$NON-NLS-2$
 				{
-					if ( strategy.get( "external" ) != null )
+					if ( strategy.get( "external" ) != null ) //$NON-NLS-1$
 					{
-						return strategy.get( "external" ).asBoolean( );
+						return strategy.get( "external" ).asBoolean( ); //$NON-NLS-1$
 					}
 				}
 			}

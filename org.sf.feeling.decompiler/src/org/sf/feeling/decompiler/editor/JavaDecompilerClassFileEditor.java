@@ -14,8 +14,7 @@ package org.sf.feeling.decompiler.editor;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,6 +42,10 @@ import org.eclipse.jface.text.hyperlink.URLHyperlink;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.search2.internal.ui.text.AnnotationManagers;
+import org.eclipse.search2.internal.ui.text.EditorAnnotationManager;
+import org.eclipse.search2.internal.ui.text.WindowAnnotationManager;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -53,9 +56,11 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
+import org.sf.feeling.decompiler.i18n.Messages;
 import org.sf.feeling.decompiler.util.ClassUtil;
 import org.sf.feeling.decompiler.util.DecompileUtil;
 import org.sf.feeling.decompiler.util.DecompilerOutputUtil;
@@ -70,6 +75,9 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 	public static final String ID = "org.sf.feeling.decompiler.ClassFileEditor"; //$NON-NLS-1$
 
 	private IBuffer classBuffer;
+
+	private PaintListener paintListener;
+	private MouseAdapter mouseAdapter;
 
 	public JavaDecompilerClassFileEditor( )
 	{
@@ -183,11 +191,28 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 	{
 		if ( UIUtil.requestFromShowMatch( ) )
 		{
-			super.selectAndReveal( start
-					+ MarkUtil.getMark( this.getDocumentProvider( )
-							.getDocument( this.getEditorInput( ) )
-							.get( ) ).length( ),
-					length );
+			String src = this.getDocumentProvider( )
+					.getDocument( this.getEditorInput( ) )
+					.get( );
+			if ( MarkUtil.containsSourceMark( src ) )
+			{
+				if ( src.indexOf( "\r\n" ) != -1 ) //$NON-NLS-1$
+				{
+					super.selectAndReveal(
+							start + MarkUtil.getMark( src ).length( ) - 1,
+							length );
+				}
+				else
+				{
+					super.selectAndReveal(
+							start + MarkUtil.getMark( src ).length( ),
+							length );
+				}
+			}
+			else
+			{
+				super.selectAndReveal( start, length );
+			}
 		}
 		else
 		{
@@ -455,13 +480,14 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 		final int index = this.getDocumentProvider( )
 				.getDocument( getEditorInput( ) )
 				.get( )
-				.indexOf( "://" );
+				.indexOf( "://" ); //$NON-NLS-1$
 		if ( index != -1 )
 		{
 			Display.getDefault( ).asyncExec( new Runnable( ) {
 
 				public void run( )
 				{
+					updateMatchAnnonation( );
 					handleMarkLink( index );
 				}
 			} );
@@ -510,55 +536,98 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 			{
 				final IHyperlinkPresenter fHyperlinkPresenter = (IHyperlinkPresenter) ReflectionUtils
 						.getFieldValue( getSourceViewer( ),
-								"fHyperlinkPresenter" );
+								"fHyperlinkPresenter" ); //$NON-NLS-1$
 
 				final HyperlinkManager fHyperlinkManager = (HyperlinkManager) ReflectionUtils
 						.getFieldValue( getSourceViewer( ),
-								"fHyperlinkManager" );
+								"fHyperlinkManager" ); //$NON-NLS-1$
 
 				fHyperlinkPresenter.showHyperlinks( links );
+
+				updateLinkRanges( links );
+
 				final StyledText text = getSourceViewer( ).getTextWidget( );
-				final PaintListener[] listeners = new PaintListener[1];
-				final List<PaintListener> messages = new ArrayList<PaintListener>( );
-				final boolean[] isActive = new boolean[1];
-				PaintListener listener = new PaintListener( ) {
+
+				final boolean[] flags = new boolean[1];
+
+				if ( paintListener != null )
+				{
+					text.removePaintListener( paintListener );
+				}
+
+				paintListener = new PaintListener( ) {
+
+					private Boolean isActive(
+							final HyperlinkManager fHyperlinkManager )
+					{
+						return (Boolean) ReflectionUtils.getFieldValue(
+								fHyperlinkManager,
+								Messages.getString(
+										"JavaDecompilerClassFileEditor.4" ) ); //$NON-NLS-1$
+					}
+
+					private void updateHyperlinks( final IHyperlink[] links,
+							final IHyperlinkPresenter fHyperlinkPresenter )
+					{
+						if ( ReflectionUtils.getFieldValue( fHyperlinkPresenter,
+								"fTextViewer" ) != null ) //$NON-NLS-1$
+						{
+							fHyperlinkPresenter.showHyperlinks( links );
+							updateLinkRanges( links );
+						}
+					}
+
+					private void addPaintListener( final StyledText text )
+					{
+						Display.getDefault( ).asyncExec( new Runnable( ) {
+
+							public void run( )
+							{
+								if ( paintListener != null )
+								{
+									text.removePaintListener( paintListener );
+									text.addPaintListener( paintListener );
+								}
+							}
+						} );
+					}
 
 					@Override
 					public void paintControl( PaintEvent e )
 					{
-						if ( !isActive[0] && messages.isEmpty( ) )
+						if ( flags[0] )
 						{
-							messages.add( this );
-							Display.getDefault( ).asyncExec( new Runnable( ) {
-
-								public void run( )
-								{
-									boolean fActive = (Boolean) ReflectionUtils
-											.getFieldValue( fHyperlinkManager,
-													"fActive" );
-									if ( !fActive && !text.isDisposed( ) )
-									{
-										text.removePaintListener(
-												listeners[0] );
-										if ( ReflectionUtils.getFieldValue(
-												fHyperlinkPresenter,
-												"fTextViewer" ) != null )
-										{
-											fHyperlinkPresenter
-													.showHyperlinks( links );
-										}
-										text.addPaintListener( listeners[0] );
-									}
-									messages.clear( );
-								}
-							} );
+							return;
 						}
+
+						flags[0] = true;
+
+						Display.getDefault( ).asyncExec( new Runnable( ) {
+
+							public void run( )
+							{
+								boolean fActive = isActive( fHyperlinkManager );
+								if ( !fActive && !text.isDisposed( ) )
+								{
+									text.removePaintListener( paintListener );
+									updateHyperlinks( links,
+											fHyperlinkPresenter );
+									updateMatchAnnonation( );
+									addPaintListener( text );
+								}
+								flags[0] = false;
+							}
+						} );
 					}
 				};
-				listeners[0] = listener;
-				text.addPaintListener( listener );
 
-				MouseAdapter adapter = new MouseAdapter( ) {
+				text.addPaintListener( paintListener );
+
+				if ( mouseAdapter != null )
+				{
+					text.removeMouseListener( mouseAdapter );
+				}
+				mouseAdapter = new MouseAdapter( ) {
 
 					@Override
 					public void mouseUp( MouseEvent e )
@@ -583,9 +652,70 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 
 					}
 				};
-				text.addMouseListener( adapter );
+				text.addMouseListener( mouseAdapter );
 			}
 		}
+	}
+
+	private void updateLinkRanges( final IHyperlink[] links )
+	{
+		String content = getDocumentProvider( ).getDocument( getEditorInput( ) )
+				.get( );
+
+		String mark = MarkUtil.getMark( content );
+		String ad = mark.replaceAll( "/(\\*)+", "" ) //$NON-NLS-1$ //$NON-NLS-2$
+				.replaceAll( "(\\*)+/", "" ) //$NON-NLS-1$ //$NON-NLS-2$
+				.trim( );
+		int length = ad.length( );
+		int offset = mark.indexOf( ad );
+
+		StyledText textWidget = getViewer( ).getTextWidget( );
+		StyleRange textRange = UIUtil
+				.getAdTextStyleRange( textWidget, offset, length );
+		if ( textRange != null )
+		{
+			textWidget.setStyleRange( textRange );
+		}
+
+		for ( int j = 0; j < links.length; j++ )
+		{
+			IHyperlink link = links[j];
+			StyleRange linkRange = UIUtil.getAdLinkStyleRange( textWidget,
+					link.getHyperlinkRegion( ).getOffset( ),
+					link.getHyperlinkRegion( ).getLength( ) );
+			if ( linkRange != null )
+			{
+				getViewer( ).getTextWidget( ).setStyleRange( linkRange );
+			}
+		}
+	}
+
+	private void updateMatchAnnonation( )
+	{
+		WindowAnnotationManager mgr = (WindowAnnotationManager) ReflectionUtils
+				.invokeMethod( AnnotationManagers.class,
+						"getWindowAnnotationManager", //$NON-NLS-1$
+						new Class[]{
+								IWorkbenchWindow.class
+						},
+						new Object[]{
+								PlatformUI.getWorkbench( )
+										.getActiveWorkbenchWindow( )
+						} );
+		if ( mgr == null )
+			return;
+		Map<IEditorPart, EditorAnnotationManager> fAnnotationManagers = (Map<IEditorPart, EditorAnnotationManager>) ReflectionUtils
+				.getFieldValue( mgr, "fAnnotationManagers" ); //$NON-NLS-1$
+		if ( fAnnotationManagers == null )
+			return;
+		EditorAnnotationManager amgr = fAnnotationManagers
+				.get( JavaDecompilerClassFileEditor.this );
+		if ( amgr == null )
+			return;
+		ReflectionUtils.invokeMethod( amgr,
+				"removeAllAnnotations", //$NON-NLS-1$
+				new Class[0],
+				new Object[0] );
 	}
 
 }

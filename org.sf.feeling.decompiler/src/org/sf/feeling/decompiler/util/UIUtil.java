@@ -30,6 +30,12 @@ import org.eclipse.jdt.internal.ui.packageview.PackageExplorerPart;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -43,8 +49,13 @@ import org.eclipse.ui.navigator.CommonNavigator;
 import org.eclipse.ui.navigator.CommonNavigatorManager;
 import org.eclipse.ui.navigator.IExtensionStateModel;
 import org.eclipse.ui.navigator.INavigatorContentService;
+import org.eclipse.ui.themes.ColorUtil;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.editor.JavaDecompilerClassFileEditor;
+
+import com.eclipsesource.json.Json;
+import com.eclipsesource.json.JsonObject;
+import com.eclipsesource.json.JsonValue;
 
 public class UIUtil
 {
@@ -376,16 +387,234 @@ public class UIUtil
 		}
 		return false;
 	}
-	
+
 	public static boolean requestFromShowMatch( )
 	{
 		StackTraceElement[] stacks = Thread.currentThread( ).getStackTrace( );
 		for ( int i = 0; i < stacks.length; i++ )
 		{
-			if ( stacks[i].getClassName( ).indexOf( "JavaSearchResultPage" ) != -1 //$NON-NLS-1$
+			if ( stacks[i].getClassName( )
+					.indexOf( "JavaSearchResultPage" ) != -1 //$NON-NLS-1$
 					&& stacks[i].getMethodName( ).equals( "showMatch" ) ) //$NON-NLS-1$
 				return true;
 		}
 		return false;
+	}
+
+	public static StyleRange getAdTextStyleRange( StyledText textWidget,
+			int offset, int length )
+	{
+		StyleRange styleRange = null;
+		if ( isDark( textWidget ) )
+		{
+			String darktStyleleValue = JavaDecompilerPlugin.getDefault( )
+					.getPreferenceStore( )
+					.getString( "darktStyle" );
+			if ( darktStyleleValue != null
+					&& darktStyleleValue.trim( ).length( ) > 0 )
+			{
+				styleRange = handleStyleValue( textWidget,
+						offset,
+						length,
+						darktStyleleValue,
+						"text" );
+			}
+		}
+		else
+		{
+			String brightStyleValue = JavaDecompilerPlugin.getDefault( )
+					.getPreferenceStore( )
+					.getString( "brightStyle" );
+			if ( brightStyleValue != null
+					&& brightStyleValue.trim( ).length( ) > 0 )
+			{
+				styleRange = handleStyleValue( textWidget,
+						offset,
+						length,
+						brightStyleValue,
+						"text" );
+			}
+
+		}
+		return styleRange;
+	}
+
+	private static StyleRange handleStyleValue( StyledText textWidget,
+			int offset, int length, String brightStyleValue, String property )
+	{
+		JsonValue styleValue = null;
+		try
+		{
+			styleValue = Json.parse( brightStyleValue );
+		}
+		catch ( Exception e )
+		{
+			Logger.debug( e );
+		}
+
+		if ( styleValue != null && styleValue.isObject( ) )
+		{
+			JsonObject style = styleValue.asObject( );
+			if ( style.get( property ) != null
+					&& style.get( property ).isObject( ) )
+			{
+				return getStyleRange( textWidget,
+						offset,
+						length,
+						style.get( property ).asObject( ) );
+			}
+		}
+
+		return null;
+	}
+
+	private static StyleRange getStyleRange( StyledText textWidget, int offset,
+			int length, JsonObject style )
+	{
+		StyleRange range = new StyleRange( offset, length, null, null );
+		JsonValue fontStyleValue = style.get( "fontStyle" );
+		if ( fontStyleValue != null && fontStyleValue.isNumber( ) )
+		{
+			range.fontStyle = fontStyleValue.asInt( );
+		}
+
+		JsonValue fontFamilyValue = style.get( "fontFamily" );
+		if ( fontFamilyValue != null && fontFamilyValue.isString( ) )
+		{
+			if ( range.font == null )
+			{
+				FontData fontData = textWidget.getFont( ).getFontData( )[0];
+				fontData.setName( fontFamilyValue.asString( ) );
+				Font font = new Font( textWidget.getDisplay( ), fontData );
+				range.font = font;
+			}
+			else
+			{
+				FontData fontData = range.font.getFontData( )[0];
+				fontData.setName( fontFamilyValue.asString( ) );
+			}
+		}
+
+		JsonValue fontSizeValue = style.get( "fontSize" );
+		if ( fontSizeValue != null && fontSizeValue.isNumber( ) )
+		{
+			FontData textFontData = textWidget.getFont( ).getFontData( )[0];
+			if ( fontSizeValue.asInt( ) > textFontData.getHeight( ) )
+			{
+				if ( range.font == null )
+				{
+					FontData fontData = textFontData;
+					fontData.setHeight( fontSizeValue.asInt( ) );
+					Font font = new Font( textWidget.getDisplay( ), fontData );
+					range.font = font;
+				}
+				else
+				{
+					FontData fontData = range.font.getFontData( )[0];
+					fontData.setHeight( fontSizeValue.asInt( ) );
+				}
+			}
+		}
+
+		JsonValue underlineValue = style.get( "underline" );
+		if ( underlineValue != null && underlineValue.isBoolean( ) )
+		{
+			range.underline = underlineValue.asBoolean( );
+		}
+
+		JsonValue underlineStyleValue = style.get( "underlineStyle" );
+		if ( underlineStyleValue != null && underlineStyleValue.isNumber( ) )
+		{
+			range.underlineStyle = underlineStyleValue.asInt( );
+		}
+
+		JsonValue hideUnderlineValue = style.get( "hideUnderline" );
+		if ( hideUnderlineValue != null && hideUnderlineValue.isBoolean( ) )
+		{
+			if ( hideUnderlineValue.asBoolean( ) )
+			{
+				range.underlineColor = textWidget.getBackground( );
+			}
+		}
+
+		JsonValue backgroundValue = style.get( "background" );
+		if ( backgroundValue != null && backgroundValue.isString( ) )
+		{
+			String backgroundString = backgroundValue.asString( );
+			RGB rgb = ColorUtil.getColorValue( backgroundString );
+			if ( rgb != null )
+			{
+				range.background = new Color( textWidget.getDisplay( ), rgb );
+			}
+		}
+
+		JsonValue foregroundValue = style.get( "foreground" );
+		if ( foregroundValue != null && foregroundValue.isString( ) )
+		{
+			String foregroundString = foregroundValue.asString( );
+			RGB rgb = ColorUtil.getColorValue( foregroundString );
+			if ( rgb != null )
+			{
+				range.foreground = new Color( textWidget.getDisplay( ), rgb );
+				if ( range.underlineColor == null )
+				{
+					range.underlineColor = range.foreground;
+				}
+			}
+		}
+
+		return range;
+	}
+
+	private static boolean isDark( StyledText textWidget )
+	{
+		if ( textWidget != null && textWidget.isDisposed( ) )
+		{
+			Color color = textWidget.getBackground( );
+			int red = color.getRed( );
+			int blue = color.getBlue( );
+			int green = color.getGreen( );
+			return red < 127 || blue < 127 || green < 127;
+		}
+		return false;
+	}
+
+	public static StyleRange getAdLinkStyleRange( StyledText textWidget,
+			int offset, int length )
+	{
+		StyleRange styleRange = null;
+		if ( isDark( textWidget ) )
+		{
+			String darktStyleleValue = JavaDecompilerPlugin.getDefault( )
+					.getPreferenceStore( )
+					.getString( "darktStyle" );
+			if ( darktStyleleValue != null
+					&& darktStyleleValue.trim( ).length( ) > 0 )
+			{
+				styleRange = handleStyleValue( textWidget,
+						offset,
+						length,
+						darktStyleleValue,
+						"link" );
+			}
+		}
+		else
+		{
+			String brightStyleValue = JavaDecompilerPlugin.getDefault( )
+					.getPreferenceStore( )
+					.getString( "brightStyle" );
+			if ( brightStyleValue != null
+					&& brightStyleValue.trim( ).length( ) > 0 )
+			{
+				styleRange = handleStyleValue( textWidget,
+						offset,
+						length,
+						brightStyleValue,
+						"link" );
+			}
+
+		}
+
+		return styleRange;
 	}
 }

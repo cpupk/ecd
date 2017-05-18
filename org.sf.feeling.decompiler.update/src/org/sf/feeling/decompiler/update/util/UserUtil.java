@@ -30,7 +30,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
-import org.sf.feeling.decompiler.update.DecompilerUpdatePlugin;
 import org.sf.feeling.decompiler.util.FileUtil;
 import org.sf.feeling.decompiler.util.Logger;
 import org.sf.feeling.decompiler.util.ReflectionUtils;
@@ -382,9 +381,9 @@ public class UserUtil
 	public static boolean matchAdCondition( )
 	{
 		int adCondition = 100;
-		if ( DecompilerUpdatePlugin.getDefault( ).getPreferenceStore( ).contains( "adCondition" ) )
+		if ( JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).contains( "adCondition" ) ) //$NON-NLS-1$
 		{
-			adCondition = DecompilerUpdatePlugin.getDefault( ).getPreferenceStore( ).getInt( "adCondition" );
+			adCondition = JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).getInt( "adCondition" ); //$NON-NLS-1$
 		}
 		if ( UserUtil.getUserCount( ) < 0 )
 			return true;

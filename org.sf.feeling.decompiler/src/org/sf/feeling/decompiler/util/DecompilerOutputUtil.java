@@ -902,56 +902,56 @@ public class DecompilerOutputUtil
 		if ( level == null )
 		{
 			if ( ReflectionUtils.getDeclaredField( JavaCore.class,
-					"VERSION_1_8" ) != null )
+					"VERSION_1_8" ) != null ) //$NON-NLS-1$
 			{
 				level = (String) ReflectionUtils.getFieldValue( JavaCore.class,
-						"VERSION_1_8" );
+						"VERSION_1_8" ); //$NON-NLS-1$
 			}
 			else if ( ReflectionUtils.getDeclaredField( JavaCore.class,
-					"VERSION_1_7" ) != null )
+					"VERSION_1_7" ) != null ) //$NON-NLS-1$
 			{
 				level = (String) ReflectionUtils.getFieldValue( JavaCore.class,
-						"VERSION_1_7" );
+						"VERSION_1_7" ); //$NON-NLS-1$
 			}
 			else if ( ReflectionUtils.getDeclaredField( JavaCore.class,
-					"VERSION_1_6" ) != null )
+					"VERSION_1_6" ) != null ) //$NON-NLS-1$
 			{
 				level = (String) ReflectionUtils.getFieldValue( JavaCore.class,
-						"VERSION_1_6" );
+						"VERSION_1_6" ); //$NON-NLS-1$
 			}
 			else if ( ReflectionUtils.getDeclaredField( JavaCore.class,
-					"VERSION_1_5" ) != null )
+					"VERSION_1_5" ) != null ) //$NON-NLS-1$
 			{
 				level = (String) ReflectionUtils.getFieldValue( JavaCore.class,
-						"VERSION_1_5" );
+						"VERSION_1_5" ); //$NON-NLS-1$
 			}
 			else if ( ReflectionUtils.getDeclaredField( JavaCore.class,
-					"VERSION_1_4" ) != null )
+					"VERSION_1_4" ) != null ) //$NON-NLS-1$
 			{
 				level = (String) ReflectionUtils.getFieldValue( JavaCore.class,
-						"VERSION_1_4" );
+						"VERSION_1_4" ); //$NON-NLS-1$
 			}
 			else if ( ReflectionUtils.getDeclaredField( JavaCore.class,
-					"VERSION_1_3" ) != null )
+					"VERSION_1_3" ) != null ) //$NON-NLS-1$
 			{
 				level = (String) ReflectionUtils.getFieldValue( JavaCore.class,
-						"VERSION_1_3" );
+						"VERSION_1_3" ); //$NON-NLS-1$
 			}
 			else if ( ReflectionUtils.getDeclaredField( JavaCore.class,
-					"VERSION_1_2" ) != null )
+					"VERSION_1_2" ) != null ) //$NON-NLS-1$
 			{
 				level = (String) ReflectionUtils.getFieldValue( JavaCore.class,
-						"VERSION_1_2" );
+						"VERSION_1_2" ); //$NON-NLS-1$
 			}
 			else if ( ReflectionUtils.getDeclaredField( JavaCore.class,
-					"VERSION_1_1" ) != null )
+					"VERSION_1_1" ) != null ) //$NON-NLS-1$
 			{
 				level = (String) ReflectionUtils.getFieldValue( JavaCore.class,
-						"VERSION_1_1" );
+						"VERSION_1_1" ); //$NON-NLS-1$
 			}
 			else
 			{
-				level = "1.8";
+				level = "1.8"; //$NON-NLS-1$
 			}
 		}
 
@@ -964,25 +964,25 @@ public class DecompilerOutputUtil
 	{
 		if ( jslLevel == -1 )
 		{
-			if ( ReflectionUtils.getDeclaredField( AST.class, "JLS8" ) != null )
+			if ( ReflectionUtils.getDeclaredField( AST.class, "JLS8" ) != null ) //$NON-NLS-1$
 			{
 				jslLevel = (Integer) ReflectionUtils.getFieldValue( AST.class,
-						"JLS8" );
+						"JLS8" ); //$NON-NLS-1$
 			}
-			else if ( ReflectionUtils.getDeclaredField( AST.class, "JLS4" ) != null )
+			else if ( ReflectionUtils.getDeclaredField( AST.class, "JLS4" ) != null ) //$NON-NLS-1$
 			{
 				jslLevel = (Integer) ReflectionUtils.getFieldValue( AST.class,
-						"JLS4" );
+						"JLS4" ); //$NON-NLS-1$
 			}
-			else if ( ReflectionUtils.getDeclaredField( AST.class, "JLS3" ) != null )
+			else if ( ReflectionUtils.getDeclaredField( AST.class, "JLS3" ) != null ) //$NON-NLS-1$
 			{
 				jslLevel = (Integer) ReflectionUtils.getFieldValue( AST.class,
-						"JLS3" );
+						"JLS3" ); //$NON-NLS-1$
 			}
-			else if ( ReflectionUtils.getDeclaredField( AST.class, "JLS2" ) != null )
+			else if ( ReflectionUtils.getDeclaredField( AST.class, "JLS2" ) != null ) //$NON-NLS-1$
 			{
 				jslLevel = (Integer) ReflectionUtils.getFieldValue( AST.class,
-						"JLS2" );
+						"JLS2" ); //$NON-NLS-1$
 			}
 			else
 			{

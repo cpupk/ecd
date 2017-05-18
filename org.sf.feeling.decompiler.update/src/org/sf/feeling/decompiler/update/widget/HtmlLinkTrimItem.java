@@ -246,7 +246,7 @@ public class HtmlLinkTrimItem extends Composite
 
 							public void run( )
 							{
-								browser.setData( "linkClick", false );
+								browser.setData( "linkClick", false ); //$NON-NLS-1$
 								browser.setVisible( false );
 								browser.setUrl( url );
 							}

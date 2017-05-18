@@ -81,6 +81,27 @@ public class ReflectionUtils
 
 		return null;
 	}
+	
+	public static Object invokeMethod( Class clazz, String methodName,
+			Class[] parameterTypes, Object[] parameters )
+	{
+
+		Method method = getDeclaredMethod( clazz, methodName, parameterTypes );
+		try
+		{
+			if ( null != method )
+			{
+				method.setAccessible( true );
+				return method.invoke( null, parameters );
+			}
+		}
+		catch ( Exception e )
+		{
+			JavaDecompilerPlugin.logError( e, "" ); //$NON-NLS-1$
+		}
+
+		return null;
+	}
 
 	public static Field getDeclaredField( Object object, String fieldName )
 	{

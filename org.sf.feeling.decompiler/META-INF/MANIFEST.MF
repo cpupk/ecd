@@ -24,6 +24,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.expressions,
  org.eclipse.ui.navigator,
  org.eclipse.ui.ide;resolution:=optional,
+ org.eclipse.search,
  org.eclipse.core.filesystem
 Bundle-Vendor: Chen Chao
 Bundle-Version: 3.0.0.qualifier

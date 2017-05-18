@@ -37,6 +37,7 @@ import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.update.i18n.Messages;
 import org.sf.feeling.decompiler.update.util.VersionUtil;
 import org.sf.feeling.decompiler.util.Logger;
@@ -110,7 +111,7 @@ public class DecompilerUpdateHandler implements IDecompilerUpdateHandler
 		final String versionString = getVersion( version );
 		final boolean force = isForce( monitor );
 		if ( versionString != null
-				&& ( !versionString.equals( DecompilerUpdatePlugin.getDefault( ).getPreferenceStore( ).getString(
+				&& ( !versionString.equals( JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).getString(
 						DecompilerUpdatePlugin.NOT_UPDATE_VERSION ) ) || force ) )
 		{
 			Display.getDefault( ).asyncExec( new Runnable( ) {
@@ -147,7 +148,7 @@ public class DecompilerUpdateHandler implements IDecompilerUpdateHandler
 
 					if ( !force && dialog.getToggleState( ) )
 					{
-						DecompilerUpdatePlugin.getDefault( )
+						JavaDecompilerPlugin.getDefault( )
 								.getPreferenceStore( )
 								.setValue( DecompilerUpdatePlugin.NOT_UPDATE_VERSION, versionString );
 					}

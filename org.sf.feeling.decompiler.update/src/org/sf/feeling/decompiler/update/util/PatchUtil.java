@@ -21,12 +21,13 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
-import org.osgi.framework.Version;
 import org.eclipse.swt.widgets.Display;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.Version;
+import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.update.DecompilerUpdatePlugin;
 import org.sf.feeling.decompiler.util.FileUtil;
 import org.sf.feeling.decompiler.util.Logger;
@@ -126,23 +127,25 @@ public class PatchUtil
 			return bundle.getVersion( );
 		}
 
-		return Version.parseVersion( file.getName( ).toLowerCase( ).replace( patchId + "_", "" ) //$NON-NLS-1$ //$NON-NLS-2$
+		return Version.parseVersion( file.getName( )
+				.toLowerCase( )
+				.replace( patchId + "_", "" ) //$NON-NLS-1$ //$NON-NLS-2$
 				.replace( ".jar", "" ) ); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public static boolean installPatch( File file )
 	{
-		BundleContext context = FrameworkUtil.getBundle( DecompilerUpdatePlugin.class ).getBundleContext( );
+		BundleContext context = FrameworkUtil.getBundle( JavaDecompilerPlugin.class ).getBundleContext( );
 		if ( DecompilerUpdatePlugin.getDefault( ).getPatchFile( ) != null )
 		{
 			if ( DecompilerUpdatePlugin.getDefault( ).getPatchFile( ).equals( file ) )
 				return true;
 			try
 			{
-				Bundle bundle = (Bundle) ReflectionUtils.invokeMethod( context, "getBundle", new Class[]{
-					String.class
+				Bundle bundle = (Bundle) ReflectionUtils.invokeMethod( context, "getBundle", new Class[]{ //$NON-NLS-1$
+						String.class
 				}, new Object[]{
-					DecompilerUpdatePlugin.getDefault( ).getPatchFile( ).toURI( ).toString( )
+						DecompilerUpdatePlugin.getDefault( ).getPatchFile( ).toURI( ).toString( )
 				} );
 
 				if ( bundle == null )
@@ -175,7 +178,7 @@ public class PatchUtil
 
 	public static String[] loadPatchIds( )
 	{
-		String patchIds = DecompilerUpdatePlugin.getDefault( ).getPreferenceStore( ).getString( "patchIds" ); //$NON-NLS-1$
+		String patchIds = JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).getString( "patchIds" ); //$NON-NLS-1$
 		if ( patchIds != null )
 		{
 			return patchIds.split( "," ); //$NON-NLS-1$
@@ -187,8 +190,9 @@ public class PatchUtil
 	{
 		if ( patchIds != null && patchIds.size( ) > 0 )
 		{
-			DecompilerUpdatePlugin.getDefault( ).getPreferenceStore( ).setValue( "patchIds", //$NON-NLS-1$
-					Arrays.toString( patchIds.toArray( new String[0] ) ).replace( "[", "" ) //$NON-NLS-1$ //$NON-NLS-2$
+			JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).setValue( "patchIds", //$NON-NLS-1$
+					Arrays.toString( patchIds.toArray( new String[0] ) )
+							.replace( "[", "" ) //$NON-NLS-1$ //$NON-NLS-2$
 							.replace( "]", "" ) //$NON-NLS-1$ //$NON-NLS-2$
 							.trim( ) );
 		}
@@ -198,7 +202,7 @@ public class PatchUtil
 	{
 		try
 		{
-			IPath path = DecompilerUpdatePlugin.getDefault( ).getStateLocation( );
+			IPath path = JavaDecompilerPlugin.getDefault( ).getStateLocation( );
 			IPath patchDir = path.append( "patch" ); //$NON-NLS-1$
 			File patchFolder = patchDir.toFile( );
 			if ( !patchFolder.exists( ) )
@@ -269,14 +273,14 @@ public class PatchUtil
 	public static boolean loadPatch( )
 	{
 		final boolean[] result = new boolean[]{
-			true
+				true
 		};
 
 		Display.getDefault( ).syncExec( new Runnable( ) {
 
 			public void run( )
 			{
-				IPath path = DecompilerUpdatePlugin.getDefault( ).getStateLocation( );
+				IPath path = JavaDecompilerPlugin.getDefault( ).getStateLocation( );
 				IPath patchDir = path.append( "patch" ); //$NON-NLS-1$
 				File patchFolder = patchDir.toFile( );
 				if ( !patchFolder.exists( ) )

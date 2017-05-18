@@ -39,8 +39,8 @@ public class MToolControlFactory
 	{
 		try
 		{
-			Class clazz = Class.forName( "org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl" );
-			return ReflectionUtils.getDeclaredMethod( clazz, "createToolControl", new Class[0] ) != null;
+			Class clazz = Class.forName( "org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl" ); //$NON-NLS-1$
+			return ReflectionUtils.getDeclaredMethod( clazz, "createToolControl", new Class[0] ) != null; //$NON-NLS-1$
 		}
 		catch ( Exception e )
 		{
@@ -51,7 +51,7 @@ public class MToolControlFactory
 
 	private static boolean supportV1( EModelService modelService )
 	{
-		return ReflectionUtils.getDeclaredMethod( modelService, "createModelElement", new Class[]{
+		return ReflectionUtils.getDeclaredMethod( modelService, "createModelElement", new Class[]{ //$NON-NLS-1$
 				MToolControl.class
 		} ) != null;
 	}

@@ -35,7 +35,7 @@ public class TrayLinkV2
 			trayLink = new HtmlLinkTrimItem( Display.getDefault( ).getActiveShell( ) );
 			trayLinkTrim = new WindowTrimProxy( trayLink,
 					"org.sf.feeling.decompiler.update.widget.HtmlLinkTrimItem", //$NON-NLS-1$
-					"Tray Link",
+					"Tray Link", //$NON-NLS-1$
 					SWT.BOTTOM | SWT.TOP ) {
 
 				public void handleClose( )
@@ -63,7 +63,7 @@ public class TrayLinkV2
 							window.getStatusLineManager( ).getControl( ).computeSize( SWT.DEFAULT, SWT.DEFAULT ).y );
 				}
 
-				TrimLayout defaultLayout = (TrimLayout) ReflectionUtils.getFieldValue( window, "defaultLayout" );
+				TrimLayout defaultLayout = (TrimLayout) ReflectionUtils.getFieldValue( window, "defaultLayout" ); //$NON-NLS-1$
 				if ( defaultLayout != null )
 				{
 					if ( defaultLayout.getTrim( trayLinkTrim.getId( ) ) == null )
@@ -76,7 +76,7 @@ public class TrayLinkV2
 			else
 			{
 				WorkbenchWindow window = (WorkbenchWindow) PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( );
-				TrimLayout defaultLayout = (TrimLayout) ReflectionUtils.getFieldValue( window, "defaultLayout" );
+				TrimLayout defaultLayout = (TrimLayout) ReflectionUtils.getFieldValue( window, "defaultLayout" ); //$NON-NLS-1$
 				if ( defaultLayout != null )
 				{
 					defaultLayout.removeTrim( trayLinkTrim );

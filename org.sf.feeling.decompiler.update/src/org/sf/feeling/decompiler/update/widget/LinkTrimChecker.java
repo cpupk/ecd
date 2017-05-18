@@ -32,7 +32,7 @@ public class LinkTrimChecker
 	{
 		try
 		{
-			Class.forName( "org.eclipse.e4.ui.model.application.ui.menu.MToolControl" );
+			Class.forName( "org.eclipse.e4.ui.model.application.ui.menu.MToolControl" ); //$NON-NLS-1$
 			return true;
 		}
 		catch ( Exception e )
@@ -46,7 +46,7 @@ public class LinkTrimChecker
 	{
 		try
 		{
-			Class.forName( "org.eclipse.ui.internal.WindowTrimProxy" );
+			Class.forName( "org.eclipse.ui.internal.WindowTrimProxy" ); //$NON-NLS-1$
 			return true;
 		}
 		catch ( Exception e )
