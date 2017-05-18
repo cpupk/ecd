@@ -12,6 +12,7 @@
 package org.sf.feeling.decompiler.util;
 
 import java.lang.reflect.Field;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -45,6 +46,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.navigator.CommonNavigator;
 import org.eclipse.ui.navigator.CommonNavigatorManager;
 import org.eclipse.ui.navigator.IExtensionStateModel;
@@ -59,6 +61,25 @@ import com.eclipsesource.json.JsonValue;
 
 public class UIUtil
 {
+
+	public static void openBrowser( String url )
+	{
+		try
+		{
+			final URL urlToOpen = new URL( url );
+			IWebBrowser browser = PlatformUI.getWorkbench( )
+					.getBrowserSupport( )
+					.getExternalBrowser( );
+			if ( browser != null )
+			{
+				browser.openURL( urlToOpen );
+			}
+		}
+		catch ( Exception e )
+		{
+			Logger.debug( e );
+		}
+	}
 
 	public static JavaDecompilerClassFileEditor getActiveEditor( )
 	{
@@ -407,16 +428,16 @@ public class UIUtil
 		StyleRange styleRange = null;
 		if ( isDark( textWidget ) )
 		{
-			String darktStyleleValue = JavaDecompilerPlugin.getDefault( )
+			String darkStyleValue = JavaDecompilerPlugin.getDefault( )
 					.getPreferenceStore( )
-					.getString( "darktStyle" );
-			if ( darktStyleleValue != null
-					&& darktStyleleValue.trim( ).length( ) > 0 )
+					.getString( "darkStyle" );
+			if ( darkStyleValue != null
+					&& darkStyleValue.trim( ).length( ) > 0 )
 			{
 				styleRange = handleStyleValue( textWidget,
 						offset,
 						length,
-						darktStyleleValue,
+						darkStyleValue,
 						"text" );
 			}
 		}
@@ -568,7 +589,7 @@ public class UIUtil
 
 	private static boolean isDark( StyledText textWidget )
 	{
-		if ( textWidget != null && textWidget.isDisposed( ) )
+		if ( textWidget != null && !textWidget.isDisposed( ) )
 		{
 			Color color = textWidget.getBackground( );
 			int red = color.getRed( );
@@ -585,16 +606,16 @@ public class UIUtil
 		StyleRange styleRange = null;
 		if ( isDark( textWidget ) )
 		{
-			String darktStyleleValue = JavaDecompilerPlugin.getDefault( )
+			String darkStyleValue = JavaDecompilerPlugin.getDefault( )
 					.getPreferenceStore( )
-					.getString( "darktStyle" );
-			if ( darktStyleleValue != null
-					&& darktStyleleValue.trim( ).length( ) > 0 )
+					.getString( "darkStyle" );
+			if ( darkStyleValue != null
+					&& darkStyleValue.trim( ).length( ) > 0 )
 			{
 				styleRange = handleStyleValue( textWidget,
 						offset,
 						length,
-						darktStyleleValue,
+						darkStyleValue,
 						"link" );
 			}
 		}

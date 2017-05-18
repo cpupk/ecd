@@ -32,8 +32,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.internal.TrimUtil;
 import org.sf.feeling.decompiler.update.util.TrayLinkUtil;
 import org.sf.feeling.decompiler.util.Logger;
@@ -50,23 +48,6 @@ public class HtmlLinkTrimItem extends Composite
 	private Composite container;
 	private ScrolledComposite sComposite;
 
-	public static void openBrowser( String url )
-	{
-		try
-		{
-			final URL urlToOpen = new URL( url );
-			IWebBrowser browser = PlatformUI.getWorkbench( ).getBrowserSupport( ).getExternalBrowser( );
-			if ( browser != null )
-			{
-				browser.openURL( urlToOpen );
-			}
-		}
-		catch ( Exception e )
-		{
-			Logger.debug( e );
-		}
-	}
-
 	static class CustomFunction extends BrowserFunction
 	{
 
@@ -79,7 +60,7 @@ public class HtmlLinkTrimItem extends Composite
 		{
 			if ( arguments != null && arguments.length > 0 && arguments[0] != null )
 			{
-				openBrowser( arguments[0].toString( ) );
+				UIUtil.openBrowser( arguments[0].toString( ) );
 			}
 			return super.function( arguments );
 		}
@@ -157,10 +138,8 @@ public class HtmlLinkTrimItem extends Composite
 									HtmlLinkTrimItem.this.getParent( ).getParent( ).layout( true, true );
 									if ( HtmlLinkTrimItem.this.getParent( ).getParent( ).getParent( ) != null )
 									{
-										HtmlLinkTrimItem.this.getParent( )
-												.getParent( )
-												.getParent( )
-												.layout( true, true );
+										HtmlLinkTrimItem.this.getParent( ).getParent( ).getParent( ).layout( true,
+												true );
 									}
 								}
 								registerLinkClickListener( );
@@ -306,8 +285,8 @@ public class HtmlLinkTrimItem extends Composite
 
 	/**
 	 * On Windows: points(SWT) = points(browser) != pixels(SWT) =
-	 * pixels(browser) </br> On Mac: points(SWT) = pixels(SWT) = pixels(browser)
-	 * != points(browser)
+	 * pixels(browser) </br>
+	 * On Mac: points(SWT) = pixels(SWT) = pixels(browser) != points(browser)
 	 */
 	protected void updateBrowserFontSize( )
 	{
@@ -374,7 +353,8 @@ public class HtmlLinkTrimItem extends Composite
 		{
 			if ( !Boolean.TRUE.equals( browser.getData( "linkClick" ) ) ) //$NON-NLS-1$
 			{
-				if ( browser.execute( "$('#link').click( function(e) {e.preventDefault(); gotoUrl(this.href); return false; } );" ) ) //$NON-NLS-1$
+				if ( browser.execute(
+						"$('#link').click( function(e) {e.preventDefault(); gotoUrl(this.href); return false; } );" ) ) //$NON-NLS-1$
 				{
 					browser.setData( "linkClick", true ); //$NON-NLS-1$
 				}

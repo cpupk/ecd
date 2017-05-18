@@ -159,9 +159,29 @@ public class DecompileUtil
 			String contents = MarkUtil.getRandomSourceMark( ) + "\n" + src; //$NON-NLS-1$
 			if ( src == null )
 			{
-				contents = MarkUtil.getRandomSourceMark( ) + "\t" + origSrc; //$NON-NLS-1$
+				contents = MarkUtil.getRandomSourceMark( )
+						+ "\n" //$NON-NLS-1$
+						+ DecompileUtil.foldOneLine( origSrc );
 			}
 			return contents;
+		}
+		return origSrc;
+	}
+
+	private static String foldOneLine( String origSrc )
+	{
+		int index = origSrc.indexOf( "\r\n" );
+		if ( index != -1 )
+		{
+			return origSrc.substring( 0, index )
+					+ origSrc.substring( index + 2 );
+		}
+
+		index = origSrc.indexOf( "\n" );
+		if ( index != -1 )
+		{
+			return origSrc.substring( 0, index )
+					+ origSrc.substring( index + 1 );
 		}
 		return origSrc;
 	}

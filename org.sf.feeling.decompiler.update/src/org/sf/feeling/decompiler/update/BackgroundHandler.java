@@ -255,7 +255,7 @@ public class BackgroundHandler implements IDecompilerExtensionHandler
 		JsonValue darkValue = stylesValue.asObject( ).get( "dark" ); //$NON-NLS-1$
 		if ( darkValue != null && !darkValue.isNull( ) && darkValue.isObject( ) )
 		{
-			JsonObject dark = brightValue.asObject( );
+			JsonObject dark = darkValue.asObject( );
 			JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).setValue( "darkStyle", dark.toString( ) ); //$NON-NLS-1$
 		}
 	}

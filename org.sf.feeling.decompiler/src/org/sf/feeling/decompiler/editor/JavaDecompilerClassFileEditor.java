@@ -187,6 +187,11 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 		return false;
 	}
 
+	public boolean isDirty( )
+	{
+		return false;
+	}
+
 	public void selectAndReveal( int start, int length )
 	{
 		if ( UIUtil.requestFromShowMatch( ) )
@@ -645,7 +650,12 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 							if ( offset >= linkOffset
 									&& offset < linkOffset + linkLength )
 							{
-								links[j].open( );
+								if ( links[j] instanceof URLHyperlink )
+								{
+									UIUtil.openBrowser(
+											( (URLHyperlink) links[j] )
+													.getURLString( ) );
+								}
 								return;
 							}
 						}
