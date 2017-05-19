@@ -4,6 +4,7 @@ Bundle-ClassPath: lib/commons-codec-1.5.jar,
  lib/fernflower.jar,
  lib/json.jar,
  lib/jsoup.jar,
+ library.jar,
  .
 Bundle-Name: Eclipse Class Decompiler
 Bundle-Localization: plugin
@@ -48,7 +49,9 @@ Export-Package: com.eclipsesource.json,
  org.sf.feeling.decompiler.actions,
  org.sf.feeling.decompiler.editor,
  org.sf.feeling.decompiler.extension,
+ org.sf.feeling.decompiler.fernflower,
  org.sf.feeling.decompiler.i18n,
+ org.sf.feeling.decompiler.preferences,
  org.sf.feeling.decompiler.source.attach,
  org.sf.feeling.decompiler.update,
  org.sf.feeling.decompiler.util

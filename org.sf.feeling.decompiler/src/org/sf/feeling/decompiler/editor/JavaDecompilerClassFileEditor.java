@@ -29,9 +29,12 @@ import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.core.BufferManager;
 import org.eclipse.jdt.internal.core.ClassFile;
+import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.javaeditor.ClassFileEditor;
 import org.eclipse.jdt.internal.ui.javaeditor.IClassFileEditorInput;
 import org.eclipse.jdt.internal.ui.javaeditor.InternalClassFileEditorInput;
+import org.eclipse.jdt.internal.ui.javaeditor.JavaSourceViewer;
+import org.eclipse.jdt.internal.ui.javaeditor.SemanticHighlightingManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.hyperlink.HyperlinkManager;
@@ -175,16 +178,44 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 						(ClassFile) cf,
 						markedSrc );
 
+				String content = new String( markedSrc );
+				if ( MarkUtil.containsMark( content ) )
+				{
+					if ( getSourceViewer( ) != null
+							&& getSourceViewer( ).getTextWidget( ) != null
+							&& !getSourceViewer( ).getTextWidget( )
+									.isDisposed( ) )
+					{
+
+						if ( !getSourceViewer( ).getTextWidget( )
+								.getText( )
+								.equals( content ) )
+						{
+							clearSelection( );
+						}
+					}
+				}
+
 				opened = true;
 			}
 			else
 			{
-				DecompileUtil.checkAndUpdateCopyright( cf, origSrc );
+				DecompileUtil.checkAndUpdateCopyright( this, cf, origSrc );
 			}
 			return opened;
 
 		}
 		return false;
+	}
+
+	public void clearSelection( )
+	{
+		if ( getSourceViewer( ) != null
+				&& getSourceViewer( ).getTextWidget( ) != null
+				&& !getSourceViewer( ).getTextWidget( ).isDisposed( ) )
+		{
+			getSourceViewer( ).getTextWidget( ).setSelectionRange( 0, 0 );
+		}
 	}
 
 	public boolean isDirty( )
@@ -289,6 +320,12 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 
 	protected void doSetInput( IEditorInput input ) throws CoreException
 	{
+		// if ( getSourceViewer( ) != null
+		// && getSourceViewer( ).getTextWidget( ) != null
+		// && !getSourceViewer( ).getTextWidget( ).isDisposed( ) )
+		// {
+		// getSourceViewer( ).getTextWidget( ).setSelectionRange( 0, 0 );
+		// }
 		JavaDecompilerPlugin.getDefault( )
 				.getDecompileCount( )
 				.getAndIncrement( );
@@ -726,6 +763,20 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 				"removeAllAnnotations", //$NON-NLS-1$
 				new Class[0],
 				new Object[0] );
+	}
+
+	protected void installSemanticHighlighting( )
+	{
+		if ( fSemanticManager == null )
+		{
+			fSemanticManager = new SemanticHighlightingManager( );
+			fSemanticManager.install( this,
+					(JavaSourceViewer) getSourceViewer( ),
+					JavaPlugin.getDefault( )
+							.getJavaTextTools( )
+							.getColorManager( ),
+					getPreferenceStore( ) );
+		}
 	}
 
 }

@@ -31,6 +31,7 @@ import org.eclipse.jdt.internal.core.SourceMapper;
 import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.sf.feeling.decompiler.editor.DecompilerSourceMapper;
 import org.sf.feeling.decompiler.editor.DecompilerType;
+import org.sf.feeling.decompiler.editor.JavaDecompilerClassFileEditor;
 import org.sf.feeling.decompiler.editor.SourceMapperFactory;
 
 public class DecompileUtil
@@ -95,9 +96,14 @@ public class DecompileUtil
 		return null;
 	}
 
-	public static String checkAndUpdateCopyright( IClassFile cf,
+	public static String checkAndUpdateCopyright( JavaDecompilerClassFileEditor editor, IClassFile cf,
 			String origSrc ) throws JavaModelException
 	{
+		if ( MarkUtil.containsMark( new String( origSrc ) ) )
+		{
+			editor.clearSelection( );
+		}
+		
 		if ( !MarkUtil.containsSourceMark( origSrc )
 				&& !MarkUtil.containsMark( origSrc ) )
 		{
@@ -108,7 +114,7 @@ public class DecompileUtil
 					false
 			} );
 
-			String contents = getCopyRightContent( origSrc );
+			String contents = getCopyRightContent( cf, origSrc );
 
 			buffer.setContents( contents );
 
@@ -151,15 +157,18 @@ public class DecompileUtil
 		}
 	}
 
-	public static String getCopyRightContent( String origSrc )
+	public static String getCopyRightContent( IClassFile classFile,
+			String origSrc )
 	{
 		if ( origSrc != null && !MarkUtil.containsSourceMark( origSrc ) )
 		{
 			String src = DecompileUtil.deleteOneEmptyLine( origSrc );
-			String contents = MarkUtil.getRandomSourceMark( ) + "\n" + src; //$NON-NLS-1$
+			String contents = MarkUtil.getRandomSourceMark( classFile )
+					+ "\n" //$NON-NLS-1$
+					+ src;
 			if ( src == null )
 			{
-				contents = MarkUtil.getRandomSourceMark( )
+				contents = MarkUtil.getRandomSourceMark( classFile )
 						+ "\n" //$NON-NLS-1$
 						+ DecompileUtil.foldOneLine( origSrc );
 			}

@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class MarkUtil
 {
@@ -107,7 +108,9 @@ public class MarkUtil
 		return ""; //$NON-NLS-1$
 	}
 
-	public static String getRandomSourceMark( )
+	private static ConcurrentHashMap<Object, String> sourceMarkMap = new ConcurrentHashMap<Object, String>( );
+
+	public static String getRandomSourceMark( Object cf )
 	{
 		if ( SOURCE_MARKS.size( ) == 1 )
 		{
@@ -115,6 +118,8 @@ public class MarkUtil
 		}
 		else
 		{
+			if ( sourceMarkMap.containsKey( cf ) )
+				return sourceMarkMap.get( cf );
 			int weight = new Random(
 					new Random( System.currentTimeMillis( ) ).nextLong( ) )
 							.nextInt( SOURCE_MARK_WEIGHT * 100 )
@@ -128,6 +133,7 @@ public class MarkUtil
 				totalWeigth += SOURCE_MARKS.get( mark );
 				if ( weight < totalWeigth )
 				{
+					sourceMarkMap.put( cf, mark );
 					return mark;
 				}
 			}
@@ -135,7 +141,9 @@ public class MarkUtil
 		}
 	}
 
-	public static String getRandomMark( )
+	private static ConcurrentHashMap<Object, String> markMap = new ConcurrentHashMap<Object, String>( );
+
+	public static String getRandomMark( Object cf )
 	{
 		if ( MARKS.size( ) == 1 )
 		{
@@ -143,6 +151,8 @@ public class MarkUtil
 		}
 		else
 		{
+			if ( markMap.containsKey( cf ) )
+				return markMap.get( cf );
 			int weight = new Random(
 					new Random( System.currentTimeMillis( ) ).nextLong( ) )
 							.nextInt( MARK_WEIGHT * 100 )
@@ -156,6 +166,7 @@ public class MarkUtil
 				totalWeigth += MARKS.get( mark );
 				if ( weight < totalWeigth )
 				{
+					markMap.put( cf, mark );
 					return mark;
 				}
 			}

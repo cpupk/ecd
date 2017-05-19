@@ -109,7 +109,8 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper
 			if ( attachedSource != null && !always )
 			{
 				attachedSource = DecompileUtil
-						.getCopyRightContent( new String( attachedSource ) )
+						.getCopyRightContent( type.getClassFile( ),
+								new String( attachedSource ) )
 						.toCharArray( );
 				updateSourceRanges( type, attachedSource );
 				isAttachedSource = true;
@@ -153,7 +154,7 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper
 					if ( attachedSource != null )
 					{
 						attachedSource = DecompileUtil
-								.getCopyRightContent(
+								.getCopyRightContent( type.getClassFile( ),
 										new String( attachedSource ) )
 								.toCharArray( );
 						updateSourceRanges( type, attachedSource );
@@ -215,7 +216,7 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper
 			}
 		}
 
-		String code = MarkUtil.getRandomMark( )
+		String code = MarkUtil.getRandomMark( type.getClassFile( ) )
 				+ "\r\n" //$NON-NLS-1$
 				+ usedDecompiler.getSource( );
 
@@ -236,6 +237,7 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper
 			if ( showReport )
 				code = usedDecompiler.removeComment( code );
 			DecompilerOutputUtil decompilerOutputUtil = new DecompilerOutputUtil(
+					type.getClassFile( ),
 					usedDecompiler.getDecompilerType( ),
 					code );
 			code = decompilerOutputUtil.realign( );
@@ -552,7 +554,7 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper
 				|| currentDecompiler.getSource( ).length( ) == 0 )
 			return null;
 
-		String code = MarkUtil.getRandomMark( )
+		String code = MarkUtil.getRandomMark( file.getAbsolutePath( ) )
 				+ "\r\n" //$NON-NLS-1$
 				+ currentDecompiler.getSource( );
 
@@ -574,7 +576,8 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper
 				code = currentDecompiler.removeComment( code );
 			DecompilerOutputUtil decompilerOutputUtil = new DecompilerOutputUtil(
 					currentDecompiler.getDecompilerType( ),
-					code );
+					code,
+					file.getAbsolutePath( ) );
 			code = decompilerOutputUtil.realign( );
 		}
 
