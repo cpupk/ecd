@@ -614,7 +614,6 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 						if ( ReflectionUtils.getFieldValue( fHyperlinkPresenter,
 								"fTextViewer" ) != null ) //$NON-NLS-1$
 						{
-							fHyperlinkPresenter.showHyperlinks( links );
 							updateLinkRanges( links );
 						}
 					}

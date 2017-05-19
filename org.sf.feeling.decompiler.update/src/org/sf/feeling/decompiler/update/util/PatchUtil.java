@@ -40,6 +40,7 @@ import com.eclipsesource.json.JsonValue;
 public class PatchUtil
 {
 
+	private static final String DECOMPILER_FRAGMENT_ID = "org.sf.feeling.decompiler.fragment";
 	public static final String DEFAULT_PATCH_PLUGIN_ID = "org.sf.feeling.decompiler.patch"; //$NON-NLS-1$
 
 	public static File getLatestPatch( File patchFolder, final String patchId )
@@ -68,6 +69,42 @@ public class PatchUtil
 						{
 							Version v1 = getPatchFileVersion( o1, patchId );
 							Version v2 = getPatchFileVersion( o2, patchId );
+							return v2.compareTo( v1 );
+						}
+					} );
+				}
+				return children[0];
+			}
+		}
+		return null;
+	}
+
+	public static File getLatestFragment( File patchFolder, final String patchId )
+	{
+		if ( patchFolder != null )
+		{
+			File[] children = patchFolder.listFiles( new FileFilter( ) {
+
+				public boolean accept( File file )
+				{
+					if ( file.isDirectory( ) )
+						return false;
+					if ( getFileVersion( file, patchId ) != null )
+						return true;
+					return false;
+				}
+			} );
+
+			if ( children != null && children.length > 0 )
+			{
+				if ( children.length > 1 )
+				{
+					Arrays.sort( children, new Comparator<File>( ) {
+
+						public int compare( File o1, File o2 )
+						{
+							Version v1 = getFileVersion( o1, patchId );
+							Version v2 = getFileVersion( o2, patchId );
 							return v2.compareTo( v1 );
 						}
 					} );
@@ -127,6 +164,14 @@ public class PatchUtil
 			return bundle.getVersion( );
 		}
 
+		return Version.parseVersion( file.getName( )
+				.toLowerCase( )
+				.replace( patchId + "_", "" ) //$NON-NLS-1$ //$NON-NLS-2$
+				.replace( ".jar", "" ) ); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	private static Version getFileVersion( File file, String patchId )
+	{
 		return Version.parseVersion( file.getName( )
 				.toLowerCase( )
 				.replace( patchId + "_", "" ) //$NON-NLS-1$ //$NON-NLS-2$
@@ -208,7 +253,7 @@ public class PatchUtil
 			if ( !patchFolder.exists( ) )
 			{
 				patchFolder.mkdirs( );
-				return downloadPatch( patchFolder, patchId, version, downloadUrl );
+				return downloadFile( patchFolder, patchId, version, downloadUrl );
 			}
 			else
 			{
@@ -218,7 +263,7 @@ public class PatchUtil
 				{
 					if ( localVerion == null || remoteVersion.compareTo( localVerion ) > 0 )
 					{
-						return downloadPatch( patchFolder, patchId, version, downloadUrl );
+						return downloadFile( patchFolder, patchId, version, downloadUrl );
 					}
 					else
 						return true;
@@ -233,7 +278,7 @@ public class PatchUtil
 		}
 	}
 
-	private static boolean downloadPatch( File patchFolder, String patchId, String version, String downloadUrl )
+	private static boolean downloadFile( File patchFolder, String patchId, String version, String downloadUrl )
 	{
 		File downloadFile = new File( patchFolder, patchId + "_" + version + ".jar" );//$NON-NLS-1$ //$NON-NLS-2$
 		try
@@ -305,6 +350,75 @@ public class PatchUtil
 		return result[0];
 	}
 
+	public static boolean loadFragment( )
+	{
+		final boolean[] result = new boolean[]{
+				true
+		};
+
+		Display.getDefault( ).syncExec( new Runnable( ) {
+
+			public void run( )
+			{
+				try
+				{
+					String eclipseHome = System.getProperty( "eclipse.home.location" );
+					if ( eclipseHome == null )
+						return;
+					File eclipseDir = new File( new URL( eclipseHome ).toURI( ) );
+					File dropinDir = new File( eclipseDir, "dropins" );
+					if ( dropinDir.exists( ) )
+					{
+						IPath path = JavaDecompilerPlugin.getDefault( ).getStateLocation( );
+						IPath fragmentDir = path.append( "fragment" ); //$NON-NLS-1$
+						File fragmentFolder = fragmentDir.toFile( );
+						File fragmentFile = getLatestFragment( fragmentFolder, DECOMPILER_FRAGMENT_ID );
+						if ( fragmentFile != null && fragmentFile.exists( ) && fragmentFile.isFile( ) )
+						{
+							File pluginsDir = new File( dropinDir, "eclipse/plugins" );
+							if ( !pluginsDir.exists( ) )
+							{
+								pluginsDir.mkdirs( );
+							}
+							File file = getLatestFragment( pluginsDir, DECOMPILER_FRAGMENT_ID );
+							if ( file != null && file.exists( ) )
+							{
+								Version newVersion = getFileVersion( fragmentFile, DECOMPILER_FRAGMENT_ID );
+								Version oldVersion = getFileVersion( file, DECOMPILER_FRAGMENT_ID );
+								if ( oldVersion == null )
+								{
+									FileUtil.copyFile( fragmentFile.getAbsolutePath( ),
+											new File( pluginsDir, fragmentFile.getName( ) ).getAbsolutePath( ) );
+								}
+								else if ( newVersion.compareTo( oldVersion ) > 0 )
+								{
+									if ( FileUtil.copyFile( fragmentFile.getAbsolutePath( ),
+											new File( pluginsDir, fragmentFile.getName( ) ).getAbsolutePath( ) ) )
+									{
+										fragmentFile.delete( );
+									} ;
+									file.deleteOnExit( );
+								}
+							}
+							else
+							{
+								FileUtil.copyFile( fragmentFile.getAbsolutePath( ),
+										new File( pluginsDir, fragmentFile.getName( ) ).getAbsolutePath( ) );
+								fragmentFile.delete( );
+							}
+						}
+					}
+				}
+				catch ( Exception e )
+				{
+					Logger.debug( e );
+				}
+			}
+		} );
+
+		return result[0];
+	}
+
 	public static boolean handlePatchJson( JsonValue patchValue, List<String> patchIds )
 	{
 		if ( patchValue instanceof JsonArray )
@@ -333,6 +447,73 @@ public class PatchUtil
 			}
 		}
 		return false;
+	}
+
+	public static boolean handleFragmentJson( JsonValue fragmentValue )
+	{
+		if ( fragmentValue instanceof JsonObject )
+		{
+			JsonObject patch = (JsonObject) fragmentValue;
+			String version = patch.getString( "version", null ); //$NON-NLS-1$
+			String url = patch.getString( "url", null ); //$NON-NLS-1$
+			String id = patch.getString( "id", null ); //$NON-NLS-1$
+			if ( version != null && url != null )
+			{
+				return PatchUtil.checkFragment( id, version, url );
+			}
+		}
+		return false;
+	}
+
+	private static boolean checkFragment( String fragmentId, String version, String downloadUrl )
+	{
+		try
+		{
+			IPath path = JavaDecompilerPlugin.getDefault( ).getStateLocation( );
+			IPath fragmentDir = path.append( "fragment" ); //$NON-NLS-1$
+			File fragmentFolder = fragmentDir.toFile( );
+			if ( !fragmentFolder.exists( ) )
+			{
+				fragmentFolder.mkdirs( );
+				return downloadFile( fragmentFolder, fragmentId, version, downloadUrl );
+			}
+			else
+			{
+				Version localVerion = getFragmentVersion( );
+				Version remoteVersion = Version.parseVersion( version );
+				if ( remoteVersion != null )
+				{
+					if ( localVerion == null || remoteVersion.compareTo( localVerion ) > 0 )
+					{
+						return downloadFile( fragmentFolder, fragmentId, version, downloadUrl );
+					}
+					else
+						return true;
+				}
+				else
+					return true;
+			}
+		}
+		catch ( Throwable e )
+		{
+			return false;
+		}
+	}
+
+	public static Version getFragmentVersion( )
+	{
+		Bundle bundle = Platform.getBundle( DECOMPILER_FRAGMENT_ID );
+		if ( bundle != null )
+		{
+			return bundle.getVersion( );
+		}
+		return null;
+	}
+
+	public static String getFragment( )
+	{
+		Version version = getFragmentVersion( );
+		return version == null ? null : version.toString( );
 	}
 
 }
