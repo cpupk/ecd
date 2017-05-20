@@ -26,11 +26,16 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.navigator.IExtensionStateConstants.Values;
 import org.eclipse.jdt.internal.ui.packageview.PackageExplorerPart;
+import org.eclipse.jdt.ui.text.IJavaColorConstants;
+import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
@@ -425,6 +430,12 @@ public class UIUtil
 	public static StyleRange getAdTextStyleRange( StyledText textWidget,
 			int offset, int length )
 	{
+		JavaTextTools textTools = JavaPlugin.getDefault( ).getJavaTextTools( );
+		IPreferenceStore preferences = (IPreferenceStore) ReflectionUtils
+				.getFieldValue( textTools, "fPreferenceStore" );
+		String textColor = preferences
+				.getString( IJavaColorConstants.JAVADOC_LINK );
+
 		StyleRange styleRange = null;
 		if ( isDark( textWidget ) )
 		{
@@ -438,7 +449,9 @@ public class UIUtil
 						offset,
 						length,
 						darkStyleValue,
-						"text" );
+						"text",
+						textColor,
+						false );
 			}
 		}
 		else
@@ -453,15 +466,23 @@ public class UIUtil
 						offset,
 						length,
 						brightStyleValue,
-						"text" );
+						"text",
+						textColor,
+						false );
 			}
 
+		}
+
+		if ( styleRange == null )
+		{
+			styleRange = getDefaultCommonRange( textWidget, offset, length );
 		}
 		return styleRange;
 	}
 
 	private static StyleRange handleStyleValue( StyledText textWidget,
-			int offset, int length, String brightStyleValue, String property )
+			int offset, int length, String brightStyleValue, String property,
+			String defaultColor, boolean isLink )
 	{
 		JsonValue styleValue = null;
 		try
@@ -482,7 +503,9 @@ public class UIUtil
 				return getStyleRange( textWidget,
 						offset,
 						length,
-						style.get( property ).asObject( ) );
+						style.get( property ).asObject( ),
+						defaultColor,
+						isLink );
 			}
 		}
 
@@ -490,9 +513,14 @@ public class UIUtil
 	}
 
 	private static StyleRange getStyleRange( StyledText textWidget, int offset,
-			int length, JsonObject style )
+			int length, JsonObject style, String defaultColor, boolean isLink )
 	{
-		StyleRange range = new StyleRange( offset, length, null, null );
+		StyleRange range = new StyleRange( offset,
+				length,
+				defaultColor == null ? null
+						: JFaceResources.getResources( ).createColor(
+								ColorUtil.getColorValue( defaultColor ) ),
+				null );
 		JsonValue fontStyleValue = style.get( "fontStyle" );
 		if ( fontStyleValue != null && fontStyleValue.isNumber( ) )
 		{
@@ -537,10 +565,20 @@ public class UIUtil
 			}
 		}
 
+		if ( isLink )
+		{
+			range.underline = true;
+			range.underlineStyle = SWT.UNDERLINE_LINK;
+		}
+
 		JsonValue underlineValue = style.get( "underline" );
 		if ( underlineValue != null && underlineValue.isBoolean( ) )
 		{
 			range.underline = underlineValue.asBoolean( );
+			if ( range.underline )
+			{
+				range.underlineStyle = SWT.UNDERLINE_LINK;
+			}
 		}
 
 		JsonValue underlineStyleValue = style.get( "underlineStyle" );
@@ -603,6 +641,12 @@ public class UIUtil
 	public static StyleRange getAdLinkStyleRange( StyledText textWidget,
 			int offset, int length )
 	{
+		JavaTextTools textTools = JavaPlugin.getDefault( ).getJavaTextTools( );
+		IPreferenceStore preferences = (IPreferenceStore) ReflectionUtils
+				.getFieldValue( textTools, "fPreferenceStore" );
+		String linkColor = preferences
+				.getString( IJavaColorConstants.JAVADOC_DEFAULT );
+
 		StyleRange styleRange = null;
 		if ( isDark( textWidget ) )
 		{
@@ -616,7 +660,9 @@ public class UIUtil
 						offset,
 						length,
 						darkStyleValue,
-						"link" );
+						"link",
+						linkColor,
+						true );
 			}
 		}
 		else
@@ -631,11 +677,54 @@ public class UIUtil
 						offset,
 						length,
 						brightStyleValue,
-						"link" );
+						"link",
+						linkColor,
+						true );
 			}
-
 		}
 
+		if ( styleRange == null )
+		{
+			styleRange = getDefaultLinkRange( textWidget, offset, length );
+		}
 		return styleRange;
+	}
+
+	private static StyleRange getDefaultLinkRange( StyledText textWidget,
+			int offset, int length )
+	{
+		JavaTextTools textTools = JavaPlugin.getDefault( ).getJavaTextTools( );
+		IPreferenceStore preferences = (IPreferenceStore) ReflectionUtils
+				.getFieldValue( textTools, "fPreferenceStore" );
+		String linkColor = preferences
+				.getString( IJavaColorConstants.JAVADOC_LINK );
+
+		StyleRange range = new StyleRange( offset,
+				length,
+				JFaceResources.getResources( )
+						.createColor( ColorUtil.getColorValue( linkColor ) ),
+				null );
+		range.font = textWidget.getFont( );
+		range.underline = true;
+		range.underlineStyle = SWT.UNDERLINE_LINK;
+		return range;
+	}
+
+	private static StyleRange getDefaultCommonRange( StyledText textWidget,
+			int offset, int length )
+	{
+		JavaTextTools textTools = JavaPlugin.getDefault( ).getJavaTextTools( );
+		IPreferenceStore preferences = (IPreferenceStore) ReflectionUtils
+				.getFieldValue( textTools, "fPreferenceStore" );
+		String commentColor = preferences
+				.getString( IJavaColorConstants.JAVADOC_DEFAULT );
+
+		StyleRange range = new StyleRange( offset,
+				length,
+				new Color( textWidget.getDisplay( ),
+						ColorUtil.getColorValue( commentColor ) ),
+				null );
+		range.font = textWidget.getFont( );
+		return range;
 	}
 }
