@@ -42,6 +42,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -651,7 +652,7 @@ public class UIUtil
 		return range;
 	}
 
-	private static boolean isDark( StyledText textWidget )
+	public static boolean isDark( Control textWidget )
 	{
 		if ( textWidget != null && !textWidget.isDisposed( ) )
 		{

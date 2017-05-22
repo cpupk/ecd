@@ -183,4 +183,39 @@ public class TrayLinkUtil
 		}
 		return true;
 	}
+	
+	public static boolean useSystemColor( String url )
+	{
+		String strategyString = JavaDecompilerPlugin.getDefault( )
+				.getPreferenceStore( )
+				.getString( "trayLinkStrategy" ); //$NON-NLS-1$
+		if ( strategyString == null )
+			return true;
+		JsonValue strategyValue = Json.parse( strategyString );
+		if ( strategyValue.isObject( ) )
+		{
+			JsonObject strategy = strategyValue.asObject( );
+			if ( strategy.get( "useSystemColor" ) != null ) //$NON-NLS-1$
+			{
+				return strategy.get( "useSystemColor" ).asBoolean( ); //$NON-NLS-1$
+			}
+		}
+		else if ( strategyValue.isArray( ) )
+		{
+			JsonArray strategyArray = strategyValue.asArray( );
+			List<JsonValue> values = strategyArray.values( );
+			for ( int i = 0; i < values.size( ); i++ )
+			{
+				JsonObject strategy = values.get( i ).asObject( );
+				if ( strategy.get( "url" ) != null && url.equals( strategy.get( "url" ).asString( ) ) ) //$NON-NLS-1$ //$NON-NLS-2$
+				{
+					if ( strategy.get( "useSystemColor" ) != null ) //$NON-NLS-1$
+					{
+						return strategy.get( "useSystemColor" ).asBoolean( ); //$NON-NLS-1$
+					}
+				}
+			}
+		}
+		return true;
+	}
 }
