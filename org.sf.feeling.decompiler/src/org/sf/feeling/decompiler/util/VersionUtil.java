@@ -9,15 +9,13 @@
  *  Chen Chao  - initial API and implementation
  *******************************************************************************/
 
-package org.sf.feeling.decompiler.update.util;
+package org.sf.feeling.decompiler.util;
 
 import org.eclipse.core.runtime.IBundleGroup;
 import org.eclipse.core.runtime.IBundleGroupProvider;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.equinox.internal.p2.metadata.OSGiVersion;
 import org.eclipse.equinox.p2.metadata.Version;
 
-@SuppressWarnings("restriction")
 public class VersionUtil
 {
 
@@ -36,7 +34,7 @@ public class VersionUtil
 
 	public static String getDecompilerVersion( )
 	{
-		OSGiVersion installVersion = (OSGiVersion) VersionUtil.getFeatureVersion( "org.sf.feeling.decompiler" ); //$NON-NLS-1$
+		Version installVersion = VersionUtil.getFeatureVersion( "org.sf.feeling.decompiler" ); //$NON-NLS-1$
 		if ( installVersion != null )
 		{
 			return installVersion.toString( );

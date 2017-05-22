@@ -317,12 +317,6 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 
 	protected void doSetInput( IEditorInput input ) throws CoreException
 	{
-		// if ( getSourceViewer( ) != null
-		// && getSourceViewer( ).getTextWidget( ) != null
-		// && !getSourceViewer( ).getTextWidget( ).isDisposed( ) )
-		// {
-		// getSourceViewer( ).getTextWidget( ).setSelectionRange( 0, 0 );
-		// }
 		JavaDecompilerPlugin.getDefault( )
 				.getDecompileCount( )
 				.getAndIncrement( );
@@ -685,9 +679,9 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 							{
 								if ( links[j] instanceof URLHyperlink )
 								{
-									UIUtil.openBrowser(
-											( (URLHyperlink) links[j] )
-													.getURLString( ) );
+									String url = ( (URLHyperlink) links[j] )
+											.getURLString( );
+									UIUtil.openBrowser( url );
 								}
 								return;
 							}

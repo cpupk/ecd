@@ -71,6 +71,7 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 	public static final String DECOMPILER_TYPE = "org.sf.feeling.decompiler.type"; //$NON-NLS-1$
 	public static final String PREF_DISPLAY_LINE_NUMBERS = "jd.ide.eclipse.prefs.DisplayLineNumbers"; //$NON-NLS-1$
 	public static final String DECOMPILE_COUNT = "decompile.count"; //$NON-NLS-1$
+	public static final String ADCLICK_COUNT = "adclick.count"; //$NON-NLS-1$
 	public static final String PREF_DISPLAY_METADATA = "jd.ide.eclipse.prefs.DisplayMetadata"; //$NON-NLS-1$
 	public static final String ALIGN = "jd.ide.eclipse.prefs.RealignLineNumbers"; //$NON-NLS-1$
 	public static final String DEFAULT_EDITOR = "org.sf.feeling.decompiler.default_editor"; //$NON-NLS-1$ ;
@@ -83,6 +84,8 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 	private IPreferenceStore preferenceStore;
 	private TreeMap<String, IDecompilerDescriptor> decompilerDescriptorMap = new TreeMap<String, IDecompilerDescriptor>( );
 	private AtomicInteger decompileCount = new AtomicInteger( 0 );
+	private AtomicInteger adClickCount = new AtomicInteger( 0 );
+
 	private boolean isDebugMode = false;
 	private boolean enableExtension = false;
 
@@ -174,7 +177,7 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 															"JavaDecompilerPlugin.BreakpoingDialog.Message" ) ); //$NON-NLS-1$
 									if ( setDebug )
 									{
-										new DebugModeAction( ).run();
+										new DebugModeAction( ).run( );
 									}
 								}
 							} );
@@ -196,6 +199,11 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 	public AtomicInteger getDecompileCount( )
 	{
 		return decompileCount;
+	}
+
+	public AtomicInteger getAdClickCount( )
+	{
+		return adClickCount;
 	}
 
 	public Map<String, IDecompilerDescriptor> getDecompilerDescriptorMap( )
@@ -276,6 +284,7 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 		store.setDefault( CHECK_UPDATE, true );
 		store.setDefault( ATTACH_SOURCE, true );
 		store.setDefault( DECOMPILE_COUNT, 0 );
+		store.setDefault( ADCLICK_COUNT, 0 );
 		store.setDefault( EXPORT_ENCODING, "UTF-8" ); //$NON-NLS-1$
 	}
 
@@ -321,6 +330,7 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 		getPreferenceStore( ).addPropertyChangeListener( this );
 		SortMemberUtil.deleteDecompilerProject( );
 		decompileCount.set( getPreferenceStore( ).getInt( DECOMPILE_COUNT ) );
+		adClickCount.set( getPreferenceStore( ).getInt( ADCLICK_COUNT ) );
 		Display.getDefault( ).asyncExec( new SetupRunnable( ) );
 
 		manager.addBreakpointListener( breakpintListener );
@@ -375,6 +385,7 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 		manager.removeBreakpointListener( breakpintListener );
 		getPreferenceStore( ).setValue( DECOMPILE_COUNT,
 				decompileCount.get( ) );
+		getPreferenceStore( ).setValue( ADCLICK_COUNT, adClickCount.get( ) );
 		super.stop( context );
 		getPreferenceStore( ).removePropertyChangeListener( this );
 		plugin = null;
@@ -543,11 +554,14 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 		this.isDebugMode = isDebugMode;
 	}
 
-	public void resetDecompileCount( )
+	public void resetCount( )
 	{
 		decompileCount.set( 0 );
 		getPreferenceStore( ).setValue( DECOMPILE_COUNT,
 				decompileCount.get( ) );
+
+		adClickCount.set( 0 );
+		getPreferenceStore( ).setValue( ADCLICK_COUNT, adClickCount.get( ) );
 	}
 
 	public String getDefaultExportEncoding( )

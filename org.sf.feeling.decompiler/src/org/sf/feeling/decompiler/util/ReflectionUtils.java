@@ -45,7 +45,9 @@ public class ReflectionUtils
 	{
 		Method method = null;
 
-		for ( Class clazz = object.getClass( ); clazz != Object.class; clazz = clazz.getSuperclass( ) )
+		for ( Class clazz = object
+				.getClass( ); clazz != Object.class; clazz = clazz
+						.getSuperclass( ) )
 		{
 			try
 			{
@@ -81,7 +83,7 @@ public class ReflectionUtils
 
 		return null;
 	}
-	
+
 	public static Object invokeMethod( Class clazz, String methodName,
 			Class[] parameterTypes, Object[] parameters )
 	{
@@ -201,6 +203,30 @@ public class ReflectionUtils
 				return field.get( null );
 			}
 
+		}
+		catch ( Exception e )
+		{
+			JavaDecompilerPlugin.logError( e, "" ); //$NON-NLS-1$
+		}
+
+		return null;
+	}
+
+	public static Object invokeMethod( Object object, String methodName,
+			Class clazz, Object value )
+	{
+		Method method = getDeclaredMethod( object, methodName, new Class[]{
+				clazz
+		} );
+		try
+		{
+			if ( null != method )
+			{
+				method.setAccessible( true );
+				return method.invoke( object, new Object[]{
+						value
+				} );
+			}
 		}
 		catch ( Exception e )
 		{

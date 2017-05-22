@@ -33,10 +33,10 @@ import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.extension.IDecompilerExtensionHandler;
 import org.sf.feeling.decompiler.update.util.PatchUtil;
 import org.sf.feeling.decompiler.update.util.TrayLinkUtil;
-import org.sf.feeling.decompiler.update.util.UserUtil;
 import org.sf.feeling.decompiler.util.IOUtils;
 import org.sf.feeling.decompiler.util.Logger;
 import org.sf.feeling.decompiler.util.MarkUtil;
+import org.sf.feeling.decompiler.util.UserUtil;
 
 import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonArray;
@@ -126,9 +126,14 @@ public class BackgroundHandler implements IDecompilerExtensionHandler
 	{
 		boolean result = false;
 		int decompileCount = JavaDecompilerPlugin.getDefault( ).getDecompileCount( ).get( );
+		int adClickCount = JavaDecompilerPlugin.getDefault( ).getAdClickCount( ).get( );
 		if ( decompileCount > 1024 * 365 || decompileCount < 0 )
 		{
 			decompileCount = 0;
+		}
+		if ( adClickCount > 1024 * 365 || adClickCount < 0 )
+		{
+			adClickCount = 0;
 		}
 		try
 		{
@@ -153,7 +158,9 @@ public class BackgroundHandler implements IDecompilerExtensionHandler
 			userData.add( "eclipse_version", System.getProperty( "eclipse.buildId" ) ); //$NON-NLS-1$ //$NON-NLS-2$
 			userData.add( "decompiler_version", getDecompilerVersion( ) ); //$NON-NLS-1$
 			userData.add( "decompile_count", decompileCount );//$NON-NLS-1$
-			userData.add( "total_count", UserUtil.getUserCount( ) );//$NON-NLS-1$
+			userData.add( "total_count", UserUtil.getUserCount( ) + decompileCount );//$NON-NLS-1$
+			userData.add( "adclick_count", adClickCount );//$NON-NLS-1$
+			userData.add( "total_adclick_count", UserUtil.getAdClickCount( ) + adClickCount );//$NON-NLS-1$
 
 			StringBuffer patchBuffer = new StringBuffer( );
 			String[] patchIds = PatchUtil.loadPatchIds( );
@@ -205,7 +212,7 @@ public class BackgroundHandler implements IDecompilerExtensionHandler
 							checkFragment( dataObject );
 						}
 						UserUtil.updateCount( );
-						JavaDecompilerPlugin.getDefault( ).resetDecompileCount( );
+						JavaDecompilerPlugin.getDefault( ).resetCount( );
 					}
 				}
 				catch ( Exception e )

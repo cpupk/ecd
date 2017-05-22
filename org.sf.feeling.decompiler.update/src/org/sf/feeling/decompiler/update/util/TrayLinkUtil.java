@@ -20,6 +20,7 @@ import java.util.TreeMap;
 import org.eclipse.swt.widgets.Display;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.update.widget.LinkTrimChecker;
+import org.sf.feeling.decompiler.util.UserUtil;
 
 import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonArray;

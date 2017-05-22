@@ -71,19 +71,45 @@ public class UIUtil
 	{
 		try
 		{
-			final URL urlToOpen = new URL( url );
+			final URL urlToOpen = new URL( appendUUID( url ) );
 			IWebBrowser browser = PlatformUI.getWorkbench( )
 					.getBrowserSupport( )
 					.getExternalBrowser( );
 			if ( browser != null )
 			{
 				browser.openURL( urlToOpen );
+				JavaDecompilerPlugin.getDefault( )
+						.getPreferenceStore( )
+						.setValue( JavaDecompilerPlugin.ADCLICK_COUNT,
+								JavaDecompilerPlugin.getDefault( )
+										.getAdClickCount( )
+										.getAndIncrement( ) );
 			}
 		}
 		catch ( Exception e )
 		{
 			Logger.debug( e );
 		}
+	}
+
+	private static String appendUUID( String url )
+	{
+		if ( url.indexOf( "cpupk.com" ) != -1 && url.indexOf( "uuid" ) == -1 )
+		{
+			String uuid = UserUtil.getUserUUID( );
+			if ( uuid != null )
+			{
+				if ( url.indexOf( "?" ) != -1 )
+				{
+					url += ( "&uuid=" + uuid );
+				}
+				else
+				{
+					url += ( "?uuid=" + uuid );
+				}
+			}
+		}
+		return url;
 	}
 
 	public static JavaDecompilerClassFileEditor getActiveEditor( )

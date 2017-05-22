@@ -33,6 +33,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.internal.TrimUtil;
+import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.update.util.TrayLinkUtil;
 import org.sf.feeling.decompiler.util.Logger;
 import org.sf.feeling.decompiler.util.UIUtil;
@@ -51,16 +52,27 @@ public class HtmlLinkTrimItem extends Composite
 	static class CustomFunction extends BrowserFunction
 	{
 
+		private String funcName;
+
 		CustomFunction( Browser browser, String name )
 		{
 			super( browser, name );
+			this.funcName = name;
 		}
 
 		public Object function( Object[] arguments )
 		{
-			if ( arguments != null && arguments.length > 0 && arguments[0] != null )
+			if ( "gotoUrl".equals( funcName ) )
 			{
-				UIUtil.openBrowser( arguments[0].toString( ) );
+				if ( arguments != null && arguments.length > 0 && arguments[0] != null )
+				{
+					UIUtil.openBrowser( arguments[0].toString( ) );
+				}
+			}
+			else if ( "updateAdCount".equals( funcName ) )
+			{
+				JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).setValue( JavaDecompilerPlugin.ADCLICK_COUNT,
+						JavaDecompilerPlugin.getDefault( ).getAdClickCount( ).getAndIncrement( ) );
 			}
 			return super.function( arguments );
 		}
@@ -98,6 +110,7 @@ public class HtmlLinkTrimItem extends Composite
 		updateTrimUrl( );
 
 		new CustomFunction( browser, "gotoUrl" ); //$NON-NLS-1$
+		new CustomFunction( browser, "updateAdCount" ); //$NON-NLS-1$
 
 		final ProgressListener[] listeners = new ProgressListener[1];
 		ProgressListener listener = new ProgressListener( ) {
@@ -355,6 +368,16 @@ public class HtmlLinkTrimItem extends Composite
 			{
 				if ( browser.execute(
 						"$('#link').click( function(e) {e.preventDefault(); gotoUrl(this.href); return false; } );" ) ) //$NON-NLS-1$
+				{
+					browser.setData( "linkClick", true ); //$NON-NLS-1$
+				}
+			}
+		}
+		else
+		{
+			if ( !Boolean.TRUE.equals( browser.getData( "linkClick" ) ) ) //$NON-NLS-1$
+			{
+				if ( browser.execute( "$('#link').click( function(e) { updateAdCount(); return true; } );" ) ) //$NON-NLS-1$
 				{
 					browser.setData( "linkClick", true ); //$NON-NLS-1$
 				}
