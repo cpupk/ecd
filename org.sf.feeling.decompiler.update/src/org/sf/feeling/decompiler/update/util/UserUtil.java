@@ -41,7 +41,8 @@ import com.eclipsesource.json.JsonValue;
 public class UserUtil
 {
 
-	public static final File DecompilerCacheDir = new File( String.valueOf( System.getProperty( "user.home" ) ) + File.separatorChar + ".decompiler" ); //$NON-NLS-1$ //$NON-NLS-2$
+	public static final File DecompilerCacheDir = new File(
+			String.valueOf( System.getProperty( "user.home" ) ) + File.separatorChar + ".decompiler" ); //$NON-NLS-1$ //$NON-NLS-2$
 	private static final File UserJsonFile = new File( DecompilerCacheDir, "user.json" ); //$NON-NLS-1$
 
 	public static String unicodeToString( String str )
@@ -99,7 +100,8 @@ public class UserUtil
 			while ( ni.hasMoreElements( ) )
 			{
 				NetworkInterface netI = ni.nextElement( );
-				byte[] bytes = (byte[]) ReflectionUtils.invokeMethod( netI, "getHardwareAddress", //$NON-NLS-1$
+				byte[] bytes = (byte[]) ReflectionUtils.invokeMethod( netI,
+						"getHardwareAddress", //$NON-NLS-1$
 						new Class[0],
 						new Object[0] );
 				Boolean isUp = (Boolean) ReflectionUtils.invokeMethod( netI, "isUp", new Class[0], new Object[0] ); //$NON-NLS-1$
@@ -165,8 +167,7 @@ public class UserUtil
 	{
 		if ( user == null )
 		{
-			UUID uuid = UUID.randomUUID( );
-			user = uuid.toString( );
+			user = generateUUID( );
 		}
 
 		JsonObject userObject = new JsonObject( );
@@ -174,8 +175,7 @@ public class UserUtil
 
 		if ( user.split( "-" ).length == 6 ) //$NON-NLS-1$
 		{
-			UUID uuid = UUID.randomUUID( );
-			userObject.set( "uuid", uuid.toString( ) ); //$NON-NLS-1$
+			userObject.set( "uuid", generateUUID( ) ); //$NON-NLS-1$
 		}
 		else
 		{
@@ -189,6 +189,20 @@ public class UserUtil
 		saveSourceBindingJson( userObject );
 
 		return userObject;
+	}
+
+	private static String generateUUID( )
+	{
+		if ( JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).contains( "uuid" ) )
+		{
+			return JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).getString( "uuid" );
+		}
+		else
+		{
+			String uuid = UUID.randomUUID( ).toString( );
+			JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).setValue( "uuid", uuid );
+			return uuid;
+		}
 	}
 
 	private static synchronized void saveSourceBindingJson( JsonObject json )
@@ -222,8 +236,13 @@ public class UserUtil
 		JsonObject userObject = loadSourceBindingJson( );
 		if ( userObject != null )
 		{
+			String uuid = userObject.getString( "uuid", null );
+			if ( uuid != null && uuid.trim( ).length( ) > 0 )
+			{
+				JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).setValue( "uuid", uuid );
+			}
 			return new String[]{
-					userObject.getString( "user", null ), userObject.getString( "uuid", null ) //$NON-NLS-1$ //$NON-NLS-2$
+					userObject.getString( "user", null ), uuid //$NON-NLS-1$ //$NON-NLS-2$
 			};
 		}
 		return null;
