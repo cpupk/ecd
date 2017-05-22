@@ -17,6 +17,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.eclipse.jdt.internal.core.ClassFile;
+
 public class MarkUtil
 {
 
@@ -112,6 +114,19 @@ public class MarkUtil
 
 	public static String getRandomSourceMark( Object cf )
 	{
+		if ( cf instanceof ClassFile )
+		{
+			if ( ( (ClassFile) cf ).getParent( ) != null )
+			{
+				cf = ( (ClassFile) cf ).getParent( ).getElementName( )
+						+ "."
+						+ ( (ClassFile) cf ).getElementName( );
+			}
+			else
+			{
+				cf = ( (ClassFile) cf ).getElementName( );
+			}
+		}
 		if ( SOURCE_MARKS.size( ) == 1 )
 		{
 			return SOURCE_MARKS.keySet( ).iterator( ).next( );
@@ -145,6 +160,19 @@ public class MarkUtil
 
 	public static String getRandomMark( Object cf )
 	{
+		if ( cf instanceof ClassFile )
+		{
+			if ( ( (ClassFile) cf ).getParent( ) != null )
+			{
+				cf = ( (ClassFile) cf ).getParent( ).getElementName( )
+						+ "."
+						+ ( (ClassFile) cf ).getElementName( );
+			}
+			else
+			{
+				cf = ( (ClassFile) cf ).getElementName( );
+			}
+		}
 		if ( MARKS.size( ) == 1 )
 		{
 			return MARKS.keySet( ).iterator( ).next( );
