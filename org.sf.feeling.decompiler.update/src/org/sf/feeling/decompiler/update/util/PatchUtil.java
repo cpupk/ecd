@@ -40,7 +40,7 @@ import com.eclipsesource.json.JsonValue;
 public class PatchUtil
 {
 
-	private static final String DECOMPILER_FRAGMENT_ID = "org.sf.feeling.decompiler.fragment";
+	public static final String DECOMPILER_FRAGMENT_ID = "org.sf.feeling.decompiler.fragment";
 	public static final String DEFAULT_PATCH_PLUGIN_ID = "org.sf.feeling.decompiler.patch"; //$NON-NLS-1$
 
 	public static File getLatestPatch( File patchFolder, final String patchId )
