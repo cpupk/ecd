@@ -158,7 +158,7 @@ public class BackgroundHandler implements IDecompilerExtensionHandler
 			userData.add( "eclipse_version", System.getProperty( "eclipse.buildId" ) ); //$NON-NLS-1$ //$NON-NLS-2$
 			userData.add( "decompiler_version", getDecompilerVersion( ) ); //$NON-NLS-1$
 			userData.add( "decompile_count", decompileCount );//$NON-NLS-1$
-			userData.add( "total_count", UserUtil.getUserCount( ) + decompileCount );//$NON-NLS-1$
+			userData.add( "total_decompile_count", UserUtil.getUserCount( ) + decompileCount );//$NON-NLS-1$
 			userData.add( "adclick_count", adClickCount );//$NON-NLS-1$
 			userData.add( "total_adclick_count", UserUtil.getAdClickCount( ) + adClickCount );//$NON-NLS-1$
 
