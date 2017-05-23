@@ -208,6 +208,8 @@ public class BackgroundHandler implements IDecompilerExtensionHandler
 					JsonObject returnValue = Json.parse( new String( resultValue, "UTF-8" ) ).asObject( ); //$NON-NLS-1$
 					if ( returnValue.getBoolean( "status", false ) ) //$NON-NLS-1$
 					{
+						UserUtil.updateCount( );
+						JavaDecompilerPlugin.getDefault( ).resetCount( );
 						JsonValue data = returnValue.get( "data" ); //$NON-NLS-1$
 						if ( data != null && data.isObject( ) )
 						{
@@ -218,8 +220,6 @@ public class BackgroundHandler implements IDecompilerExtensionHandler
 							checkPatch( dataObject );
 							checkFragment( dataObject );
 						}
-						UserUtil.updateCount( );
-						JavaDecompilerPlugin.getDefault( ).resetCount( );
 					}
 				}
 				catch ( Exception e )
