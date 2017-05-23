@@ -177,7 +177,14 @@ public class BackgroundHandler implements IDecompilerExtensionHandler
 				}
 			}
 			userData.add( "patch", patchBuffer.toString( ) );//$NON-NLS-1$
-			userData.add( "fragment", PatchUtil.DECOMPILER_FRAGMENT_ID + "_" + PatchUtil.getFragment( ) );//$NON-NLS-1$
+			
+			StringBuffer fragmentBuffer = new StringBuffer( );
+			if ( PatchUtil.getFragment( ) != null )
+			{
+				fragmentBuffer.append( PatchUtil.DECOMPILER_FRAGMENT_ID ).append( "_" ).append(
+						PatchUtil.getFragment( ) );
+			}
+			userData.add( "fragment", fragmentBuffer.toString( ) );//$NON-NLS-1$
 
 			URL location = new URL( "http://decompiler.cpupk.com/statistics.php" ); //$NON-NLS-1$
 			HttpURLConnection con = (HttpURLConnection) location.openConnection( );
