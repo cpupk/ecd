@@ -39,6 +39,7 @@ import org.eclipse.jface.text.hyperlink.IHyperlink;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.text.hyperlink.IHyperlinkPresenter;
 import org.eclipse.jface.text.hyperlink.URLHyperlink;
+import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -554,8 +555,11 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 
 	private void handleMarkLink( final int index )
 	{
+		ISourceViewer sourceViewer = getSourceViewer( );
+		if ( sourceViewer == null )
+			return;
 		IHyperlinkDetector[] descriptors = getSourceViewerConfiguration( )
-				.getHyperlinkDetectors( getSourceViewer( ) );
+				.getHyperlinkDetectors( sourceViewer );
 		for ( int i = 0; i < descriptors.length; i++ )
 		{
 			final IHyperlink[] links = descriptors[i].detectHyperlinks(
