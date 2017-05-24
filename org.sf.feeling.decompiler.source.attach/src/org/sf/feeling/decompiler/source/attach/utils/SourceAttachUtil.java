@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.internal.core.PackageFragmentRoot;
 import org.eclipse.jdt.internal.corext.util.JavaModelUtil;
 import org.eclipse.jdt.internal.ui.wizards.buildpaths.BuildPathSupport;
 import org.eclipse.jdt.internal.ui.wizards.buildpaths.CPListElement;
@@ -35,6 +36,7 @@ import org.sf.feeling.decompiler.source.attach.handler.JavaSourceAttacherHandler
 import org.sf.feeling.decompiler.util.FileUtil;
 import org.sf.feeling.decompiler.util.HashUtils;
 import org.sf.feeling.decompiler.util.Logger;
+import org.sf.feeling.decompiler.util.ReflectionUtils;
 
 @SuppressWarnings("restriction")
 public class SourceAttachUtil
@@ -255,8 +257,7 @@ public class SourceAttachUtil
 		thread.start( );
 	}
 
-	private static void refreshEclipseLibrarySources( final IPackageFragmentRoot pkgRoot,
-			final List<String> plugins )
+	private static void refreshEclipseLibrarySources( final IPackageFragmentRoot pkgRoot, final List<String> plugins )
 	{
 		Thread thread = new Thread( ) {
 
@@ -311,6 +312,9 @@ public class SourceAttachUtil
 					containerPath,
 					entry.getReferencingEntry( ) != null,
 					new NullProgressMonitor( ) );
+
+			Object rootInfo = ( (PackageFragmentRoot) root ).getElementInfo( );
+			ReflectionUtils.setFieldValue( rootInfo, "sourceMapper", null );
 		}
 		catch ( Exception e )
 		{
