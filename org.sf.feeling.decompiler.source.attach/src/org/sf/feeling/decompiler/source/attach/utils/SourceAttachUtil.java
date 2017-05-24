@@ -313,8 +313,11 @@ public class SourceAttachUtil
 					entry.getReferencingEntry( ) != null,
 					new NullProgressMonitor( ) );
 
-			Object rootInfo = ( (PackageFragmentRoot) root ).getElementInfo( );
-			ReflectionUtils.setFieldValue( rootInfo, "sourceMapper", null );
+			if ( root instanceof PackageFragmentRoot )
+			{
+				Object rootInfo = ( (PackageFragmentRoot) root ).getElementInfo( );
+				ReflectionUtils.setFieldValue( rootInfo, "sourceMapper", null );
+			}
 		}
 		catch ( Exception e )
 		{
