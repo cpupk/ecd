@@ -15,8 +15,6 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.URL;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.ui.text.IJavaColorConstants;
@@ -40,6 +38,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.internal.TrimUtil;
 import org.eclipse.ui.themes.ColorUtil;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
+import org.sf.feeling.decompiler.update.util.ExecutorUtil;
 import org.sf.feeling.decompiler.update.util.TrayLinkUtil;
 import org.sf.feeling.decompiler.util.Logger;
 import org.sf.feeling.decompiler.util.ReflectionUtils;
@@ -238,8 +237,7 @@ public class HtmlLinkTrimItem extends Composite
 		}
 		if ( !trayLinkUrl.equals( browser.getUrl( ) ) )
 		{
-			ExecutorService poll = Executors.newFixedThreadPool( 1 );
-			poll.submit( new Callable<Boolean>( ) {
+			ExecutorUtil.submitTask( new Callable<Boolean>( ) {
 
 				public Boolean call( ) throws Exception
 				{
@@ -253,9 +251,12 @@ public class HtmlLinkTrimItem extends Composite
 
 							public void run( )
 							{
-								browser.setData( "linkClick", false ); //$NON-NLS-1$
-								browser.setVisible( false );
-								browser.setUrl( trayLinkUrl );
+								if ( browser != null && !browser.isDisposed( ) )
+								{
+									browser.setData( "linkClick", false ); //$NON-NLS-1$
+									browser.setVisible( false );
+									browser.setUrl( trayLinkUrl );
+								}
 							}
 						} );
 						return true;

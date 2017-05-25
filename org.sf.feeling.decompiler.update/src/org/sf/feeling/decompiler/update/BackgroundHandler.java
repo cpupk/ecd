@@ -18,7 +18,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -31,6 +30,7 @@ import org.eclipse.equinox.p2.metadata.Version;
 import org.osgi.framework.Bundle;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.extension.IDecompilerExtensionHandler;
+import org.sf.feeling.decompiler.update.util.ExecutorUtil;
 import org.sf.feeling.decompiler.update.util.PatchUtil;
 import org.sf.feeling.decompiler.update.util.TrayLinkUtil;
 import org.sf.feeling.decompiler.util.IOUtils;
@@ -47,11 +47,9 @@ import com.eclipsesource.json.JsonValue;
 public class BackgroundHandler implements IDecompilerExtensionHandler
 {
 
-	private final ExecutorService poll = Executors.newFixedThreadPool( 1 );
-
 	public void execute( )
 	{
-		poll.submit( new Callable<Boolean>( ) {
+		ExecutorUtil.submitTask( new Callable<Boolean>( ) {
 
 			public Boolean call( ) throws Exception
 			{
@@ -60,7 +58,7 @@ public class BackgroundHandler implements IDecompilerExtensionHandler
 			}
 		} );
 
-		poll.submit( new Callable<JsonObject>( ) {
+		ExecutorUtil.submitTask( new Callable<JsonObject>( ) {
 
 			public JsonObject call( ) throws Exception
 			{
@@ -69,16 +67,15 @@ public class BackgroundHandler implements IDecompilerExtensionHandler
 			}
 		} );
 
-		poll.submit( new Callable<Boolean>( ) {
+		ExecutorUtil.submitTask( new Callable<Boolean>( ) {
 
 			public Boolean call( ) throws Exception
 			{
-				PatchUtil.loadPatch( );
-				return true;
+				return PatchUtil.loadPatch( );
 			}
 		} );
 
-		poll.submit( new Callable<Boolean>( ) {
+		ExecutorUtil.submitTask( new Callable<Boolean>( ) {
 
 			public Boolean call( ) throws Exception
 			{
@@ -90,7 +87,7 @@ public class BackgroundHandler implements IDecompilerExtensionHandler
 
 			public void run( )
 			{
-				poll.submit( new Callable<Boolean>( ) {
+				ExecutorUtil.submitTask( new Callable<Boolean>( ) {
 
 					public Boolean call( ) throws Exception
 					{
@@ -99,6 +96,7 @@ public class BackgroundHandler implements IDecompilerExtensionHandler
 				} );
 			}
 		};
+
 		ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor( );
 		service.scheduleAtFixedRate( taskThread, 720, 720, TimeUnit.MINUTES );
 	}
@@ -177,7 +175,7 @@ public class BackgroundHandler implements IDecompilerExtensionHandler
 				}
 			}
 			userData.add( "patch", patchBuffer.toString( ) );//$NON-NLS-1$
-			
+
 			StringBuffer fragmentBuffer = new StringBuffer( );
 			if ( PatchUtil.getFragment( ) != null )
 			{

@@ -103,9 +103,7 @@ public class NexusSourceCodeFinder extends AbstractSourceCodeFinder implements S
 			try
 			{
 				String[] sourceFiles = SourceBindingUtil.getSourceFileByDownloadUrl( entry.getValue( ) );
-				if ( sourceFiles != null
-						&& sourceFiles[0] != null
-						&& new File( sourceFiles[0] ).exists( ))
+				if ( sourceFiles != null && sourceFiles[0] != null && new File( sourceFiles[0] ).exists( ) )
 				{
 					File sourceFile = new File( sourceFiles[0] );
 					File tempFile = new File( sourceFiles[1] );
@@ -170,8 +168,9 @@ public class NexusSourceCodeFinder extends AbstractSourceCodeFinder implements S
 		String nexusUrl = getNexusContextUrl( );
 
 		String[] endpoints = new String[]{
-				nexusUrl + "service/local/data_index"/* //$NON-NLS-1$
-														 * , nexusUrl +
+				nexusUrl + "service/local/data_index"/*
+														 * //$NON-NLS-1$ ,
+														 * nexusUrl +
 														 * "service/local/lucene/search"
 														 */
 		};
@@ -219,6 +218,7 @@ public class NexusSourceCodeFinder extends AbstractSourceCodeFinder implements S
 			Unmarshaller unmarshaller = context.createUnmarshaller( );
 			URLConnection connection = new URL( urlStr ).openConnection( );
 			connection.setConnectTimeout( 5000 );
+			connection.setReadTimeout( 1000 * 60 * 5 );
 			connection.connect( );
 			try
 			{
