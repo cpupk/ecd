@@ -164,10 +164,24 @@ public class PatchUtil
 			return bundle.getVersion( );
 		}
 
-		return Version.parseVersion( file.getName( )
-				.toLowerCase( )
-				.replace( patchId + "_", "" ) //$NON-NLS-1$ //$NON-NLS-2$
-				.replace( ".jar", "" ) ); //$NON-NLS-1$ //$NON-NLS-2$
+		try
+		{
+			String fileName = file.getName( );
+			int index = fileName.indexOf( "_" );
+			if ( index != -1 )
+			{
+				String versionString = fileName.substring( index );
+				versionString = versionString.replaceAll( "(?i)\\.jar", "" ).trim( );
+				return Version.parseVersion( versionString );
+			}
+		}
+		catch ( Exception e )
+		{
+			Logger.debug( e );
+		}
+
+		Version version = new Version( 0, 0, 0 );
+		return version;
 	}
 
 	private static Version getFileVersion( File file, String patchId )

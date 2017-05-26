@@ -594,6 +594,13 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 		ISourceViewer sourceViewer = getSourceViewer( );
 		if ( sourceViewer == null )
 			return;
+
+		final StyledText text = sourceViewer.getTextWidget( );
+		if ( text.isDisposed( ) )
+		{
+			return;
+		}
+
 		IHyperlinkDetector[] descriptors = getSourceViewerConfiguration( )
 				.getHyperlinkDetectors( sourceViewer );
 		for ( int i = 0; i < descriptors.length; i++ )
@@ -619,11 +626,9 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 
 				updateLinkRanges( links );
 
-				final StyledText text = getSourceViewer( ).getTextWidget( );
-
 				final boolean[] flags = new boolean[1];
 
-				if ( paintListener != null )
+				if ( !text.isDisposed( ) && paintListener != null )
 				{
 					text.removePaintListener( paintListener );
 				}
@@ -655,7 +660,8 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 
 							public void run( )
 							{
-								if ( paintListener != null )
+								if ( !text.isDisposed( )
+										&& paintListener != null )
 								{
 									text.removePaintListener( paintListener );
 									text.addPaintListener( paintListener );

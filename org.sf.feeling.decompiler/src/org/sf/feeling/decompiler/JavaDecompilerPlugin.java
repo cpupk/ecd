@@ -108,7 +108,7 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 		}
 
 		@Override
-		public void breakpointAdded( IBreakpoint breakpoint )
+		public void breakpointAdded( final IBreakpoint breakpoint )
 		{
 			JavaDecompilerClassFileEditor editor = UIUtil
 					.getActiveDecompilerEditor( );
@@ -148,9 +148,17 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 																			"JavaDecompilerPlugin.BreakpoingWithNumberDialog.Title" ), //$NON-NLS-1$
 																	Messages.getString(
 																			"JavaDecompilerPlugin.BreakpoingWithNumberDialog.Message" ) ); //$NON-NLS-1$
+													try
+													{
+														breakpoint.delete( );
+													}
+													catch ( CoreException e )
+													{
+														Logger.debug( e );
+													}
 												}
 											} );
-									breakpoint.delete( );
+
 								}
 							}
 						}
@@ -161,32 +169,31 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 					}
 					else
 					{
-						try
-						{
-							Display.getDefault( ).asyncExec( new Runnable( ) {
 
-								public void run( )
+						Display.getDefault( ).asyncExec( new Runnable( ) {
+
+							public void run( )
+							{
+								boolean setDebug = MessageDialog.openConfirm(
+										Display.getDefault( ).getActiveShell( ),
+										Messages.getString(
+												"JavaDecompilerPlugin.BreakpoingDialog.Title" ), //$NON-NLS-1$
+										Messages.getString(
+												"JavaDecompilerPlugin.BreakpoingDialog.Message" ) ); //$NON-NLS-1$
+								try
 								{
-									boolean setDebug = MessageDialog
-											.openConfirm(
-													Display.getDefault( )
-															.getActiveShell( ),
-													Messages.getString(
-															"JavaDecompilerPlugin.BreakpoingDialog.Title" ), //$NON-NLS-1$
-													Messages.getString(
-															"JavaDecompilerPlugin.BreakpoingDialog.Message" ) ); //$NON-NLS-1$
-									if ( setDebug )
-									{
-										new DebugModeAction( ).run( );
-									}
+									breakpoint.delete( );
 								}
-							} );
-							breakpoint.delete( );
-						}
-						catch ( CoreException e )
-						{
-							Logger.debug( e );
-						}
+								catch ( CoreException e )
+								{
+									Logger.debug( e );
+								}
+								if ( setDebug )
+								{
+									new DebugModeAction( ).run( );
+								}
+							}
+						} );
 					}
 				}
 			}
