@@ -250,8 +250,14 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 					{
 						int selection = widget.getVerticalBar( )
 								.getSelection( );
+
 						if ( selection > 0
-								&& selection < widget.getBounds( ).height / 2 )
+								&& selection < widget.getBounds( ).height / 2
+								&& widget.getLocationAtOffset(
+										widget.getSelection( ).x ).y
+										+ selection
+										+ widget.getLineHeight( ) * 2 < widget
+												.getBounds( ).height )
 						{
 							ReflectionUtils.invokeMethod( widget,
 									"scrollVertical",

@@ -59,43 +59,43 @@ public class MavenSourceDownloader
 						}
 					}
 					buildpathManager.scheduleDownload( root, true, false );
-				}
 
-				Thread thread = new Thread( ) {
+					Thread thread = new Thread( ) {
 
-					public void run( )
-					{
-						if ( root instanceof PackageFragmentRoot )
+						public void run( )
 						{
-							long time = System.currentTimeMillis( );
-							PackageFragmentRoot fRoot = (PackageFragmentRoot) root;
-							while ( true )
+							if ( root instanceof PackageFragmentRoot )
 							{
-								if ( System.currentTimeMillis( ) - time > 60 * 1000 )
+								long time = System.currentTimeMillis( );
+								PackageFragmentRoot fRoot = (PackageFragmentRoot) root;
+								while ( true )
 								{
-									new AttachSourceHandler( ).execute( root, true );
-									break;
-								}
-								try
-								{
-									if ( fRoot.getSourceAttachmentPath( ) != null
-											&& fRoot.getSourceAttachmentPath( ).toFile( ).exists( ) )
+									if ( System.currentTimeMillis( ) - time > 60 * 1000 )
 									{
-										SourceAttachUtil.updateSourceAttachStatus( fRoot );
+										new AttachSourceHandler( ).execute( root, true );
+										break;
+									}
+									try
+									{
+										if ( fRoot.getSourceAttachmentPath( ) != null
+												&& fRoot.getSourceAttachmentPath( ).toFile( ).exists( ) )
+										{
+											SourceAttachUtil.updateSourceAttachStatus( fRoot );
+											break;
+										}
+									}
+									catch ( JavaModelException e )
+									{
+										Logger.debug( e );
 										break;
 									}
 								}
-								catch ( JavaModelException e )
-								{
-									Logger.debug( e );
-									break;
-								}
 							}
 						}
-					}
-				};
-				thread.setDaemon( true );
-				thread.start( );
+					};
+					thread.setDaemon( true );
+					thread.start( );
+				}
 			}
 		}
 		catch ( JavaModelException e )
