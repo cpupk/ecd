@@ -29,9 +29,12 @@ import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.core.BufferManager;
 import org.eclipse.jdt.internal.core.ClassFile;
+import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.javaeditor.ClassFileEditor;
 import org.eclipse.jdt.internal.ui.javaeditor.IClassFileEditorInput;
 import org.eclipse.jdt.internal.ui.javaeditor.InternalClassFileEditorInput;
+import org.eclipse.jdt.internal.ui.javaeditor.JavaSourceViewer;
+import org.eclipse.jdt.internal.ui.javaeditor.SemanticHighlightingManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.hyperlink.HyperlinkManager;
@@ -219,6 +222,39 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 	public boolean isDirty( )
 	{
 		return false;
+	}
+
+	public void setHighlightRange( int offset, int length, boolean moveCursor )
+	{
+		super.setHighlightRange( offset, length, moveCursor );
+
+		final StyledText widget = getSourceViewer( ).getTextWidget( );
+		widget.getDisplay( ).asyncExec( new Runnable( ) {
+
+			public void run( )
+			{
+				if ( !widget.isDisposed( ) )
+				{
+					if ( widget.getVerticalBar( ) != null )
+					{
+						int selection = widget.getVerticalBar( )
+								.getSelection( );
+						if ( selection > 0
+								&& selection < widget.getBounds( ).height / 2 )
+						{
+							ReflectionUtils.invokeMethod( widget,
+									"scrollVertical",
+									new Class[]{
+											int.class, boolean.class
+							},
+									new Object[]{
+											-selection, true
+							} );
+						}
+					}
+				}
+			};
+		} );
 	}
 
 	public void selectAndReveal( int start, int length )
@@ -759,4 +795,17 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 				new Object[0] );
 	}
 
+	protected void installSemanticHighlighting( )
+	{
+		if ( fSemanticManager == null )
+		{
+			fSemanticManager = new SemanticHighlightingManager( );
+			fSemanticManager.install( this,
+					(JavaSourceViewer) getSourceViewer( ),
+					JavaPlugin.getDefault( )
+							.getJavaTextTools( )
+							.getColorManager( ),
+					getPreferenceStore( ) );
+		}
+	}
 }

@@ -112,7 +112,7 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 		{
 			JavaDecompilerClassFileEditor editor = UIUtil
 					.getActiveDecompilerEditor( );
-			if ( editor != null )
+			if ( editor != null && breakpoint != null )
 			{
 				String source = editor.getDocumentProvider( )
 						.getDocument( editor.getEditorInput( ) )
@@ -121,7 +121,7 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 				if ( source != null && MarkUtil.containsMark( source ) )
 				{
 
-					if ( UIUtil.isDebug( ) )
+					if ( UIUtil.isDebug( ) && breakpoint.getMarker( ) != null )
 					{
 						try
 						{
