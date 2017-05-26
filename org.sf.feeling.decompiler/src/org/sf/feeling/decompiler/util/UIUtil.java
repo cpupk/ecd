@@ -441,6 +441,26 @@ public class UIUtil
 		return false;
 	}
 
+	public static boolean requestFromJavadocHover2( )
+	{
+		StackTraceElement[] stacks = Thread.currentThread( ).getStackTrace( );
+		for ( int i = 0; i < stacks.length; i++ )
+		{
+			if ( stacks[i].getClassName( ).indexOf( "BinaryType" ) != -1 //$NON-NLS-1$
+					&& stacks[i].getMethodName( ).equals( "getJavadocRange" ) ) //$NON-NLS-1$
+				return false;
+
+			if ( stacks[i].getClassName( ).indexOf( "JavadocHover" ) != -1 //$NON-NLS-1$
+					&& stacks[i].getMethodName( ).equals( "getHoverInfo2" ) ) //$NON-NLS-1$
+				return true;
+
+			if ( stacks[i].getClassName( ).indexOf( "JavaSourceHover" ) != -1 //$NON-NLS-1$
+					&& stacks[i].getMethodName( ).equals( "getHoverInfo" ) ) //$NON-NLS-1$
+				return true;
+		}
+		return false;
+	}
+
 	public static boolean requestFromShowMatch( )
 	{
 		StackTraceElement[] stacks = Thread.currentThread( ).getStackTrace( );

@@ -16,9 +16,12 @@ import java.util.Enumeration;
 import org.eclipse.jdt.core.IBuffer;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.IOpenable;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.core.BufferManager;
+import org.eclipse.jdt.internal.core.ClassFile;
 import org.eclipse.jdt.internal.ui.javaeditor.IClassFileEditorInput;
 import org.eclipse.swt.widgets.Display;
+import org.sf.feeling.decompiler.util.Logger;
 import org.sf.feeling.decompiler.util.MarkUtil;
 import org.sf.feeling.decompiler.util.UIUtil;
 
@@ -108,6 +111,52 @@ public class JavaDecompilerBufferManager extends BufferManager
 						}
 					}
 				} );
+			}
+		}
+		else if ( UIUtil.requestFromJavadocHover2( ) )
+		{
+			{
+				JavaDecompilerClassFileEditor editor = UIUtil
+						.getActiveEditor( );
+				if ( editor != null
+						&& editor
+								.getEditorInput( ) instanceof IClassFileEditorInput )
+				{
+					String content = editor.getDocumentProvider( )
+							.getDocument( editor.getEditorInput( ) )
+							.get( );
+					if ( buffers[0] != null )
+					{
+						if ( !content.equals( buffers[0].getContents( ) ) )
+							buffers[0].setContents( content );
+					}
+					else
+					{
+						IClassFile input = ( (IClassFileEditorInput) editor
+								.getEditorInput( ) ).getClassFile( );
+						ClassFile cf = (ClassFile) input;
+						IBuffer classBuffer = BufferManager.createBuffer( cf );
+						classBuffer.setContents( content );
+						editor.getBufferManager( ).addBuffer( classBuffer );
+
+						try
+						{
+							ClassFileSourceMap.updateSource(
+									editor.getBufferManager( ),
+									(ClassFile) cf,
+									content.toCharArray( ) );
+						}
+						catch ( JavaModelException e )
+						{
+							Logger.debug( e );
+						}
+
+						buffers[0] = classBuffer;
+						JavaDecompilerBufferManager.this
+								.addBuffer( buffers[0] );
+					}
+				}
+
 			}
 		}
 
