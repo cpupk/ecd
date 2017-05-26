@@ -224,10 +224,21 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 		return false;
 	}
 
+	private boolean selectionChange = false;
+
+	protected void selectionChanged( )
+	{
+		selectionChange = true;
+		super.selectionChanged( );
+		selectionChange = false;
+	}
+
 	public void setHighlightRange( int offset, int length, boolean moveCursor )
 	{
 		super.setHighlightRange( offset, length, moveCursor );
 
+		if ( selectionChange )
+			return;
 		final StyledText widget = getSourceViewer( ).getTextWidget( );
 		widget.getDisplay( ).asyncExec( new Runnable( ) {
 
