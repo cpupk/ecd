@@ -115,12 +115,15 @@ public class JavaDecompilerBufferManager extends BufferManager
 		}
 		else if ( UIUtil.requestFromJavadocHover2( ) )
 		{
+
+			JavaDecompilerClassFileEditor editor = UIUtil.getActiveEditor( );
+			if ( editor != null
+					&& editor
+							.getEditorInput( ) instanceof IClassFileEditorInput )
 			{
-				JavaDecompilerClassFileEditor editor = UIUtil
-						.getActiveEditor( );
-				if ( editor != null
-						&& editor
-								.getEditorInput( ) instanceof IClassFileEditorInput )
+				IClassFile input = ( (IClassFileEditorInput) editor
+						.getEditorInput( ) ).getClassFile( );
+				if ( owner.equals( input ) )
 				{
 					String content = editor.getDocumentProvider( )
 							.getDocument( editor.getEditorInput( ) )
@@ -132,8 +135,6 @@ public class JavaDecompilerBufferManager extends BufferManager
 					}
 					else
 					{
-						IClassFile input = ( (IClassFileEditorInput) editor
-								.getEditorInput( ) ).getClassFile( );
 						ClassFile cf = (ClassFile) input;
 						IBuffer classBuffer = BufferManager.createBuffer( cf );
 						classBuffer.setContents( content );
@@ -156,7 +157,6 @@ public class JavaDecompilerBufferManager extends BufferManager
 								.addBuffer( buffers[0] );
 					}
 				}
-
 			}
 		}
 
