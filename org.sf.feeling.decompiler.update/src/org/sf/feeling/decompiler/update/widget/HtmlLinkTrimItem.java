@@ -35,6 +35,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.TrimUtil;
 import org.eclipse.ui.themes.ColorUtil;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
@@ -91,8 +92,8 @@ public class HtmlLinkTrimItem extends Composite
 		this.setBackgroundMode( SWT.INHERIT_FORCE );
 
 		GridLayout trimLayout = new GridLayout( );
-		trimLayout.marginTop = 1;
-
+		trimLayout.marginWidth = 0;
+		trimLayout.marginHeight = 0;
 		this.setLayout( trimLayout );
 
 		sComposite = new ScrolledComposite( this, SWT.NONE );
@@ -129,25 +130,16 @@ public class HtmlLinkTrimItem extends Composite
 
 			private void handleEvent( )
 			{
-
-				updateBrowserColor( );
-				if ( trayLinkUrl == null
-						|| TrayLinkUtil.useSystemColor( trayLinkUrl )
-						|| UIUtil.isDark( getParent( ) ) )
-				{
-					updateBrowserFontColor( );
-				}
-				updateBrowserFontFamily( );
-				updateBrowserFontSize( );
-
+				updateBrowserStyle( );
 				Display.getDefault( ).asyncExec( new Runnable( ) {
 
 					public void run( )
 					{
 						try
 						{
-							Object[] area = (Object[]) browser.evaluate( "return getContentArea();" ); //$NON-NLS-1$
+							updateBrowserStyle( );
 
+							Object[] area = (Object[]) browser.evaluate( "return getContentArea();" ); //$NON-NLS-1$
 							double tempWidth = Double.valueOf( area[0].toString( ) );
 							double tempHeight = Double.valueOf( area[1].toString( ) );
 							if ( tempWidth > 0 && tempHeight > 0 && ( tempWidth != width || tempHeight != height ) )
@@ -156,6 +148,14 @@ public class HtmlLinkTrimItem extends Composite
 								height = tempHeight;
 								HtmlLinkTrimItem.this.pack( );
 								HtmlLinkTrimItem.this.setSize( computeSize( -1, -1, true ) );
+								GridData gd = (GridData) browser.getLayoutData( );
+								if ( gd == null )
+								{
+									gd = new GridData( );
+								}
+								gd.verticalIndent = (int) Math
+										.ceil( HtmlLinkTrimItem.this.getBounds( ).height - height ) / 2 - 1;
+								browser.setLayoutData( gd );
 								HtmlLinkTrimItem.this.layout( true, true );
 								HtmlLinkTrimItem.this.getParent( ).layout( true, true );
 								if ( HtmlLinkTrimItem.this.getParent( ).getParent( ) != null )
@@ -178,6 +178,19 @@ public class HtmlLinkTrimItem extends Composite
 						}
 					}
 				} );
+			}
+
+			private void updateBrowserStyle( )
+			{
+				updateBrowserColor( );
+				if ( trayLinkUrl == null
+						|| TrayLinkUtil.useSystemColor( trayLinkUrl )
+						|| UIUtil.isDark( getParent( ) ) )
+				{
+					updateBrowserFontColor( );
+				}
+				updateBrowserFontFamily( );
+				updateBrowserFontSize( );
 			}
 
 			public void changed( ProgressEvent event )
@@ -287,7 +300,7 @@ public class HtmlLinkTrimItem extends Composite
 	public Point computeSize( int wHint, int hHint, boolean changed )
 	{
 		int trimWidth = (int) width + 5 * 2 + 4;
-		int trimHeight = (int) height + 5 * 2 + 4;
+		int trimHeight = getParent( ) instanceof Shell ? (int) height : getParent( ).getBounds( ).height;
 		trimHeight = Math.max( TrimUtil.TRIM_DEFAULT_HEIGHT, trimHeight );
 		return new Point( trimWidth, trimHeight );
 	}

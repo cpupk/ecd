@@ -40,7 +40,8 @@ public class MavenSourceDownloader
 		root = null;
 		try
 		{
-			IClasspathManager buildpathManager = MavenJdtPlugin.getDefault( ).getBuildpathManager( );
+			IClasspathManager buildpathManager = MavenJdtPlugin.getDefault( )
+					.getBuildpathManager( );
 			IClassFileEditorInput input = (IClassFileEditorInput) part.getEditorInput( );
 			IJavaElement element = input.getClassFile( );
 			while ( element.getParent( ) != null )
@@ -49,6 +50,10 @@ public class MavenSourceDownloader
 				if ( ( element instanceof IPackageFragmentRoot ) )
 				{
 					root = (IPackageFragmentRoot) element;
+					if ( !SourceAttachUtil.isMavenLibrary( root ) )
+					{
+						continue;
+					}
 					final IPath sourcePath = root.getSourceAttachmentPath( );
 					if ( sourcePath != null && sourcePath.toOSString( ) != null )
 					{
@@ -72,13 +77,16 @@ public class MavenSourceDownloader
 								{
 									if ( System.currentTimeMillis( ) - time > 60 * 1000 )
 									{
-										new AttachSourceHandler( ).execute( root, true );
+										new AttachSourceHandler( ).execute( root,
+												true );
 										break;
 									}
 									try
 									{
 										if ( fRoot.getSourceAttachmentPath( ) != null
-												&& fRoot.getSourceAttachmentPath( ).toFile( ).exists( ) )
+												&& fRoot.getSourceAttachmentPath( )
+														.toFile( )
+														.exists( ) )
 										{
 											SourceAttachUtil.updateSourceAttachStatus( fRoot );
 											break;
@@ -109,7 +117,9 @@ public class MavenSourceDownloader
 
 					public void run( )
 					{
-						JavaSourceAttacherHandler.updateSourceAttachments( selections, null, true );
+						JavaSourceAttacherHandler.updateSourceAttachments( selections,
+								null,
+								true );
 					}
 				};
 				thread.setDaemon( true );

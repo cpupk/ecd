@@ -101,7 +101,7 @@ public class SourceBindingUtil
 			if ( item.get( "downloadUrl" ).isNull( ) ) //$NON-NLS-1$
 				continue;
 			String downloadUrlValue = item.getString( "downloadUrl", null ); //$NON-NLS-1$
-			if ( downloadUrl.equals( downloadUrlValue ) )
+			if ( downloadUrl!=null && downloadUrl.equals( downloadUrlValue ) )
 			{
 				String source = item.getString( "source", null ); //$NON-NLS-1$
 				String temp = item.getString( "temp", null ); //$NON-NLS-1$
