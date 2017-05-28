@@ -63,15 +63,30 @@ public class UserUtil
 		InputStream is = null;
 		try
 		{
-			URLConnection connection = new URL(
-					"http://ipip.yy.com/get_ip_info.php" ).openConnection( ); //$NON-NLS-1$
+			URLConnection connection = new URL( "http://pv.sohu.com/cityjson" ) //$NON-NLS-1$
+					.openConnection( );
 			connection.setConnectTimeout( 30000 );
 			is = connection.getInputStream( );
 			String content = FileUtil.getContent( is );
 			content = unicodeToString(
 					content.substring( content.indexOf( "=" ) + 1, //$NON-NLS-1$
 							content.length( ) - 1 ) );
-			return Json.parse( content ).asObject( );
+			JsonObject json = Json.parse( content ).asObject( );
+			String ip = json.get( "cip" ).asString( );
+
+			is.close( );
+
+			connection = new URL(
+					"http://ip.taobao.com/service/getIpInfo.php?ip=" + ip ) //$NON-NLS-1$
+							.openConnection( );
+			connection.setConnectTimeout( 30000 );
+			is = connection.getInputStream( );
+			content = unicodeToString(FileUtil.getContent( is ));
+			json = Json.parse( content ).asObject( );
+			if ( json.getInt( "code", -1 ) == 0 && json.get( "data" ).isObject( ))
+			{
+				return json.get( "data" ).asObject( );
+			}
 		}
 		catch ( Exception e )
 		{
@@ -298,13 +313,13 @@ public class UserUtil
 					.getDecompileCount( )
 					.get( );
 			userObject.set( "count", count ); //$NON-NLS-1$
-			
+
 			long adclick = userObject.getLong( "adclick", 0 ); //$NON-NLS-1$
 			adclick += JavaDecompilerPlugin.getDefault( )
 					.getAdClickCount( )
 					.get( );
 			userObject.set( "adclick", adclick ); //$NON-NLS-1$
-			
+
 			saveSourceBindingJson( userObject );
 		}
 		return userObject;
@@ -315,7 +330,7 @@ public class UserUtil
 		JsonObject userObject = loadSourceBindingJson( );
 		if ( userObject != null && userIpInfo != null )
 		{
-			JsonValue ip = userIpInfo.get( "cip" ); //$NON-NLS-1$
+			JsonValue ip = userIpInfo.get( "ip" ); //$NON-NLS-1$
 			if ( ip != null && ip.isString( ) )
 			{
 				if ( "".equals( ip.asString( ) ) ) //$NON-NLS-1$
@@ -339,7 +354,19 @@ public class UserUtil
 					userObject.set( "country", country.asString( ) ); //$NON-NLS-1$
 				}
 			}
-			JsonValue province = userIpInfo.get( "province" ); //$NON-NLS-1$
+			JsonValue country_code = userIpInfo.get( "country_id" ); //$NON-NLS-1$
+			if ( country != null && country.isString( ) )
+			{
+				if ( "".equals( country.asString( ) ) ) //$NON-NLS-1$
+				{
+					userObject.remove( "country_code" ); //$NON-NLS-1$
+				}
+				else
+				{
+					userObject.set( "country_code", country_code.asString( ) ); //$NON-NLS-1$
+				}
+			}
+			JsonValue province = userIpInfo.get( "region" ); //$NON-NLS-1$
 			if ( province != null && province.isString( ) )
 			{
 				if ( "".equals( province.asString( ) ) ) //$NON-NLS-1$
@@ -422,6 +449,22 @@ public class UserUtil
 			return null;
 
 		JsonValue countryValue = userObject.get( "country" ); //$NON-NLS-1$
+		if ( countryValue != null && countryValue.isString( ) )
+		{
+			return countryValue.asString( );
+		}
+
+		return null;
+	}
+	
+	public static String getUserCountryCode( )
+	{
+		JsonObject userObject = loadSourceBindingJson( );
+
+		if ( userObject == null )
+			return null;
+
+		JsonValue countryValue = userObject.get( "country_code" ); //$NON-NLS-1$
 		if ( countryValue != null && countryValue.isString( ) )
 		{
 			return countryValue.asString( );

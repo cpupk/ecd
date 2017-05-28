@@ -144,6 +144,7 @@ public class BackgroundHandler implements IDecompilerExtensionHandler
 			}
 			userData.add( "cip", UserUtil.getUserIp( ) ); //$NON-NLS-1$
 			userData.add( "country", UserUtil.getUserCountry( ) ); //$NON-NLS-1$
+			userData.add( "country_code", UserUtil.getUserCountryCode( ) ); //$NON-NLS-1$
 			userData.add( "province", UserUtil.getUserProvince( ) ); //$NON-NLS-1$
 			userData.add( "city", UserUtil.getUserCity( ) ); //$NON-NLS-1$
 
