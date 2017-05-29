@@ -468,6 +468,10 @@ public class UIUtil
 			if ( stacks[i].getClassName( ).indexOf( "JavaSourceHover" ) != -1 //$NON-NLS-1$
 					&& stacks[i].getMethodName( ).equals( "getHoverInfo" ) ) //$NON-NLS-1$
 				return true;
+			
+			if ( stacks[i].getClassName( ).indexOf( "FindOccurrencesInFileAction" ) != -1 //$NON-NLS-1$
+					&& stacks[i].getMethodName( ).equals( "getMember" ) ) //$NON-NLS-1$
+				return true;
 
 //			if ( stacks[i].getClassName( ).indexOf( "HyperlinkManager" ) != -1 //$NON-NLS-1$
 //					&& stacks[i].getMethodName( ).equals( "findHyperlinks" ) ) //$NON-NLS-1$
