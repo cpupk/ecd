@@ -172,7 +172,18 @@ public class DecompileUtil
 							"sourcePath" ),
 					rootPath,
 					(Map) ReflectionUtils.getFieldValue( mapper, "options" ) );
-			importMapper.mapSource( type, contents.toCharArray( ), typeInfo );
+			if ( contents.indexOf( "{" ) != -1 )
+			{
+				importMapper.mapSource( type,
+						contents.substring( 0, contents.indexOf( "{" ) )
+								.toCharArray( ),
+						typeInfo );
+			}
+			else
+			{
+				importMapper
+						.mapSource( type, contents.toCharArray( ), typeInfo );
+			}
 		}
 	}
 

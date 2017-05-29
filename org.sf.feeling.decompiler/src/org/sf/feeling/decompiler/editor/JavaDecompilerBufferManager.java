@@ -113,7 +113,7 @@ public class JavaDecompilerBufferManager extends BufferManager
 				} );
 			}
 		}
-		else if ( UIUtil.requestFromJavadocHover2( ) )
+		else if ( UIUtil.requestCreateBuffer( ) )
 		{
 
 			JavaDecompilerClassFileEditor editor = UIUtil.getActiveEditor( );

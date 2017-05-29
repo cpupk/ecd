@@ -58,6 +58,7 @@ import org.eclipse.ui.navigator.CommonNavigatorManager;
 import org.eclipse.ui.navigator.IExtensionStateModel;
 import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.themes.ColorUtil;
+import org.eclipse.ui.views.contentoutline.ContentOutline;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.editor.JavaDecompilerClassFileEditor;
 
@@ -266,7 +267,17 @@ public class UIUtil
 
 				if ( pg != null )
 				{
-					return pg.getActivePart( );
+					IWorkbenchPart activePart = pg.getActivePart( );
+					if ( activePart instanceof ContentOutline )
+					{
+						ContentOutline outline = (ContentOutline)activePart;
+						IWorkbenchPart part = (IWorkbenchPart)ReflectionUtils.invokeMethod( outline, "getCurrentContributingPart");
+						if(part == null) {
+							return (IWorkbenchPart)ReflectionUtils.getFieldValue( outline, "hiddenPart" );
+						}
+					}
+					else
+						return activePart;
 				}
 			}
 			else
@@ -428,23 +439,23 @@ public class UIUtil
 	public static boolean requestFromJavadocHover( )
 	{
 		StackTraceElement[] stacks = Thread.currentThread( ).getStackTrace( );
-		for ( int i = 0; i < stacks.length; i++ )
+		for ( int i = 0; i < stacks.length && i < 12; i++ )
 		{
 			if ( stacks[i].getClassName( ).indexOf( "BinaryType" ) != -1 //$NON-NLS-1$
 					&& stacks[i].getMethodName( ).equals( "getJavadocRange" ) ) //$NON-NLS-1$
 				return false;
 
 			if ( stacks[i].getClassName( ).indexOf( "JavadocHover" ) != -1 //$NON-NLS-1$
-					&& stacks[i].getMethodName( ).equals( "getHoverInfo" ) ) //$NON-NLS-1$
+					&& stacks[i].getMethodName( ).equals( "getHoverInfo" ) )
 				return true;
 		}
 		return false;
 	}
 
-	public static boolean requestFromJavadocHover2( )
+	public static boolean requestCreateBuffer( )
 	{
 		StackTraceElement[] stacks = Thread.currentThread( ).getStackTrace( );
-		for ( int i = 0; i < stacks.length; i++ )
+		for ( int i = 0; i < stacks.length && i < 12; i++ )
 		{
 			if ( stacks[i].getClassName( ).indexOf( "BinaryType" ) != -1 //$NON-NLS-1$
 					&& stacks[i].getMethodName( ).equals( "getJavadocRange" ) ) //$NON-NLS-1$
@@ -457,6 +468,16 @@ public class UIUtil
 			if ( stacks[i].getClassName( ).indexOf( "JavaSourceHover" ) != -1 //$NON-NLS-1$
 					&& stacks[i].getMethodName( ).equals( "getHoverInfo" ) ) //$NON-NLS-1$
 				return true;
+
+//			if ( stacks[i].getClassName( ).indexOf( "HyperlinkManager" ) != -1 //$NON-NLS-1$
+//					&& stacks[i].getMethodName( ).equals( "findHyperlinks" ) ) //$NON-NLS-1$
+//				return true;
+
+//			if ( stacks[i].getClassName( )
+//					.indexOf( "DefaultJavaFoldingStructureProvider" ) != -1 //$NON-NLS-1$
+//					&& stacks[i].getMethodName( )
+//							.equals( "computeProjectionRanges" ) ) //$NON-NLS-1$
+//				return true;
 		}
 		return false;
 	}

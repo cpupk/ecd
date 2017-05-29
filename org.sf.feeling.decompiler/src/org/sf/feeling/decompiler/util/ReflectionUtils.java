@@ -83,6 +83,26 @@ public class ReflectionUtils
 
 		return null;
 	}
+	
+	public static Object invokeMethod( Object object, String methodName )
+	{
+
+		Method method = getDeclaredMethod( object, methodName, new Class[0] );
+		try
+		{
+			if ( null != method )
+			{
+				method.setAccessible( true );
+				return method.invoke( object, new Object[0] );
+			}
+		}
+		catch ( Exception e )
+		{
+			JavaDecompilerPlugin.logError( e, "" ); //$NON-NLS-1$
+		}
+
+		return null;
+	}
 
 	public static Object invokeMethod( Class clazz, String methodName,
 			Class[] parameterTypes, Object[] parameters )
