@@ -47,7 +47,7 @@ public class AttachSourceHandler implements IAttachSourceHandler
 		{
 			if ( showUI )
 			{
-				final Job job = new Job( Messages.getString("AttachSourceHandler.Job.Name") ) { //$NON-NLS-1$
+				final Job job = new Job( Messages.getString( "AttachSourceHandler.Job.Name" ) ) { //$NON-NLS-1$
 
 					protected IStatus run( final IProgressMonitor monitor )
 					{
@@ -89,10 +89,7 @@ public class AttachSourceHandler implements IAttachSourceHandler
 			if ( sourcePath != null && sourcePath.toOSString( ) != null )
 			{
 				File tempfile = new File( sourcePath.toOSString( ) );
-				if ( tempfile.exists( )
-						&& tempfile.isFile( )
-						&& SourceAttachUtil.isSourceCodeFor( tempfile.getAbsolutePath( ),
-								SourceAttachUtil.getBinFile( root ).getAbsolutePath( ) ) )
+				if ( tempfile.exists( ) && tempfile.isFile( ) )
 				{
 					return true;
 				}

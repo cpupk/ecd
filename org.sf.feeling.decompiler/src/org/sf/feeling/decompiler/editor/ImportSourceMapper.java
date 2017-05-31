@@ -75,7 +75,6 @@ public class ImportSourceMapper extends SourceMapper
 	protected ImportContainerInfo importContainerInfo = null;
 	protected ImportContainer importContainer;
 
-	private HashMap newElements;
 	private JavaModelManager manager = JavaModelManager.getJavaModelManager( );
 
 	public void enterCompilationUnit( )
@@ -100,8 +99,7 @@ public class ImportSourceMapper extends SourceMapper
 		{
 			Logger.debug( e );
 		}
-
-		newElements = manager.getTemporaryCache( );
+		
 		return super.mapSource( type, contents, info, elementToFind );
 	}
 
@@ -135,12 +133,12 @@ public class ImportSourceMapper extends SourceMapper
 
 		if ( this.importContainer != null )
 		{
-			newElements.put( this.importContainer, this.importContainerInfo );
+			manager.getTemporaryCache( ).put( this.importContainer, this.importContainerInfo );
 		}
 		ReflectionUtils.invokeMethod( manager, "putInfos", new Class[]{
 				IJavaElement.class, Object.class, boolean.class, Map.class
 		}, new Object[]{
-				unit, unitInfo, false, newElements
+				unit, unitInfo, false, manager.getTemporaryCache( )
 		} );
 	}
 
@@ -236,6 +234,6 @@ public class ImportSourceMapper extends SourceMapper
 		ReflectionUtils.invokeMethod( info, "setFlags", int.class, modifiers );
 
 		addToChildren( this.importContainerInfo, handle );
-		this.newElements.put( handle, info );
+		manager.getTemporaryCache( ).put( handle, info );
 	}
 }

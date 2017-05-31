@@ -201,6 +201,9 @@ public class DecompileUtil
 				rootPath = (String) rootPaths.get( 0 );
 			}
 
+			if ( "".equals( rootPath ) )
+				rootPath = null;
+
 			ImportSourceMapper importMapper = new ImportSourceMapper(
 					(IPath) ReflectionUtils.getFieldValue( mapper,
 							"sourcePath" ),
