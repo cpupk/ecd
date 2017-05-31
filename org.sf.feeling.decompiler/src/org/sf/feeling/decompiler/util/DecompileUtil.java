@@ -16,12 +16,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IBuffer;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.IType;
@@ -33,7 +31,6 @@ import org.eclipse.jdt.internal.core.SourceMapper;
 import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.sf.feeling.decompiler.editor.DecompilerSourceMapper;
 import org.sf.feeling.decompiler.editor.DecompilerType;
-import org.sf.feeling.decompiler.editor.ImportSourceMapper;
 import org.sf.feeling.decompiler.editor.JavaDecompilerClassFileEditor;
 import org.sf.feeling.decompiler.editor.SourceMapperFactory;
 
@@ -193,34 +190,23 @@ public class DecompileUtil
 			sourceRange.remove( type );
 			mapper.mapSource( type, contents.toCharArray( ), typeInfo );
 
-			List rootPaths = (List) ReflectionUtils.getFieldValue( mapper,
-					"rootPaths" );
-			String rootPath = null;
-			if ( rootPaths != null && rootPaths.size( ) > 0 )
-			{
-				rootPath = (String) rootPaths.get( 0 );
-			}
-
-			if ( "".equals( rootPath ) )
-				rootPath = null;
-
-			ImportSourceMapper importMapper = new ImportSourceMapper(
-					(IPath) ReflectionUtils.getFieldValue( mapper,
-							"sourcePath" ),
-					rootPath,
-					(Map) ReflectionUtils.getFieldValue( mapper, "options" ) );
-			if ( contents.indexOf( "{" ) != -1 )
-			{
-				importMapper.mapSource( type,
-						contents.substring( 0, contents.indexOf( "{" ) )
-								.toCharArray( ),
-						typeInfo );
-			}
-			else
-			{
-				importMapper
-						.mapSource( type, contents.toCharArray( ), typeInfo );
-			}
+//			List rootPaths = (List) ReflectionUtils.getFieldValue( mapper,
+//					"rootPaths" );
+//			String rootPath = null;
+//			if ( rootPaths != null && rootPaths.size( ) > 0 )
+//			{
+//				rootPath = (String) rootPaths.get( 0 );
+//			}
+//
+//			if ( "".equals( rootPath ) )
+//				rootPath = null;
+//
+//			ImportSourceMapper importMapper = new ImportSourceMapper(
+//					(IPath) ReflectionUtils.getFieldValue( mapper,
+//							"sourcePath" ),
+//					rootPath,
+//					(Map) ReflectionUtils.getFieldValue( mapper, "options" ) );
+//			importMapper.mapSource( type, contents.toCharArray( ), typeInfo );
 		}
 	}
 

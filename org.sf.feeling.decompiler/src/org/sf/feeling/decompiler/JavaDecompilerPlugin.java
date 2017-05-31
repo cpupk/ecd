@@ -38,9 +38,14 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveListener;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 import org.sf.feeling.decompiler.actions.DebugModeAction;
+import org.sf.feeling.decompiler.actions.DecompileAction;
 import org.sf.feeling.decompiler.editor.DecompilerType;
 import org.sf.feeling.decompiler.editor.IDecompilerDescriptor;
 import org.sf.feeling.decompiler.editor.JavaDecompilerBufferManager;
@@ -88,6 +93,25 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 
 	private boolean isDebugMode = false;
 	private boolean enableExtension = false;
+
+	private IPerspectiveListener perspectiveListener = new IPerspectiveListener( ) {
+
+		@Override
+		public void perspectiveChanged( IWorkbenchPage page,
+				IPerspectiveDescriptor perspective, String changeId )
+		{
+		}
+
+		@Override
+		public void perspectiveActivated( IWorkbenchPage page,
+				IPerspectiveDescriptor perspective )
+		{
+			if ( UIUtil.isDebugPerspective( ) )
+			{
+				new DecompileAction( ).run( );
+			}
+		}
+	};
 
 	private IBreakpointListener breakpintListener = new IBreakpointListener( ) {
 
@@ -167,7 +191,7 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 							Logger.debug( e );
 						}
 					}
-					else
+					else if ( !UIUtil.isDebug( ) )
 					{
 
 						Display.getDefault( ).asyncExec( new Runnable( ) {
@@ -341,6 +365,17 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 		Display.getDefault( ).asyncExec( new SetupRunnable( ) );
 
 		manager.addBreakpointListener( breakpintListener );
+
+		Display.getDefault( ).asyncExec( new Runnable( ) {
+
+			public void run( )
+			{
+				PlatformUI.getWorkbench( )
+						.getActiveWorkbenchWindow( )
+						.addPerspectiveListener( perspectiveListener );
+			}
+		} );
+
 	}
 
 	private void checkEnableExtension( )
@@ -389,6 +424,10 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 
 	public void stop( BundleContext context ) throws Exception
 	{
+		PlatformUI.getWorkbench( )
+				.getActiveWorkbenchWindow( )
+				.addPerspectiveListener( perspectiveListener );
+
 		manager.removeBreakpointListener( breakpintListener );
 		getPreferenceStore( ).setValue( DECOMPILE_COUNT,
 				decompileCount.get( ) );

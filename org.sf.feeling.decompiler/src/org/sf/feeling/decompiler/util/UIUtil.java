@@ -182,23 +182,42 @@ public class UIUtil
 
 	public static String getActivePerspectiveId( )
 	{
-		IWorkbench wb = PlatformUI.getWorkbench( );
-		if ( wb == null )
-			return null;
+		final String[] ids = new String[1];
+		Display.getDefault( ).syncExec( new Runnable( ) {
 
-		IWorkbenchWindow win = wb.getActiveWorkbenchWindow( );
-		if ( win == null )
-			return null;
+			public void run( )
+			{
+				IWorkbench wb = PlatformUI.getWorkbench( );
+				if ( wb == null )
+				{
+					ids[0] = null;
+					return;
+				}
 
-		IWorkbenchPage page = win.getActivePage( );
-		if ( page == null )
-			return null;
+				IWorkbenchWindow win = wb.getActiveWorkbenchWindow( );
+				if ( win == null )
+				{
+					ids[0] = null;
+					return;
+				}
+				IWorkbenchPage page = win.getActivePage( );
+				if ( page == null )
+				{
+					ids[0] = null;
+					return;
+				}
 
-		IPerspectiveDescriptor perspective = page.getPerspective( );
-		if ( perspective == null )
-			return null;
+				IPerspectiveDescriptor perspective = page.getPerspective( );
+				if ( perspective == null )
+				{
+					ids[0] = null;
+					return;
+				}
+				ids[0] = perspective.getId( );
 
-		return perspective.getId( );
+			}
+		} );
+		return ids[0];
 	}
 
 	public static boolean isDebug( )
@@ -270,10 +289,14 @@ public class UIUtil
 					IWorkbenchPart activePart = pg.getActivePart( );
 					if ( activePart instanceof ContentOutline )
 					{
-						ContentOutline outline = (ContentOutline)activePart;
-						IWorkbenchPart part = (IWorkbenchPart)ReflectionUtils.invokeMethod( outline, "getCurrentContributingPart");
-						if(part == null) {
-							return (IWorkbenchPart)ReflectionUtils.getFieldValue( outline, "hiddenPart" );
+						ContentOutline outline = (ContentOutline) activePart;
+						IWorkbenchPart part = (IWorkbenchPart) ReflectionUtils
+								.invokeMethod( outline,
+										"getCurrentContributingPart" );
+						if ( part == null )
+						{
+							return (IWorkbenchPart) ReflectionUtils
+									.getFieldValue( outline, "hiddenPart" );
 						}
 					}
 					else
@@ -468,20 +491,24 @@ public class UIUtil
 			if ( stacks[i].getClassName( ).indexOf( "JavaSourceHover" ) != -1 //$NON-NLS-1$
 					&& stacks[i].getMethodName( ).equals( "getHoverInfo" ) ) //$NON-NLS-1$
 				return true;
-			
-			if ( stacks[i].getClassName( ).indexOf( "FindOccurrencesInFileAction" ) != -1 //$NON-NLS-1$
+
+			if ( stacks[i].getClassName( )
+					.indexOf( "FindOccurrencesInFileAction" ) != -1 //$NON-NLS-1$
 					&& stacks[i].getMethodName( ).equals( "getMember" ) ) //$NON-NLS-1$
 				return true;
 
-//			if ( stacks[i].getClassName( ).indexOf( "HyperlinkManager" ) != -1 //$NON-NLS-1$
-//					&& stacks[i].getMethodName( ).equals( "findHyperlinks" ) ) //$NON-NLS-1$
-//				return true;
+			// if ( stacks[i].getClassName( ).indexOf( "HyperlinkManager" ) !=
+			// -1 //$NON-NLS-1$
+			// && stacks[i].getMethodName( ).equals( "findHyperlinks" ) )
+			// //$NON-NLS-1$
+			// return true;
 
-//			if ( stacks[i].getClassName( )
-//					.indexOf( "DefaultJavaFoldingStructureProvider" ) != -1 //$NON-NLS-1$
-//					&& stacks[i].getMethodName( )
-//							.equals( "computeProjectionRanges" ) ) //$NON-NLS-1$
-//				return true;
+			// if ( stacks[i].getClassName( )
+			// .indexOf( "DefaultJavaFoldingStructureProvider" ) != -1
+			// //$NON-NLS-1$
+			// && stacks[i].getMethodName( )
+			// .equals( "computeProjectionRanges" ) ) //$NON-NLS-1$
+			// return true;
 		}
 		return false;
 	}
