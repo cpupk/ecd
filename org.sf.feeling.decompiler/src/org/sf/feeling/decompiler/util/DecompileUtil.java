@@ -139,6 +139,40 @@ public class DecompileUtil
 		return origSrc;
 	}
 
+	public static String updateBuffer( IClassFile cf, String origSrc )
+			throws JavaModelException
+	{
+		if ( !MarkUtil.containsSourceMark( origSrc )
+				&& !MarkUtil.containsMark( origSrc ) )
+		{
+			IBuffer buffer = cf.getBuffer( );
+			ReflectionUtils.invokeMethod( buffer, "setReadOnly", new Class[]{ //$NON-NLS-1$
+					boolean.class
+			}, new Object[]{
+					false
+			} );
+
+			String contents = getCopyRightContent( cf, origSrc );
+
+			buffer.setContents( contents );
+
+			ReflectionUtils.invokeMethod( BufferManager
+					.getDefaultBufferManager( ), "addBuffer", new Class[]{ //$NON-NLS-1$
+							IBuffer.class
+			}, new Object[]{
+					buffer
+			} );
+
+			updateSourceRanges( cf, contents );
+			return contents;
+		}
+		else
+		{
+			updateSourceRanges( cf, origSrc );
+		}
+		return origSrc;
+	}
+
 	public static void updateSourceRanges( IClassFile cf, String contents )
 			throws JavaModelException
 	{

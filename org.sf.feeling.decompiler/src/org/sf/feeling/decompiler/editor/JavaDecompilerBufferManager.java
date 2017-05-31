@@ -62,11 +62,39 @@ public class JavaDecompilerBufferManager extends BufferManager
 		}
 	}
 
-	public void addBuffer( IBuffer buffer )
+	public void addBuffer( final IBuffer buffer )
 	{
 		if ( buffer == null || buffer.getContents( ) == null )
+		{
+			if ( buffer != null )
+			{
+				delayAddBuffer( buffer );
+			}
 			return;
+		}
 		super.addBuffer( buffer );
+	}
+
+	private void delayAddBuffer( final IBuffer buffer )
+	{
+		new Thread( ) {
+
+			public void run( )
+			{
+				if ( buffer.getContents( ) != null )
+				{
+					try
+					{
+						Thread.sleep( 1 );
+					}
+					catch ( InterruptedException e )
+					{
+						Logger.debug( e );
+					}
+					addBuffer( buffer );
+				}
+			}
+		}.start( );
 	}
 
 	public void removeBuffer( IBuffer buffer )

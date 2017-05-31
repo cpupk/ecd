@@ -236,6 +236,26 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 
 		if ( selectionChange )
 			return;
+
+		IClassFileEditorInput classFileEditorInput = (IClassFileEditorInput) getEditorInput( );
+		final IClassFile file = classFileEditorInput.getClassFile( );
+
+		Display.getDefault( ).asyncExec( new Runnable( ) {
+
+			public void run( )
+			{
+				try
+				{
+					DecompileUtil.updateBuffer( file,
+							file.getBuffer( ).getContents( ) );
+				}
+				catch ( JavaModelException e )
+				{
+					e.printStackTrace( );
+				}
+			}
+		} );
+
 		final StyledText widget = getSourceViewer( ).getTextWidget( );
 		widget.getDisplay( ).asyncExec( new Runnable( ) {
 
