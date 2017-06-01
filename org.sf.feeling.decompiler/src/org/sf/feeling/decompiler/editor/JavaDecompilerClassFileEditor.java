@@ -61,7 +61,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
-import org.sf.feeling.decompiler.i18n.Messages;
 import org.sf.feeling.decompiler.util.ClassUtil;
 import org.sf.feeling.decompiler.util.DecompileUtil;
 import org.sf.feeling.decompiler.util.DecompilerOutputUtil;
@@ -672,10 +671,8 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 					private Boolean isActive(
 							final HyperlinkManager fHyperlinkManager )
 					{
-						return (Boolean) ReflectionUtils.getFieldValue(
-								fHyperlinkManager,
-								Messages.getString(
-										"JavaDecompilerClassFileEditor.4" ) ); //$NON-NLS-1$
+						return (Boolean) ReflectionUtils
+								.getFieldValue( fHyperlinkManager, "fActive" );//$NON-NLS-1$
 					}
 
 					private void updateHyperlinks( final IHyperlink[] links,

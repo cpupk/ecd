@@ -170,7 +170,7 @@ public class PatchUtil
 			int index = fileName.indexOf( "_" );
 			if ( index != -1 )
 			{
-				String versionString = fileName.substring( index );
+				String versionString = fileName.substring( index + 1 );
 				versionString = versionString.replaceAll( "(?i)\\.jar", "" ).trim( );
 				return Version.parseVersion( versionString );
 			}
@@ -329,13 +329,10 @@ public class PatchUtil
 		}
 	}
 
-	public static boolean loadPatch( )
+	public static void loadPatch( )
 	{
-		final boolean[] result = new boolean[]{
-				true
-		};
 
-		Display.getDefault( ).syncExec( new Runnable( ) {
+		Display.getDefault( ).asyncExec( new Runnable( ) {
 
 			public void run( )
 			{
@@ -353,15 +350,13 @@ public class PatchUtil
 						File patchFile = PatchUtil.getLatestPatch( patchFolder, patchId );
 						if ( patchFile != null && patchFile.exists( ) && patchFile.isFile( ) )
 						{
-							if ( !PatchUtil.installPatch( patchFile ) )
-								result[0] = false;
+							PatchUtil.installPatch( patchFile );
 						}
 					}
 				}
 			}
 		} );
 
-		return result[0];
 	}
 
 	public static boolean loadFragment( )

@@ -14,15 +14,24 @@ package org.sf.feeling.decompiler.update.util;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class ExecutorUtil
 {
 
 	private final static ExecutorService poll = Executors.newFixedThreadPool( 1 );
 
+	private final static ScheduledExecutorService scheduledPool = Executors.newScheduledThreadPool( 1 );
+
 	public static <T> void submitTask( Callable<T> task )
 	{
 		poll.submit( task );
+	}
+
+	public static <T> void submitScheduledTask( Runnable task, long initialDelay, long period, TimeUnit unit )
+	{
+		scheduledPool.scheduleAtFixedRate( task, initialDelay, period, unit );
 	}
 
 }

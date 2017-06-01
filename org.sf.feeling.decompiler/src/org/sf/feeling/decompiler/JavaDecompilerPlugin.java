@@ -424,9 +424,12 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements
 
 	public void stop( BundleContext context ) throws Exception
 	{
-		PlatformUI.getWorkbench( )
-				.getActiveWorkbenchWindow( )
-				.addPerspectiveListener( perspectiveListener );
+		if ( PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( ) != null )
+		{
+			PlatformUI.getWorkbench( )
+					.getActiveWorkbenchWindow( )
+					.addPerspectiveListener( perspectiveListener );
+		}
 
 		manager.removeBreakpointListener( breakpintListener );
 		getPreferenceStore( ).setValue( DECOMPILE_COUNT,

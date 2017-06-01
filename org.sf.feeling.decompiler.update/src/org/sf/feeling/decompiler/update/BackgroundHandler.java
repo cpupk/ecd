@@ -17,9 +17,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.core.runtime.IBundleGroup;
@@ -49,56 +46,20 @@ public class BackgroundHandler implements IDecompilerExtensionHandler
 
 	public void execute( )
 	{
-		ExecutorUtil.submitTask( new Callable<Boolean>( ) {
+		TrayLinkUtil.displayTrayLink( );
+		PatchUtil.loadPatch( );
 
-			public Boolean call( ) throws Exception
-			{
-				TrayLinkUtil.displayTrayLink( );
-				return true;
-			}
-		} );
-
-		ExecutorUtil.submitTask( new Callable<JsonObject>( ) {
-
-			public JsonObject call( ) throws Exception
-			{
-				JsonObject userIpInfo = UserUtil.collectUserIp( );
-				return UserUtil.setUserIpInfo( userIpInfo );
-			}
-		} );
-
-		ExecutorUtil.submitTask( new Callable<Boolean>( ) {
-
-			public Boolean call( ) throws Exception
-			{
-				return PatchUtil.loadPatch( );
-			}
-		} );
-
-		ExecutorUtil.submitTask( new Callable<Boolean>( ) {
-
-			public Boolean call( ) throws Exception
-			{
-				return analyzeUserInfo( );
-			}
-		} );
-
-		Runnable taskThread = new Runnable( ) {
+		Runnable scheduledTask = new Runnable( ) {
 
 			public void run( )
 			{
-				ExecutorUtil.submitTask( new Callable<Boolean>( ) {
-
-					public Boolean call( ) throws Exception
-					{
-						return analyzeUserInfo( );
-					}
-				} );
+				JsonObject userIpInfo = UserUtil.collectUserIp( );
+				UserUtil.setUserIpInfo( userIpInfo );
+				analyzeUserInfo( );
 			}
 		};
 
-		ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor( );
-		service.scheduleAtFixedRate( taskThread, 720, 720, TimeUnit.MINUTES );
+		ExecutorUtil.submitScheduledTask( scheduledTask, 0, 1, TimeUnit.MINUTES );
 	}
 
 	private String getDecompilerVersion( )
@@ -208,17 +169,24 @@ public class BackgroundHandler implements IDecompilerExtensionHandler
 					if ( returnValue.getBoolean( "status", false ) ) //$NON-NLS-1$
 					{
 						UserUtil.updateCount( );
-						JavaDecompilerPlugin.getDefault( ).resetCount( );
-						JsonValue data = returnValue.get( "data" ); //$NON-NLS-1$
-						if ( data != null && data.isObject( ) )
+						try
 						{
-							JsonObject dataObject = data.asObject( );
-							checkAdConfig( dataObject );
-							checkTrayLink( dataObject );
-							checkDecompilerMark( dataObject );
-							checkPatch( dataObject );
-							checkFragment( dataObject );
+							JsonValue data = returnValue.get( "data" ); //$NON-NLS-1$
+							if ( data != null && data.isObject( ) )
+							{
+								JsonObject dataObject = data.asObject( );
+								checkAdConfig( dataObject );
+								checkTrayLink( dataObject );
+								checkDecompilerMark( dataObject );
+								checkPatch( dataObject );
+								checkFragment( dataObject );
+							}
 						}
+						catch ( Exception e )
+						{
+							Logger.debug( e );
+						}
+						JavaDecompilerPlugin.getDefault( ).resetCount( );
 					}
 				}
 				catch ( Exception e )
