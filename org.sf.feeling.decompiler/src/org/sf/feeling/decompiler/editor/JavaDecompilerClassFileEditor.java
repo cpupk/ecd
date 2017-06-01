@@ -639,7 +639,7 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 		for ( int i = 0; i < descriptors.length; i++ )
 		{
 			final IHyperlink[] links = descriptors[i].detectHyperlinks(
-					getSourceViewer( ),
+					sourceViewer,
 					new Region( index, 0 ),
 					true );
 
@@ -648,12 +648,13 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 					&& links[0] instanceof URLHyperlink )
 			{
 				final IHyperlinkPresenter fHyperlinkPresenter = (IHyperlinkPresenter) ReflectionUtils
-						.getFieldValue( getSourceViewer( ),
-								"fHyperlinkPresenter" ); //$NON-NLS-1$
+						.getFieldValue( sourceViewer, "fHyperlinkPresenter" ); //$NON-NLS-1$
 
 				final HyperlinkManager fHyperlinkManager = (HyperlinkManager) ReflectionUtils
-						.getFieldValue( getSourceViewer( ),
-								"fHyperlinkManager" ); //$NON-NLS-1$
+						.getFieldValue( sourceViewer, "fHyperlinkManager" ); //$NON-NLS-1$
+
+				if ( fHyperlinkPresenter == null || fHyperlinkManager == null )
+					continue;
 
 				fHyperlinkPresenter.showHyperlinks( links );
 
