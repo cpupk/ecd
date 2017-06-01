@@ -191,6 +191,7 @@ public class ArtifactorySourceCodeFinder extends AbstractSourceCodeFinder implem
 
 		URLConnection connection = new URL( url ).openConnection( );
 		connection.setConnectTimeout( 5000 );
+		connection.setReadTimeout( 5000 );
 		connection.connect( );
 		try
 		{

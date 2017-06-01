@@ -66,6 +66,7 @@ public class UserUtil
 			URLConnection connection = new URL( "http://pv.sohu.com/cityjson" ) //$NON-NLS-1$
 					.openConnection( );
 			connection.setConnectTimeout( 30000 );
+			connection.setReadTimeout( 30000 );
 			is = connection.getInputStream( );
 			String content = FileUtil.getContent( is );
 			content = unicodeToString(
@@ -80,6 +81,7 @@ public class UserUtil
 					"http://ip.taobao.com/service/getIpInfo.php?ip=" + ip ) //$NON-NLS-1$
 							.openConnection( );
 			connection.setConnectTimeout( 30000 );
+			connection.setReadTimeout( 30000 );
 			is = connection.getInputStream( );
 			content = unicodeToString(FileUtil.getContent( is ));
 			json = Json.parse( content ).asObject( );

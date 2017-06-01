@@ -51,7 +51,7 @@ public class AttachSourceHandler implements IAttachSourceHandler
 
 					protected IStatus run( final IProgressMonitor monitor )
 					{
-						return JavaSourceAttacherHandler.updateSourceAttachments( selections, monitor, true );
+						return JavaSourceAttacherHandler.updateSourceAttachments( selections, monitor );
 					}
 				};
 				job.setPriority( 30 );
@@ -63,7 +63,7 @@ public class AttachSourceHandler implements IAttachSourceHandler
 
 					public void run( )
 					{
-						JavaSourceAttacherHandler.updateSourceAttachments( selections, null, true );
+						JavaSourceAttacherHandler.updateSourceAttachments( selections, null );
 					}
 				};
 				thread.setDaemon( true );

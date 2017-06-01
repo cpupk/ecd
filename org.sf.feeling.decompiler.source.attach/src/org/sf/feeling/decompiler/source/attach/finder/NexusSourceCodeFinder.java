@@ -218,7 +218,7 @@ public class NexusSourceCodeFinder extends AbstractSourceCodeFinder implements S
 			Unmarshaller unmarshaller = context.createUnmarshaller( );
 			URLConnection connection = new URL( urlStr ).openConnection( );
 			connection.setConnectTimeout( 5000 );
-			connection.setReadTimeout( 1000 * 60 * 5 );
+			connection.setReadTimeout( 5000 );
 			connection.connect( );
 			try
 			{

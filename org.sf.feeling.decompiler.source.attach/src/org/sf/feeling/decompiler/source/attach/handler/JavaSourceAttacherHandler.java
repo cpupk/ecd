@@ -56,6 +56,8 @@ import org.sf.feeling.decompiler.util.Logger;
 public class JavaSourceAttacherHandler extends AbstractHandler
 {
 
+	final static Map<String, IPackageFragmentRoot> requests = new HashMap<String, IPackageFragmentRoot>( );
+
 	public Object execute( final ExecutionEvent event ) throws ExecutionException
 	{
 		if ( !JavaDecompilerPlugin.getDefault( ).isEnableExtension( ) )
@@ -150,7 +152,7 @@ public class JavaSourceAttacherHandler extends AbstractHandler
 
 				protected IStatus run( final IProgressMonitor monitor )
 				{
-					return JavaSourceAttacherHandler.updateSourceAttachments( selections, monitor, true );
+					return JavaSourceAttacherHandler.updateSourceAttachments( selections, monitor );
 				}
 			};
 			job.setPriority( 30 );
@@ -160,9 +162,9 @@ public class JavaSourceAttacherHandler extends AbstractHandler
 	}
 
 	public static IStatus updateSourceAttachments( final List<IPackageFragmentRoot> roots,
-			final IProgressMonitor monitor, final boolean firstTime )
+			final IProgressMonitor monitor )
 	{
-		final Map<String, IPackageFragmentRoot> requests = new HashMap<String, IPackageFragmentRoot>( );
+
 		for ( final IPackageFragmentRoot pkgRoot : roots )
 		{
 			File file;
@@ -177,6 +179,10 @@ public class JavaSourceAttacherHandler extends AbstractHandler
 			}
 			try
 			{
+				if ( roots.size( ) == 1 && requests.containsKey( file.getCanonicalPath( ) ) )
+				{
+					return Status.CANCEL_STATUS;
+				}
 				requests.put( file.getCanonicalPath( ), pkgRoot );
 			}
 			catch ( Exception e )
@@ -195,7 +201,7 @@ public class JavaSourceAttacherHandler extends AbstractHandler
 		{
 			while ( mgr.isRunning( ) && !notProcessedLibs.isEmpty( ) )
 			{
-				processLibSources( requests, notProcessedLibs, responses );
+				processLibSources( notProcessedLibs, responses );
 				try
 				{
 					Thread.sleep( 1000L );
@@ -210,7 +216,7 @@ public class JavaSourceAttacherHandler extends AbstractHandler
 		{
 			while ( !monitor.isCanceled( ) && mgr.isRunning( ) && !notProcessedLibs.isEmpty( ) )
 			{
-				processLibSources( requests, notProcessedLibs, responses );
+				processLibSources( notProcessedLibs, responses );
 				try
 				{
 					Thread.sleep( 1000L );
@@ -225,13 +231,36 @@ public class JavaSourceAttacherHandler extends AbstractHandler
 		mgr.cancel( );
 		if ( !notProcessedLibs.isEmpty( ) )
 		{
-			processLibSources( requests, notProcessedLibs, responses );
+			processLibSources( notProcessedLibs, responses );
 		}
+
+		for ( final IPackageFragmentRoot pkgRoot : roots )
+		{
+			File file;
+
+			if ( !pkgRoot.isExternal( ) )
+			{
+				file = pkgRoot.getResource( ).getLocation( ).toFile( );
+			}
+			else
+			{
+				file = pkgRoot.getPath( ).toFile( );
+			}
+			try
+			{
+
+				requests.remove( file.getCanonicalPath( ) );
+			}
+			catch ( Exception e )
+			{
+				Logger.debug( e );
+			}
+		}
+
 		return Status.OK_STATUS;
 	}
 
-	private static void processLibSources( final Map<String, IPackageFragmentRoot> requests,
-			final Set<String> notProcessedLibs, final List<SourceFileResult> responses )
+	private static void processLibSources( final Set<String> notProcessedLibs, final List<SourceFileResult> responses )
 	{
 
 		while ( !responses.isEmpty( ) )
@@ -240,18 +269,18 @@ public class JavaSourceAttacherHandler extends AbstractHandler
 			final String binFile = response.getBinFile( );
 			if ( notProcessedLibs.contains( binFile ) && response.getSource( ) != null )
 			{
-				notProcessedLibs.remove( response.getBinFile( ) );
 				final IPackageFragmentRoot pkgRoot = requests.get( binFile );
-				final String source = response.getSource( );
-				final String tempSource = response.getTempSource( );
-				final String suggestedSourceFileName = response.getSuggestedSourceFileName( );
-				final String downloadUrl = response.getFinder( ).getDownloadUrl( );
-				if ( downloadUrl == null && !( response.getFinder( ) instanceof SourceCodeFinderFacade ) )
-				{
-					continue;
-				}
 				try
 				{
+					notProcessedLibs.remove( response.getBinFile( ) );
+					final String source = response.getSource( );
+					final String tempSource = response.getTempSource( );
+					final String suggestedSourceFileName = response.getSuggestedSourceFileName( );
+					final String downloadUrl = response.getFinder( ).getDownloadUrl( );
+					if ( downloadUrl == null && !( response.getFinder( ) instanceof SourceCodeFinderFacade ) )
+					{
+						continue;
+					}
 					if ( !SourceConstants.SourceAttacherDir.exists( ) )
 					{
 						SourceConstants.SourceAttacherDir.mkdirs( );

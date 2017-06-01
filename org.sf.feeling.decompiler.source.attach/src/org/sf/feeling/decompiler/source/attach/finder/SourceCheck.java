@@ -87,6 +87,7 @@ public class SourceCheck
 		final URL url2 = new URL( "http://javasourceattacher2.appspot.com/rest/libraries" ); //$NON-NLS-1$
 		final HttpURLConnection conn = (HttpURLConnection) url2.openConnection( );
 		conn.setConnectTimeout( 5000 );
+		conn.setReadTimeout( 5000 );
 		conn.setDoOutput( true );
 		final OutputStreamWriter wr = new OutputStreamWriter( conn.getOutputStream( ) );
 		wr.write( data );

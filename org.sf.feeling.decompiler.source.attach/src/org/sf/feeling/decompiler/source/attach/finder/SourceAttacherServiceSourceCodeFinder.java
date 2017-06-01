@@ -62,6 +62,8 @@ public class SourceAttacherServiceSourceCodeFinder extends AbstractSourceCodeFin
 				String serviceUrl = "http://javasourceattacher2.appspot.com/rest/libraries?md5=" + md5; //$NON-NLS-1$
 				conn = new URL( serviceUrl ).openConnection( );
 				conn.setConnectTimeout( 5000 );
+				conn.setReadTimeout( 5000 );
+				conn.setReadTimeout( 5000 );
 				is2 = conn.getInputStream( );
 				String str = IOUtils.toString( is2 );
 				JsonArray json = Json.parse( str ).asArray( );
@@ -79,9 +81,7 @@ public class SourceAttacherServiceSourceCodeFinder extends AbstractSourceCodeFin
 						{
 							String url1 = ar.get( 0 ).asString( );
 							String[] sourceFiles = SourceBindingUtil.getSourceFileByDownloadUrl( url1 );
-							if ( sourceFiles != null
-									&& sourceFiles[0] != null
-									&& new File( sourceFiles[0] ).exists( ) )
+							if ( sourceFiles != null && sourceFiles[0] != null && new File( sourceFiles[0] ).exists( ) )
 							{
 								File sourceFile = new File( sourceFiles[0] );
 								File tempFile = new File( sourceFiles[1] );

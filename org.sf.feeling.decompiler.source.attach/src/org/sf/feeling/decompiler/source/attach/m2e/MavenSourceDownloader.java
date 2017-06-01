@@ -14,6 +14,8 @@ package org.sf.feeling.decompiler.source.attach.m2e;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IJavaElement;
@@ -34,14 +36,14 @@ public class MavenSourceDownloader
 {
 
 	private IPackageFragmentRoot root = null;
+	private static Set<String> librarys = new ConcurrentSkipListSet<String>( );
 
 	public void downloadSource( IEditorPart part )
 	{
 		root = null;
 		try
 		{
-			IClasspathManager buildpathManager = MavenJdtPlugin.getDefault( )
-					.getBuildpathManager( );
+			IClasspathManager buildpathManager = MavenJdtPlugin.getDefault( ).getBuildpathManager( );
 			IClassFileEditorInput input = (IClassFileEditorInput) part.getEditorInput( );
 			IJavaElement element = input.getClassFile( );
 			while ( element.getParent( ) != null )
@@ -50,6 +52,16 @@ public class MavenSourceDownloader
 				if ( ( element instanceof IPackageFragmentRoot ) )
 				{
 					root = (IPackageFragmentRoot) element;
+					if ( root.getPath( ) == null || root.getPath( ).toOSString( ) == null )
+						continue;
+					if ( librarys.contains( root.getPath( ).toOSString( ) ) )
+					{
+						continue;
+					}
+					else
+					{
+						librarys.add( root.getPath( ).toOSString( ) );
+					}
 					if ( !SourceAttachUtil.isMavenLibrary( root ) )
 					{
 						continue;
@@ -77,16 +89,13 @@ public class MavenSourceDownloader
 								{
 									if ( System.currentTimeMillis( ) - time > 60 * 1000 )
 									{
-										new AttachSourceHandler( ).execute( root,
-												true );
+										new AttachSourceHandler( ).execute( root, true );
 										break;
 									}
 									try
 									{
 										if ( fRoot.getSourceAttachmentPath( ) != null
-												&& fRoot.getSourceAttachmentPath( )
-														.toFile( )
-														.exists( ) )
+												&& fRoot.getSourceAttachmentPath( ).toFile( ).exists( ) )
 										{
 											SourceAttachUtil.updateSourceAttachStatus( fRoot );
 											break;
@@ -117,9 +126,7 @@ public class MavenSourceDownloader
 
 					public void run( )
 					{
-						JavaSourceAttacherHandler.updateSourceAttachments( selections,
-								null,
-								true );
+						JavaSourceAttacherHandler.updateSourceAttachments( selections, null );
 					}
 				};
 				thread.setDaemon( true );

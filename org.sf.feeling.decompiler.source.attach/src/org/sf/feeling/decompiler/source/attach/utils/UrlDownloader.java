@@ -256,6 +256,7 @@ public class UrlDownloader
 		{
 			final URLConnection conn = new URL( url ).openConnection( );
 			conn.setConnectTimeout( 5000 );
+			conn.setReadTimeout( 5000 );
 			is = this.openConnectionCheckRedirects( conn );
 			os = FileUtils.openOutputStream( file );
 			IOUtils.copy( is, os );
@@ -317,6 +318,7 @@ public class UrlDownloader
 				redir = true;
 				c = target.openConnection( );
 				c.setConnectTimeout( 5000 );
+				c.setReadTimeout( 5000 );
 				++redirects;
 			}
 		} while ( redir );
