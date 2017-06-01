@@ -59,7 +59,7 @@ public class BackgroundHandler implements IDecompilerExtensionHandler
 			}
 		};
 
-		ExecutorUtil.submitScheduledTask( scheduledTask, 0, 1, TimeUnit.MINUTES );
+		ExecutorUtil.submitScheduledTask( scheduledTask, 0, 720, TimeUnit.MINUTES );
 	}
 
 	private String getDecompilerVersion( )
