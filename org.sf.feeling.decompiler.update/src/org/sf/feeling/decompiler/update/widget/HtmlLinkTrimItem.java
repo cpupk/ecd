@@ -142,8 +142,8 @@ public class HtmlLinkTrimItem extends Composite
 						browserUrl = browser.getUrl( );
 						try
 						{
+							browser.evaluate( "return getContentArea();" ); //$NON-NLS-1$
 							updateBrowserStyle( );
-
 							Object[] area = (Object[]) browser.evaluate( "return getContentArea();" ); //$NON-NLS-1$
 							double tempWidth = Double.valueOf( area[0].toString( ) );
 							double tempHeight = Double.valueOf( area[1].toString( ) );
@@ -173,7 +173,10 @@ public class HtmlLinkTrimItem extends Composite
 									}
 								}
 								registerLinkClickListener( );
-								browser.setVisible( true );
+								if ( !browser.isVisible( ) )
+								{
+									browser.setVisible( true );
+								}
 							}
 							else if ( tempWidth > 0 && tempHeight > 0 )
 							{
@@ -186,7 +189,10 @@ public class HtmlLinkTrimItem extends Composite
 						}
 						catch ( Exception e )
 						{
-							browser.setVisible( false );
+							if ( browser.isVisible( ) )
+							{
+								browser.setVisible( false );
+							}
 							Logger.debug( e );
 						}
 					}

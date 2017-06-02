@@ -614,8 +614,12 @@ public class UIUtil
 	private static StyleRange getStyleRange( StyledText textWidget, int offset,
 			int length, JsonObject style, String defaultColor, boolean isLink )
 	{
+		int contentLength = textWidget.getCharCount( );
+		if ( contentLength - offset < 0 )
+			return null;
 		StyleRange range = new StyleRange( offset,
-				length,
+				offset + length < contentLength ? length
+						: contentLength - offset,
 				defaultColor == null ? null
 						: JFaceResources.getResources( ).createColor(
 								ColorUtil.getColorValue( defaultColor ) ),
