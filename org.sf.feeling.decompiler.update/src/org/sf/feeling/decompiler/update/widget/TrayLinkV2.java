@@ -30,6 +30,8 @@ public class TrayLinkV2
 
 	public static void displayTrayLink( IWorkbenchWindow window, boolean show )
 	{
+		if ( window == null )
+			return;
 
 		if ( !trayLinks.containsKey( window ) )
 		{
@@ -61,15 +63,13 @@ public class TrayLinkV2
 			{
 				if ( trayLink.getLayoutData( ) == null )
 				{
-					trayLinkTrim.setWidthHint( trayLink.computeSize( SWT.DEFAULT,
-							SWT.DEFAULT ).x );
-					trayLinkTrim.setHeightHint( ( (WorkbenchWindow) window ).getStatusLineManager( )
-							.getControl( )
-							.computeSize( SWT.DEFAULT, SWT.DEFAULT ).y );
+					trayLinkTrim.setWidthHint( trayLink.computeSize( SWT.DEFAULT, SWT.DEFAULT ).x );
+					trayLinkTrim.setHeightHint(
+							( (WorkbenchWindow) window ).getStatusLineManager( ).getControl( ).computeSize( SWT.DEFAULT,
+									SWT.DEFAULT ).y );
 				}
 
-				TrimLayout defaultLayout = (TrimLayout) ReflectionUtils.getFieldValue( window,
-						"defaultLayout" ); //$NON-NLS-1$
+				TrimLayout defaultLayout = (TrimLayout) ReflectionUtils.getFieldValue( window, "defaultLayout" ); //$NON-NLS-1$
 				if ( defaultLayout != null )
 				{
 					if ( defaultLayout.getTrim( trayLinkTrim.getId( ) ) == null )
@@ -81,8 +81,7 @@ public class TrayLinkV2
 			}
 			else
 			{
-				TrimLayout defaultLayout = (TrimLayout) ReflectionUtils.getFieldValue( window,
-						"defaultLayout" ); //$NON-NLS-1$
+				TrimLayout defaultLayout = (TrimLayout) ReflectionUtils.getFieldValue( window, "defaultLayout" ); //$NON-NLS-1$
 				if ( defaultLayout != null )
 				{
 					defaultLayout.removeTrim( trayLinkTrim );
