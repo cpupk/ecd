@@ -132,47 +132,65 @@ public class HtmlLinkTrimItem extends Composite
 
 			private void handleEvent( )
 			{
-				browserUrl = browser.getUrl( );
-				try
-				{
-					updateBrowserStyle( );
+				getDisplay( ).asyncExec( new Runnable( ) {
 
-					Object[] area = (Object[]) browser.evaluate( "return getContentArea();" ); //$NON-NLS-1$
-					double tempWidth = Double.valueOf( area[0].toString( ) );
-					double tempHeight = Double.valueOf( area[1].toString( ) );
-					if ( tempWidth > 0 && tempHeight > 0 && ( tempWidth != width || tempHeight != height ) )
+					public void run( )
 					{
-						width = tempWidth;
-						height = tempHeight;
-						HtmlLinkTrimItem.this.pack( );
-						HtmlLinkTrimItem.this.setSize( computeSize( -1, -1, true ) );
-						GridData gd = (GridData) browser.getLayoutData( );
-						if ( gd == null )
+						if ( browser == null || browser.isDisposed( ) )
+							return;
+
+						browserUrl = browser.getUrl( );
+						try
 						{
-							gd = new GridData( );
-						}
-						gd.verticalIndent = (int) Math.ceil( HtmlLinkTrimItem.this.getBounds( ).height - height ) / 2
-								- 1;
-						browser.setLayoutData( gd );
-						HtmlLinkTrimItem.this.layout( true, true );
-						HtmlLinkTrimItem.this.getParent( ).layout( true, true );
-						if ( HtmlLinkTrimItem.this.getParent( ).getParent( ) != null )
-						{
-							HtmlLinkTrimItem.this.getParent( ).getParent( ).layout( true, true );
-							if ( HtmlLinkTrimItem.this.getParent( ).getParent( ).getParent( ) != null )
+							updateBrowserStyle( );
+
+							Object[] area = (Object[]) browser.evaluate( "return getContentArea();" ); //$NON-NLS-1$
+							double tempWidth = Double.valueOf( area[0].toString( ) );
+							double tempHeight = Double.valueOf( area[1].toString( ) );
+							if ( tempWidth > 0 && tempHeight > 0 && ( tempWidth != width || tempHeight != height ) )
 							{
-								HtmlLinkTrimItem.this.getParent( ).getParent( ).getParent( ).layout( true, true );
+								width = tempWidth;
+								height = tempHeight;
+								HtmlLinkTrimItem.this.pack( );
+								HtmlLinkTrimItem.this.setSize( computeSize( -1, -1, true ) );
+								GridData gd = (GridData) browser.getLayoutData( );
+								if ( gd == null )
+								{
+									gd = new GridData( );
+								}
+								gd.verticalIndent = (int) Math
+										.ceil( HtmlLinkTrimItem.this.getBounds( ).height - height ) / 2 - 1;
+								browser.setLayoutData( gd );
+								HtmlLinkTrimItem.this.layout( true, true );
+								HtmlLinkTrimItem.this.getParent( ).layout( true, true );
+								if ( HtmlLinkTrimItem.this.getParent( ).getParent( ) != null )
+								{
+									HtmlLinkTrimItem.this.getParent( ).getParent( ).layout( true, true );
+									if ( HtmlLinkTrimItem.this.getParent( ).getParent( ).getParent( ) != null )
+									{
+										HtmlLinkTrimItem.this.getParent( ).getParent( ).getParent( ).layout( true,
+												true );
+									}
+								}
+								registerLinkClickListener( );
+								browser.setVisible( true );
+							}
+							else
+							{
+								if ( !browser.isVisible( ) )
+								{
+									browser.setVisible( true );
+								}
 							}
 						}
-						registerLinkClickListener( );
-						browser.setVisible( true );
+						catch ( Exception e )
+						{
+							browser.setVisible( false );
+							Logger.debug( e );
+						}
 					}
-				}
-				catch ( Exception e )
-				{
-					browser.setVisible( false );
-					Logger.debug( e );
-				}
+				} );
+
 			}
 
 			private void updateBrowserStyle( )

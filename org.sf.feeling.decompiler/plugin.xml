@@ -20,6 +20,7 @@
             icon="icons/decompiler.png"
             extensions="class"
             class="org.sf.feeling.decompiler.editor.JavaDecompilerClassFileEditor"
+            contributorClass="org.eclipse.jdt.internal.ui.javaeditor.ClassFileEditorActionContributor"
             id="org.sf.feeling.decompiler.ClassFileEditor"
             symbolicFontName="org.eclipse.jdt.ui.editors.textfont"
             filenames="*.class without source">
@@ -177,7 +178,7 @@
                id="org.sf.feeling.decompiler.actions.DecompilerToolbarMenu"
                label="%Decompiler"
                style="pulldown"
-               toolbarPath="additions"
+               toolbarPath="org.eclipse.ui.edit.text.actionSet.presentation/Decompiler"
                tooltip="%Decompiler">
          </action>
          <action
@@ -216,6 +217,32 @@
                label="%DebugMode"
                style="toggle"
                menubarPath="decompilerMenu/debugGroup">
+         </action>
+         <action
+               allowLabelUpdate="true"
+               style="toggle"
+               toolbarPath="org.eclipse.ui.edit.text.actionSet.presentation/Presentation"
+               id="org.eclipse.jdt.ui.edit.text.java.toggleMarkOccurrences"
+               definitionId="org.eclipse.jdt.ui.edit.text.java.toggleMarkOccurrences"
+               disabledIcon="platform:/plugin/org.eclipse.jdt.ui/icons/full/dtool16/mark_occurrences.png"
+               icon="platform:/plugin/org.eclipse.jdt.ui/icons/full/etool16/mark_occurrences.png"
+               helpContextId="org.eclipse.jdt.ui.toggle_mark_occurrences_action_context"
+               label="%toggleMarkOccurrences.label"
+               retarget="true"
+               tooltip="%toggleMarkOccurrences.tooltip">
+         </action>
+         <action
+               allowLabelUpdate="true"
+               style="toggle"
+               toolbarPath="org.eclipse.ui.edit.text.actionSet.presentation/Presentation"
+               id="org.eclipse.jdt.ui.edit.text.java.toggleBreadcrumb"
+               definitionId="org.eclipse.jdt.ui.edit.text.java.toggleBreadcrumb"
+               disabledIcon="platform:/plugin/org.eclipse.jdt.ui/icons/full/dtool16/toggle_breadcrumb.png"
+               icon="platform:/plugin/org.eclipse.jdt.ui/icons/full/etool16/toggle_breadcrumb.png"
+               helpContextId="org.eclipse.jdt.ui.toggle_mini_browser_action_context"
+               label="%toggleBreadcrumb.label"
+               retarget="true"
+               tooltip="%toggleBreadcrumb.tooltip">
          </action>
       </actionSet>
    </extension>	 
