@@ -13,6 +13,7 @@ package org.sf.feeling.decompiler.update.widget;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WindowTrimProxy;
 import org.eclipse.ui.internal.WorkbenchWindow;
@@ -27,12 +28,12 @@ public class TrayLinkV2
 
 	private static WindowTrimProxy trayLinkTrim = null;
 
-	public static void displayTrayLink( boolean show )
+	public static void displayTrayLink( IWorkbenchWindow window, boolean show )
 	{
 
 		if ( trayLink == null )
 		{
-			trayLink = new HtmlLinkTrimItem( Display.getDefault( ).getActiveShell( ) );
+			trayLink = new HtmlLinkTrimItem( window.getShell( ) );
 			trayLinkTrim = new WindowTrimProxy( trayLink,
 					"org.sf.feeling.decompiler.update.widget.HtmlLinkTrimItem", //$NON-NLS-1$
 					"Tray Link", //$NON-NLS-1$
@@ -54,8 +55,6 @@ public class TrayLinkV2
 		{
 			if ( show )
 			{
-				WorkbenchWindow window = (WorkbenchWindow) PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( );
-
 				if ( trayLink.getLayoutData( ) == null )
 				{
 					trayLinkTrim.setWidthHint( trayLink.computeSize( SWT.DEFAULT, SWT.DEFAULT ).x );
@@ -75,7 +74,6 @@ public class TrayLinkV2
 			}
 			else
 			{
-				WorkbenchWindow window = (WorkbenchWindow) PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( );
 				TrimLayout defaultLayout = (TrimLayout) ReflectionUtils.getFieldValue( window, "defaultLayout" ); //$NON-NLS-1$
 				if ( defaultLayout != null )
 				{

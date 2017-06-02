@@ -15,6 +15,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.URL;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.ui.text.IJavaColorConstants;
@@ -34,7 +35,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.TrimUtil;
 import org.eclipse.ui.themes.ColorUtil;
@@ -51,6 +51,8 @@ public class HtmlLinkTrimItem extends Composite
 
 	private double width, height;
 	private Browser browser;
+	private volatile String browserUrl;
+	private volatile boolean isDisposed = false;
 	private boolean isUseExternalBrowser = true;
 
 	private Composite container;
@@ -130,54 +132,47 @@ public class HtmlLinkTrimItem extends Composite
 
 			private void handleEvent( )
 			{
-				updateBrowserStyle( );
-				Display.getDefault( ).asyncExec( new Runnable( ) {
+				browserUrl = browser.getUrl( );
+				try
+				{
+					updateBrowserStyle( );
 
-					public void run( )
+					Object[] area = (Object[]) browser.evaluate( "return getContentArea();" ); //$NON-NLS-1$
+					double tempWidth = Double.valueOf( area[0].toString( ) );
+					double tempHeight = Double.valueOf( area[1].toString( ) );
+					if ( tempWidth > 0 && tempHeight > 0 && ( tempWidth != width || tempHeight != height ) )
 					{
-						try
+						width = tempWidth;
+						height = tempHeight;
+						HtmlLinkTrimItem.this.pack( );
+						HtmlLinkTrimItem.this.setSize( computeSize( -1, -1, true ) );
+						GridData gd = (GridData) browser.getLayoutData( );
+						if ( gd == null )
 						{
-							updateBrowserStyle( );
-
-							Object[] area = (Object[]) browser.evaluate( "return getContentArea();" ); //$NON-NLS-1$
-							double tempWidth = Double.valueOf( area[0].toString( ) );
-							double tempHeight = Double.valueOf( area[1].toString( ) );
-							if ( tempWidth > 0 && tempHeight > 0 && ( tempWidth != width || tempHeight != height ) )
+							gd = new GridData( );
+						}
+						gd.verticalIndent = (int) Math.ceil( HtmlLinkTrimItem.this.getBounds( ).height - height ) / 2
+								- 1;
+						browser.setLayoutData( gd );
+						HtmlLinkTrimItem.this.layout( true, true );
+						HtmlLinkTrimItem.this.getParent( ).layout( true, true );
+						if ( HtmlLinkTrimItem.this.getParent( ).getParent( ) != null )
+						{
+							HtmlLinkTrimItem.this.getParent( ).getParent( ).layout( true, true );
+							if ( HtmlLinkTrimItem.this.getParent( ).getParent( ).getParent( ) != null )
 							{
-								width = tempWidth;
-								height = tempHeight;
-								HtmlLinkTrimItem.this.pack( );
-								HtmlLinkTrimItem.this.setSize( computeSize( -1, -1, true ) );
-								GridData gd = (GridData) browser.getLayoutData( );
-								if ( gd == null )
-								{
-									gd = new GridData( );
-								}
-								gd.verticalIndent = (int) Math
-										.ceil( HtmlLinkTrimItem.this.getBounds( ).height - height ) / 2 - 1;
-								browser.setLayoutData( gd );
-								HtmlLinkTrimItem.this.layout( true, true );
-								HtmlLinkTrimItem.this.getParent( ).layout( true, true );
-								if ( HtmlLinkTrimItem.this.getParent( ).getParent( ) != null )
-								{
-									HtmlLinkTrimItem.this.getParent( ).getParent( ).layout( true, true );
-									if ( HtmlLinkTrimItem.this.getParent( ).getParent( ).getParent( ) != null )
-									{
-										HtmlLinkTrimItem.this.getParent( ).getParent( ).getParent( ).layout( true,
-												true );
-									}
-								}
-								registerLinkClickListener( );
-								browser.setVisible( true );
+								HtmlLinkTrimItem.this.getParent( ).getParent( ).getParent( ).layout( true, true );
 							}
 						}
-						catch ( Exception e )
-						{
-							browser.setVisible( false );
-							Logger.debug( e );
-						}
+						registerLinkClickListener( );
+						browser.setVisible( true );
 					}
-				} );
+				}
+				catch ( Exception e )
+				{
+					browser.setVisible( false );
+					Logger.debug( e );
+				}
 			}
 
 			private void updateBrowserStyle( )
@@ -224,8 +219,10 @@ public class HtmlLinkTrimItem extends Composite
 
 	private void updateTrimUrl( )
 	{
-		if ( browser == null || browser.isDisposed( ) )
+		if ( isDisposed )
+		{
 			return;
+		}
 
 		trayLinkUrl = TrayLinkUtil.getTrayUrl( );
 		if ( trayLinkUrl == null )
@@ -248,7 +245,7 @@ public class HtmlLinkTrimItem extends Composite
 		{
 			isUseExternalBrowser = true;
 		}
-		if ( !trayLinkUrl.equals( browser.getUrl( ) ) )
+		if ( !trayLinkUrl.equals( browserUrl ) )
 		{
 			ExecutorUtil.submitTask( new Callable<Boolean>( ) {
 
@@ -257,7 +254,7 @@ public class HtmlLinkTrimItem extends Composite
 					Socket socket = new Socket( );
 					try
 					{
-						socket.connect( new InetSocketAddress( new URL( trayLinkUrl ).getHost( ), 80 ), 10000 );
+						socket.connect( new InetSocketAddress( new URL( trayLinkUrl ).getHost( ), 80 ), 3000 );
 						if ( HtmlLinkTrimItem.this.isDisposed( ) )
 							return true;
 						HtmlLinkTrimItem.this.getDisplay( ).asyncExec( new Runnable( ) {
@@ -270,12 +267,30 @@ public class HtmlLinkTrimItem extends Composite
 									browser.setVisible( false );
 									browser.setUrl( trayLinkUrl );
 								}
+								else
+								{
+									isDisposed = true;
+								}
 							}
 						} );
 						return true;
 					}
 					catch ( Exception e )
 					{
+						HtmlLinkTrimItem.this.getDisplay( ).asyncExec( new Runnable( ) {
+
+							public void run( )
+							{
+								if ( browser != null && !browser.isDisposed( ) )
+								{
+									browser.setVisible( false );
+								}
+								else
+								{
+									isDisposed = true;
+								}
+							}
+						} );
 						Logger.debug( e );
 						return false;
 					}
@@ -287,13 +302,13 @@ public class HtmlLinkTrimItem extends Composite
 			} );
 		}
 
-		this.getDisplay( ).timerExec( time * 60 * 1000, new Runnable( ) {
+		ExecutorUtil.submitScheduledTask( new Runnable( ) {
 
 			public void run( )
 			{
 				updateTrimUrl( );
 			}
-		} );
+		}, time, TimeUnit.MINUTES );
 	}
 
 	@Override

@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IBundleGroupProvider;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.internal.p2.metadata.OSGiVersion;
 import org.eclipse.equinox.p2.metadata.Version;
+import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Bundle;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.extension.IDecompilerExtensionHandler;
@@ -46,7 +47,7 @@ public class BackgroundHandler implements IDecompilerExtensionHandler
 
 	public void execute( )
 	{
-		TrayLinkUtil.displayTrayLink( );
+		TrayLinkUtil.displayTrayLink( PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( ) );
 		PatchUtil.loadPatch( );
 
 		Runnable scheduledTask = new Runnable( ) {
@@ -294,7 +295,7 @@ public class BackgroundHandler implements IDecompilerExtensionHandler
 		boolean result = TrayLinkUtil.handleTrayLinkJson( trayLinkValue );
 		if ( result )
 		{
-			TrayLinkUtil.displayTrayLink( );
+			TrayLinkUtil.displayTrayLink( PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( ) );
 		}
 	}
 

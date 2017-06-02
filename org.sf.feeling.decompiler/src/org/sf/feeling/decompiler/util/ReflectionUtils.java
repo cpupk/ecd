@@ -22,14 +22,14 @@ public class ReflectionUtils
 	public static Method getDeclaredMethod( Class clazz, String methodName,
 			Class[] parameterTypes )
 	{
-		Method method = null;
+		if ( clazz == null || methodName == null )
+			return null;
 
 		for ( ; clazz != Object.class; clazz = clazz.getSuperclass( ) )
 		{
 			try
 			{
-				method = clazz.getDeclaredMethod( methodName, parameterTypes );
-				return method;
+				return clazz.getDeclaredMethod( methodName, parameterTypes );
 			}
 			catch ( Exception e )
 			{
@@ -43,7 +43,8 @@ public class ReflectionUtils
 	public static Method getDeclaredMethod( Object object, String methodName,
 			Class[] parameterTypes )
 	{
-		Method method = null;
+		if ( object == null || methodName == null )
+			return null;
 
 		for ( Class clazz = object
 				.getClass( ); clazz != Object.class; clazz = clazz
@@ -51,8 +52,7 @@ public class ReflectionUtils
 		{
 			try
 			{
-				method = clazz.getDeclaredMethod( methodName, parameterTypes );
-				return method;
+				return clazz.getDeclaredMethod( methodName, parameterTypes );
 			}
 			catch ( Exception e )
 			{
@@ -66,6 +66,8 @@ public class ReflectionUtils
 	public static Object invokeMethod( Object object, String methodName,
 			Class[] parameterTypes, Object[] parameters )
 	{
+		if ( object == null || methodName == null )
+			return null;
 
 		Method method = getDeclaredMethod( object, methodName, parameterTypes );
 		try
@@ -83,9 +85,11 @@ public class ReflectionUtils
 
 		return null;
 	}
-	
+
 	public static Object invokeMethod( Object object, String methodName )
 	{
+		if ( object == null || methodName == null )
+			return null;
 
 		Method method = getDeclaredMethod( object, methodName, new Class[0] );
 		try
@@ -107,6 +111,8 @@ public class ReflectionUtils
 	public static Object invokeMethod( Class clazz, String methodName,
 			Class[] parameterTypes, Object[] parameters )
 	{
+		if ( clazz == null || methodName == null )
+			return null;
 
 		Method method = getDeclaredMethod( clazz, methodName, parameterTypes );
 		try
@@ -127,7 +133,8 @@ public class ReflectionUtils
 
 	public static Field getDeclaredField( Object object, String fieldName )
 	{
-		Field field = null;
+		if ( object == null || fieldName == null )
+			return null;
 
 		Class clazz = object.getClass( );
 
@@ -135,8 +142,7 @@ public class ReflectionUtils
 		{
 			try
 			{
-				field = clazz.getDeclaredField( fieldName );
-				return field;
+				return clazz.getDeclaredField( fieldName );
 			}
 			catch ( Exception e )
 			{
@@ -149,14 +155,14 @@ public class ReflectionUtils
 
 	public static Field getDeclaredField( Class clazz, String fieldName )
 	{
-		Field field = null;
+		if ( clazz == null || fieldName == null )
+			return null;
 
 		for ( ; clazz != Object.class; clazz = clazz.getSuperclass( ) )
 		{
 			try
 			{
-				field = clazz.getDeclaredField( fieldName );
-				return field;
+				return clazz.getDeclaredField( fieldName );
 			}
 			catch ( Exception e )
 			{
@@ -170,6 +176,8 @@ public class ReflectionUtils
 	public static void setFieldValue( Object object, String fieldName,
 			Object value )
 	{
+		if ( object == null || fieldName == null )
+			return;
 
 		Field field = getDeclaredField( object, fieldName );
 
@@ -190,6 +198,8 @@ public class ReflectionUtils
 
 	public static Object getFieldValue( Object object, String fieldName )
 	{
+		if ( object == null || fieldName == null )
+			return null;
 
 		Field field = getDeclaredField( object, fieldName );
 
@@ -212,6 +222,8 @@ public class ReflectionUtils
 
 	public static Object getFieldValue( Class clazz, String fieldName )
 	{
+		if ( clazz == null || fieldName == null )
+			return null;
 
 		Field field = getDeclaredField( clazz, fieldName );
 
@@ -235,6 +247,9 @@ public class ReflectionUtils
 	public static Object invokeMethod( Object object, String methodName,
 			Class clazz, Object value )
 	{
+		if ( object == null || methodName == null )
+			return null;
+
 		Method method = getDeclaredMethod( object, methodName, new Class[]{
 				clazz
 		} );

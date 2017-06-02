@@ -11,20 +11,21 @@
 
 package org.sf.feeling.decompiler.update.widget;
 
+import org.eclipse.ui.IWorkbenchWindow;
 import org.sf.feeling.decompiler.util.Logger;
 
 public class LinkTrimChecker
 {
 
-	public void displayTrayLink( boolean show )
+	public void displayTrayLink( IWorkbenchWindow window, boolean show )
 	{
 		if ( supportV1( ) )
 		{
-			TrayLinkV1.displayTrayLink( show );
+			TrayLinkV1.displayTrayLink( window, show );
 		}
 		else if ( supportV2( ) )
 		{
-			TrayLinkV2.displayTrayLink( show );
+			TrayLinkV2.displayTrayLink( window, show );
 		}
 	}
 

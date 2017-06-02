@@ -16,11 +16,15 @@ import java.io.File;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.ui.IWindowListener;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
+import org.sf.feeling.decompiler.update.util.TrayLinkUtil;
 import org.sf.feeling.decompiler.util.Logger;
 import org.sf.feeling.decompiler.util.ReflectionUtils;
 
@@ -42,6 +46,26 @@ public class DecompilerUpdatePlugin extends AbstractUIPlugin implements IPropert
 
 	private File patchFile;
 
+	private IWindowListener windowListener = new IWindowListener( ) {
+
+		public void windowOpened( IWorkbenchWindow window )
+		{
+			TrayLinkUtil.displayTrayLink( window );
+		}
+
+		public void windowActivated( IWorkbenchWindow window )
+		{
+		}
+
+		public void windowDeactivated( IWorkbenchWindow window )
+		{
+		}
+
+		public void windowClosed( IWorkbenchWindow window )
+		{
+		}
+	};
+
 	/**
 	 * The constructor
 	 */
@@ -60,6 +84,7 @@ public class DecompilerUpdatePlugin extends AbstractUIPlugin implements IPropert
 		super.start( context );
 		plugin = this;
 		getPreferenceStore( ).addPropertyChangeListener( this );
+		PlatformUI.getWorkbench( ).addWindowListener( windowListener );
 	}
 
 	public IPreferenceStore getPreferenceStore( )
@@ -80,14 +105,18 @@ public class DecompilerUpdatePlugin extends AbstractUIPlugin implements IPropert
 	 */
 	public void stop( BundleContext context ) throws Exception
 	{
+		if ( PlatformUI.getWorkbench( ) != null )
+		{
+			PlatformUI.getWorkbench( ).removeWindowListener( windowListener );
+		}
 		if ( patchFile != null )
 		{
 			try
 			{
 				Bundle bundle = (Bundle) ReflectionUtils.invokeMethod( context, "getBundle", new Class[]{ //$NON-NLS-1$
-					String.class
+						String.class
 				}, new Object[]{
-					patchFile.toURI( ).toString( )
+						patchFile.toURI( ).toString( )
 				} );
 				if ( bundle == null )
 				{
