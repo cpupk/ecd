@@ -32,8 +32,8 @@ public class ExportEditorSourceAction extends Action
 	public ExportEditorSourceAction( )
 	{
 		super( Messages.getString( "JavaDecompilerActionBarContributor.Action.ExportSource" ) ); //$NON-NLS-1$
-		this.setImageDescriptor( JavaDecompilerPlugin.getImageDescriptor( "icons/etool16/export_wiz.gif" ) ); //$NON-NLS-1$
-		this.setDisabledImageDescriptor( JavaDecompilerPlugin.getImageDescriptor( "icons/dtool16/export_wiz.gif" ) ); //$NON-NLS-1$
+		this.setImageDescriptor( JavaDecompilerPlugin.getImageDescriptor( "icons/etool16/export_wiz.png" ) ); //$NON-NLS-1$
+		this.setDisabledImageDescriptor( JavaDecompilerPlugin.getImageDescriptor( "icons/dtool16/export_wiz.png" ) ); //$NON-NLS-1$
 	}
 
 	public void run( )

@@ -179,6 +179,7 @@ public class HtmlLinkTrimItem extends Composite
 							{
 								if ( !browser.isVisible( ) )
 								{
+									registerLinkClickListener( );
 									browser.setVisible( true );
 								}
 							}
@@ -208,7 +209,7 @@ public class HtmlLinkTrimItem extends Composite
 
 			public void changed( ProgressEvent event )
 			{
-				handleEvent( );
+				// handleEvent( );
 			}
 		};
 		listeners[0] = listener;

@@ -132,7 +132,7 @@
                class="org.sf.feeling.decompiler.actions.ExportSourceActionDelegate"
                menubarPath="org.eclipse.jdt.ui.refactoring.menu"
                id="org.sf.feeling.decompiler.actions.ExportSourceAction"
-               icon="icons/etool16/export_wiz.gif"
+               icon="icons/etool16/export_wiz.png"
                >
          </action>
          <action
@@ -184,9 +184,9 @@
          <action
                class="org.sf.feeling.decompiler.actions.ExportSourceMenuItemAction"
                enablesFor="*"
-               hoverIcon="icons/etool16/export_wiz.gif"
-               icon="icons/etool16/export_wiz.gif"
-               disabledIcon="icons/dtool16/export_wiz.gif"
+               hoverIcon="icons/etool16/export_wiz.png"
+               icon="icons/etool16/export_wiz.png"
+               disabledIcon="icons/dtool16/export_wiz.png"
                id="org.sf.feeling.decompiler.actions.ExportSourceMenu"
                label="%ExportSource"
                style="push"
@@ -224,8 +224,8 @@
                toolbarPath="org.eclipse.ui.edit.text.actionSet.presentation/Presentation"
                id="org.eclipse.jdt.ui.edit.text.java.toggleMarkOccurrences"
                definitionId="org.eclipse.jdt.ui.edit.text.java.toggleMarkOccurrences"
-               disabledIcon="platform:/plugin/org.eclipse.jdt.ui/icons/full/dtool16/mark_occurrences.png"
-               icon="platform:/plugin/org.eclipse.jdt.ui/icons/full/etool16/mark_occurrences.png"
+               disabledIcon="icons/dtool16/mark_occurrences.png"
+               icon="icons/etool16/mark_occurrences.png"
                helpContextId="org.eclipse.jdt.ui.toggle_mark_occurrences_action_context"
                label="%toggleMarkOccurrences.label"
                retarget="true"
@@ -237,8 +237,8 @@
                toolbarPath="org.eclipse.ui.edit.text.actionSet.presentation/Presentation"
                id="org.eclipse.jdt.ui.edit.text.java.toggleBreadcrumb"
                definitionId="org.eclipse.jdt.ui.edit.text.java.toggleBreadcrumb"
-               disabledIcon="platform:/plugin/org.eclipse.jdt.ui/icons/full/dtool16/toggle_breadcrumb.png"
-               icon="platform:/plugin/org.eclipse.jdt.ui/icons/full/etool16/toggle_breadcrumb.png"
+               disabledIcon="icons/dtool16/toggle_breadcrumb.png"
+               icon="icons/etool16/toggle_breadcrumb.png"
                helpContextId="org.eclipse.jdt.ui.toggle_mini_browser_action_context"
                label="%toggleBreadcrumb.label"
                retarget="true"
