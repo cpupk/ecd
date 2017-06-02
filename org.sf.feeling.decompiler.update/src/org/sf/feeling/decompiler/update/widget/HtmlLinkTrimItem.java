@@ -175,7 +175,7 @@ public class HtmlLinkTrimItem extends Composite
 								registerLinkClickListener( );
 								browser.setVisible( true );
 							}
-							else
+							else if ( tempWidth > 0 && tempHeight > 0 )
 							{
 								if ( !browser.isVisible( ) )
 								{
@@ -272,7 +272,7 @@ public class HtmlLinkTrimItem extends Composite
 					Socket socket = new Socket( );
 					try
 					{
-						socket.connect( new InetSocketAddress( new URL( trayLinkUrl ).getHost( ), 80 ), 3000 );
+						socket.connect( new InetSocketAddress( new URL( trayLinkUrl ).getHost( ), 80 ), 5000 );
 						if ( HtmlLinkTrimItem.this.isDisposed( ) )
 							return true;
 						HtmlLinkTrimItem.this.getDisplay( ).asyncExec( new Runnable( ) {
