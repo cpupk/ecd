@@ -29,6 +29,7 @@ import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.core.BufferManager;
 import org.eclipse.jdt.internal.core.ClassFile;
+import org.eclipse.jdt.internal.ui.actions.CompositeActionGroup;
 import org.eclipse.jdt.internal.ui.javaeditor.ClassFileEditor;
 import org.eclipse.jdt.internal.ui.javaeditor.IClassFileEditorInput;
 import org.eclipse.jdt.internal.ui.javaeditor.InternalClassFileEditorInput;
@@ -59,8 +60,11 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.ide.FileStoreEditorInput;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
+import org.sf.feeling.decompiler.actions.DecompileActionGroup;
 import org.sf.feeling.decompiler.util.ClassUtil;
 import org.sf.feeling.decompiler.util.DecompileUtil;
 import org.sf.feeling.decompiler.util.DecompilerOutputUtil;
@@ -831,5 +835,30 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 				"removeAllAnnotations", //$NON-NLS-1$
 				new Class[0],
 				new Object[0] );
+	}
+
+	public String[] collectContextMenuPreferencePages( )
+	{
+		String[] inheritedPages = super.collectContextMenuPreferencePages( );
+		int length = 1;
+		String[] result = new String[inheritedPages.length + length];
+		result[0] = "org.sf.feeling.decompiler.Main"; //$NON-NLS-1$
+		System.arraycopy( inheritedPages,
+				0,
+				result,
+				length,
+				inheritedPages.length );
+		return result;
+	}
+
+	protected void createActions( )
+	{
+		super.createActions( );
+		final ActionGroup group = new DecompileActionGroup( this,
+				ITextEditorActionConstants.GROUP_SAVE,
+				true );
+		CompositeActionGroup fContextMenuGroup = (CompositeActionGroup) ReflectionUtils
+				.getFieldValue( this, "fContextMenuGroup" );
+		fContextMenuGroup.addGroup( group );
 	}
 }

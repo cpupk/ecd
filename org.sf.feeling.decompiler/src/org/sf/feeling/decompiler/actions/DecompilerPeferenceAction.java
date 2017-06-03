@@ -14,25 +14,43 @@ package org.sf.feeling.decompiler.actions;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.dialogs.PreferencesUtil;
+import org.sf.feeling.decompiler.editor.JavaDecompilerClassFileEditor;
 import org.sf.feeling.decompiler.i18n.Messages;
+import org.sf.feeling.decompiler.util.UIUtil;
 
 public class DecompilerPeferenceAction extends Action
 {
 
 	public DecompilerPeferenceAction( )
 	{
-		super( Messages.getString( "JavaDecompilerActionBarContributor.Action.Preferences" ) ); //$NON-NLS-1$
+		super( Messages.getString(
+				"JavaDecompilerActionBarContributor.Action.Preferences" ) ); //$NON-NLS-1$
 	}
 
 	public void run( )
 	{
-		PreferencesUtil.createPreferenceDialogOn( Display.getDefault( )
-				.getActiveShell( ),
-				"org.sf.feeling.decompiler.Main", //$NON-NLS-1$
-				new String[]{
-						"org.sf.feeling.decompiler.Main"}, //$NON-NLS-1$
-				null )
-				.open( );
+		JavaDecompilerClassFileEditor editor = UIUtil
+				.getActiveDecompilerEditor( );
+		if ( editor != null )
+		{
+			PreferencesUtil
+					.createPreferenceDialogOn(
+							Display.getDefault( ).getActiveShell( ),
+							"org.sf.feeling.decompiler.Main", //$NON-NLS-1$
+							editor.collectContextMenuPreferencePages( ),
+							null )
+					.open( );
+		}
+		else
+		{
+			PreferencesUtil.createPreferenceDialogOn(
+					Display.getDefault( ).getActiveShell( ),
+					"org.sf.feeling.decompiler.Main", //$NON-NLS-1$
+					new String[]{
+							"org.sf.feeling.decompiler.Main" //$NON-NLS-1$
+					},
+					null ).open( );
+		}
 	}
 
 	public boolean isEnabled( )
