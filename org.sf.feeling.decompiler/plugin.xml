@@ -96,6 +96,11 @@
             name="Decompile"  
             categoryId="org.sf.feeling.decompiler"  
             id="org.sf.feeling.decompiler.decompile">  
+      </command> 
+      <command  
+            name="Decompile"  
+            categoryId="org.sf.feeling.decompiler"  
+            id="org.sf.feeling.decompiler.debugMode">  
       </command>  
       <command  
             name="Decompile With FernFlower"  
@@ -106,8 +111,13 @@
    <extension
  		point="org.eclipse.ui.bindings">
  		<key
-      		sequence="Ctrl+Alt+Z"
+      		sequence="Ctrl+Shift+,"
       		commandId="org.sf.feeling.decompiler.decompile"
+      		schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+		</key>
+		<key
+      		sequence="Ctrl+Shift+."
+      		commandId="org.sf.feeling.decompiler.debugMode"
       		schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
 		</key>
  	</extension>
@@ -116,6 +126,10 @@
       <handler  
             commandId="org.sf.feeling.decompiler.decompile"  
             class="org.sf.feeling.decompiler.actions.DecompileHandler">  
+      </handler>
+      <handler  
+            commandId="org.sf.feeling.decompiler.debugMode"  
+            class="org.sf.feeling.decompiler.actions.DebugModeHandler">  
       </handler>  
       <handler  
             commandId="org.sf.feeling.decompiler.decompile.fernflower"  
