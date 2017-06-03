@@ -302,6 +302,7 @@ public class HtmlLinkTrimItem extends Composite
 					}
 					catch ( Exception e )
 					{
+						browserUrl = null;
 						HtmlLinkTrimItem.this.getDisplay( ).asyncExec( new Runnable( ) {
 
 							public void run( )
