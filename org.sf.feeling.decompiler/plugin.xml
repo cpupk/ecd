@@ -111,12 +111,12 @@
    <extension
  		point="org.eclipse.ui.bindings">
  		<key
-      		sequence="Ctrl+Shift+,"
+      		sequence="Ctrl+Alt+,"
       		commandId="org.sf.feeling.decompiler.decompile"
       		schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
 		</key>
 		<key
-      		sequence="Ctrl+Shift+."
+      		sequence="Ctrl+Alt+."
       		commandId="org.sf.feeling.decompiler.debugMode"
       		schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
 		</key>
