@@ -63,11 +63,13 @@ public class HtmlLinkTrimItem extends Composite
 	{
 
 		private String funcName;
+		private HtmlLinkTrimItem linkItem;
 
-		CustomFunction( Browser browser, String name )
+		CustomFunction( HtmlLinkTrimItem linkItem, Browser browser, String name )
 		{
 			super( browser, name );
 			this.funcName = name;
+			this.linkItem = linkItem;
 		}
 
 		public Object function( Object[] arguments )
@@ -83,6 +85,10 @@ public class HtmlLinkTrimItem extends Composite
 			{
 				JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).setValue( JavaDecompilerPlugin.ADCLICK_COUNT,
 						JavaDecompilerPlugin.getDefault( ).getAdClickCount( ).getAndIncrement( ) );
+			}
+			else if ( "resize".equals( funcName ) ) //$NON-NLS-1$
+			{
+				linkItem.resize( "" );
 			}
 			return super.function( arguments );
 		}
@@ -119,8 +125,9 @@ public class HtmlLinkTrimItem extends Composite
 
 		updateTrimUrl( );
 
-		new CustomFunction( browser, "gotoUrl" ); //$NON-NLS-1$
-		new CustomFunction( browser, "updateAdCount" ); //$NON-NLS-1$
+		new CustomFunction( this, browser, "gotoUrl" ); //$NON-NLS-1$
+		new CustomFunction( this, browser, "updateAdCount" ); //$NON-NLS-1$
+		new CustomFunction( this, browser, "resize" ); //$NON-NLS-1$
 
 		final ProgressListener[] listeners = new ProgressListener[1];
 		ProgressListener listener = new ProgressListener( ) {
@@ -143,51 +150,7 @@ public class HtmlLinkTrimItem extends Composite
 						try
 						{
 							String updatedStyle = updateBrowserStyle( );
-							Object[] area = (Object[]) browser.evaluate( updatedStyle + "return getContentArea();" ); //$NON-NLS-1$
-							double tempWidth = Double.valueOf( area[0].toString( ) );
-							double tempHeight = Double.valueOf( area[1].toString( ) );
-							if ( tempWidth > 0 && tempHeight > 0 )
-							{
-								width = tempWidth;
-								height = tempHeight;
-
-								Point computeSize = computeSize( -1, -1, true );
-								Point size = HtmlLinkTrimItem.this.getSize( );
-
-								if ( computeSize.x != size.x || computeSize.y != size.y )
-								{
-									HtmlLinkTrimItem.this.pack( );
-									HtmlLinkTrimItem.this.setSize( computeSize );
-									GridData gd = (GridData) browser.getLayoutData( );
-									if ( gd == null )
-									{
-										gd = new GridData( );
-									}
-									gd.verticalIndent = (int) Math
-											.ceil( HtmlLinkTrimItem.this.getBounds( ).height - height ) / 2 - 1;
-									browser.setLayoutData( gd );
-									HtmlLinkTrimItem.this.layout( true, true );
-									HtmlLinkTrimItem.this.getParent( ).layout( true, true );
-									if ( HtmlLinkTrimItem.this.getParent( ).getParent( ) != null )
-									{
-										HtmlLinkTrimItem.this.getParent( ).getParent( ).layout( true, true );
-										if ( HtmlLinkTrimItem.this.getParent( ).getParent( ).getParent( ) != null )
-										{
-											HtmlLinkTrimItem.this.getParent( ).getParent( ).getParent( ).layout( true,
-													true );
-										}
-									}
-								}
-
-								if ( !browser.isVisible( ) )
-								{
-									browser.setVisible( true );
-								}
-							}
-							else if ( browser.isVisible( ) )
-							{
-								browser.setVisible( false );
-							}
+							resize( updatedStyle );
 						}
 						catch ( Exception e )
 						{
@@ -375,10 +338,10 @@ public class HtmlLinkTrimItem extends Composite
 	protected String updateBrowserFontSize( )
 	{
 		int fontHeight = HtmlLinkTrimItem.this.getFont( ).getFontData( )[0].getHeight( );
-		String script = "document.getElementById(\"link\").style.fontSize=\"" //$NON-NLS-1$
+		String script = "$('a').css('font-size','" //$NON-NLS-1$
 				+ fontHeight
 				+ ( UIUtil.isMacOS( ) ? "px" : "pt" ) //$NON-NLS-1$ //$NON-NLS-2$
-				+ "\";"; //$NON-NLS-1$
+				+ "');"; //$NON-NLS-1$
 		return script;
 	}
 
@@ -389,7 +352,7 @@ public class HtmlLinkTrimItem extends Composite
 		{
 			fontFamily = "sans-serif"; //$NON-NLS-1$
 		}
-		String script = "document.getElementById(\"link\").style.fontFamily=\"" + fontFamily + "\";"; //$NON-NLS-1$ //$NON-NLS-2$
+		String script = "$('a').css('font-family','" + fontFamily + "');"; //$NON-NLS-1$ //$NON-NLS-2$
 		return script;
 	}
 
@@ -409,13 +372,13 @@ public class HtmlLinkTrimItem extends Composite
 			String defaultColorSetting = preferences.getString( IJavaColorConstants.JAVA_DEFAULT );
 			color = JFaceResources.getResources( ).createColor( ColorUtil.getColorValue( defaultColorSetting ) );
 		}
-		String script = "document.getElementById(\"link\").style.color=\"rgb(" //$NON-NLS-1$
+		String script = "$('a').css('color','rgb(" //$NON-NLS-1$
 				+ color.getRed( )
 				+ "," //$NON-NLS-1$
 				+ color.getGreen( )
 				+ "," //$NON-NLS-1$
 				+ color.getBlue( )
-				+ ")\";"; //$NON-NLS-1$
+				+ ")');"; //$NON-NLS-1$
 		return script;
 	}
 
@@ -426,7 +389,7 @@ public class HtmlLinkTrimItem extends Composite
 			if ( !Boolean.TRUE.equals( browser.getData( "linkClick" ) ) ) //$NON-NLS-1$
 			{
 
-				String script = "$('#link').click( function(e) {e.preventDefault(); gotoUrl(this.href); return false; } );"; //$NON-NLS-1$
+				String script = "$('a').click( function(e) {e.preventDefault(); gotoUrl(this.href); return false; } );"; //$NON-NLS-1$
 				browser.setData( "linkClick", true ); //$NON-NLS-1$
 				return script;
 			}
@@ -435,11 +398,58 @@ public class HtmlLinkTrimItem extends Composite
 		{
 			if ( !Boolean.TRUE.equals( browser.getData( "linkClick" ) ) ) //$NON-NLS-1$
 			{
-				String script = "$('#link').click( function(e) { updateAdCount(); return true; } );"; //$NON-NLS-1$
+				String script = "$('a').click( function(e) { updateAdCount(); return true; } );"; //$NON-NLS-1$
 				browser.setData( "linkClick", true ); //$NON-NLS-1$
 				return script;
 			}
 		}
 		return null;
+	}
+
+	private void resize( String updatedStyle )
+	{
+		Object[] area = (Object[]) browser.evaluate( updatedStyle + "return getContentArea();" ); //$NON-NLS-1$
+		double tempWidth = Double.valueOf( area[0].toString( ) );
+		double tempHeight = Double.valueOf( area[1].toString( ) );
+		if ( tempWidth > 0 && tempHeight > 0 )
+		{
+			width = tempWidth;
+			height = tempHeight;
+
+			Point computeSize = computeSize( -1, -1, true );
+			Point size = HtmlLinkTrimItem.this.getSize( );
+
+			if ( computeSize.x != size.x || computeSize.y != size.y )
+			{
+				HtmlLinkTrimItem.this.pack( );
+				HtmlLinkTrimItem.this.setSize( computeSize );
+				GridData gd = (GridData) browser.getLayoutData( );
+				if ( gd == null )
+				{
+					gd = new GridData( );
+				}
+				gd.verticalIndent = (int) Math.ceil( HtmlLinkTrimItem.this.getBounds( ).height - height ) / 2 - 1;
+				browser.setLayoutData( gd );
+				HtmlLinkTrimItem.this.layout( true, true );
+				HtmlLinkTrimItem.this.getParent( ).layout( true, true );
+				if ( HtmlLinkTrimItem.this.getParent( ).getParent( ) != null )
+				{
+					HtmlLinkTrimItem.this.getParent( ).getParent( ).layout( true, true );
+					if ( HtmlLinkTrimItem.this.getParent( ).getParent( ).getParent( ) != null )
+					{
+						HtmlLinkTrimItem.this.getParent( ).getParent( ).getParent( ).layout( true, true );
+					}
+				}
+			}
+
+			if ( !browser.isVisible( ) )
+			{
+				browser.setVisible( true );
+			}
+		}
+		else if ( browser.isVisible( ) )
+		{
+			browser.setVisible( false );
+		}
 	}
 }
