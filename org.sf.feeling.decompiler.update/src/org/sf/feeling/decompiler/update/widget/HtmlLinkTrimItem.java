@@ -72,14 +72,14 @@ public class HtmlLinkTrimItem extends Composite
 
 		public Object function( Object[] arguments )
 		{
-			if ( "gotoUrl".equals( funcName ) )
+			if ( "gotoUrl".equals( funcName ) ) //$NON-NLS-1$
 			{
 				if ( arguments != null && arguments.length > 0 && arguments[0] != null )
 				{
 					UIUtil.openBrowser( arguments[0].toString( ) );
 				}
 			}
-			else if ( "updateAdCount".equals( funcName ) )
+			else if ( "updateAdCount".equals( funcName ) ) //$NON-NLS-1$
 			{
 				JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).setValue( JavaDecompilerPlugin.ADCLICK_COUNT,
 						JavaDecompilerPlugin.getDefault( ).getAdClickCount( ).getAndIncrement( ) );
@@ -142,49 +142,51 @@ public class HtmlLinkTrimItem extends Composite
 						browserUrl = browser.getUrl( );
 						try
 						{
-							browser.evaluate( "return getContentArea();" ); //$NON-NLS-1$
-							updateBrowserStyle( );
-							Object[] area = (Object[]) browser.evaluate( "return getContentArea();" ); //$NON-NLS-1$
+							String updatedStyle = updateBrowserStyle( );
+							Object[] area = (Object[]) browser.evaluate( updatedStyle + "return getContentArea();" ); //$NON-NLS-1$
 							double tempWidth = Double.valueOf( area[0].toString( ) );
 							double tempHeight = Double.valueOf( area[1].toString( ) );
-							if ( tempWidth > 0 && tempHeight > 0 && ( tempWidth != width || tempHeight != height ) )
+							if ( tempWidth > 0 && tempHeight > 0 )
 							{
 								width = tempWidth;
 								height = tempHeight;
-								HtmlLinkTrimItem.this.pack( );
-								HtmlLinkTrimItem.this.setSize( computeSize( -1, -1, true ) );
-								GridData gd = (GridData) browser.getLayoutData( );
-								if ( gd == null )
+
+								Point computeSize = computeSize( -1, -1, true );
+								Point size = HtmlLinkTrimItem.this.getSize( );
+
+								if ( computeSize.x != size.x || computeSize.y != size.y )
 								{
-									gd = new GridData( );
-								}
-								gd.verticalIndent = (int) Math
-										.ceil( HtmlLinkTrimItem.this.getBounds( ).height - height ) / 2 - 1;
-								browser.setLayoutData( gd );
-								HtmlLinkTrimItem.this.layout( true, true );
-								HtmlLinkTrimItem.this.getParent( ).layout( true, true );
-								if ( HtmlLinkTrimItem.this.getParent( ).getParent( ) != null )
-								{
-									HtmlLinkTrimItem.this.getParent( ).getParent( ).layout( true, true );
-									if ( HtmlLinkTrimItem.this.getParent( ).getParent( ).getParent( ) != null )
+									HtmlLinkTrimItem.this.pack( );
+									HtmlLinkTrimItem.this.setSize( computeSize );
+									GridData gd = (GridData) browser.getLayoutData( );
+									if ( gd == null )
 									{
-										HtmlLinkTrimItem.this.getParent( ).getParent( ).getParent( ).layout( true,
-												true );
+										gd = new GridData( );
+									}
+									gd.verticalIndent = (int) Math
+											.ceil( HtmlLinkTrimItem.this.getBounds( ).height - height ) / 2 - 1;
+									browser.setLayoutData( gd );
+									HtmlLinkTrimItem.this.layout( true, true );
+									HtmlLinkTrimItem.this.getParent( ).layout( true, true );
+									if ( HtmlLinkTrimItem.this.getParent( ).getParent( ) != null )
+									{
+										HtmlLinkTrimItem.this.getParent( ).getParent( ).layout( true, true );
+										if ( HtmlLinkTrimItem.this.getParent( ).getParent( ).getParent( ) != null )
+										{
+											HtmlLinkTrimItem.this.getParent( ).getParent( ).getParent( ).layout( true,
+													true );
+										}
 									}
 								}
-								registerLinkClickListener( );
+
 								if ( !browser.isVisible( ) )
 								{
 									browser.setVisible( true );
 								}
 							}
-							else if ( tempWidth > 0 && tempHeight > 0 )
+							else if ( browser.isVisible( ) )
 							{
-								if ( !browser.isVisible( ) )
-								{
-									registerLinkClickListener( );
-									browser.setVisible( true );
-								}
+								browser.setVisible( false );
 							}
 						}
 						catch ( Exception e )
@@ -198,19 +200,6 @@ public class HtmlLinkTrimItem extends Composite
 					}
 				} );
 
-			}
-
-			private void updateBrowserStyle( )
-			{
-				updateBrowserColor( );
-				if ( trayLinkUrl == null
-						|| TrayLinkUtil.useSystemColor( trayLinkUrl )
-						|| UIUtil.isDark( getParent( ) ) )
-				{
-					updateBrowserFontColor( );
-				}
-				updateBrowserFontFamily( );
-				updateBrowserFontSize( );
 			}
 
 			public void changed( ProgressEvent event )
@@ -240,6 +229,25 @@ public class HtmlLinkTrimItem extends Composite
 			}
 		} );
 		container.layout( );
+	}
+
+	private String updateBrowserStyle( )
+	{
+		StringBuilder buffer = new StringBuilder( );
+		buffer.append( updateBrowserColor( ) );
+		if ( trayLinkUrl == null || TrayLinkUtil.useSystemColor( trayLinkUrl ) || UIUtil.isDark( getParent( ) ) )
+		{
+			buffer.append( updateBrowserFontColor( ) );
+		}
+		buffer.append( updateBrowserFontFamily( ) );
+		buffer.append( updateBrowserFontSize( ) );
+
+		String listener = registerLinkClickListener( );
+		if ( listener != null )
+		{
+			buffer.append( listener );
+		}
+		return buffer.toString( );
 	}
 
 	private void updateTrimUrl( )
@@ -279,9 +287,9 @@ public class HtmlLinkTrimItem extends Composite
 					Socket socket = new Socket( );
 					try
 					{
-						socket.connect( new InetSocketAddress( new URL( trayLinkUrl ).getHost( ), 80 ), 5000 );
 						if ( HtmlLinkTrimItem.this.isDisposed( ) )
 							return true;
+						socket.connect( new InetSocketAddress( new URL( trayLinkUrl ).getHost( ), 80 ), 5000 );
 						HtmlLinkTrimItem.this.getDisplay( ).asyncExec( new Runnable( ) {
 
 							public void run( )
@@ -346,24 +354,17 @@ public class HtmlLinkTrimItem extends Composite
 		return new Point( trimWidth, trimHeight );
 	}
 
-	private void updateBrowserColor( )
+	private String updateBrowserColor( )
 	{
-		try
-		{
-			Color color = getBackground( );
-			String script = "return eval('document.body.style.background=\"rgb(" //$NON-NLS-1$
-					+ color.getRed( )
-					+ "," //$NON-NLS-1$
-					+ color.getGreen( )
-					+ "," //$NON-NLS-1$
-					+ color.getBlue( )
-					+ ")\"');"; //$NON-NLS-1$
-			browser.evaluate( script );
-		}
-		catch ( Exception e1 )
-		{
-			Logger.debug( e1 );
-		}
+		Color color = getBackground( );
+		String script = "document.body.style.background=\"rgb(" //$NON-NLS-1$
+				+ color.getRed( )
+				+ "," //$NON-NLS-1$
+				+ color.getGreen( )
+				+ "," //$NON-NLS-1$
+				+ color.getBlue( )
+				+ ")\";"; //$NON-NLS-1$
+		return script;
 	}
 
 	/**
@@ -371,95 +372,74 @@ public class HtmlLinkTrimItem extends Composite
 	 * pixels(browser) </br>
 	 * On Mac: points(SWT) = pixels(SWT) = pixels(browser) != points(browser)
 	 */
-	protected void updateBrowserFontSize( )
+	protected String updateBrowserFontSize( )
 	{
-		try
-		{
-			int fontHeight = HtmlLinkTrimItem.this.getFont( ).getFontData( )[0].getHeight( );
-			String script = "return eval('document.getElementById(\"link\").style.fontSize=\"" //$NON-NLS-1$
-					+ fontHeight
-					+ ( UIUtil.isMacOS( ) ? "px" : "pt" ) //$NON-NLS-1$ //$NON-NLS-2$
-					+ "\"');"; //$NON-NLS-1$
-			browser.evaluate( script );
-		}
-		catch ( Exception e1 )
-		{
-			Logger.debug( e1 );
-		}
+		int fontHeight = HtmlLinkTrimItem.this.getFont( ).getFontData( )[0].getHeight( );
+		String script = "document.getElementById(\"link\").style.fontSize=\"" //$NON-NLS-1$
+				+ fontHeight
+				+ ( UIUtil.isMacOS( ) ? "px" : "pt" ) //$NON-NLS-1$ //$NON-NLS-2$
+				+ "\";"; //$NON-NLS-1$
+		return script;
 	}
 
-	protected void updateBrowserFontFamily( )
+	protected String updateBrowserFontFamily( )
 	{
-		try
+		String fontFamily = HtmlLinkTrimItem.this.getFont( ).getFontData( )[0].getName( );
+		if ( UIUtil.isMacOS( ) )
 		{
-			String fontFamily = HtmlLinkTrimItem.this.getFont( ).getFontData( )[0].getName( );
-			if ( UIUtil.isMacOS( ) )
-			{
-				fontFamily = "sans-serif"; //$NON-NLS-1$
-			}
-			String script = "return eval('document.getElementById(\"link\").style.fontFamily=\"" + fontFamily + "\"');"; //$NON-NLS-1$ //$NON-NLS-2$
-			browser.evaluate( script );
+			fontFamily = "sans-serif"; //$NON-NLS-1$
 		}
-		catch ( Exception e1 )
-		{
-			Logger.debug( e1 );
-		}
+		String script = "document.getElementById(\"link\").style.fontFamily=\"" + fontFamily + "\";"; //$NON-NLS-1$ //$NON-NLS-2$
+		return script;
 	}
 
-	protected void updateBrowserFontColor( )
+	protected String updateBrowserFontColor( )
 	{
-		try
+
+		Color color = HtmlLinkTrimItem.this.getParent( ).getForeground( );
+		if ( color.equals( getDisplay( ).getSystemColor( SWT.COLOR_WIDGET_FOREGROUND ) ) )
 		{
-			Color color = HtmlLinkTrimItem.this.getParent( ).getForeground( );
-			if ( color.equals( getDisplay( ).getSystemColor( SWT.COLOR_WIDGET_FOREGROUND ) ) )
-			{
-				color = getDisplay( ).getSystemColor( SWT.COLOR_BLUE );
-			}
-			else if ( UIUtil.isDark( this ) )
-			{
-				JavaTextTools textTools = JavaPlugin.getDefault( ).getJavaTextTools( );
-				IPreferenceStore preferences = (IPreferenceStore) ReflectionUtils.getFieldValue( textTools,
-						"fPreferenceStore" );
-				String defaultColorSetting = preferences.getString( IJavaColorConstants.JAVA_DEFAULT );
-				color = JFaceResources.getResources( ).createColor( ColorUtil.getColorValue( defaultColorSetting ) );
-			}
-			String script = "return eval('document.getElementById(\"link\").style.color=\"rgb(" //$NON-NLS-1$
-					+ color.getRed( )
-					+ "," //$NON-NLS-1$
-					+ color.getGreen( )
-					+ "," //$NON-NLS-1$
-					+ color.getBlue( )
-					+ ")\"');"; //$NON-NLS-1$
-			browser.evaluate( script );
+			color = getDisplay( ).getSystemColor( SWT.COLOR_BLUE );
 		}
-		catch ( Exception e1 )
+		else if ( UIUtil.isDark( this ) )
 		{
-			Logger.debug( e1 );
+			JavaTextTools textTools = JavaPlugin.getDefault( ).getJavaTextTools( );
+			IPreferenceStore preferences = (IPreferenceStore) ReflectionUtils.getFieldValue( textTools,
+					"fPreferenceStore" ); //$NON-NLS-1$
+			String defaultColorSetting = preferences.getString( IJavaColorConstants.JAVA_DEFAULT );
+			color = JFaceResources.getResources( ).createColor( ColorUtil.getColorValue( defaultColorSetting ) );
 		}
+		String script = "document.getElementById(\"link\").style.color=\"rgb(" //$NON-NLS-1$
+				+ color.getRed( )
+				+ "," //$NON-NLS-1$
+				+ color.getGreen( )
+				+ "," //$NON-NLS-1$
+				+ color.getBlue( )
+				+ ")\";"; //$NON-NLS-1$
+		return script;
 	}
 
-	private void registerLinkClickListener( ) throws Exception
+	private String registerLinkClickListener( )
 	{
 		if ( isUseExternalBrowser )
 		{
 			if ( !Boolean.TRUE.equals( browser.getData( "linkClick" ) ) ) //$NON-NLS-1$
 			{
-				if ( browser.execute(
-						"$('#link').click( function(e) {e.preventDefault(); gotoUrl(this.href); return false; } );" ) ) //$NON-NLS-1$
-				{
-					browser.setData( "linkClick", true ); //$NON-NLS-1$
-				}
+
+				String script = "$('#link').click( function(e) {e.preventDefault(); gotoUrl(this.href); return false; } );"; //$NON-NLS-1$
+				browser.setData( "linkClick", true ); //$NON-NLS-1$
+				return script;
 			}
 		}
 		else
 		{
 			if ( !Boolean.TRUE.equals( browser.getData( "linkClick" ) ) ) //$NON-NLS-1$
 			{
-				if ( browser.execute( "$('#link').click( function(e) { updateAdCount(); return true; } );" ) ) //$NON-NLS-1$
-				{
-					browser.setData( "linkClick", true ); //$NON-NLS-1$
-				}
+				String script = "$('#link').click( function(e) { updateAdCount(); return true; } );"; //$NON-NLS-1$
+				browser.setData( "linkClick", true ); //$NON-NLS-1$
+				return script;
 			}
 		}
+		return null;
 	}
 }
