@@ -58,6 +58,7 @@ public class HtmlLinkTrimItem extends Composite
 	private Composite container;
 	private ScrolledComposite sComposite;
 	private String trayLinkUrl;
+	private long lastUpdateTime = -1L;
 
 	static class CustomFunction extends BrowserFunction
 	{
@@ -123,8 +124,6 @@ public class HtmlLinkTrimItem extends Composite
 		browser.setVisible( false );
 		browser.setBackgroundMode( SWT.INHERIT_FORCE );
 
-		updateTrimUrl( );
-
 		new CustomFunction( this, browser, "gotoUrl" ); //$NON-NLS-1$
 		new CustomFunction( this, browser, "updateAdCount" ); //$NON-NLS-1$
 		new CustomFunction( this, browser, "resize" ); //$NON-NLS-1$
@@ -139,8 +138,8 @@ public class HtmlLinkTrimItem extends Composite
 
 			private void handleEvent( )
 			{
-				final String updatedStyle = updateBrowserStyle( );
-				browser.execute( updatedStyle );
+				if ( browser == null || browser.isDisposed( ) )
+					return;
 
 				getDisplay( ).asyncExec( new Runnable( ) {
 
@@ -150,7 +149,7 @@ public class HtmlLinkTrimItem extends Composite
 							return;
 						try
 						{
-							resize( updatedStyle );
+							resize( updateBrowserStyle( ) );
 							browserUrl = browser.getUrl( );
 						}
 						catch ( Exception e )
@@ -160,6 +159,23 @@ public class HtmlLinkTrimItem extends Composite
 								browser.setVisible( false );
 							}
 							Logger.debug( e );
+						}
+						finally
+						{
+							if ( browser == null || browser.isDisposed( ) )
+								return;
+							getDisplay( ).timerExec( 1000 * 600, new Runnable( ) {
+
+								public void run( )
+								{
+									if ( browser == null || browser.isDisposed( ) )
+										return;
+									if ( !browser.isVisible( ) )
+									{
+										updateTrimUrl( true );
+									}
+								}
+							} );
 						}
 					}
 				} );
@@ -178,6 +194,8 @@ public class HtmlLinkTrimItem extends Composite
 		gd.heightHint = getDisplay( ).getBounds( ).height;
 		gd.widthHint = getDisplay( ).getBounds( ).width;
 		browser.setLayoutData( gd );
+
+		updateTrimUrl( false );
 
 		sComposite.addControlListener( new ControlAdapter( ) {
 
@@ -214,7 +232,7 @@ public class HtmlLinkTrimItem extends Composite
 		return buffer.toString( );
 	}
 
-	private void updateTrimUrl( )
+	private void updateTrimUrl( boolean force )
 	{
 		if ( isDisposed )
 		{
@@ -242,8 +260,9 @@ public class HtmlLinkTrimItem extends Composite
 		{
 			isUseExternalBrowser = true;
 		}
-		if ( !trayLinkUrl.equals( browserUrl ) )
+		if ( !trayLinkUrl.equals( browserUrl ) || force )
 		{
+
 			ExecutorUtil.submitTask( new Callable<Boolean>( ) {
 
 				public Boolean call( ) throws Exception
@@ -300,13 +319,17 @@ public class HtmlLinkTrimItem extends Composite
 			} );
 		}
 
-		ExecutorUtil.submitScheduledTask( new Runnable( ) {
+		if ( lastUpdateTime == -1 || ( System.currentTimeMillis( ) - lastUpdateTime ) / ( 60 * 1000 ) >= time - 1 )
+		{
+			lastUpdateTime = System.currentTimeMillis( );
+			ExecutorUtil.submitScheduledTask( new Runnable( ) {
 
-			public void run( )
-			{
-				updateTrimUrl( );
-			}
-		}, time, TimeUnit.MINUTES );
+				public void run( )
+				{
+					updateTrimUrl( false );
+				}
+			}, time, TimeUnit.MINUTES );
+		}
 	}
 
 	@Override
