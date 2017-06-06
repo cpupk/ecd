@@ -88,7 +88,6 @@
          point="org.eclipse.ui.startup">
       <startup class="org.sf.feeling.decompiler.Startup"/>
    </extension>
-   <!--
    <extension point="org.eclipse.ui.commands">  
       <category id="org.sf.feeling.decompiler"  
             name="Eclipse Class Decompiler">  
@@ -137,7 +136,6 @@
             class="org.sf.feeling.decompiler.actions.DecompileWithFernFlowerHandler">  
       </handler>
    </extension>
-   -->  
    <extension
          point="org.eclipse.ui.popupMenus">
       <viewerContribution
