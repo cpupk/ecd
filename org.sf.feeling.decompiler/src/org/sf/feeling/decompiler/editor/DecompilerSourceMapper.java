@@ -27,6 +27,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.ToolFactory;
 import org.eclipse.jdt.core.formatter.CodeFormatter;
 import org.eclipse.jdt.internal.compiler.env.IBinaryType;
+import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.jdt.internal.core.BinaryType;
 import org.eclipse.jdt.internal.core.SourceMapper;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -35,6 +36,7 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.text.edits.TextEdit;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
+import org.sf.feeling.decompiler.util.DecompilerOutputUtil;
 
 public abstract class DecompilerSourceMapper extends SourceMapper
 {
@@ -107,7 +109,13 @@ public abstract class DecompilerSourceMapper extends SourceMapper
 
 		if ( source != null && useFormatter )
 		{
-			CodeFormatter formatter = ToolFactory.createCodeFormatter( null );
+			CompilerOptions option = new CompilerOptions( );
+			Map<String, String> options = option.getMap( );
+			options.put( CompilerOptions.OPTION_Compliance,
+					DecompilerOutputUtil.getMaxDecompileLevel( ) ); // $NON-NLS-1$
+			options.put( CompilerOptions.OPTION_Source,
+					DecompilerOutputUtil.getMaxDecompileLevel( ) ); // $NON-NLS-1$
+			CodeFormatter formatter = ToolFactory.createCodeFormatter( options );
 			TextEdit textEdit = formatter.format(
 					CodeFormatter.K_COMPILATION_UNIT,
 					source,
