@@ -416,6 +416,10 @@ public class HtmlLinkTrimItem extends Composite
 
 	private void resize( final String updatedStyle )
 	{
+		if ( browser.isDisposed( ) )
+		{
+			return;
+		}
 		if ( updatedStyle != null && updatedStyle.length( ) > 0 )
 		{
 			browser.execute( updatedStyle ); // $NON-NLS-1$
@@ -424,6 +428,10 @@ public class HtmlLinkTrimItem extends Composite
 
 			public void run( )
 			{
+				if ( browser.isDisposed( ) )
+				{
+					return;
+				}
 				getDisplay( ).timerExec( 50, new Runnable( ) {
 
 					public void run( )
@@ -489,10 +497,18 @@ public class HtmlLinkTrimItem extends Composite
 
 	private void showBrowser( )
 	{
+		if ( browser.isDisposed( ) )
+		{
+			return;
+		}
 		getDisplay( ).asyncExec( new Runnable( ) {
 
 			public void run( )
 			{
+				if ( browser.isDisposed( ) )
+				{
+					return;
+				}
 				getDisplay( ).timerExec( 50, new Runnable( ) {
 
 					public void run( )
