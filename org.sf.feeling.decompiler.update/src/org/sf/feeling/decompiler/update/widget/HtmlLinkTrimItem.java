@@ -58,7 +58,6 @@ public class HtmlLinkTrimItem extends Composite
 	private Composite container;
 	private ScrolledComposite sComposite;
 	private String trayLinkUrl;
-	private long lastUpdateTime = -1L;
 
 	static class CustomFunction extends BrowserFunction
 	{
@@ -138,8 +137,8 @@ public class HtmlLinkTrimItem extends Composite
 
 			private void handleEvent( )
 			{
-				if ( browser == null || browser.isDisposed( ) )
-					return;
+				final String updatedStyle = updateBrowserStyle( );
+				browser.execute( updatedStyle );
 
 				getDisplay( ).asyncExec( new Runnable( ) {
 
@@ -149,7 +148,7 @@ public class HtmlLinkTrimItem extends Composite
 							return;
 						try
 						{
-							resize( updateBrowserStyle( ) );
+							resize( updatedStyle );
 							browserUrl = browser.getUrl( );
 						}
 						catch ( Exception e )
@@ -160,23 +159,6 @@ public class HtmlLinkTrimItem extends Composite
 							}
 							Logger.debug( e );
 						}
-						finally
-						{
-							if ( browser == null || browser.isDisposed( ) )
-								return;
-							getDisplay( ).timerExec( 1000 * 600, new Runnable( ) {
-
-								public void run( )
-								{
-									if ( browser == null || browser.isDisposed( ) )
-										return;
-									if ( !browser.isVisible( ) )
-									{
-										updateTrimUrl( true );
-									}
-								}
-							} );
-						}
 					}
 				} );
 
@@ -184,7 +166,7 @@ public class HtmlLinkTrimItem extends Composite
 
 			public void changed( ProgressEvent event )
 			{
-				// handleEvent( );
+				handleEvent( );
 			}
 		};
 		listeners[0] = listener;
@@ -195,7 +177,7 @@ public class HtmlLinkTrimItem extends Composite
 		gd.widthHint = getDisplay( ).getBounds( ).width;
 		browser.setLayoutData( gd );
 
-		updateTrimUrl( false );
+		updateTrimUrl( );
 
 		sComposite.addControlListener( new ControlAdapter( ) {
 
@@ -232,9 +214,9 @@ public class HtmlLinkTrimItem extends Composite
 		return buffer.toString( );
 	}
 
-	private void updateTrimUrl( boolean force )
+	private void updateTrimUrl( )
 	{
-		if ( isDisposed )
+		if ( isDisposed || browser.isDisposed( ) )
 		{
 			return;
 		}
@@ -260,9 +242,8 @@ public class HtmlLinkTrimItem extends Composite
 		{
 			isUseExternalBrowser = true;
 		}
-		if ( !trayLinkUrl.equals( browserUrl ) || force )
+		if ( !trayLinkUrl.equals( browserUrl ) )
 		{
-
 			ExecutorUtil.submitTask( new Callable<Boolean>( ) {
 
 				public Boolean call( ) throws Exception
@@ -319,17 +300,13 @@ public class HtmlLinkTrimItem extends Composite
 			} );
 		}
 
-		if ( lastUpdateTime == -1 || ( System.currentTimeMillis( ) - lastUpdateTime ) / ( 60 * 1000 ) >= time - 1 )
-		{
-			lastUpdateTime = System.currentTimeMillis( );
-			ExecutorUtil.submitScheduledTask( new Runnable( ) {
+		ExecutorUtil.submitScheduledTask( new Runnable( ) {
 
-				public void run( )
-				{
-					updateTrimUrl( false );
-				}
-			}, time, TimeUnit.MINUTES );
-		}
+			public void run( )
+			{
+				updateTrimUrl( );
+			}
+		}, time, TimeUnit.MINUTES );
 	}
 
 	@Override
@@ -447,75 +424,57 @@ public class HtmlLinkTrimItem extends Composite
 		{
 			browser.execute( updatedStyle ); // $NON-NLS-1$
 		}
-		getDisplay( ).asyncExec( new Runnable( ) {
 
-			public void run( )
+		try
+		{
+			if ( browser.isDisposed( ) )
 			{
-				if ( browser.isDisposed( ) )
-				{
-					return;
-				}
-				getDisplay( ).timerExec( 50, new Runnable( ) {
-
-					public void run( )
-					{
-						try
-						{
-							if ( browser.isDisposed( ) )
-							{
-								return;
-							}
-
-							browser.execute( updatedStyle ); // $NON-NLS-1$
-							Object[] area = (Object[]) browser.evaluate( "return getContentArea();" ); //$NON-NLS-1$
-							if ( area == null || area[0] == null || area[1] == null )
-								return;
-							double tempWidth = Double.valueOf( area[0].toString( ) );
-							double tempHeight = Double.valueOf( area[1].toString( ) );
-							if ( tempWidth > 0 && tempHeight > 0 )
-							{
-								width = tempWidth;
-								height = tempHeight;
-
-								Point computeSize = computeSize( -1, -1, true );
-								HtmlLinkTrimItem.this.pack( );
-								HtmlLinkTrimItem.this.setSize( computeSize );
-								GridData gd = (GridData) browser.getLayoutData( );
-								if ( gd == null )
-								{
-									gd = new GridData( );
-								}
-								gd.verticalIndent = (int) Math
-										.ceil( HtmlLinkTrimItem.this.getBounds( ).height - height ) / 2 - 1;
-								gd.heightHint = (int) height + 1;
-								browser.setLayoutData( gd );
-								HtmlLinkTrimItem.this.layout( true, true );
-								HtmlLinkTrimItem.this.getParent( ).layout( true, true );
-								if ( HtmlLinkTrimItem.this.getParent( ).getParent( ) != null )
-								{
-									HtmlLinkTrimItem.this.getParent( ).getParent( ).layout( true, true );
-									if ( HtmlLinkTrimItem.this.getParent( ).getParent( ).getParent( ) != null )
-									{
-										HtmlLinkTrimItem.this.getParent( ).getParent( ).getParent( ).layout( true,
-												true );
-									}
-								}
-								showBrowser( );
-							}
-							else if ( browser.isVisible( ) )
-							{
-								browser.setVisible( false );
-							}
-						}
-						catch ( Exception e )
-						{
-							Logger.debug( e );
-						}
-					}
-				} );
+				return;
 			}
-		} );
 
+			browser.execute( updatedStyle ); // $NON-NLS-1$
+			Object[] area = (Object[]) browser.evaluate( "return getContentArea();" ); //$NON-NLS-1$
+			if ( area == null || area[0] == null || area[1] == null )
+				return;
+			double tempWidth = Double.valueOf( area[0].toString( ) );
+			double tempHeight = Double.valueOf( area[1].toString( ) );
+			if ( tempWidth > 0 && tempHeight > 0 )
+			{
+				width = tempWidth;
+				height = tempHeight;
+
+				Point computeSize = computeSize( -1, -1, true );
+				HtmlLinkTrimItem.this.pack( );
+				HtmlLinkTrimItem.this.setSize( computeSize );
+				GridData gd = (GridData) browser.getLayoutData( );
+				if ( gd == null )
+				{
+					gd = new GridData( );
+				}
+				gd.verticalIndent = (int) Math.ceil( HtmlLinkTrimItem.this.getBounds( ).height - height ) / 2 - 1;
+				gd.heightHint = (int) height + 1;
+				browser.setLayoutData( gd );
+				HtmlLinkTrimItem.this.layout( true, true );
+				HtmlLinkTrimItem.this.getParent( ).layout( true, true );
+				if ( HtmlLinkTrimItem.this.getParent( ).getParent( ) != null )
+				{
+					HtmlLinkTrimItem.this.getParent( ).getParent( ).layout( true, true );
+					if ( HtmlLinkTrimItem.this.getParent( ).getParent( ).getParent( ) != null )
+					{
+						HtmlLinkTrimItem.this.getParent( ).getParent( ).getParent( ).layout( true, true );
+					}
+				}
+				showBrowser( );
+			}
+			else if ( browser.isVisible( ) )
+			{
+				browser.setVisible( false );
+			}
+		}
+		catch ( Exception e )
+		{
+			Logger.debug( e );
+		}
 	}
 
 	private void showBrowser( )
