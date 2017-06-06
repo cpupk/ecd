@@ -139,18 +139,19 @@ public class HtmlLinkTrimItem extends Composite
 
 			private void handleEvent( )
 			{
+				final String updatedStyle = updateBrowserStyle( );
+				browser.execute( updatedStyle );
+
 				getDisplay( ).asyncExec( new Runnable( ) {
 
 					public void run( )
 					{
 						if ( browser == null || browser.isDisposed( ) )
 							return;
-
-						browserUrl = browser.getUrl( );
 						try
 						{
-							String updatedStyle = updateBrowserStyle( );
 							resize( updatedStyle );
+							browserUrl = browser.getUrl( );
 						}
 						catch ( Exception e )
 						{
@@ -327,6 +328,13 @@ public class HtmlLinkTrimItem extends Composite
 				+ "," //$NON-NLS-1$
 				+ color.getBlue( )
 				+ ")\";"; //$NON-NLS-1$
+		script += "$('div').css('background-color','rgb(" //$NON-NLS-1$
+				+ color.getRed( )
+				+ "," //$NON-NLS-1$
+				+ color.getGreen( )
+				+ "," //$NON-NLS-1$
+				+ color.getBlue( )
+				+ ")');"; //$NON-NLS-1$
 		return script;
 	}
 
@@ -406,50 +414,93 @@ public class HtmlLinkTrimItem extends Composite
 		return null;
 	}
 
-	private void resize( String updatedStyle )
+	private void resize( final String updatedStyle )
 	{
-		Object[] area = (Object[]) browser.evaluate( updatedStyle + "return getContentArea();" ); //$NON-NLS-1$
-		double tempWidth = Double.valueOf( area[0].toString( ) );
-		double tempHeight = Double.valueOf( area[1].toString( ) );
-		if ( tempWidth > 0 && tempHeight > 0 )
-		{
-			width = tempWidth;
-			height = tempHeight;
+		browser.execute( updatedStyle ); // $NON-NLS-1$
+		getDisplay( ).asyncExec( new Runnable( ) {
 
-			Point computeSize = computeSize( -1, -1, true );
-			Point size = HtmlLinkTrimItem.this.getSize( );
-
-			if ( computeSize.x != size.x || computeSize.y != size.y )
+			public void run( )
 			{
-				HtmlLinkTrimItem.this.pack( );
-				HtmlLinkTrimItem.this.setSize( computeSize );
-				GridData gd = (GridData) browser.getLayoutData( );
-				if ( gd == null )
-				{
-					gd = new GridData( );
-				}
-				gd.verticalIndent = (int) Math.ceil( HtmlLinkTrimItem.this.getBounds( ).height - height ) / 2 - 1;
-				browser.setLayoutData( gd );
-				HtmlLinkTrimItem.this.layout( true, true );
-				HtmlLinkTrimItem.this.getParent( ).layout( true, true );
-				if ( HtmlLinkTrimItem.this.getParent( ).getParent( ) != null )
-				{
-					HtmlLinkTrimItem.this.getParent( ).getParent( ).layout( true, true );
-					if ( HtmlLinkTrimItem.this.getParent( ).getParent( ).getParent( ) != null )
+				getDisplay( ).timerExec( 50, new Runnable( ) {
+
+					public void run( )
 					{
-						HtmlLinkTrimItem.this.getParent( ).getParent( ).getParent( ).layout( true, true );
-					}
-				}
-			}
+						if ( browser.isDisposed( ) )
+						{
+							return;
+						}
 
-			if ( !browser.isVisible( ) )
-			{
-				browser.setVisible( true );
+						browser.execute( updatedStyle ); // $NON-NLS-1$
+						Object[] area = (Object[]) browser.evaluate( "return getContentArea();" ); //$NON-NLS-1$
+						double tempWidth = Double.valueOf( area[0].toString( ) );
+						double tempHeight = Double.valueOf( area[1].toString( ) );
+						if ( tempWidth > 0 && tempHeight > 0 )
+						{
+							width = tempWidth;
+							height = tempHeight;
+
+							Point computeSize = computeSize( -1, -1, true );
+							Point size = HtmlLinkTrimItem.this.getSize( );
+
+							if ( computeSize.x != size.x || computeSize.y != size.y )
+							{
+								HtmlLinkTrimItem.this.pack( );
+								HtmlLinkTrimItem.this.setSize( computeSize );
+								GridData gd = (GridData) browser.getLayoutData( );
+								if ( gd == null )
+								{
+									gd = new GridData( );
+								}
+								gd.verticalIndent = (int) Math
+										.ceil( HtmlLinkTrimItem.this.getBounds( ).height - height ) / 2 - 1;
+								gd.heightHint = (int) height + 1;
+								browser.setLayoutData( gd );
+								HtmlLinkTrimItem.this.layout( true, true );
+								HtmlLinkTrimItem.this.getParent( ).layout( true, true );
+								if ( HtmlLinkTrimItem.this.getParent( ).getParent( ) != null )
+								{
+									HtmlLinkTrimItem.this.getParent( ).getParent( ).layout( true, true );
+									if ( HtmlLinkTrimItem.this.getParent( ).getParent( ).getParent( ) != null )
+									{
+										HtmlLinkTrimItem.this.getParent( ).getParent( ).getParent( ).layout( true,
+												true );
+									}
+								}
+								showBrowser( );
+							}
+							else if ( browser.getUrl( ).equals( browserUrl ) )
+							{
+								showBrowser( );
+							}
+						}
+						else if ( browser.isVisible( ) )
+						{
+							browser.setVisible( false );
+						}
+					}
+				} );
 			}
-		}
-		else if ( browser.isVisible( ) )
-		{
-			browser.setVisible( false );
-		}
+		} );
+
+	}
+
+	private void showBrowser( )
+	{
+		getDisplay( ).asyncExec( new Runnable( ) {
+
+			public void run( )
+			{
+				getDisplay( ).timerExec( 50, new Runnable( ) {
+
+					public void run( )
+					{
+						if ( !browser.isDisposed( ) && !browser.isVisible( ) )
+						{
+							browser.setVisible( true );
+						}
+					}
+				} );
+			}
+		} );
 	}
 }
