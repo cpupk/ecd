@@ -328,13 +328,13 @@ public class HtmlLinkTrimItem extends Composite
 				+ "," //$NON-NLS-1$
 				+ color.getBlue( )
 				+ ")\";"; //$NON-NLS-1$
-		script += "$('div').css('background-color','rgb(" //$NON-NLS-1$
-				+ color.getRed( )
-				+ "," //$NON-NLS-1$
-				+ color.getGreen( )
-				+ "," //$NON-NLS-1$
-				+ color.getBlue( )
-				+ ")');"; //$NON-NLS-1$
+		// script += "$('div').css('background-color','rgb(" //$NON-NLS-1$
+		// + color.getRed( )
+		// + "," //$NON-NLS-1$
+		// + color.getGreen( )
+		// + "," //$NON-NLS-1$
+		// + color.getBlue( )
+		// + ")');"; //$NON-NLS-1$
 		return script;
 	}
 
