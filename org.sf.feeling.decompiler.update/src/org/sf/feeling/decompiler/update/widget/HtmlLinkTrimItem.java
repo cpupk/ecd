@@ -76,21 +76,15 @@ public class HtmlLinkTrimItem extends Composite
 		{
 			if ( "gotoUrl".equals( funcName ) ) //$NON-NLS-1$
 			{
-				if ( arguments != null
-						&& arguments.length > 0
-						&& arguments[0] != null )
+				if ( arguments != null && arguments.length > 0 && arguments[0] != null )
 				{
 					UIUtil.openBrowser( arguments[0].toString( ) );
 				}
 			}
 			else if ( "updateAdCount".equals( funcName ) ) //$NON-NLS-1$
 			{
-				JavaDecompilerPlugin.getDefault( )
-						.getPreferenceStore( )
-						.setValue( JavaDecompilerPlugin.ADCLICK_COUNT,
-								JavaDecompilerPlugin.getDefault( )
-										.getAdClickCount( )
-										.getAndIncrement( ) );
+				JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).setValue( JavaDecompilerPlugin.ADCLICK_COUNT,
+						JavaDecompilerPlugin.getDefault( ).getAdClickCount( ).getAndIncrement( ) );
 			}
 			else if ( "resize".equals( funcName ) ) //$NON-NLS-1$
 			{
@@ -189,8 +183,7 @@ public class HtmlLinkTrimItem extends Composite
 
 			private void computeSize( )
 			{
-				sComposite.setMinSize( container.computeSize( SWT.DEFAULT,
-						SWT.DEFAULT ) );
+				sComposite.setMinSize( container.computeSize( SWT.DEFAULT, SWT.DEFAULT ) );
 				container.layout( );
 			}
 
@@ -206,9 +199,7 @@ public class HtmlLinkTrimItem extends Composite
 	{
 		StringBuilder buffer = new StringBuilder( );
 		buffer.append( updateBrowserColor( ) );
-		if ( trayLinkUrl == null
-				|| TrayLinkUtil.useSystemColor( trayLinkUrl )
-				|| UIUtil.isDark( getParent( ) ) )
+		if ( trayLinkUrl == null || TrayLinkUtil.useSystemColor( trayLinkUrl ) || UIUtil.isDark( getParent( ) ) )
 		{
 			buffer.append( updateBrowserFontColor( ) );
 		}
@@ -262,48 +253,42 @@ public class HtmlLinkTrimItem extends Composite
 					{
 						if ( HtmlLinkTrimItem.this.isDisposed( ) )
 							return true;
-						socket.connect( new InetSocketAddress( new URL( trayLinkUrl ).getHost( ),
-								80 ),
-								5000 );
-						HtmlLinkTrimItem.this.getDisplay( )
-								.asyncExec( new Runnable( ) {
+						socket.connect( new InetSocketAddress( new URL( trayLinkUrl ).getHost( ), 80 ), 5000 );
+						HtmlLinkTrimItem.this.getDisplay( ).asyncExec( new Runnable( ) {
 
-									public void run( )
-									{
-										if ( browser != null
-												&& !browser.isDisposed( ) )
-										{
-											browser.setData( "linkClick", false ); //$NON-NLS-1$
-											browser.setVisible( false );
-											browser.setUrl( trayLinkUrl );
-										}
-										else
-										{
-											isDisposed = true;
-										}
-									}
-								} );
+							public void run( )
+							{
+								if ( browser != null && !browser.isDisposed( ) )
+								{
+									browser.setData( "linkClick", false ); //$NON-NLS-1$
+									browser.setVisible( false );
+									browser.setUrl( trayLinkUrl );
+								}
+								else
+								{
+									isDisposed = true;
+								}
+							}
+						} );
 						return true;
 					}
 					catch ( Exception e )
 					{
 						browserUrl = null;
-						HtmlLinkTrimItem.this.getDisplay( )
-								.asyncExec( new Runnable( ) {
+						HtmlLinkTrimItem.this.getDisplay( ).asyncExec( new Runnable( ) {
 
-									public void run( )
-									{
-										if ( browser != null
-												&& !browser.isDisposed( ) )
-										{
-											browser.setVisible( false );
-										}
-										else
-										{
-											isDisposed = true;
-										}
-									}
-								} );
+							public void run( )
+							{
+								if ( browser != null && !browser.isDisposed( ) )
+								{
+									browser.setVisible( false );
+								}
+								else
+								{
+									isDisposed = true;
+								}
+							}
+						} );
 						Logger.debug( e );
 						return false;
 					}
@@ -328,8 +313,7 @@ public class HtmlLinkTrimItem extends Composite
 	public Point computeSize( int wHint, int hHint, boolean changed )
 	{
 		int trimWidth = (int) width + 5 * 2 + 4;
-		int trimHeight = getParent( ) instanceof Shell ? (int) height
-				: getParent( ).getBounds( ).height;
+		int trimHeight = getParent( ) instanceof Shell ? (int) height : getParent( ).getBounds( ).height;
 		trimHeight = Math.max( TrimUtil.TRIM_DEFAULT_HEIGHT, trimHeight );
 		return new Point( trimWidth, trimHeight );
 	}
@@ -356,8 +340,8 @@ public class HtmlLinkTrimItem extends Composite
 
 	/**
 	 * On Windows: points(SWT) = points(browser) != pixels(SWT) =
-	 * pixels(browser) </br> On Mac: points(SWT) = pixels(SWT) = pixels(browser)
-	 * != points(browser)
+	 * pixels(browser) </br>
+	 * On Mac: points(SWT) = pixels(SWT) = pixels(browser) != points(browser)
 	 */
 	protected String updateBrowserFontSize( )
 	{
@@ -390,13 +374,11 @@ public class HtmlLinkTrimItem extends Composite
 		}
 		else if ( UIUtil.isDark( this ) )
 		{
-			JavaTextTools textTools = JavaPlugin.getDefault( )
-					.getJavaTextTools( );
+			JavaTextTools textTools = JavaPlugin.getDefault( ).getJavaTextTools( );
 			IPreferenceStore preferences = (IPreferenceStore) ReflectionUtils.getFieldValue( textTools,
 					"fPreferenceStore" ); //$NON-NLS-1$
 			String defaultColorSetting = preferences.getString( IJavaColorConstants.JAVA_DEFAULT );
-			color = JFaceResources.getResources( )
-					.createColor( ColorUtil.getColorValue( defaultColorSetting ) );
+			color = JFaceResources.getResources( ).createColor( ColorUtil.getColorValue( defaultColorSetting ) );
 		}
 		String script = "$('a').css('color','rgb(" //$NON-NLS-1$
 				+ color.getRed( )
@@ -446,57 +428,57 @@ public class HtmlLinkTrimItem extends Composite
 
 					public void run( )
 					{
-						if ( browser.isDisposed( ) )
+						try
 						{
-							return;
-						}
-
-						browser.execute( updatedStyle ); // $NON-NLS-1$
-						Object[] area = (Object[]) browser.evaluate( "return getContentArea();" ); //$NON-NLS-1$
-						if ( area == null )
-							return;
-						double tempWidth = Double.valueOf( area[0].toString( ) );
-						double tempHeight = Double.valueOf( area[1].toString( ) );
-						if ( tempWidth > 0 && tempHeight > 0 )
-						{
-							width = tempWidth;
-							height = tempHeight;
-
-							Point computeSize = computeSize( -1, -1, true );
-							HtmlLinkTrimItem.this.pack( );
-							HtmlLinkTrimItem.this.setSize( computeSize );
-							GridData gd = (GridData) browser.getLayoutData( );
-							if ( gd == null )
+							if ( browser.isDisposed( ) )
 							{
-								gd = new GridData( );
+								return;
 							}
-							gd.verticalIndent = (int) Math.ceil( HtmlLinkTrimItem.this.getBounds( ).height
-									- height ) / 2 - 1;
-							gd.heightHint = (int) height + 1;
-							browser.setLayoutData( gd );
-							HtmlLinkTrimItem.this.layout( true, true );
-							HtmlLinkTrimItem.this.getParent( ).layout( true,
-									true );
-							if ( HtmlLinkTrimItem.this.getParent( ).getParent( ) != null )
+
+							browser.execute( updatedStyle ); // $NON-NLS-1$
+							Object[] area = (Object[]) browser.evaluate( "return getContentArea();" ); //$NON-NLS-1$
+							if ( area == null || area[0] == null || area[1] == null )
+								return;
+							double tempWidth = Double.valueOf( area[0].toString( ) );
+							double tempHeight = Double.valueOf( area[1].toString( ) );
+							if ( tempWidth > 0 && tempHeight > 0 )
 							{
-								HtmlLinkTrimItem.this.getParent( )
-										.getParent( )
-										.layout( true, true );
-								if ( HtmlLinkTrimItem.this.getParent( )
-										.getParent( )
-										.getParent( ) != null )
+								width = tempWidth;
+								height = tempHeight;
+
+								Point computeSize = computeSize( -1, -1, true );
+								HtmlLinkTrimItem.this.pack( );
+								HtmlLinkTrimItem.this.setSize( computeSize );
+								GridData gd = (GridData) browser.getLayoutData( );
+								if ( gd == null )
 								{
-									HtmlLinkTrimItem.this.getParent( )
-											.getParent( )
-											.getParent( )
-											.layout( true, true );
+									gd = new GridData( );
 								}
+								gd.verticalIndent = (int) Math
+										.ceil( HtmlLinkTrimItem.this.getBounds( ).height - height ) / 2 - 1;
+								gd.heightHint = (int) height + 1;
+								browser.setLayoutData( gd );
+								HtmlLinkTrimItem.this.layout( true, true );
+								HtmlLinkTrimItem.this.getParent( ).layout( true, true );
+								if ( HtmlLinkTrimItem.this.getParent( ).getParent( ) != null )
+								{
+									HtmlLinkTrimItem.this.getParent( ).getParent( ).layout( true, true );
+									if ( HtmlLinkTrimItem.this.getParent( ).getParent( ).getParent( ) != null )
+									{
+										HtmlLinkTrimItem.this.getParent( ).getParent( ).getParent( ).layout( true,
+												true );
+									}
+								}
+								showBrowser( );
 							}
-							showBrowser( );
+							else if ( browser.isVisible( ) )
+							{
+								browser.setVisible( false );
+							}
 						}
-						else if ( browser.isVisible( ) )
+						catch ( Exception e )
 						{
-							browser.setVisible( false );
+							Logger.debug( e );
 						}
 					}
 				} );
