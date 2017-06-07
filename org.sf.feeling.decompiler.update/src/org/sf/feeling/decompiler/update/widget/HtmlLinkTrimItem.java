@@ -133,6 +133,16 @@ public class HtmlLinkTrimItem extends Composite
 			public void completed( ProgressEvent event )
 			{
 				handleEvent( );
+				getDisplay( ).asyncExec( new Runnable( ) {
+
+					public void run( )
+					{
+						if ( !browser.isDisposed( ) )
+						{
+							registerLinkClickListener( );
+						}
+					}
+				} );
 			}
 
 			private void handleEvent( )
@@ -390,7 +400,7 @@ public class HtmlLinkTrimItem extends Composite
 		{
 			if ( !Boolean.TRUE.equals( browser.getData( "linkClick" ) ) ) //$NON-NLS-1$
 			{
-				String script = "$('body').append(\"<script>$('a').click( function(e) {e.preventDefault(); gotoUrl(this.href); updateAdCount(); return false; } );</script>\");"; //$NON-NLS-1$
+				String script = "var script = document.createElement('script'); script.innerHTML=\"$('a').click( function(e) {e.preventDefault(); gotoUrl(this.href); updateAdCount(); return false; } );\"; document.head.appendChild(script);"; //$NON-NLS-1$
 				if ( browser.execute( script ) )
 				{
 					browser.setData( "linkClick", true ); //$NON-NLS-1$
@@ -401,7 +411,7 @@ public class HtmlLinkTrimItem extends Composite
 		{
 			if ( !Boolean.TRUE.equals( browser.getData( "linkClick" ) ) ) //$NON-NLS-1$
 			{
-				String script = "$('body').append(\"<script>$('a').click( function(e) { updateAdCount(); return true; } );</script>\");"; //$NON-NLS-1$
+				String script = "var script = document.createElement('script'); script.innerHTML=\"$('a').click( function(e) { updateAdCount(); return true; } );\"; document.head.appendChild(script);"; //$NON-NLS-1$
 				if ( browser.execute( script ) )
 				{
 					browser.setData( "linkClick", true ); //$NON-NLS-1$
@@ -494,7 +504,6 @@ public class HtmlLinkTrimItem extends Composite
 						if ( !browser.isDisposed( ) && !browser.isVisible( ) )
 						{
 							browser.setVisible( true );
-							registerLinkClickListener( );
 						}
 					}
 				} );
