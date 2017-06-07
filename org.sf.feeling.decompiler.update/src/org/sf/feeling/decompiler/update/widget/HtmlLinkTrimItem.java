@@ -205,11 +205,6 @@ public class HtmlLinkTrimItem extends Composite
 		buffer.append( updateBrowserFontFamily( ) );
 		buffer.append( updateBrowserFontSize( ) );
 
-		String listener = registerLinkClickListener( );
-		if ( listener != null )
-		{
-			buffer.append( listener );
-		}
 		return buffer.toString( );
 	}
 
@@ -259,8 +254,7 @@ public class HtmlLinkTrimItem extends Composite
 							{
 								if ( browser != null && !browser.isDisposed( ) )
 								{
-									browser.setData( "externalLinkClick", false ); //$NON-NLS-1$
-									browser.setData( "internalLinkClick", false ); //$NON-NLS-1$
+									browser.setData( "linkClick", false ); //$NON-NLS-1$
 									browser.setVisible( false );
 									browser.setUrl( trayLinkUrl );
 								}
@@ -390,27 +384,30 @@ public class HtmlLinkTrimItem extends Composite
 		return script;
 	}
 
-	private String registerLinkClickListener( )
+	private void registerLinkClickListener( )
 	{
 		if ( isUseExternalBrowser )
 		{
-			if ( !Boolean.TRUE.equals( browser.getData( "externalLinkClick" ) ) ) //$NON-NLS-1$
+			if ( !Boolean.TRUE.equals( browser.getData( "linkClick" ) ) ) //$NON-NLS-1$
 			{
-				browser.setData( "externalLinkClick", true ); //$NON-NLS-1$
-				String script = "$('a').click( function(e) {e.preventDefault(); updateAdCount(); gotoUrl(this.href); return false; } );"; //$NON-NLS-1$
-				return script;
+				String script = "$('a').click( function(e) {e.preventDefault(); gotoUrl(this.href); updateAdCount(); return false; } );"; //$NON-NLS-1$
+				if ( browser.execute( script ) )
+				{
+					browser.setData( "linkClick", true ); //$NON-NLS-1$
+				} ;
 			}
 		}
 		else
 		{
-			if ( !Boolean.TRUE.equals( browser.getData( "internalLinkClick" ) ) ) //$NON-NLS-1$
+			if ( !Boolean.TRUE.equals( browser.getData( "linkClick" ) ) ) //$NON-NLS-1$
 			{
-				browser.setData( "internalLinkClick", true ); //$NON-NLS-1$
 				String script = "$('a').click( function(e) { updateAdCount(); return true; } );"; //$NON-NLS-1$
-				return script;
+				if ( browser.execute( script ) )
+				{
+					browser.setData( "linkClick", true ); //$NON-NLS-1$
+				}
 			}
 		}
-		return null;
 	}
 
 	private void resize( final String updatedStyle )
@@ -463,6 +460,7 @@ public class HtmlLinkTrimItem extends Composite
 						HtmlLinkTrimItem.this.getParent( ).getParent( ).getParent( ).layout( true, true );
 					}
 				}
+				registerLinkClickListener( );
 				showBrowser( );
 			}
 			else if ( browser.isVisible( ) )
