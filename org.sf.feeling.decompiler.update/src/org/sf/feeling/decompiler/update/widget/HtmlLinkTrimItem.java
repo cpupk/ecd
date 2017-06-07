@@ -390,7 +390,7 @@ public class HtmlLinkTrimItem extends Composite
 		{
 			if ( !Boolean.TRUE.equals( browser.getData( "linkClick" ) ) ) //$NON-NLS-1$
 			{
-				String script = "$('a').click( function(e) {e.preventDefault(); gotoUrl(this.href); updateAdCount(); return false; } );"; //$NON-NLS-1$
+				String script = "$('body').append(\"<script>$('a').click( function(e) {e.preventDefault(); gotoUrl(this.href); updateAdCount(); return false; } );</script>\");"; //$NON-NLS-1$
 				if ( browser.execute( script ) )
 				{
 					browser.setData( "linkClick", true ); //$NON-NLS-1$
@@ -401,7 +401,7 @@ public class HtmlLinkTrimItem extends Composite
 		{
 			if ( !Boolean.TRUE.equals( browser.getData( "linkClick" ) ) ) //$NON-NLS-1$
 			{
-				String script = "$('a').click( function(e) { updateAdCount(); return true; } );"; //$NON-NLS-1$
+				String script = "$('body').append(\"<script>$('a').click( function(e) { updateAdCount(); return true; } );</script>\");"; //$NON-NLS-1$
 				if ( browser.execute( script ) )
 				{
 					browser.setData( "linkClick", true ); //$NON-NLS-1$
@@ -460,7 +460,6 @@ public class HtmlLinkTrimItem extends Composite
 						HtmlLinkTrimItem.this.getParent( ).getParent( ).getParent( ).layout( true, true );
 					}
 				}
-				registerLinkClickListener( );
 				showBrowser( );
 			}
 			else if ( browser.isVisible( ) )
@@ -495,6 +494,7 @@ public class HtmlLinkTrimItem extends Composite
 						if ( !browser.isDisposed( ) && !browser.isVisible( ) )
 						{
 							browser.setVisible( true );
+							registerLinkClickListener( );
 						}
 					}
 				} );
