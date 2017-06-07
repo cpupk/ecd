@@ -102,12 +102,12 @@ public class TrayLinkUtil
 			}
 
 			int randomWeight = new Random( new Random( System.currentTimeMillis( ) ).nextLong( ) )
-					.nextInt( weight * 100 ) / 100;
+					.nextInt( weight * 100 );
 			Iterator<Integer> iter = urlMap.keySet( ).iterator( );
 			while ( iter.hasNext( ) )
 			{
 				Integer priority = iter.next( );
-				if ( randomWeight < priority )
+				if ( randomWeight < priority * 100 )
 				{
 					return urlMap.get( priority );
 				}
