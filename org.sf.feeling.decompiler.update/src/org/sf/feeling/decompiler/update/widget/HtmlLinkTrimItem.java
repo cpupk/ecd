@@ -137,8 +137,7 @@ public class HtmlLinkTrimItem extends Composite
 
 			private void handleEvent( )
 			{
-				final String updatedStyle = updateBrowserStyle( );
-				browser.execute( updatedStyle );
+				browser.execute( updateBrowserStyle( ) );
 
 				getDisplay( ).asyncExec( new Runnable( ) {
 
@@ -148,7 +147,7 @@ public class HtmlLinkTrimItem extends Composite
 							return;
 						try
 						{
-							resize( updatedStyle );
+							resize( updateBrowserStyle( ) );
 							browserUrl = browser.getUrl( );
 						}
 						catch ( Exception e )
@@ -260,7 +259,8 @@ public class HtmlLinkTrimItem extends Composite
 							{
 								if ( browser != null && !browser.isDisposed( ) )
 								{
-									browser.setData( "linkClick", false ); //$NON-NLS-1$
+									browser.setData( "externalLinkClick", false ); //$NON-NLS-1$
+									browser.setData( "internalLinkClick", false ); //$NON-NLS-1$
 									browser.setVisible( false );
 									browser.setUrl( trayLinkUrl );
 								}
@@ -394,20 +394,19 @@ public class HtmlLinkTrimItem extends Composite
 	{
 		if ( isUseExternalBrowser )
 		{
-			if ( !Boolean.TRUE.equals( browser.getData( "linkClick" ) ) ) //$NON-NLS-1$
+			if ( !Boolean.TRUE.equals( browser.getData( "externalLinkClick" ) ) ) //$NON-NLS-1$
 			{
-
-				String script = "$('a').click( function(e) {e.preventDefault(); gotoUrl(this.href); return false; } );"; //$NON-NLS-1$
-				browser.setData( "linkClick", true ); //$NON-NLS-1$
+				browser.setData( "externalLinkClick", true ); //$NON-NLS-1$
+				String script = "$('a').click( function(e) {e.preventDefault(); updateAdCount(); gotoUrl(this.href); return false; } );"; //$NON-NLS-1$
 				return script;
 			}
 		}
 		else
 		{
-			if ( !Boolean.TRUE.equals( browser.getData( "linkClick" ) ) ) //$NON-NLS-1$
+			if ( !Boolean.TRUE.equals( browser.getData( "internalLinkClick" ) ) ) //$NON-NLS-1$
 			{
+				browser.setData( "internalLinkClick", true ); //$NON-NLS-1$
 				String script = "$('a').click( function(e) { updateAdCount(); return true; } );"; //$NON-NLS-1$
-				browser.setData( "linkClick", true ); //$NON-NLS-1$
 				return script;
 			}
 		}
