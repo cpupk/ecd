@@ -25,7 +25,9 @@ import java.util.zip.ZipFile;
 import org.apache.commons.io.FilenameUtils;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.core.PackageFragmentRoot;
@@ -414,5 +416,55 @@ public class SourceAttachUtil
 			Logger.debug( e );
 		}
 		return false;
+	}
+	
+	public static boolean needDownloadSource( List<?> selection )
+	{
+		IPackageFragmentRoot root = null;
+		for ( int i = 0; i < selection.size( ); i++ )
+		{
+			IPackageFragmentRoot packRoot = null;
+			Object obj = selection.get( i );
+			if ( obj instanceof IPackageFragment )
+			{
+				IPackageFragment packageFragment = (IPackageFragment) obj;
+				packRoot = (IPackageFragmentRoot) packageFragment.getParent( );
+			}
+			else if ( obj instanceof IClassFile )
+			{
+				IClassFile classFile = (IClassFile) obj;
+				packRoot = (IPackageFragmentRoot) classFile.getParent( ).getParent( );
+			}
+			else if ( obj instanceof IPackageFragmentRoot )
+			{
+				packRoot = (IPackageFragmentRoot) obj;
+			}
+			else
+				return false;
+			if ( root == null )
+			{
+				root = packRoot;
+			}
+			else
+			{
+				if ( root != packRoot )
+					return false;
+			}
+		}
+		try
+		{
+			if ( root != null
+					&& root.getSourceAttachmentPath( ) != null
+					&& root.getSourceAttachmentPath( ).toFile( ).exists( )
+					&& !root.getPath( ).toFile( ).equals( root.getSourceAttachmentPath( ).toFile( ) ) )
+			{
+				return false;
+			}
+		}
+		catch ( JavaModelException e )
+		{
+			Logger.debug( e );
+		}
+		return true;
 	}
 }

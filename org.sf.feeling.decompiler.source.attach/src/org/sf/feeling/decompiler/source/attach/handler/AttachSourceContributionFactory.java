@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -31,7 +30,7 @@ import org.eclipse.ui.menus.ExtensionContributionFactory;
 import org.eclipse.ui.menus.IContributionRoot;
 import org.eclipse.ui.services.IServiceLocator;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
-import org.sf.feeling.decompiler.util.Logger;
+import org.sf.feeling.decompiler.source.attach.utils.SourceAttachUtil;
 
 @SuppressWarnings({
 		"rawtypes", "unchecked"
@@ -58,7 +57,7 @@ public class AttachSourceContributionFactory extends ExtensionContributionFactor
 						@Override
 						public EvaluationResult evaluate( IEvaluationContext context ) throws CoreException
 						{
-							boolean menuVisible = isMenuVisible( selectedJars );
+							boolean menuVisible = SourceAttachUtil.needDownloadSource( selectedJars );
 
 							if ( menuVisible )
 								return EvaluationResult.TRUE;
@@ -84,7 +83,7 @@ public class AttachSourceContributionFactory extends ExtensionContributionFactor
 						@Override
 						public EvaluationResult evaluate( IEvaluationContext context ) throws CoreException
 						{
-							boolean menuVisible = isMenuVisible( selectedClasses );
+							boolean menuVisible = SourceAttachUtil.needDownloadSource( selectedClasses );
 
 							if ( menuVisible )
 								return EvaluationResult.TRUE;
@@ -97,55 +96,7 @@ public class AttachSourceContributionFactory extends ExtensionContributionFactor
 
 	}
 
-	private boolean isMenuVisible( List selection )
-	{
-		IPackageFragmentRoot root = null;
-		for ( int i = 0; i < selection.size( ); i++ )
-		{
-			IPackageFragmentRoot packRoot = null;
-			Object obj = selection.get( i );
-			if ( obj instanceof IPackageFragment )
-			{
-				IPackageFragment packageFragment = (IPackageFragment) obj;
-				packRoot = (IPackageFragmentRoot) packageFragment.getParent( );
-			}
-			else if ( obj instanceof IClassFile )
-			{
-				IClassFile classFile = (IClassFile) obj;
-				packRoot = (IPackageFragmentRoot) classFile.getParent( ).getParent( );
-			}
-			else if ( obj instanceof IPackageFragmentRoot )
-			{
-				packRoot = (IPackageFragmentRoot) obj;
-			}
-			else
-				return false;
-			if ( root == null )
-			{
-				root = packRoot;
-			}
-			else
-			{
-				if ( root != packRoot )
-					return false;
-			}
-		}
-		try
-		{
-			if ( root != null
-					&& root.getSourceAttachmentPath( ) != null
-					&& root.getSourceAttachmentPath( ).toFile( ).exists( )
-					&& !root.getPath( ).toFile( ).equals( root.getSourceAttachmentPath( ).toFile( ) ) )
-			{
-				return false;
-			}
-		}
-		catch ( JavaModelException e )
-		{
-			Logger.debug( e );
-		}
-		return true;
-	}
+	
 
 	private List getSelectedElements( ISelectionService selService, Class eleClass )
 	{

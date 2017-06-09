@@ -11,11 +11,10 @@
 
 package org.sf.feeling.decompiler.source.attach.handler;
 
-import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
@@ -78,7 +77,7 @@ public class AttachSourceHandler implements IAttachSourceHandler
 	}
 
 	@Override
-	public boolean syncAttachSource( IPackageFragmentRoot root )
+	public boolean syncAttachSource( final IPackageFragmentRoot root )
 	{
 		if ( !JavaDecompilerPlugin.getDefault( ).isEnableExtension( ) )
 		{
@@ -87,16 +86,17 @@ public class AttachSourceHandler implements IAttachSourceHandler
 
 		try
 		{
-			final IPath sourcePath = root.getSourceAttachmentPath( );
+			boolean download = SourceAttachUtil.needDownloadSource( Arrays.asList( new IPackageFragmentRoot[]{
+					root
+			} ) );
 
-			if ( sourcePath != null && sourcePath.toOSString( ) != null )
+			if ( download )
 			{
-				File tempfile = new File( sourcePath.toOSString( ) );
-				if ( tempfile.exists( ) && tempfile.isFile( ) )
-				{
-					return true;
-				}
 				return SourceAttachUtil.refreshSourceAttachStatus( root );
+			}
+			else
+			{
+				return true;
 			}
 		}
 		catch ( Exception e )
