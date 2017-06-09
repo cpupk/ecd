@@ -18,6 +18,7 @@ import org.sf.feeling.decompiler.update.tester.OperationTester;
 public class LunaDecompilerMarketplace extends MarketplaceDropAdapter
 {
 
+	@Override
 	public void proceedInstallation( String url )
 	{
 		super.proceedInstallation( url );

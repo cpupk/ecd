@@ -29,14 +29,11 @@ public class BaseDecompilerHandler extends DecompileHandler
 		final List classes = UIUtil.getActiveSelection( );
 		if ( classes != null && !classes.isEmpty( ) )
 		{
-			IEditorRegistry registry = PlatformUI.getWorkbench( )
-					.getEditorRegistry( );
-			IEditorDescriptor editorDescriptor = registry
-					.findEditor( JavaDecompilerPlugin.EDITOR_ID );
+			IEditorRegistry registry = PlatformUI.getWorkbench( ).getEditorRegistry( );
+			IEditorDescriptor editorDescriptor = registry.findEditor( JavaDecompilerPlugin.EDITOR_ID );
 			if ( editorDescriptor == null )
 			{
-				JavaDecompilerClassFileEditor editor = UIUtil
-						.getActiveEditor( );
+				JavaDecompilerClassFileEditor editor = UIUtil.getActiveEditor( );
 				if ( editor != null )
 				{
 					if ( editor != null )
@@ -44,9 +41,7 @@ public class BaseDecompilerHandler extends DecompileHandler
 				}
 			}
 			else
-				new OpenClassesAction( editorDescriptor,
-						classes,
-						decompilerType ).run( );
+				new OpenClassesAction( editorDescriptor, classes, decompilerType ).run( );
 		}
 		else
 		{

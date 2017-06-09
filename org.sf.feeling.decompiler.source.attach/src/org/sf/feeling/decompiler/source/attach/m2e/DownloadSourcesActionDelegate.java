@@ -22,6 +22,7 @@ import org.sf.feeling.decompiler.source.attach.utils.SourceAttachUtil;
 public class DownloadSourcesActionDelegate implements IEditorActionDelegate
 {
 
+	@Override
 	public void setActiveEditor( IAction action, IEditorPart part )
 	{
 		if ( ( part != null ) && ( ( part.getEditorInput( ) instanceof IClassFileEditorInput ) ) )
@@ -33,10 +34,12 @@ public class DownloadSourcesActionDelegate implements IEditorActionDelegate
 		}
 	}
 
+	@Override
 	public void run( IAction action )
 	{
 	}
 
+	@Override
 	public void selectionChanged( IAction action, ISelection selection )
 	{
 	}

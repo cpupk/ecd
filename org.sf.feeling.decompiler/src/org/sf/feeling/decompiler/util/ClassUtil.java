@@ -29,8 +29,7 @@ import org.sf.feeling.decompiler.fernflower.FernFlowerDecompiler;
 public class ClassUtil
 {
 
-	public static IDecompiler checkAvailableDecompiler( IDecompiler decompiler,
-			File file )
+	public static IDecompiler checkAvailableDecompiler( IDecompiler decompiler, File file )
 	{
 		FileInputStream fis = null;
 		try
@@ -59,8 +58,7 @@ public class ClassUtil
 		return decompiler;
 	}
 
-	public static IDecompiler checkAvailableDecompiler( IDecompiler decompiler,
-			InputStream is )
+	public static IDecompiler checkAvailableDecompiler( IDecompiler decompiler, InputStream is )
 	{
 		int classLevel = getLevel( is );
 		if ( decompiler.supportLevel( classLevel ) )
@@ -183,25 +181,20 @@ public class ClassUtil
 
 	public static IDecompiler getDefaultDecompiler( int level, boolean debug )
 	{
-		Collection<IDecompilerDescriptor> descriptors = JavaDecompilerPlugin
-				.getDefault( )
+		Collection<IDecompilerDescriptor> descriptors = JavaDecompilerPlugin.getDefault( )
 				.getDecompilerDescriptorMap( )
 				.values( );
 		if ( descriptors != null )
 		{
-			for ( Iterator iterator = descriptors.iterator( ); iterator
-					.hasNext( ); )
+			for ( Iterator iterator = descriptors.iterator( ); iterator.hasNext( ); )
 			{
-				IDecompilerDescriptor iDecompilerDescriptor = (IDecompilerDescriptor) iterator
-						.next( );
+				IDecompilerDescriptor iDecompilerDescriptor = (IDecompilerDescriptor) iterator.next( );
 				if ( iDecompilerDescriptor.isDefault( ) )
 				{
-					IDecompiler decompiler = iDecompilerDescriptor
-							.getDecompiler( );
+					IDecompiler decompiler = iDecompilerDescriptor.getDecompiler( );
 					if ( debug )
 					{
-						if ( decompiler.supportDebug( )
-								&& decompiler.supportDebugLevel( level ) )
+						if ( decompiler.supportDebug( ) && decompiler.supportDebugLevel( level ) )
 						{
 							return decompiler;
 						}

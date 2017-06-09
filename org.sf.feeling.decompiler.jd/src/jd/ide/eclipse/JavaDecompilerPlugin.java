@@ -36,6 +36,7 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin
 		return plugin;
 	}
 
+	@Override
 	public IPreferenceStore getPreferenceStore( )
 	{
 		IPreferenceStore store = org.sf.feeling.decompiler.JavaDecompilerPlugin.getDefault( ).getPreferenceStore( );

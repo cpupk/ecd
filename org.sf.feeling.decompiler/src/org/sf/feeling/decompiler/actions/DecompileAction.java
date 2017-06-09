@@ -27,9 +27,11 @@ public class DecompileAction extends Action
 
 	public DecompileAction( ImageDescriptor actionIcon )
 	{
-		super( Messages.getString( "JavaDecompilerActionBarContributor.Action.Decompile" ), actionIcon ); //$NON-NLS-1$
+		super( Messages.getString( "JavaDecompilerActionBarContributor.Action.Decompile" ), //$NON-NLS-1$
+				actionIcon );
 	}
 
+	@Override
 	public void run( )
 	{
 		try
@@ -41,9 +43,9 @@ public class DecompileAction extends Action
 		}
 	}
 
+	@Override
 	public boolean isEnabled( )
 	{
-		return UIUtil.getActiveEditor( ) != null
-				|| UIUtil.getActiveSelection( ) != null;
+		return UIUtil.getActiveEditor( ) != null || UIUtil.getActiveSelection( ) != null;
 	}
 }

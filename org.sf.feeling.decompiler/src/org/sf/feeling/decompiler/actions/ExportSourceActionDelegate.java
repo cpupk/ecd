@@ -17,12 +17,12 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.actions.ActionDelegate;
 import org.sf.feeling.decompiler.editor.JavaDecompilerClassFileEditor;
 
-public class ExportSourceActionDelegate extends ActionDelegate implements
-		IEditorActionDelegate
+public class ExportSourceActionDelegate extends ActionDelegate implements IEditorActionDelegate
 {
 
 	JavaDecompilerClassFileEditor editor;
 
+	@Override
 	public void setActiveEditor( IAction action, IEditorPart targetEditor )
 	{
 		if ( targetEditor instanceof JavaDecompilerClassFileEditor )
@@ -31,6 +31,7 @@ public class ExportSourceActionDelegate extends ActionDelegate implements
 		}
 	}
 
+	@Override
 	public void run( IAction action )
 	{
 		new ExportEditorSourceAction( ).run( );

@@ -1,6 +1,10 @@
 
 package org.apache.maven.scm.provider.git.jgit.command.status;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -32,10 +36,6 @@ import org.apache.maven.scm.provider.git.jgit.command.JGitUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.Status;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 /**
  * @author <a href="mailto:struberg@yahoo.de">Mark Struberg</a>
  * @author Dominik Bartholdi (imod)
@@ -47,6 +47,7 @@ public class JGitStatusCommand extends AbstractStatusCommand implements GitComma
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	protected StatusScmResult executeStatusCommand( ScmProviderRepository repo, ScmFileSet fileSet ) throws ScmException
 	{
 		Git git = null;

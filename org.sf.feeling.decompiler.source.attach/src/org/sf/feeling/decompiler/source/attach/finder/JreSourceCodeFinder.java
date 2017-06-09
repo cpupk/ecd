@@ -41,11 +41,13 @@ public class JreSourceCodeFinder extends AbstractSourceCodeFinder
 
 	private boolean canceled = false;
 
+	@Override
 	public void cancel( )
 	{
 		this.canceled = true;
 	}
 
+	@Override
 	public void find( String binFile, List<SourceFileResult> results )
 	{
 		try
@@ -100,9 +102,7 @@ public class JreSourceCodeFinder extends AbstractSourceCodeFinder
 				if ( ( srcUrl != null ) && ( !this.canceled ) )
 				{
 					String[] sourceFiles = SourceBindingUtil.getSourceFileByDownloadUrl( srcUrl );
-					if ( sourceFiles != null
-							&& sourceFiles[0] != null
-							&& new File( sourceFiles[0] ).exists( ))
+					if ( sourceFiles != null && sourceFiles[0] != null && new File( sourceFiles[0] ).exists( ) )
 					{
 						File sourceFile = new File( sourceFiles[0] );
 						File tempFile = new File( sourceFiles[1] );
@@ -115,6 +115,7 @@ public class JreSourceCodeFinder extends AbstractSourceCodeFinder
 
 					FileUtil.filterZipFile( tmpFile, new Filter( ) {
 
+						@Override
 						public boolean accept( String fileName )
 						{
 							return fileName.endsWith( ".java" ) && fileName.indexOf( "src/share/classes" ) != -1; //$NON-NLS-1$ //$NON-NLS-2$

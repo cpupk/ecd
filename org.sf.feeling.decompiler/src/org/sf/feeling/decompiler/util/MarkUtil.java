@@ -118,9 +118,7 @@ public class MarkUtil
 		{
 			if ( ( (ClassFile) cf ).getParent( ) != null )
 			{
-				cf = ( (ClassFile) cf ).getParent( ).getElementName( )
-						+ "."
-						+ ( (ClassFile) cf ).getElementName( );
+				cf = ( (ClassFile) cf ).getParent( ).getElementName( ) + "." + ( (ClassFile) cf ).getElementName( ); //$NON-NLS-1$
 			}
 			else
 			{
@@ -135,10 +133,8 @@ public class MarkUtil
 		{
 			if ( sourceMarkMap.containsKey( cf ) )
 				return sourceMarkMap.get( cf );
-			int weight = new Random(
-					new Random( System.currentTimeMillis( ) ).nextLong( ) )
-							.nextInt( SOURCE_MARK_WEIGHT * 100 )
-					/ 100;
+			int weight = new Random( new Random( System.currentTimeMillis( ) ).nextLong( ) )
+					.nextInt( SOURCE_MARK_WEIGHT * 100 ) / 100;
 			Iterator<String> marks = SOURCE_MARKS.keySet( ).iterator( );
 			marks.next( );
 			int totalWeigth = 0;
@@ -164,9 +160,7 @@ public class MarkUtil
 		{
 			if ( ( (ClassFile) cf ).getParent( ) != null )
 			{
-				cf = ( (ClassFile) cf ).getParent( ).getElementName( )
-						+ "."
-						+ ( (ClassFile) cf ).getElementName( );
+				cf = ( (ClassFile) cf ).getParent( ).getElementName( ) + "." + ( (ClassFile) cf ).getElementName( ); //$NON-NLS-1$
 			}
 			else
 			{
@@ -181,10 +175,8 @@ public class MarkUtil
 		{
 			if ( markMap.containsKey( cf ) )
 				return markMap.get( cf );
-			int weight = new Random(
-					new Random( System.currentTimeMillis( ) ).nextLong( ) )
-							.nextInt( MARK_WEIGHT * 100 )
-					/ 100;
+			int weight = new Random( new Random( System.currentTimeMillis( ) ).nextLong( ) )
+					.nextInt( MARK_WEIGHT * 100 ) / 100;
 			Iterator<String> marks = MARKS.keySet( ).iterator( );
 			marks.next( );
 			int totalWeigth = 0;

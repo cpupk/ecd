@@ -32,8 +32,8 @@ public class DecompilerAdapterInvocationHandler implements InvocationHandler
 		this.adapters = adapters;
 	}
 
-	public Object invoke( Object proxy, Method method, Object[] args )
-			throws Throwable
+	@Override
+	public Object invoke( Object proxy, Method method, Object[] args ) throws Throwable
 	{
 		try
 		{
@@ -49,8 +49,7 @@ public class DecompilerAdapterInvocationHandler implements InvocationHandler
 						if ( result != null )
 							allResult.addAll( Arrays.asList( (Object[]) result ) );
 					}
-					Object a = java.lang.reflect.Array.newInstance( returnType.getComponentType( ),
-							allResult.size( ) );
+					Object a = java.lang.reflect.Array.newInstance( returnType.getComponentType( ), allResult.size( ) );
 					return allResult.toArray( (Object[]) a );
 				}
 				else if ( returnType == Collection.class )
@@ -68,8 +67,7 @@ public class DecompilerAdapterInvocationHandler implements InvocationHandler
 					boolean returnValue = false;
 					for ( Iterator iter = adapters.iterator( ); iter.hasNext( ); )
 					{
-						Boolean result = (Boolean) method.invoke( iter.next( ),
-								args );
+						Boolean result = (Boolean) method.invoke( iter.next( ), args );
 						if ( returnValue != result.booleanValue( ) )
 							returnValue = returnValue ^ result.booleanValue( );
 					}

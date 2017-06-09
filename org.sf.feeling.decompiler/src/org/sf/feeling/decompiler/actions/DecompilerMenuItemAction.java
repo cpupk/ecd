@@ -19,9 +19,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
 
-public class DecompilerMenuItemAction implements
-		IWorkbenchWindowPulldownDelegate,
-		IWorkbenchWindowPulldownDelegate2
+public class DecompilerMenuItemAction implements IWorkbenchWindowPulldownDelegate, IWorkbenchWindowPulldownDelegate2
 {
 
 	public DecompilerMenuItemAction( )
@@ -29,30 +27,36 @@ public class DecompilerMenuItemAction implements
 		super( );
 	}
 
+	@Override
 	public Menu getMenu( Control parent )
 	{
 		return new SubMenuCreator( ).getMenu( parent );
 	}
 
+	@Override
 	public Menu getMenu( Menu parent )
 	{
 		return new SubMenuCreator( ).getMenu( parent );
 	}
 
+	@Override
 	public void init( IWorkbenchWindow window )
 	{
 
 	}
 
+	@Override
 	public void dispose( )
 	{
 	}
 
+	@Override
 	public void run( IAction action )
 	{
 		new DecompileAction( ).run( );
 	}
 
+	@Override
 	public void selectionChanged( IAction action, ISelection selection )
 	{
 		action.setEnabled( isEnable( ) );

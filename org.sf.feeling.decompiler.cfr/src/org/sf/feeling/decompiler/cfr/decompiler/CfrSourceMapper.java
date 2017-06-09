@@ -28,6 +28,7 @@ public class CfrSourceMapper extends BaseDecompilerSourceMapper
 		origionalDecompiler = new CfrDecompiler( );
 	}
 
+	@Override
 	protected void printDecompileReport( StringBuffer source, String fileLocation, Collection exceptions,
 			long decompilationTime )
 	{

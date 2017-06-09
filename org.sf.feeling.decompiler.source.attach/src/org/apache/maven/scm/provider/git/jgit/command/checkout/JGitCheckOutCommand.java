@@ -1,6 +1,11 @@
 
 package org.apache.maven.scm.provider.git.jgit.command.checkout;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -47,11 +52,6 @@ import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.sf.feeling.decompiler.util.ReflectionUtils;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 /**
  * @author <a href="mailto:struberg@yahoo.de">Mark Struberg</a>
  * @author Dominik Bartholdi (imod)
@@ -67,6 +67,7 @@ public class JGitCheckOutCommand extends AbstractCheckOutCommand implements GitC
 	 * <p/>
 	 * {@inheritDoc}
 	 */
+	@Override
 	protected CheckOutScmResult executeCheckOutCommand( ScmProviderRepository repo, ScmFileSet fileSet,
 			ScmVersion version, boolean recursive ) throws ScmException
 	{

@@ -18,6 +18,7 @@ import org.sf.feeling.decompiler.editor.DecompilerType;
 public class DecompileWithFernFlowerHandler extends BaseDecompilerHandler
 {
 
+	@Override
 	public Object execute( ExecutionEvent event ) throws ExecutionException
 	{
 		return handleDecompile( DecompilerType.FernFlower );

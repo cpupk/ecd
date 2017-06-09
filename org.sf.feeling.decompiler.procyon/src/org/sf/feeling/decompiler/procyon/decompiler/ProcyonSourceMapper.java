@@ -30,6 +30,7 @@ public class ProcyonSourceMapper extends BaseDecompilerSourceMapper
 		origionalDecompiler = new ProcyonDecompiler( );
 	}
 
+	@Override
 	protected void printDecompileReport( StringBuffer source, String fileLocation, Collection exceptions,
 			long decompilationTime )
 	{

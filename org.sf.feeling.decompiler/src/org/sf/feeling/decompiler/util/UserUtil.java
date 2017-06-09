@@ -38,12 +38,10 @@ import com.eclipsesource.json.JsonValue;
 public class UserUtil
 {
 
-	public static final File DecompilerCacheDir = new File(
-			String.valueOf( System.getProperty( "user.home" ) ) //$NON-NLS-1$
-					+ File.separatorChar
-					+ ".decompiler" ); //$NON-NLS-1$
-	private static final File UserJsonFile = new File( DecompilerCacheDir,
-			"user.json" ); //$NON-NLS-1$
+	public static final File DecompilerCacheDir = new File( String.valueOf( System.getProperty( "user.home" ) ) //$NON-NLS-1$
+			+ File.separatorChar
+			+ ".decompiler" ); //$NON-NLS-1$
+	private static final File UserJsonFile = new File( DecompilerCacheDir, "user.json" ); //$NON-NLS-1$
 
 	public static String unicodeToString( String str )
 	{
@@ -69,25 +67,23 @@ public class UserUtil
 			connection.setReadTimeout( 30000 );
 			is = connection.getInputStream( );
 			String content = FileUtil.getContent( is );
-			content = unicodeToString(
-					content.substring( content.indexOf( "=" ) + 1, //$NON-NLS-1$
-							content.length( ) - 1 ) );
+			content = unicodeToString( content.substring( content.indexOf( "=" ) + 1, //$NON-NLS-1$
+					content.length( ) - 1 ) );
 			JsonObject json = Json.parse( content ).asObject( );
-			String ip = json.get( "cip" ).asString( );
+			String ip = json.get( "cip" ).asString( ); //$NON-NLS-1$
 
 			is.close( );
 
-			connection = new URL(
-					"http://ip.taobao.com/service/getIpInfo.php?ip=" + ip ) //$NON-NLS-1$
-							.openConnection( );
+			connection = new URL( "http://ip.taobao.com/service/getIpInfo.php?ip=" + ip ) //$NON-NLS-1$
+					.openConnection( );
 			connection.setConnectTimeout( 30000 );
 			connection.setReadTimeout( 30000 );
 			is = connection.getInputStream( );
-			content = unicodeToString(FileUtil.getContent( is ));
+			content = unicodeToString( FileUtil.getContent( is ) );
 			json = Json.parse( content ).asObject( );
-			if ( json.getInt( "code", -1 ) == 0 && json.get( "data" ).isObject( ))
+			if ( json.getInt( "code", -1 ) == 0 && json.get( "data" ).isObject( ) ) //$NON-NLS-1$ //$NON-NLS-2$
 			{
-				return json.get( "data" ).asObject( );
+				return json.get( "data" ).asObject( ); //$NON-NLS-1$
 			}
 		}
 		catch ( Exception e )
@@ -116,8 +112,7 @@ public class UserUtil
 		List<String> macList = new ArrayList<String>( );
 		try
 		{
-			Enumeration<NetworkInterface> ni = NetworkInterface
-					.getNetworkInterfaces( );
+			Enumeration<NetworkInterface> ni = NetworkInterface.getNetworkInterfaces( );
 			while ( ni.hasMoreElements( ) )
 			{
 				NetworkInterface netI = ni.nextElement( );
@@ -129,10 +124,7 @@ public class UserUtil
 						"isUp", //$NON-NLS-1$
 						new Class[0],
 						new Object[0] );
-				if ( Boolean.TRUE.equals( isUp )
-						&& netI != null
-						&& bytes != null
-						&& bytes.length == 6 )
+				if ( Boolean.TRUE.equals( isUp ) && netI != null && bytes != null && bytes.length == 6 )
 				{
 					StringBuffer sb = new StringBuffer( );
 					for ( byte b : bytes )
@@ -159,6 +151,7 @@ public class UserUtil
 		{
 			Collections.sort( macList, new Comparator<String>( ) {
 
+				@Override
 				public int compare( String o1, String o2 )
 				{
 					return o1.split( "00" ).length - o2.split( "00" ).length; //$NON-NLS-1$ //$NON-NLS-2$
@@ -180,14 +173,12 @@ public class UserUtil
 		{
 			try
 			{
-				return Json
-						.parse( FileUtil.getContent( UserJsonFile, "utf-8" ) ) //$NON-NLS-1$
+				return Json.parse( FileUtil.getContent( UserJsonFile, "utf-8" ) ) //$NON-NLS-1$
 						.asObject( );
 			}
 			catch ( Exception e )
 			{
-				Logger.error(
-						"Load source attach binding configuration failed.", //$NON-NLS-1$
+				Logger.error( "Load source attach binding configuration failed.", //$NON-NLS-1$
 						e );
 			}
 		}
@@ -226,19 +217,14 @@ public class UserUtil
 
 	private static String generateUUID( )
 	{
-		if ( JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).contains(
-				"uuid" ) )
+		if ( JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).contains( "uuid" ) ) //$NON-NLS-1$
 		{
-			return JavaDecompilerPlugin.getDefault( )
-					.getPreferenceStore( )
-					.getString( "uuid" );
+			return JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).getString( "uuid" ); //$NON-NLS-1$
 		}
 		else
 		{
 			String uuid = UUID.randomUUID( ).toString( );
-			JavaDecompilerPlugin.getDefault( )
-					.getPreferenceStore( )
-					.setValue( "uuid", uuid );
+			JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).setValue( "uuid", uuid ); //$NON-NLS-1$
 			return uuid;
 		}
 	}
@@ -274,15 +260,13 @@ public class UserUtil
 		JsonObject userObject = loadSourceBindingJson( );
 		if ( userObject != null )
 		{
-			String uuid = userObject.getString( "uuid", null );
+			String uuid = userObject.getString( "uuid", null ); //$NON-NLS-1$
 			if ( uuid != null && uuid.trim( ).length( ) > 0 )
 			{
-				JavaDecompilerPlugin.getDefault( )
-						.getPreferenceStore( )
-						.setValue( "uuid", uuid );
+				JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).setValue( "uuid", uuid ); //$NON-NLS-1$
 			}
 			return new String[]{
-					userObject.getString( "user", null ), uuid //$NON-NLS-1$ //$NON-NLS-2$
+					userObject.getString( "user", null ), uuid //$NON-NLS-1$
 			};
 		}
 		return null;
@@ -293,12 +277,10 @@ public class UserUtil
 		JsonObject userObject = loadSourceBindingJson( );
 		if ( userObject != null )
 		{
-			String uuid = userObject.getString( "uuid", null );
+			String uuid = userObject.getString( "uuid", null ); //$NON-NLS-1$
 			if ( uuid != null && uuid.trim( ).length( ) > 0 )
 			{
-				JavaDecompilerPlugin.getDefault( )
-						.getPreferenceStore( )
-						.setValue( "uuid", uuid );
+				JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).setValue( "uuid", uuid ); //$NON-NLS-1$
 			}
 			return uuid;
 		}
@@ -311,15 +293,11 @@ public class UserUtil
 		if ( userObject != null )
 		{
 			long count = userObject.getLong( "count", 0 ); //$NON-NLS-1$
-			count += JavaDecompilerPlugin.getDefault( )
-					.getDecompileCount( )
-					.get( );
+			count += JavaDecompilerPlugin.getDefault( ).getDecompileCount( ).get( );
 			userObject.set( "count", count ); //$NON-NLS-1$
 
 			long adclick = userObject.getLong( "adclick", 0 ); //$NON-NLS-1$
-			adclick += JavaDecompilerPlugin.getDefault( )
-					.getAdClickCount( )
-					.get( );
+			adclick += JavaDecompilerPlugin.getDefault( ).getAdClickCount( ).get( );
 			userObject.set( "adclick", adclick ); //$NON-NLS-1$
 
 			saveSourceBindingJson( userObject );
@@ -458,7 +436,7 @@ public class UserUtil
 
 		return null;
 	}
-	
+
 	public static String getUserCountryCode( )
 	{
 		JsonObject userObject = loadSourceBindingJson( );
@@ -510,12 +488,9 @@ public class UserUtil
 	public static boolean matchAdCondition( )
 	{
 		int adCondition = 100;
-		if ( JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).contains(
-				"adCondition" ) ) //$NON-NLS-1$
+		if ( JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).contains( "adCondition" ) ) //$NON-NLS-1$
 		{
-			adCondition = JavaDecompilerPlugin.getDefault( )
-					.getPreferenceStore( )
-					.getInt( "adCondition" ); //$NON-NLS-1$
+			adCondition = JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).getInt( "adCondition" ); //$NON-NLS-1$
 		}
 		if ( UserUtil.getUserCount( ) < 0 )
 			return true;

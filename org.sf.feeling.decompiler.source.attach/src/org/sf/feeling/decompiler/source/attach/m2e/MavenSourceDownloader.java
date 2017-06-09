@@ -79,6 +79,7 @@ public class MavenSourceDownloader
 
 					Thread thread = new Thread( ) {
 
+						@Override
 						public void run( )
 						{
 							if ( root instanceof PackageFragmentRoot )
@@ -124,6 +125,7 @@ public class MavenSourceDownloader
 				selections.add( root );
 				Thread thread = new Thread( ) {
 
+					@Override
 					public void run( )
 					{
 						JavaSourceAttacherHandler.updateSourceAttachments( selections, null );

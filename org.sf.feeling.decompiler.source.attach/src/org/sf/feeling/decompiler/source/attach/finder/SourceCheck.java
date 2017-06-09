@@ -148,7 +148,7 @@ public class SourceCheck
 		final ZipFile zf = new ZipFile( file );
 		try
 		{
-			final Enumeration<ZipArchiveEntry> entries = (Enumeration<ZipArchiveEntry>) zf.getEntries( );
+			final Enumeration<ZipArchiveEntry> entries = zf.getEntries( );
 			while ( entries.hasMoreElements( ) )
 			{
 				final ZipArchiveEntry entry = entries.nextElement( );

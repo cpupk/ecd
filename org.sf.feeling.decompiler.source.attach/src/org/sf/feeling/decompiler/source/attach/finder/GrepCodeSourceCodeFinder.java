@@ -27,11 +27,13 @@ public class GrepCodeSourceCodeFinder extends AbstractSourceCodeFinder
 
 	protected boolean canceled = false;
 
+	@Override
 	public void cancel( )
 	{
 		this.canceled = true;
 	}
 
+	@Override
 	public void find( String binFile, List<SourceFileResult> results )
 	{
 		try

@@ -39,6 +39,7 @@ public class JDCoreSourceMapper extends JDSourceMapper
 		origionalDecompiler = new JDCoreDecompiler( this );
 	}
 
+	@Override
 	protected void printDecompileReport( StringBuffer source, String fileLocation, Collection exceptions,
 			long decompilationTime )
 	{

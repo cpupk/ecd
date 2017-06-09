@@ -1490,6 +1490,7 @@ public class MethodUtils
 		 *            object to be tested for equality
 		 * @return true, if the object describes the same Method.
 		 */
+		@Override
 		public boolean equals( Object obj )
 		{
 			if ( !( obj instanceof MethodDescriptor ) )
@@ -1511,6 +1512,7 @@ public class MethodUtils
 		 * 
 		 * @return the string length of method name.
 		 */
+		@Override
 		public int hashCode( )
 		{
 			return hashCode;

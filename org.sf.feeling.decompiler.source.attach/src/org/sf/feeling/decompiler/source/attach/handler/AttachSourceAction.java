@@ -28,10 +28,11 @@ public class AttachSourceAction extends Action
 
 	public AttachSourceAction( List selection )
 	{
-		super( Messages.getString("AttachSourceAction.Action.Name") ); //$NON-NLS-1$
+		super( Messages.getString( "AttachSourceAction.Action.Name" ) ); //$NON-NLS-1$
 		this.selection = selection;
 	}
 
+	@Override
 	public void run( )
 	{
 		if ( JavaDecompilerPlugin.getDefault( ).isEnableExtension( ) )
@@ -69,6 +70,7 @@ public class AttachSourceAction extends Action
 		}
 	}
 
+	@Override
 	public boolean isEnabled( )
 	{
 		return JavaDecompilerPlugin.getDefault( ).isEnableExtension( ) && selection != null;

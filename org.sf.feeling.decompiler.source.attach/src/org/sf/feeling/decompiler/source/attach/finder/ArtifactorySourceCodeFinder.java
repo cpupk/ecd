@@ -53,11 +53,13 @@ public class ArtifactorySourceCodeFinder extends AbstractSourceCodeFinder implem
 		return this.getClass( ) + "; serviceUrl=" + serviceUrl; //$NON-NLS-1$
 	}
 
+	@Override
 	public void cancel( )
 	{
 		this.canceled = true;
 	}
 
+	@Override
 	public void find( String binFile, List<SourceFileResult> results )
 	{
 		Collection<GAV> gavs = new HashSet<GAV>( );
@@ -203,7 +205,7 @@ public class ArtifactorySourceCodeFinder extends AbstractSourceCodeFinder implem
 			for ( JsonValue elem : resp.get( "results" ).asArray( ) ) //$NON-NLS-1$
 			{
 				JsonObject result = elem.asObject( );
-				String uri = (String) result.getString( "uri", "" ); //$NON-NLS-1$ //$NON-NLS-2$
+				String uri = result.getString( "uri", "" ); //$NON-NLS-1$ //$NON-NLS-2$
 				// http://repository.cloudera.com/artifactory/api/storage/repo1-cache/commons-cli/commons-cli/1.2/commons-cli-1.2.jar
 				String regex = "/api/storage/[^/]+/(.+)$"; //$NON-NLS-1$
 				Pattern pattern = Pattern.compile( regex );

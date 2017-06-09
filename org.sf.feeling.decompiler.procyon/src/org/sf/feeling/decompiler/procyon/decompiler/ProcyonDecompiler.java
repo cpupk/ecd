@@ -54,6 +54,7 @@ public class ProcyonDecompiler implements IDecompiler
 	 * 
 	 * @see IDecompiler#decompile(String, String, String)
 	 */
+	@Override
 	public void decompile( String root, String packege, String className )
 	{
 		start = System.currentTimeMillis( );
@@ -192,6 +193,7 @@ public class ProcyonDecompiler implements IDecompiler
 	 * 
 	 * @see IDecompiler#decompileFromArchive(String, String, String)
 	 */
+	@Override
 	public void decompileFromArchive( String archivePath, String packege, String className )
 	{
 		start = System.currentTimeMillis( );
@@ -234,11 +236,13 @@ public class ProcyonDecompiler implements IDecompiler
 		root.delete( );
 	}
 
+	@Override
 	public long getDecompilationTime( )
 	{
 		return time;
 	}
 
+	@Override
 	public List getExceptions( )
 	{
 		return Collections.EMPTY_LIST;
@@ -247,6 +251,7 @@ public class ProcyonDecompiler implements IDecompiler
 	/**
 	 * @see IDecompiler#getLog()
 	 */
+	@Override
 	public String getLog( )
 	{
 		return log;
@@ -255,31 +260,37 @@ public class ProcyonDecompiler implements IDecompiler
 	/**
 	 * @see IDecompiler#getSource()
 	 */
+	@Override
 	public String getSource( )
 	{
 		return source;
 	}
 
+	@Override
 	public String getDecompilerType( )
 	{
 		return ProcyonDecompilerPlugin.decompilerType;
 	}
 
+	@Override
 	public String removeComment( String source )
 	{
 		return source;
 	}
 
+	@Override
 	public boolean supportLevel( int level )
 	{
 		return true;
 	}
 
+	@Override
 	public boolean supportDebugLevel( int level )
 	{
 		return true;
 	}
 
+	@Override
 	public boolean supportDebug( )
 	{
 		return true;

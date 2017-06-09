@@ -19,16 +19,19 @@ public class JadDecompilerDescriptor implements IDecompilerDescriptor
 
 	private Action decompileAction = null;
 
+	@Override
 	public String getDecompilerType( )
 	{
 		return JadDecompilerPlugin.decompilerType;
 	}
 
+	@Override
 	public String getDecompilerPreferenceLabel( )
 	{
 		return Messages.getString( "JadDecompilerDescriptor.PreferenceLabel" ); //$NON-NLS-1$
 	}
 
+	@Override
 	public IDecompiler getDecompiler( )
 	{
 		if ( decompiler == null )
@@ -36,6 +39,7 @@ public class JadDecompilerDescriptor implements IDecompilerDescriptor
 		return decompiler;
 	}
 
+	@Override
 	public BaseDecompilerSourceMapper getDecompilerSourceMapper( )
 	{
 		if ( sourceMapper == null )
@@ -45,6 +49,7 @@ public class JadDecompilerDescriptor implements IDecompilerDescriptor
 		return sourceMapper;
 	}
 
+	@Override
 	public Action getDecompileAction( )
 	{
 		if ( decompileAction == null )
@@ -54,19 +59,22 @@ public class JadDecompilerDescriptor implements IDecompilerDescriptor
 		return decompileAction;
 	}
 
+	@Override
 	public boolean isEnabled( )
 	{
 		return true;
 	}
 
+	@Override
 	public boolean isDefault( )
 	{
 		return false;
 	}
 
+	@Override
 	public ImageDescriptor getDecompilerIcon( )
 	{
-		return JadDecompilerPlugin.getImageDescriptor( "icons/jad_16.gif" ); //$NON-NLS-1$;
+		return JadDecompilerPlugin.getImageDescriptor( "icons/jad_16.gif" ); //$NON-NLS-1$ ;
 	}
 
 }

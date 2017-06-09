@@ -15,7 +15,7 @@ import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 
 public class DecompilerType
 {
-	
+
 	public static final String FernFlower = "FernFlower";//$NON-NLS-1$
 
 	public static String[] decompilerTypes = null;
@@ -24,8 +24,7 @@ public class DecompilerType
 	{
 		if ( decompilerTypes == null )
 		{
-			decompilerTypes = JavaDecompilerPlugin.getDefault( )
-					.getDecompilerDescriptorTypes( );
+			decompilerTypes = JavaDecompilerPlugin.getDefault( ).getDecompilerDescriptorTypes( );
 		}
 		return decompilerTypes;
 	}

@@ -29,7 +29,6 @@ import org.apache.maven.scm.ScmTag;
 import org.apache.maven.scm.ScmVersion;
 import org.apache.maven.scm.manager.BasicScmManager;
 import org.apache.maven.scm.manager.ScmManager;
-import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.provider.accurev.AccuRevScmProvider;
 import org.apache.maven.scm.provider.bazaar.BazaarScmProvider;
 import org.apache.maven.scm.provider.clearcase.ClearCaseScmProvider;
@@ -90,21 +89,21 @@ public class UrlDownloader
 					|| checkoutDirectory.list( ).length == 0
 					|| ( checkoutDirectory.list( ).length == 1 && checkoutDirectory.list( )[0].startsWith( "." ) ) ) //$NON-NLS-1$
 			{
-				final ScmManager scmManager = (ScmManager) new BasicScmManager( );
-				scmManager.setScmProvider( "accurev", (ScmProvider) new AccuRevScmProvider( ) ); //$NON-NLS-1$
-				scmManager.setScmProvider( "bazaar", (ScmProvider) new BazaarScmProvider( ) ); //$NON-NLS-1$
-				scmManager.setScmProvider( "clearcase", (ScmProvider) new ClearCaseScmProvider( ) ); //$NON-NLS-1$
-				scmManager.setScmProvider( "hg", (ScmProvider) new HgScmProvider( ) ); //$NON-NLS-1$
-				scmManager.setScmProvider( "local", (ScmProvider) new LocalScmProvider( ) ); //$NON-NLS-1$
-				scmManager.setScmProvider( "perforce", (ScmProvider) new PerforceScmProvider( ) ); //$NON-NLS-1$
-				scmManager.setScmProvider( "cvs_native", (ScmProvider) new CvsExeScmProvider( ) ); //$NON-NLS-1$
-				scmManager.setScmProvider( "cvs", (ScmProvider) new CvsJavaScmProvider( ) ); //$NON-NLS-1$
-				scmManager.setScmProvider( "git", (ScmProvider) new JGitScmProvider( ) ); //$NON-NLS-1$
-				scmManager.setScmProvider( "svn", (ScmProvider) new SvnExeScmProvider( ) ); //$NON-NLS-1$
-				scmManager.setScmProvider( "starteam", (ScmProvider) new StarteamScmProvider( ) ); //$NON-NLS-1$
-				scmManager.setScmProvider( "synergy", (ScmProvider) new SynergyScmProvider( ) ); //$NON-NLS-1$
-				scmManager.setScmProvider( "vss", (ScmProvider) new VssScmProvider( ) ); //$NON-NLS-1$
-				scmManager.setScmProvider( "jazz", (ScmProvider) new JazzScmProvider( ) ); //$NON-NLS-1$
+				final ScmManager scmManager = new BasicScmManager( );
+				scmManager.setScmProvider( "accurev", new AccuRevScmProvider( ) ); //$NON-NLS-1$
+				scmManager.setScmProvider( "bazaar", new BazaarScmProvider( ) ); //$NON-NLS-1$
+				scmManager.setScmProvider( "clearcase", new ClearCaseScmProvider( ) ); //$NON-NLS-1$
+				scmManager.setScmProvider( "hg", new HgScmProvider( ) ); //$NON-NLS-1$
+				scmManager.setScmProvider( "local", new LocalScmProvider( ) ); //$NON-NLS-1$
+				scmManager.setScmProvider( "perforce", new PerforceScmProvider( ) ); //$NON-NLS-1$
+				scmManager.setScmProvider( "cvs_native", new CvsExeScmProvider( ) ); //$NON-NLS-1$
+				scmManager.setScmProvider( "cvs", new CvsJavaScmProvider( ) ); //$NON-NLS-1$
+				scmManager.setScmProvider( "git", new JGitScmProvider( ) ); //$NON-NLS-1$
+				scmManager.setScmProvider( "svn", new SvnExeScmProvider( ) ); //$NON-NLS-1$
+				scmManager.setScmProvider( "starteam", new StarteamScmProvider( ) ); //$NON-NLS-1$
+				scmManager.setScmProvider( "synergy", new SynergyScmProvider( ) ); //$NON-NLS-1$
+				scmManager.setScmProvider( "vss", new VssScmProvider( ) ); //$NON-NLS-1$
+				scmManager.setScmProvider( "jazz", new JazzScmProvider( ) ); //$NON-NLS-1$
 				String scmUrl;
 				ScmVersion scmVersion;
 				if ( url.indexOf( '#' ) != -1 )
@@ -118,15 +117,15 @@ public class UrlDownloader
 						final String type = StringUtils.trim( versionTypeAndVersion[0] );
 						if ( "tag".equals( type ) ) //$NON-NLS-1$
 						{
-							scmVersion = (ScmVersion) new ScmTag( version );
+							scmVersion = new ScmTag( version );
 						}
 						else if ( "branch".equals( type ) ) //$NON-NLS-1$
 						{
-							scmVersion = (ScmVersion) new ScmBranch( version );
+							scmVersion = new ScmBranch( version );
 						}
 						else if ( "revision".equals( type ) ) //$NON-NLS-1$
 						{
-							scmVersion = (ScmVersion) new ScmRevision( version );
+							scmVersion = new ScmRevision( version );
 						}
 						else
 						{
@@ -134,12 +133,12 @@ public class UrlDownloader
 							{
 								throw new IllegalArgumentException( "'" + type + "' version type isn't known." ); //$NON-NLS-1$ //$NON-NLS-2$
 							}
-							scmVersion = (ScmVersion) new ScmRevision( version );
+							scmVersion = new ScmRevision( version );
 						}
 					}
 					else
 					{
-						scmVersion = (ScmVersion) new ScmTag( fragment );
+						scmVersion = new ScmTag( fragment );
 					}
 				}
 				else if ( url.indexOf( ';' ) != -1 )
@@ -159,29 +158,29 @@ public class UrlDownloader
 							final String type2 = StringUtils.trim( versionTypeAndVersion2[0] );
 							if ( "tag".equals( type2 ) ) //$NON-NLS-1$
 							{
-								scmVersion = (ScmVersion) new ScmTag( version2 );
+								scmVersion = new ScmTag( version2 );
 								break;
 							}
 							if ( "branch".equals( type2 ) ) //$NON-NLS-1$
 							{
-								scmVersion = (ScmVersion) new ScmBranch( version2 );
+								scmVersion = new ScmBranch( version2 );
 								break;
 							}
 							if ( "revision".equals( type2 ) ) //$NON-NLS-1$
 							{
-								scmVersion = (ScmVersion) new ScmRevision( version2 );
+								scmVersion = new ScmRevision( version2 );
 								break;
 							}
 							if ( "commitId".equals( type2 ) ) //$NON-NLS-1$
 							{
-								scmVersion = (ScmVersion) new ScmRevision( version2 );
+								scmVersion = new ScmRevision( version2 );
 								break;
 							}
 						}
 					}
 					else
 					{
-						scmVersion = (ScmVersion) new ScmTag( fragment );
+						scmVersion = new ScmTag( fragment );
 					}
 				}
 				else

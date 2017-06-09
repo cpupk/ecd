@@ -227,6 +227,7 @@ public class SourceAttachUtil
 	{
 		Thread thread = new Thread( ) {
 
+			@Override
 			public void run( )
 			{
 				try
@@ -261,6 +262,7 @@ public class SourceAttachUtil
 	{
 		Thread thread = new Thread( ) {
 
+			@Override
 			public void run( )
 			{
 				try
@@ -303,7 +305,7 @@ public class SourceAttachUtil
 			}
 
 			String[] changedAttributes = {
-					CPListElement.SOURCEATTACHMENT, "source_encoding"
+					CPListElement.SOURCEATTACHMENT, "source_encoding" //$NON-NLS-1$
 			};
 			BuildPathSupport.modifyClasspathEntry( null,
 					entry,
@@ -316,7 +318,7 @@ public class SourceAttachUtil
 			if ( root instanceof PackageFragmentRoot )
 			{
 				Object rootInfo = ( (PackageFragmentRoot) root ).getElementInfo( );
-				ReflectionUtils.setFieldValue( rootInfo, "sourceMapper", null );
+				ReflectionUtils.setFieldValue( rootInfo, "sourceMapper", null ); //$NON-NLS-1$
 			}
 		}
 		catch ( Exception e )

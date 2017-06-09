@@ -82,11 +82,11 @@ public class InternalBasedSourceAttacherImpl36 implements SourceAttacher
 			{
 				final File sourceAttacherDir = newSourcePath.getParentFile( );
 				JavaCore.setClasspathVariable( "SOURCE_ATTACHER", //$NON-NLS-1$
-						(IPath) new Path( sourceAttacherDir.getAbsolutePath( ) ),
+						new Path( sourceAttacherDir.getAbsolutePath( ) ),
 						(IProgressMonitor) null );
-				srcAttPath = (IPath) new Path( "SOURCE_ATTACHER/" + newSourcePath.getName( ) ); //$NON-NLS-1$
+				srcAttPath = new Path( "SOURCE_ATTACHER/" + newSourcePath.getName( ) ); //$NON-NLS-1$
 			}
-			elem.setAttribute( "sourcepath", (Object) srcAttPath ); //$NON-NLS-1$
+			elem.setAttribute( "sourcepath", srcAttPath ); //$NON-NLS-1$
 			final IClasspathEntry entry2 = elem.getClasspathEntry( );
 			if ( entry2.equals( fEntry ) )
 			{
@@ -107,7 +107,7 @@ public class InternalBasedSourceAttacherImpl36 implements SourceAttacher
 						jproject,
 						fContainerPath,
 						isReferencedEntry,
-						(IProgressMonitor) new NullProgressMonitor( ) );
+						new NullProgressMonitor( ) );
 				if ( fRoot.getSourceAttachmentPath( ) != null && fRoot.getSourceAttachmentPath( ).toFile( ).exists( ) )
 				{
 					break;
@@ -127,7 +127,7 @@ public class InternalBasedSourceAttacherImpl36 implements SourceAttacher
 		}
 		catch ( CoreException e )
 		{
-			Logger.debug( "error", (Throwable) e ); //$NON-NLS-1$
+			Logger.debug( "error", e ); //$NON-NLS-1$
 			return false;
 		}
 		return true;

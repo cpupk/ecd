@@ -16,6 +16,7 @@ import org.sf.feeling.decompiler.fernflower.FernFlowerSourceMapper;
 
 public class SourceMapperFactory
 {
+
 	private static DecompilerSourceMapper fernFlowerSourceMapper;
 
 	public static DecompilerSourceMapper getSourceMapper( String decompiler )
@@ -31,8 +32,7 @@ public class SourceMapperFactory
 		}
 		else
 		{
-			IDecompilerDescriptor descriptor = JavaDecompilerPlugin.getDefault( )
-					.getDecompilerDescriptor( decompiler );
+			IDecompilerDescriptor descriptor = JavaDecompilerPlugin.getDefault( ).getDecompilerDescriptor( decompiler );
 			if ( descriptor != null )
 				return descriptor.getDecompilerSourceMapper( );
 		}

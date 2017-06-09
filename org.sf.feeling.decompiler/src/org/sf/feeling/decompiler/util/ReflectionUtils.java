@@ -19,8 +19,7 @@ import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 public class ReflectionUtils
 {
 
-	public static Method getDeclaredMethod( Class clazz, String methodName,
-			Class[] parameterTypes )
+	public static Method getDeclaredMethod( Class clazz, String methodName, Class[] parameterTypes )
 	{
 		if ( clazz == null || methodName == null )
 			return null;
@@ -40,15 +39,12 @@ public class ReflectionUtils
 		return null;
 	}
 
-	public static Method getDeclaredMethod( Object object, String methodName,
-			Class[] parameterTypes )
+	public static Method getDeclaredMethod( Object object, String methodName, Class[] parameterTypes )
 	{
 		if ( object == null || methodName == null )
 			return null;
 
-		for ( Class clazz = object
-				.getClass( ); clazz != Object.class; clazz = clazz
-						.getSuperclass( ) )
+		for ( Class clazz = object.getClass( ); clazz != Object.class; clazz = clazz.getSuperclass( ) )
 		{
 			try
 			{
@@ -63,8 +59,7 @@ public class ReflectionUtils
 		return null;
 	}
 
-	public static Object invokeMethod( Object object, String methodName,
-			Class[] parameterTypes, Object[] parameters )
+	public static Object invokeMethod( Object object, String methodName, Class[] parameterTypes, Object[] parameters )
 	{
 		if ( object == null || methodName == null )
 			return null;
@@ -108,8 +103,7 @@ public class ReflectionUtils
 		return null;
 	}
 
-	public static Object invokeMethod( Class clazz, String methodName,
-			Class[] parameterTypes, Object[] parameters )
+	public static Object invokeMethod( Class clazz, String methodName, Class[] parameterTypes, Object[] parameters )
 	{
 		if ( clazz == null || methodName == null )
 			return null;
@@ -173,8 +167,7 @@ public class ReflectionUtils
 		return null;
 	}
 
-	public static void setFieldValue( Object object, String fieldName,
-			Object value )
+	public static void setFieldValue( Object object, String fieldName, Object value )
 	{
 		if ( object == null || fieldName == null )
 			return;
@@ -244,8 +237,7 @@ public class ReflectionUtils
 		return null;
 	}
 
-	public static Object invokeMethod( Object object, String methodName,
-			Class clazz, Object value )
+	public static Object invokeMethod( Object object, String methodName, Class clazz, Object value )
 	{
 		if ( object == null || methodName == null )
 			return null;

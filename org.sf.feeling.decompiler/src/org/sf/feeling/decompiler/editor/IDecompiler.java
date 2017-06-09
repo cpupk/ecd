@@ -47,8 +47,7 @@ public interface IDecompiler
 	 * @param className
 	 *            file name of the class file
 	 */
-	public void decompileFromArchive( String archivePath, String packege,
-			String className );
+	public void decompileFromArchive( String archivePath, String packege, String className );
 
 	/**
 	 * @return time taken by decompilation

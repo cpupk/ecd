@@ -45,8 +45,7 @@ public class FileUtil
 			String encoding = null;
 			try
 			{
-				encoding = JavaDecompilerPlugin.getDefault( )
-						.getExportEncoding( );
+				encoding = JavaDecompilerPlugin.getDefault( ).getExportEncoding( );
 			}
 			catch ( Exception e )
 			{
@@ -55,9 +54,7 @@ public class FileUtil
 			{
 				encoding = "UTF-8"; //$NON-NLS-1$
 			}
-			PrintWriter out = new PrintWriter(
-					new OutputStreamWriter( new FileOutputStream( file ),
-							encoding ) );
+			PrintWriter out = new PrintWriter( new OutputStreamWriter( new FileOutputStream( file ), encoding ) );
 			out.print( string );
 			out.close( );
 		}
@@ -67,8 +64,7 @@ public class FileUtil
 		}
 	}
 
-	public static void writeToBinarayFile( File file, InputStream source,
-			boolean close )
+	public static void writeToBinarayFile( File file, InputStream source, boolean close )
 	{
 		BufferedInputStream bis = null;
 		BufferedOutputStream fouts = null;
@@ -107,8 +103,7 @@ public class FileUtil
 			}
 			catch ( IOException f )
 			{
-				Logger.getLogger( FileUtil.class.getName( ) )
-						.log( Level.WARNING, "Close output stream failed.", f ); //$NON-NLS-1$
+				Logger.getLogger( FileUtil.class.getName( ) ).log( Level.WARNING, "Close output stream failed.", f ); //$NON-NLS-1$
 			}
 			if ( close )
 			{
@@ -119,8 +114,7 @@ public class FileUtil
 				}
 				catch ( IOException f )
 				{
-					Logger.getLogger( FileUtil.class.getName( ) ).log(
-							Level.WARNING,
+					Logger.getLogger( FileUtil.class.getName( ) ).log( Level.WARNING,
 							"Close input stream failed.", //$NON-NLS-1$
 							f );
 				}
@@ -149,8 +143,7 @@ public class FileUtil
 			}
 			catch ( IOException f )
 			{
-				Logger.getLogger( FileUtil.class.getName( ) )
-						.log( Level.WARNING, "Close input stream failed.", f ); //$NON-NLS-1$
+				Logger.getLogger( FileUtil.class.getName( ) ).log( Level.WARNING, "Close input stream failed.", f ); //$NON-NLS-1$
 			}
 
 		}
@@ -164,19 +157,15 @@ public class FileUtil
 			return false;
 		}
 
-		return copyDirectory( srcDirectory.getAbsolutePath( ),
-				desDirectory.getAbsolutePath( ),
-				null );
+		return copyDirectory( srcDirectory.getAbsolutePath( ), desDirectory.getAbsolutePath( ), null );
 	}
 
-	public static boolean copyDirectory( String srcDirectory,
-			String desDirectory )
+	public static boolean copyDirectory( String srcDirectory, String desDirectory )
 	{
 		return copyDirectory( srcDirectory, desDirectory, null );
 	}
 
-	public static boolean copyDirectory( String srcDirectory,
-			String desDirectory, FileFilter filter )
+	public static boolean copyDirectory( String srcDirectory, String desDirectory, FileFilter filter )
 	{
 		try
 		{
@@ -196,25 +185,17 @@ public class FileUtil
 				if ( !allFile[currentFile].isDirectory( ) )
 				{
 					srcName = allFile[currentFile].toString( );
-					desName = desDirectory
-							+ File.separator
-							+ allFile[currentFile].getName( );
-					if ( filter == null
-							|| filter.accept( new File( srcName ) ) )
+					desName = desDirectory + File.separator + allFile[currentFile].getName( );
+					if ( filter == null || filter.accept( new File( srcName ) ) )
 						copyFile( srcName, desName );
 				}
 				else
 				{
-					if ( !copyDirectory(
-							allFile[currentFile].getPath( ).toString( ),
-							desDirectory
-									+ File.separator
-									+ allFile[currentFile].getName( )
-											.toString( ),
+					if ( !copyDirectory( allFile[currentFile].getPath( ).toString( ),
+							desDirectory + File.separator + allFile[currentFile].getName( ).toString( ),
 							filter ) )
 					{
-						Logger.getLogger( FileUtil.class.getName( ) ).log(
-								Level.WARNING,
+						Logger.getLogger( FileUtil.class.getName( ) ).log( Level.WARNING,
 								"Copy sub directory " //$NON-NLS-1$
 										+ srcDirectory
 										+ "failed." ); //$NON-NLS-1$
@@ -232,14 +213,12 @@ public class FileUtil
 		}
 	}
 
-	public static void copyDirectoryToDirectory( File srcDir, File destDir )
-			throws IOException
+	public static void copyDirectoryToDirectory( File srcDir, File destDir ) throws IOException
 	{
 		copyDirectoryToDirectory( srcDir, destDir, null );
 	}
 
-	public static void copyDirectoryToDirectory( File srcDir, File destDir,
-			FileFilter filter ) throws IOException
+	public static void copyDirectoryToDirectory( File srcDir, File destDir, FileFilter filter ) throws IOException
 	{
 		if ( srcDir == null )
 		{
@@ -261,9 +240,7 @@ public class FileUtil
 					+ destDir
 					+ "' is not a directory" ); //$NON-NLS-1$
 		}
-		copyDirectory( srcDir.getAbsolutePath( ),
-				new File( destDir, srcDir.getName( ) ).getAbsolutePath( ),
-				filter );
+		copyDirectory( srcDir.getAbsolutePath( ), new File( destDir, srcDir.getName( ) ).getAbsolutePath( ), filter );
 	}
 
 	public static long sizeOfDirectory( File directory )
@@ -309,8 +286,8 @@ public class FileUtil
 	 * @throws IOException
 	 *             in case deletion is unsuccessful
 	 */
-	public static void deleteDirectory( IProgressMonitor monitor,
-			File directory, File base, int step ) throws IOException
+	public static void deleteDirectory( IProgressMonitor monitor, File directory, File base, int step )
+			throws IOException
 	{
 		if ( !directory.exists( ) )
 		{
@@ -325,14 +302,13 @@ public class FileUtil
 		}
 	}
 
-	public static void deleteDirectory( IProgressMonitor monitor,
-			File directory, int step ) throws IOException
+	public static void deleteDirectory( IProgressMonitor monitor, File directory, int step ) throws IOException
 	{
 		deleteDirectory( monitor, directory, directory, step );
 	}
 
-	public static void cleanDirectory( IProgressMonitor monitor, File directory,
-			File base, int step ) throws IOException
+	public static void cleanDirectory( IProgressMonitor monitor, File directory, File base, int step )
+			throws IOException
 	{
 		if ( !directory.exists( ) )
 		{
@@ -382,8 +358,7 @@ public class FileUtil
 		}
 	}
 
-	public static void forceDelete( IProgressMonitor monitor, File file,
-			File base, int step ) throws IOException
+	public static void forceDelete( IProgressMonitor monitor, File file, File base, int step ) throws IOException
 	{
 		if ( file.isDirectory( ) )
 		{
@@ -395,16 +370,13 @@ public class FileUtil
 			{
 				String taskName = file.getAbsolutePath( )
 						.substring( base.getAbsolutePath( ).length( )
-								+ new Long( System.currentTimeMillis( ) )
-										.toString( )
-										.length( )
+								+ new Long( System.currentTimeMillis( ) ).toString( ).length( )
 								+ 2 );
 				monitor.subTask( taskName );
 			}
 			if ( !file.exists( ) )
 			{
-				throw new FileNotFoundException(
-						"File does not exist: " + file ); //$NON-NLS-1$
+				throw new FileNotFoundException( "File does not exist: " + file ); //$NON-NLS-1$
 			}
 			if ( !file.delete( ) )
 			{
@@ -414,10 +386,8 @@ public class FileUtil
 		}
 	}
 
-	public static void recursiveZip( IProgressMonitor monitor,
-			ZipOutputStream zos, File file, final String path,
-			FileFilter filter, int step )
-			throws FileNotFoundException, IOException
+	public static void recursiveZip( IProgressMonitor monitor, ZipOutputStream zos, File file, final String path,
+			FileFilter filter, int step ) throws FileNotFoundException, IOException
 	{
 		if ( file.isDirectory( ) )
 		{
@@ -450,8 +420,7 @@ public class FileUtil
 			ZipEntry ze = new ZipEntry( path );
 			ze.setSize( file.length( ) );
 			zos.putNextEntry( ze );
-			BufferedInputStream fis = new BufferedInputStream(
-					new FileInputStream( file ) );
+			BufferedInputStream fis = new BufferedInputStream( new FileInputStream( file ) );
 			int i = 0;
 			while ( ( i = fis.read( bt ) ) != -1 )
 			{
@@ -463,8 +432,7 @@ public class FileUtil
 
 	public static void zipFile( File file, String zipFile ) throws Exception
 	{
-		ZipOutputStream zos = new ZipOutputStream(
-				new FileOutputStream( zipFile ) );
+		ZipOutputStream zos = new ZipOutputStream( new FileOutputStream( zipFile ) );
 		ZipEntry ze = null;
 		byte[] buf = new byte[1024];
 		int readLen = 0;
@@ -487,21 +455,18 @@ public class FileUtil
 		public boolean accept( String fileName );
 	}
 
-	public static void filterZipFile( String filePath, Filter filter )
-			throws Exception
+	public static void filterZipFile( String filePath, Filter filter ) throws Exception
 	{
 		if ( isZipFile( filePath ) && filter != null )
 		{
 			File file = new File( filePath );
 			ZipFile zipFile = new ZipFile( file );
-			ZipInputStream zis = new ZipInputStream(
-					new FileInputStream( file ) );
+			ZipInputStream zis = new ZipInputStream( new FileInputStream( file ) );
 			ZipEntry entry = null;
 			InputStream input = null;
 
 			File tmpFile = new File( file + ".tmp" ); //$NON-NLS-1$
-			ZipOutputStream zos = new ZipOutputStream(
-					new FileOutputStream( tmpFile ) );
+			ZipOutputStream zos = new ZipOutputStream( new FileOutputStream( tmpFile ) );
 			zos.setLevel( 1 );
 			while ( ( entry = zis.getNextEntry( ) ) != null )
 			{
@@ -525,14 +490,12 @@ public class FileUtil
 		}
 	}
 
-	public static void zipDir( File dir, String classPackage, String zipFile )
-			throws Exception
+	public static void zipDir( File dir, String classPackage, String zipFile ) throws Exception
 	{
 		File[] files = dir.listFiles( );
 		if ( files != null )
 		{
-			ZipOutputStream zos = new ZipOutputStream(
-					new FileOutputStream( zipFile ) );
+			ZipOutputStream zos = new ZipOutputStream( new FileOutputStream( zipFile ) );
 			ZipEntry ze = null;
 			byte[] buf = new byte[1024];
 			int readLen = 0;
@@ -541,14 +504,12 @@ public class FileUtil
 				File file = files[i];
 				if ( file.isDirectory( ) )
 					continue;
-				ze = new ZipEntry(
-						( classPackage.length( ) > 0 ? ( classPackage + "/" ) //$NON-NLS-1$
-								: "" ) + file.getName( ) ); //$NON-NLS-1$
+				ze = new ZipEntry( ( classPackage.length( ) > 0 ? ( classPackage + "/" ) //$NON-NLS-1$
+						: "" ) + file.getName( ) ); //$NON-NLS-1$
 				ze.setSize( file.length( ) );
 				ze.setTime( file.lastModified( ) );
 				zos.putNextEntry( ze );
-				InputStream is = new BufferedInputStream(
-						new FileInputStream( file ) );
+				InputStream is = new BufferedInputStream( new FileInputStream( file ) );
 				while ( ( readLen = is.read( buf, 0, 1024 ) ) != -1 )
 				{
 					zos.write( buf, 0, readLen );
@@ -582,8 +543,7 @@ public class FileUtil
 		{
 			ByteArrayOutputStream out = new ByteArrayOutputStream( 4096 );
 			byte[] tmp = new byte[4096];
-			InputStream is = new BufferedInputStream(
-					new FileInputStream( file ) );
+			InputStream is = new BufferedInputStream( new FileInputStream( file ) );
 			while ( true )
 			{
 				int r = is.read( tmp );
@@ -612,8 +572,7 @@ public class FileUtil
 		{
 			ByteArrayOutputStream out = new ByteArrayOutputStream( 4096 );
 			byte[] tmp = new byte[4096];
-			InputStream is = new BufferedInputStream(
-					new FileInputStream( file ) );
+			InputStream is = new BufferedInputStream( new FileInputStream( file ) );
 			while ( true )
 			{
 				int r = is.read( tmp );
@@ -670,8 +629,7 @@ public class FileUtil
 		{
 			ByteArrayOutputStream out = new ByteArrayOutputStream( 4096 );
 			byte[] tmp = new byte[4096];
-			InputStream is = new BufferedInputStream(
-					new FileInputStream( file ) );
+			InputStream is = new BufferedInputStream( new FileInputStream( file ) );
 			while ( true )
 			{
 				int r = is.read( tmp );
@@ -697,9 +655,7 @@ public class FileUtil
 		{
 			if ( !file.getParentFile( ).exists( ) )
 				file.getParentFile( ).mkdirs( );
-			PrintWriter out = new PrintWriter(
-					new OutputStreamWriter( new FileOutputStream( file ),
-							encoding ) );
+			PrintWriter out = new PrintWriter( new OutputStreamWriter( new FileOutputStream( file ), encoding ) );
 			out.print( string );
 			out.close( );
 		}

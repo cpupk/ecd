@@ -22,9 +22,11 @@ public class DebugModeAction extends Action
 
 	public DebugModeAction( )
 	{
-		super( Messages.getString("DebugModeAction.Action.Text"), AS_CHECK_BOX ); //$NON-NLS-1$
+		super( Messages.getString( "DebugModeAction.Action.Text" ), //$NON-NLS-1$
+				AS_CHECK_BOX );
 	}
 
+	@Override
 	public void run( )
 	{
 		JavaDecompilerPlugin.getDefault( ).setDebugMode( !isChecked( ) );
@@ -37,6 +39,7 @@ public class DebugModeAction extends Action
 		}
 	}
 
+	@Override
 	public boolean isChecked( )
 	{
 		return JavaDecompilerPlugin.getDefault( ).isDebugMode( );

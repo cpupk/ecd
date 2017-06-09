@@ -16,7 +16,6 @@ import java.io.File;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathContainer;
@@ -85,8 +84,8 @@ public class MySourceAttacher2 implements SourceAttacher
 		final CPListElement elem = CPListElement.createFromExisting( fEntry, fProject );
 		final IPath sourceAttachmentPath = Path.fromOSString( sourcePath ).makeAbsolute( );
 		final String encoding = ResourcesPlugin.getWorkspace( ).getRoot( ).getDefaultCharset( );
-		elem.setAttribute( "sourcepath", (Object) sourceAttachmentPath ); //$NON-NLS-1$
-		elem.setAttribute( "source_encoding", (Object) encoding ); //$NON-NLS-1$
+		elem.setAttribute( "sourcepath", sourceAttachmentPath ); //$NON-NLS-1$
+		elem.setAttribute( "source_encoding", encoding ); //$NON-NLS-1$
 		return elem.getClasspathEntry( );
 	}
 
@@ -102,6 +101,6 @@ public class MySourceAttacher2 implements SourceAttacher
 				project,
 				containerPath,
 				isReferencedEntry,
-				(IProgressMonitor) new NullProgressMonitor( ) );
+				new NullProgressMonitor( ) );
 	}
 }

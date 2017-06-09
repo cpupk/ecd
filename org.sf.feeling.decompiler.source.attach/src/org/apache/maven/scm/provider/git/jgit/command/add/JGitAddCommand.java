@@ -1,6 +1,8 @@
 
 package org.apache.maven.scm.provider.git.jgit.command.add;
 
+import java.util.List;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -31,8 +33,6 @@ import org.apache.maven.scm.provider.git.command.GitCommand;
 import org.apache.maven.scm.provider.git.jgit.command.JGitUtils;
 import org.eclipse.jgit.api.Git;
 
-import java.util.List;
-
 /**
  * @author <a href="mailto:struberg@yahoo.de">Mark Struberg</a>
  * @author Dominik Bartholdi (imod)
@@ -44,6 +44,7 @@ public class JGitAddCommand extends AbstractAddCommand implements GitCommand
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	protected ScmResult executeAddCommand( ScmProviderRepository repo, ScmFileSet fileSet, String message,
 			boolean binary ) throws ScmException
 	{

@@ -63,12 +63,10 @@ public class DecompileActionGroup extends ActionGroup
 		this( page.getSite( ), null );
 	}
 
-	public DecompileActionGroup( JavaDecompilerClassFileEditor editor,
-			String groupName, boolean binary )
+	public DecompileActionGroup( JavaDecompilerClassFileEditor editor, String groupName, boolean binary )
 	{
 
-		final PerformanceStats stats = PerformanceStats
-				.getStats( PERF_DECOMPILE_ACTION_GROUP, this );
+		final PerformanceStats stats = PerformanceStats.getStats( PERF_DECOMPILE_ACTION_GROUP, this );
 		stats.startRun( );
 
 		fEditor = editor;
@@ -77,11 +75,9 @@ public class DecompileActionGroup extends ActionGroup
 		stats.endRun( );
 	}
 
-	public DecompileActionGroup( IWorkbenchSite site,
-			ISelectionProvider selectionProvider )
+	public DecompileActionGroup( IWorkbenchSite site, ISelectionProvider selectionProvider )
 	{
-		final PerformanceStats stats = PerformanceStats
-				.getStats( PERF_DECOMPILE_ACTION_GROUP, this );
+		final PerformanceStats stats = PerformanceStats.getStats( PERF_DECOMPILE_ACTION_GROUP, this );
 		stats.startRun( );
 
 		stats.endRun( );
@@ -106,8 +102,7 @@ public class DecompileActionGroup extends ActionGroup
 	private void addDecompileSubmenu( IMenuManager menu )
 	{
 		MenuManager decompileSubmenu = new MenuManager(
-				Messages.getString(
-						"JavaDecompilerActionBarContributor.Menu.Decompiler" ),
+				Messages.getString( "JavaDecompilerActionBarContributor.Menu.Decompiler" ), //$NON-NLS-1$
 				MENU_ID );
 		decompileSubmenu.setActionDefinitionId( QUICK_MENU_ID );
 		if ( fEditor != null )
@@ -139,17 +134,13 @@ public class DecompileActionGroup extends ActionGroup
 				decompileMenuHidden( );
 			}
 		} );
-		ITextSelection textSelection = (ITextSelection) fEditor
-				.getSelectionProvider( )
-				.getSelection( );
-		JavaTextSelection javaSelection = new JavaTextSelection(
-				getEditorInput( ),
+		ITextSelection textSelection = (ITextSelection) fEditor.getSelectionProvider( ).getSelection( );
+		JavaTextSelection javaSelection = new JavaTextSelection( getEditorInput( ),
 				getDocument( ),
 				textSelection.getOffset( ),
 				textSelection.getLength( ) );
 
-		for ( Iterator<SelectionDispatchAction> iter = fActions
-				.iterator( ); iter.hasNext( ); )
+		for ( Iterator<SelectionDispatchAction> iter = fActions.iterator( ); iter.hasNext( ); )
 		{
 			SelectionDispatchAction action = iter.next( );
 			action.update( javaSelection );
@@ -159,11 +150,8 @@ public class DecompileActionGroup extends ActionGroup
 
 	private void decompileMenuHidden( )
 	{
-		ITextSelection textSelection = (ITextSelection) fEditor
-				.getSelectionProvider( )
-				.getSelection( );
-		for ( Iterator<SelectionDispatchAction> iter = fActions
-				.iterator( ); iter.hasNext( ); )
+		ITextSelection textSelection = (ITextSelection) fEditor.getSelectionProvider( ).getSelection( );
+		for ( Iterator<SelectionDispatchAction> iter = fActions.iterator( ); iter.hasNext( ); )
 		{
 			SelectionDispatchAction action = iter.next( );
 			action.update( textSelection );
@@ -177,7 +165,6 @@ public class DecompileActionGroup extends ActionGroup
 
 	private IDocument getDocument( )
 	{
-		return JavaUI.getDocumentProvider( )
-				.getDocument( fEditor.getEditorInput( ) );
+		return JavaUI.getDocumentProvider( ).getDocument( fEditor.getEditorInput( ) );
 	}
 }

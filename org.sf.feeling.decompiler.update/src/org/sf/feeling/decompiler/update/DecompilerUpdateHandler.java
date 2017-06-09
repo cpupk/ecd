@@ -52,12 +52,14 @@ public class DecompilerUpdateHandler implements IDecompilerUpdateHandler
 
 	private OSGiVersion version;
 
+	@Override
 	public void execute( boolean showUI )
 	{
 		if ( !showUI )
 		{
 			Thread updateThread = new Thread( ) {
 
+				@Override
 				public void run( )
 				{
 					updateDecompiler( new NullProgressMonitor( ) );
@@ -70,6 +72,7 @@ public class DecompilerUpdateHandler implements IDecompilerUpdateHandler
 		{
 			Job job = new Job( "Decompiler update job" ) { //$NON-NLS-1$
 
+				@Override
 				protected IStatus run( IProgressMonitor monitor )
 				{
 					monitor.beginTask( "start task", 100 ); //$NON-NLS-1$
@@ -116,6 +119,7 @@ public class DecompilerUpdateHandler implements IDecompilerUpdateHandler
 		{
 			Display.getDefault( ).asyncExec( new Runnable( ) {
 
+				@Override
 				public void run( )
 				{
 					MessageDialogWithToggle dialog = new MessageDialogWithToggle(
@@ -133,6 +137,7 @@ public class DecompilerUpdateHandler implements IDecompilerUpdateHandler
 							Messages.getString( "DecompilerUpdateHandler.ConfirmDialog.Button.NotAskAgain" ), //$NON-NLS-1$
 							false ) {
 
+						@Override
 						protected Button createToggleButton( Composite parent )
 						{
 							Button button = super.createToggleButton( parent );
@@ -207,7 +212,7 @@ public class DecompilerUpdateHandler implements IDecompilerUpdateHandler
 
 		for ( Iterator<IInstallableUnit> iterator = result.iterator( ); iterator.hasNext( ); )
 		{
-			IInstallableUnit iu = (IInstallableUnit) iterator.next( );
+			IInstallableUnit iu = iterator.next( );
 			if ( "org.sf.feeling.decompiler.feature.group".equals( iu.getId( ) ) ) //$NON-NLS-1$
 			{
 				OSGiVersion remoteVersion = (OSGiVersion) iu.getVersion( );
@@ -293,6 +298,7 @@ public class DecompilerUpdateHandler implements IDecompilerUpdateHandler
 		return remoteVersion.getMajor( ) + "." + remoteVersion.getMinor( ); //$NON-NLS-1$
 	}
 
+	@Override
 	public boolean isForce( IProgressMonitor monitor )
 	{
 		if ( version == null && monitor != null )

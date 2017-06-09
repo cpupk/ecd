@@ -18,8 +18,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import jd.ide.eclipse.editors.JDSourceMapper;
-
 import org.jetbrains.java.decompiler.main.DecompilerContext;
 import org.jetbrains.java.decompiler.main.collectors.CounterContainer;
 import org.jetbrains.java.decompiler.struct.StructClass;
@@ -30,6 +28,8 @@ import org.sf.feeling.decompiler.jd.JDCoreDecompilerPlugin;
 import org.sf.feeling.decompiler.util.FileUtil;
 import org.sf.feeling.decompiler.util.JarClassExtractor;
 import org.sf.feeling.decompiler.util.UIUtil;
+
+import jd.ide.eclipse.editors.JDSourceMapper;
 
 public class JDCoreDecompiler implements IDecompiler
 {
@@ -51,6 +51,7 @@ public class JDCoreDecompiler implements IDecompiler
 	 * 
 	 * @see IDecompiler#decompile(String, String, String)
 	 */
+	@Override
 	public void decompile( String root, String classPackage, String className )
 	{
 		start = System.currentTimeMillis( );
@@ -86,8 +87,9 @@ public class JDCoreDecompiler implements IDecompiler
 				JavaDecompilerPlugin.getDefault( ).displayLineNumber( Boolean.TRUE );
 			}
 
-			source = mapper.decompile( zipFileName, ( classPackage.length( ) > 0 ? ( classPackage + "/" ) : "" ) //$NON-NLS-1$ //$NON-NLS-2$
-					+ className );
+			source = mapper.decompile( zipFileName,
+					( classPackage.length( ) > 0 ? ( classPackage + "/" ) : "" ) //$NON-NLS-1$ //$NON-NLS-2$
+							+ className );
 
 			if ( !zipFile.delete( ) )
 			{
@@ -137,6 +139,7 @@ public class JDCoreDecompiler implements IDecompiler
 	 * 
 	 * @see IDecompiler#decompileFromArchive(String, String, String)
 	 */
+	@Override
 	public void decompileFromArchive( String archivePath, String packege, String className )
 	{
 		start = System.currentTimeMillis( );
@@ -179,11 +182,13 @@ public class JDCoreDecompiler implements IDecompiler
 		root.delete( );
 	}
 
+	@Override
 	public long getDecompilationTime( )
 	{
 		return time;
 	}
 
+	@Override
 	public List getExceptions( )
 	{
 		return Collections.EMPTY_LIST;
@@ -192,6 +197,7 @@ public class JDCoreDecompiler implements IDecompiler
 	/**
 	 * @see IDecompiler#getLog()
 	 */
+	@Override
 	public String getLog( )
 	{
 		return log;
@@ -200,31 +206,37 @@ public class JDCoreDecompiler implements IDecompiler
 	/**
 	 * @see IDecompiler#getSource()
 	 */
+	@Override
 	public String getSource( )
 	{
 		return source;
 	}
 
+	@Override
 	public String getDecompilerType( )
 	{
 		return JDCoreDecompilerPlugin.decompilerType;
 	}
 
+	@Override
 	public String removeComment( String source )
 	{
 		return source;
 	}
 
+	@Override
 	public boolean supportLevel( int level )
 	{
 		return level < 8;
 	}
 
+	@Override
 	public boolean supportDebugLevel( int level )
 	{
 		return level < 8;
 	}
 
+	@Override
 	public boolean supportDebug( )
 	{
 		return true;

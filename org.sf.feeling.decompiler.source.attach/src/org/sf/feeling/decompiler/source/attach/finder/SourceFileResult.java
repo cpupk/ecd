@@ -43,6 +43,7 @@ public class SourceFileResult
 		this.tempSource = tempFile.getAbsolutePath( );
 	}
 
+	@Override
 	public String toString( )
 	{
 		String s = "SourceFileResult[source = " //$NON-NLS-1$

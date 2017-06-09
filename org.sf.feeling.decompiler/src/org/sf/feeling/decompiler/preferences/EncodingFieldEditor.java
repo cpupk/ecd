@@ -19,8 +19,7 @@ import org.eclipse.ui.ide.dialogs.AbstractEncodingFieldEditor;
 public final class EncodingFieldEditor extends AbstractEncodingFieldEditor
 {
 
-	public EncodingFieldEditor( String name, String labelText,
-			String groupTitle, Composite parent )
+	public EncodingFieldEditor( String name, String labelText, String groupTitle, Composite parent )
 	{
 		super( );
 		init( name, labelText );
@@ -28,8 +27,7 @@ public final class EncodingFieldEditor extends AbstractEncodingFieldEditor
 		createControl( parent );
 	}
 
-	public EncodingFieldEditor( String name, String labelText,
-			Composite parent )
+	public EncodingFieldEditor( String name, String labelText, Composite parent )
 	{
 		super( );
 		init( name, labelText );
@@ -64,6 +62,7 @@ public final class EncodingFieldEditor extends AbstractEncodingFieldEditor
 		}
 	}
 
+	@Override
 	public void setPreferenceStore( IPreferenceStore store )
 	{
 		if ( store != null )

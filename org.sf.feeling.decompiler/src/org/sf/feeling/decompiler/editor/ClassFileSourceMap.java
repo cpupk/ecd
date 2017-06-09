@@ -37,9 +37,8 @@ public class ClassFileSourceMap
 		return type;
 	}
 
-	private static void mapSource( JavaDecompilerBufferManager bufferManager,
-			ClassFile cf, SourceMapper mapper, IBinaryType info,
-			IClassFile bufferOwner, char[] markedSrc )
+	private static void mapSource( JavaDecompilerBufferManager bufferManager, ClassFile cf, SourceMapper mapper,
+			IBinaryType info, IClassFile bufferOwner, char[] markedSrc )
 	{
 		char[] contents = mapper.findSource( cf.getType( ), info );
 		if ( Arrays.equals( markedSrc, contents ) )
@@ -83,8 +82,8 @@ public class ClassFileSourceMap
 		}
 	}
 
-	public static void updateSource( JavaDecompilerBufferManager bufferManager,
-			ClassFile cf, char[] markedSrc ) throws JavaModelException
+	public static void updateSource( JavaDecompilerBufferManager bufferManager, ClassFile cf, char[] markedSrc )
+			throws JavaModelException
 	{
 		IType type = cf.getType( );
 		if ( !type.isBinary( ) )
@@ -100,16 +99,10 @@ public class ClassFileSourceMap
 		}
 		IType outerMostEnclosingType = type;
 		SourceMapper mapper = cf.getSourceMapper( );
-		IBinaryType typeInfo = info instanceof IBinaryType ? (IBinaryType) info
-				: null;
+		IBinaryType typeInfo = info instanceof IBinaryType ? (IBinaryType) info : null;
 		if ( mapper != null )
 		{
-			mapSource( bufferManager,
-					cf,
-					mapper,
-					typeInfo,
-					outerMostEnclosingType.getClassFile( ),
-					markedSrc );
+			mapSource( bufferManager, cf, mapper, typeInfo, outerMostEnclosingType.getClassFile( ), markedSrc );
 		}
 
 	}

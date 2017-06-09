@@ -89,7 +89,7 @@ public class FinderManager
 			{
 				wait( );
 			}
-			return (String) this.queue.removeFirst( );
+			return this.queue.removeFirst( );
 		}
 	}
 
@@ -115,6 +115,7 @@ public class FinderManager
 			this.finder.cancel( );
 		}
 
+		@Override
 		public void run( )
 		{
 			try

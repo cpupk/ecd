@@ -58,6 +58,7 @@ public class JavaSourceAttacherHandler extends AbstractHandler
 
 	final static Map<String, IPackageFragmentRoot> requests = new HashMap<String, IPackageFragmentRoot>( );
 
+	@Override
 	public Object execute( final ExecutionEvent event ) throws ExecutionException
 	{
 		if ( !JavaDecompilerPlugin.getDefault( ).isEnableExtension( ) )
@@ -150,6 +151,7 @@ public class JavaSourceAttacherHandler extends AbstractHandler
 		{
 			final Job job = new Job( Messages.getString( "JavaSourceAttacherHandler.Job.Name" ) ) { //$NON-NLS-1$
 
+				@Override
 				protected IStatus run( final IProgressMonitor monitor )
 				{
 					return JavaSourceAttacherHandler.updateSourceAttachments( selections, monitor );
@@ -357,6 +359,7 @@ public class JavaSourceAttacherHandler extends AbstractHandler
 	{
 		Thread thread = new Thread( ) {
 
+			@Override
 			public void run( )
 			{
 				try

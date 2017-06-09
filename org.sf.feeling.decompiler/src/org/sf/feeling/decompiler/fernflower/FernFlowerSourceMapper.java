@@ -28,8 +28,9 @@ public class FernFlowerSourceMapper extends BaseDecompilerSourceMapper
 		origionalDecompiler = new FernFlowerDecompiler( );
 	}
 
-	protected void printDecompileReport( StringBuffer source,
-			String fileLocation, Collection exceptions, long decompilationTime )
+	@Override
+	protected void printDecompileReport( StringBuffer source, String fileLocation, Collection exceptions,
+			long decompilationTime )
 	{
 		String location = "\tDecompiled from: " //$NON-NLS-1$
 				+ fileLocation;

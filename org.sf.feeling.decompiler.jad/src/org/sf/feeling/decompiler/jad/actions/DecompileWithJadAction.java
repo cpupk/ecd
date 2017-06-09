@@ -26,6 +26,7 @@ public class DecompileWithJadAction extends Action
 		this.setImageDescriptor( JadDecompilerPlugin.getImageDescriptor( "icons/jad_16.gif" ) ); //$NON-NLS-1$
 	}
 
+	@Override
 	public void run( )
 	{
 		try
@@ -37,9 +38,9 @@ public class DecompileWithJadAction extends Action
 		}
 	}
 
+	@Override
 	public boolean isEnabled( )
 	{
-		return UIUtil.getActiveEditor( ) != null
-				|| UIUtil.getActiveSelection( ) != null;
+		return UIUtil.getActiveEditor( ) != null || UIUtil.getActiveSelection( ) != null;
 	}
 }

@@ -32,12 +32,14 @@ public class SubMenuCreator implements IMenuCreator
 
 	private MenuManager dropDownMenuMgr;
 
+	@Override
 	public Menu getMenu( final Menu parent )
 	{
 		final Menu menu = new Menu( parent );
 		fillMenu( menu );
 		menu.addMenuListener( new MenuAdapter( ) {
 
+			@Override
 			public void menuShown( MenuEvent e )
 			{
 				while ( menu.getItemCount( ) > 0 )
@@ -55,10 +57,11 @@ public class SubMenuCreator implements IMenuCreator
 		final MenuManager menuMgr = new MenuManager( );
 
 		boolean isAddFernFlower = false;
-		
+
 		for ( int i = 0; i < DecompilerType.getDecompilerTypes( ).length; i++ )
 		{
-			if ( DecompilerType.getDecompilerTypes( )[i] .compareToIgnoreCase( DecompilerType.FernFlower ) > 0 && !isAddFernFlower )
+			if ( DecompilerType.getDecompilerTypes( )[i].compareToIgnoreCase( DecompilerType.FernFlower ) > 0
+					&& !isAddFernFlower )
 			{
 				menuMgr.add( new DecompileWithFernFlowerAction( ) );
 				isAddFernFlower = true;
@@ -67,8 +70,9 @@ public class SubMenuCreator implements IMenuCreator
 					.getDecompilerDescriptor( DecompilerType.getDecompilerTypes( )[i] )
 					.getDecompileAction( ) );
 		}
-		
-		if(!isAddFernFlower){
+
+		if ( !isAddFernFlower )
+		{
 			menuMgr.add( new DecompileWithFernFlowerAction( ) );
 		}
 
@@ -85,12 +89,14 @@ public class SubMenuCreator implements IMenuCreator
 		}
 	}
 
+	@Override
 	public Menu getMenu( Control parent )
 	{
 		createDropDownMenuMgr( );
 		return dropDownMenuMgr.createContextMenu( parent );
 	}
 
+	@Override
 	public void dispose( )
 	{
 		if ( null != dropDownMenuMgr )
@@ -108,6 +114,7 @@ public class SubMenuCreator implements IMenuCreator
 			super( action );
 		}
 
+		@Override
 		public boolean isEnabledAllowed( )
 		{
 			return true;
@@ -121,29 +128,30 @@ public class SubMenuCreator implements IMenuCreator
 			dropDownMenuMgr = new MenuManager( );
 
 			boolean isAddFernFlower = false;
-			
-			
+
 			for ( int i = 0; i < DecompilerType.getDecompilerTypes( ).length; i++ )
 			{
-				if ( DecompilerType.getDecompilerTypes( )[i] .compareToIgnoreCase( DecompilerType.FernFlower ) > 0 && !isAddFernFlower )
+				if ( DecompilerType.getDecompilerTypes( )[i].compareToIgnoreCase( DecompilerType.FernFlower ) > 0
+						&& !isAddFernFlower )
 				{
 					dropDownMenuMgr.add( new DecompileWithFernFlowerAction( ) );
 					isAddFernFlower = true;
 				}
-				
+
 				dropDownMenuMgr.add( JavaDecompilerPlugin.getDefault( )
 						.getDecompilerDescriptor( DecompilerType.getDecompilerTypes( )[i] )
 						.getDecompileAction( ) );
 			}
-			
-			if(!isAddFernFlower){
+
+			if ( !isAddFernFlower )
+			{
 				dropDownMenuMgr.add( new DecompileWithFernFlowerAction( ) );
 			}
-			
+
 			dropDownMenuMgr.add( new Separator( ) );
-			
+
 			dropDownMenuMgr.add( new DebugModeAction( ) );
-			
+
 			dropDownMenuMgr.add( new Separator( ) );
 
 			List list = UIUtil.getExportSelections( );

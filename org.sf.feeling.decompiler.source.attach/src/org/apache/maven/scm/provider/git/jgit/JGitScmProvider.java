@@ -54,6 +54,7 @@ public class JGitScmProvider extends AbstractGitScmProvider
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	protected GitCommand getAddCommand( )
 	{
 		return new JGitAddCommand( );
@@ -62,6 +63,7 @@ public class JGitScmProvider extends AbstractGitScmProvider
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	protected GitCommand getBranchCommand( )
 	{
 		return new JGitBranchCommand( );
@@ -70,6 +72,7 @@ public class JGitScmProvider extends AbstractGitScmProvider
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	protected GitCommand getChangeLogCommand( )
 	{
 		return new JGitChangeLogCommand( );
@@ -78,6 +81,7 @@ public class JGitScmProvider extends AbstractGitScmProvider
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	protected GitCommand getCheckInCommand( )
 	{
 		return new JGitCheckInCommand( );
@@ -86,6 +90,7 @@ public class JGitScmProvider extends AbstractGitScmProvider
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	protected GitCommand getCheckOutCommand( )
 	{
 		return new JGitCheckOutCommand( );
@@ -94,6 +99,7 @@ public class JGitScmProvider extends AbstractGitScmProvider
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	protected GitCommand getDiffCommand( )
 	{
 		return new JGitDiffCommand( );
@@ -102,22 +108,25 @@ public class JGitScmProvider extends AbstractGitScmProvider
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	protected GitCommand getExportCommand( )
 	{
-		throw new UnsupportedOperationException( "getExportCommand" );
+		throw new UnsupportedOperationException( "getExportCommand" ); //$NON-NLS-1$
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	protected GitCommand getRemoveCommand( )
 	{
-		throw new UnsupportedOperationException( "getRemoveCommand" );
+		throw new UnsupportedOperationException( "getRemoveCommand" ); //$NON-NLS-1$
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	protected GitCommand getStatusCommand( )
 	{
 		return new JGitStatusCommand( );
@@ -126,6 +135,7 @@ public class JGitScmProvider extends AbstractGitScmProvider
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	protected GitCommand getTagCommand( )
 	{
 		return new JGitTagCommand( );
@@ -134,14 +144,16 @@ public class JGitScmProvider extends AbstractGitScmProvider
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	protected GitCommand getUpdateCommand( )
 	{
-		throw new UnsupportedOperationException( "getUpdateCommand" );
+		throw new UnsupportedOperationException( "getUpdateCommand" ); //$NON-NLS-1$
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	protected GitCommand getListCommand( )
 	{
 		return new JGitListCommand( );
@@ -150,26 +162,28 @@ public class JGitScmProvider extends AbstractGitScmProvider
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public GitCommand getInfoCommand( )
 	{
-		throw new UnsupportedOperationException( "getInfoCommand" );
+		throw new UnsupportedOperationException( "getInfoCommand" ); //$NON-NLS-1$
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	protected String getRepositoryURL( File path ) throws ScmException
 	{
 		// Note: I need to supply just 1 absolute path, but ScmFileSet won't let
 		// me without
 		// a basedir (which isn't used here anyway), so use a dummy file.
-		InfoScmResult result = info( null, new ScmFileSet( new File( "" ), path ), null );
+		InfoScmResult result = info( null, new ScmFileSet( new File( "" ), path ), null ); //$NON-NLS-1$
 
 		if ( result.getInfoItems( ).size( ) != 1 )
 		{
-			throw new ScmRepositoryException( "Cannot find URL: "
-					+ ( result.getInfoItems( ).size( ) == 0 ? "no" : "multiple" )
-					+ " items returned by the info command" );
+			throw new ScmRepositoryException( "Cannot find URL: " //$NON-NLS-1$
+					+ ( result.getInfoItems( ).size( ) == 0 ? "no" : "multiple" ) //$NON-NLS-1$ //$NON-NLS-2$
+					+ " items returned by the info command" ); //$NON-NLS-1$
 		}
 
 		return ( (GitInfoItem) result.getInfoItems( ).get( 0 ) ).getURL( );
@@ -178,6 +192,7 @@ public class JGitScmProvider extends AbstractGitScmProvider
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	protected GitCommand getBlameCommand( )
 	{
 		return new JGitBlameCommand( );
@@ -186,6 +201,7 @@ public class JGitScmProvider extends AbstractGitScmProvider
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	protected GitCommand getRemoteInfoCommand( )
 	{
 		return new JGitRemoteInfoCommand( );

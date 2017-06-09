@@ -1,6 +1,12 @@
 
 package org.apache.maven.scm.provider.git.jgit.command.changelog;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -38,12 +44,6 @@ import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevSort;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 /**
  * @author <a href="mailto:struberg@yahoo.de">Mark Struberg</a>
  * @author Dominik Bartholdi (imod)
@@ -55,6 +55,7 @@ public class JGitChangeLogCommand extends AbstractChangeLogCommand implements Gi
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	protected ChangeLogScmResult executeChangeLogCommand( ScmProviderRepository repo, ScmFileSet fileSet,
 			ScmVersion startVersion, ScmVersion endVersion, String datePattern ) throws ScmException
 	{
@@ -64,6 +65,7 @@ public class JGitChangeLogCommand extends AbstractChangeLogCommand implements Gi
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	protected ChangeLogScmResult executeChangeLogCommand( ScmProviderRepository repo, ScmFileSet fileSet,
 			Date startDate, Date endDate, ScmBranch branch, String datePattern ) throws ScmException
 	{

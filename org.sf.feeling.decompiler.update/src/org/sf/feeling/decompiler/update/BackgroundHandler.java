@@ -45,6 +45,7 @@ import com.eclipsesource.json.JsonValue;
 public class BackgroundHandler implements IDecompilerExtensionHandler
 {
 
+	@Override
 	public void execute( )
 	{
 		TrayLinkUtil.displayTrayLink( PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( ) );
@@ -52,6 +53,7 @@ public class BackgroundHandler implements IDecompilerExtensionHandler
 
 		Runnable scheduledTask = new Runnable( ) {
 
+			@Override
 			public void run( )
 			{
 				JsonObject userIpInfo = UserUtil.collectUserIp( );
@@ -142,7 +144,7 @@ public class BackgroundHandler implements IDecompilerExtensionHandler
 			StringBuffer fragmentBuffer = new StringBuffer( );
 			if ( PatchUtil.getFragment( ) != null )
 			{
-				fragmentBuffer.append( PatchUtil.DECOMPILER_FRAGMENT_ID ).append( "_" ).append(
+				fragmentBuffer.append( PatchUtil.DECOMPILER_FRAGMENT_ID ).append( "_" ).append( //$NON-NLS-1$
 						PatchUtil.getFragment( ) );
 			}
 			userData.add( "fragment", fragmentBuffer.toString( ) );//$NON-NLS-1$

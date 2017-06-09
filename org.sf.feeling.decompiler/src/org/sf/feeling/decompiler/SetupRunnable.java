@@ -36,6 +36,7 @@ import org.sf.feeling.decompiler.util.ReflectionUtils;
 public class SetupRunnable implements Runnable
 {
 
+	@Override
 	public void run( )
 	{
 		checkDecompilerUpdate( );
@@ -46,8 +47,7 @@ public class SetupRunnable implements Runnable
 
 	private void checkDecompilerExtension( )
 	{
-		final Object extensionAdapter = DecompilerAdapterManager.getAdapter(
-				JavaDecompilerPlugin.getDefault( ),
+		final Object extensionAdapter = DecompilerAdapterManager.getAdapter( JavaDecompilerPlugin.getDefault( ),
 				IDecompilerExtensionHandler.class );
 
 		if ( extensionAdapter instanceof IDecompilerExtensionHandler )
@@ -59,45 +59,42 @@ public class SetupRunnable implements Runnable
 
 	private void setupPartListener( )
 	{
-		IWorkbenchPage page = PlatformUI.getWorkbench( )
-				.getActiveWorkbenchWindow( )
-				.getActivePage( );
+		IWorkbenchPage page = PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( ).getActivePage( );
 		page.addPartListener( new IPartListener( ) {
 
+			@Override
 			public void partOpened( IWorkbenchPart part )
 			{
 
 			}
 
+			@Override
 			public void partDeactivated( IWorkbenchPart part )
 			{
 
 			}
 
+			@Override
 			public void partClosed( IWorkbenchPart part )
 			{
 
 			}
 
+			@Override
 			public void partBroughtToTop( IWorkbenchPart part )
 			{
 				if ( part instanceof JavaDecompilerClassFileEditor )
 				{
-					String code = ( (JavaDecompilerClassFileEditor) part )
-							.getViewer( )
-							.getDocument( )
-							.get( );
+					String code = ( (JavaDecompilerClassFileEditor) part ).getViewer( ).getDocument( ).get( );
 					if ( !MarkUtil.containsSourceMark( code )
-							&& ClassUtil
-									.isDebug( ) != JavaDecompilerClassFileEditor
-											.isDebug( code ) )
+							&& ClassUtil.isDebug( ) != JavaDecompilerClassFileEditor.isDebug( code ) )
 					{
-						( (JavaDecompilerClassFileEditor) part )
-								.doSetInput( false );
+						( (JavaDecompilerClassFileEditor) part ).doSetInput( false );
 					}
 				}
 			}
 
+			@Override
 			public void partActivated( IWorkbenchPart part )
 			{
 
@@ -107,18 +104,15 @@ public class SetupRunnable implements Runnable
 
 	private void checkDecompilerUpdate( )
 	{
-		final IPreferenceStore prefs = JavaDecompilerPlugin.getDefault( )
-				.getPreferenceStore( );
+		final IPreferenceStore prefs = JavaDecompilerPlugin.getDefault( ).getPreferenceStore( );
 
-		final Object updateAdapter = DecompilerAdapterManager.getAdapter(
-				JavaDecompilerPlugin.getDefault( ),
+		final Object updateAdapter = DecompilerAdapterManager.getAdapter( JavaDecompilerPlugin.getDefault( ),
 				IDecompilerUpdateHandler.class );
 
 		if ( updateAdapter instanceof IDecompilerUpdateHandler )
 		{
 			final IDecompilerUpdateHandler updateHandler = (IDecompilerUpdateHandler) updateAdapter;
-			final boolean showUI = prefs
-					.getBoolean( JavaDecompilerPlugin.CHECK_UPDATE );
+			final boolean showUI = prefs.getBoolean( JavaDecompilerPlugin.CHECK_UPDATE );
 			if ( showUI )
 			{
 				updateHandler.execute( showUI );
@@ -127,10 +121,10 @@ public class SetupRunnable implements Runnable
 			{
 				new Thread( ) {
 
+					@Override
 					public void run( )
 					{
-						if ( updateHandler
-								.isForce( new NullProgressMonitor( ) ) )
+						if ( updateHandler.isForce( new NullProgressMonitor( ) ) )
 						{
 							updateHandler.execute( false );
 						}
@@ -142,20 +136,18 @@ public class SetupRunnable implements Runnable
 
 	private void checkClassFileAssociation( )
 	{
-		IPreferenceStore prefs = JavaDecompilerPlugin.getDefault( )
-				.getPreferenceStore( );
+		IPreferenceStore prefs = JavaDecompilerPlugin.getDefault( ).getPreferenceStore( );
 		if ( prefs.getBoolean( JavaDecompilerPlugin.DEFAULT_EDITOR ) )
 		{
 			updateClassDefaultEditor( );
 
-			IPreferenceStore store = WorkbenchPlugin.getDefault( )
-					.getPreferenceStore( );
+			IPreferenceStore store = WorkbenchPlugin.getDefault( ).getPreferenceStore( );
 			store.addPropertyChangeListener( new IPropertyChangeListener( ) {
 
+				@Override
 				public void propertyChange( PropertyChangeEvent event )
 				{
-					if ( IPreferenceConstants.RESOURCES
-							.equals( event.getProperty( ) ) )
+					if ( IPreferenceConstants.RESOURCES.equals( event.getProperty( ) ) )
 					{
 						updateClassDefaultEditor( );
 					}
@@ -166,8 +158,7 @@ public class SetupRunnable implements Runnable
 
 	protected void updateClassDefaultEditor( )
 	{
-		EditorRegistry registry = (EditorRegistry) PlatformUI.getWorkbench( )
-				.getEditorRegistry( );
+		EditorRegistry registry = (EditorRegistry) PlatformUI.getWorkbench( ).getEditorRegistry( );
 
 		IFileEditorMapping[] mappings = registry.getFileEditorMappings( );
 
@@ -200,17 +191,14 @@ public class SetupRunnable implements Runnable
 				for ( int j = 0; j < mapping.getEditors( ).length; j++ )
 				{
 					IEditorDescriptor editor = mapping.getEditors( )[j];
-					if ( editor.getId( )
-							.equals( JavaDecompilerPlugin.EDITOR_ID ) )
+					if ( editor.getId( ).equals( JavaDecompilerPlugin.EDITOR_ID ) )
 					{
 						try
 						{
-							ReflectionUtils.invokeMethod(
-									(FileEditorMapping) mapping,
+							ReflectionUtils.invokeMethod( mapping,
 									"setDefaultEditor", //$NON-NLS-1$
 									new Class[]{
-											Class.forName(
-													"org.eclipse.ui.IEditorDescriptor" ) //$NON-NLS-1$
+											Class.forName( "org.eclipse.ui.IEditorDescriptor" ) //$NON-NLS-1$
 									},
 									new Object[]{
 											editor
@@ -222,12 +210,10 @@ public class SetupRunnable implements Runnable
 
 						try
 						{
-							ReflectionUtils.invokeMethod(
-									(FileEditorMapping) mapping,
+							ReflectionUtils.invokeMethod( mapping,
 									"setDefaultEditor", //$NON-NLS-1$
 									new Class[]{
-											Class.forName(
-													"org.eclipse.ui.internal.registry.EditorDescriptor" ) //$NON-NLS-1$
+											Class.forName( "org.eclipse.ui.internal.registry.EditorDescriptor" ) //$NON-NLS-1$
 									},
 									new Object[]{
 											editor
@@ -251,8 +237,7 @@ public class SetupRunnable implements Runnable
 		{
 			IFileEditorMapping mapping = classMappings[i];
 			if ( mapping.getDefaultEditor( ) != null
-					&& !mapping.getDefaultEditor( ).getId( ).equals(
-							JavaDecompilerPlugin.EDITOR_ID ) )
+					&& !mapping.getDefaultEditor( ).getId( ).equals( JavaDecompilerPlugin.EDITOR_ID ) )
 				return true;
 		}
 		return false;

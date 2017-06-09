@@ -77,6 +77,7 @@ public class MarketplaceWizardCommand extends AbstractHandler implements IHandle
 
 	private WizardState wizardDialogState;
 
+	@Override
 	public Object execute( ExecutionEvent event ) throws ExecutionException
 	{
 		final MarketplaceCatalog catalog = new MarketplaceCatalog( );
@@ -200,6 +201,7 @@ public class MarketplaceWizardCommand extends AbstractHandler implements IHandle
 
 		final IPropertyChangeListener marketListener = new IPropertyChangeListener( ) {
 
+			@Override
 			public void propertyChange( PropertyChangeEvent event )
 			{
 				final String property = event.getProperty( );
@@ -265,6 +267,7 @@ public class MarketplaceWizardCommand extends AbstractHandler implements IHandle
 		}
 		Collections.sort( choices, new Comparator<Tag>( ) {
 
+			@Override
 			public int compare( Tag o1, Tag o2 )
 			{
 				return o1.getLabel( ).compareTo( o2.getLabel( ) );
@@ -323,6 +326,7 @@ public class MarketplaceWizardCommand extends AbstractHandler implements IHandle
 
 			PlatformUI.getWorkbench( ).getProgressService( ).busyCursorWhile( new IRunnableWithProgress( ) {
 
+				@Override
 				public void run( IProgressMonitor monitor ) throws InvocationTargetException, InterruptedException
 				{
 					try

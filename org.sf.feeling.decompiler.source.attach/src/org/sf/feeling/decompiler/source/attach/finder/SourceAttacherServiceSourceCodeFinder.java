@@ -35,16 +35,19 @@ public class SourceAttacherServiceSourceCodeFinder extends AbstractSourceCodeFin
 	public static final String SERVICE = "http://javasourceattacher2.appspot.com"; //$NON-NLS-1$
 	private boolean canceled = false;
 
+	@Override
 	public String toString( )
 	{
 		return getClass( ).toString( );
 	}
 
+	@Override
 	public void cancel( )
 	{
 		this.canceled = true;
 	}
 
+	@Override
 	public void find( String binFile, List<SourceFileResult> results )
 	{
 		File bin = new File( binFile );

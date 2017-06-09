@@ -45,8 +45,7 @@ public abstract class DecompilerSourceMapper extends SourceMapper
 
 	protected boolean isAttachedSource;
 
-	public DecompilerSourceMapper( IPath sourcePath, String rootPath,
-			Map options )
+	public DecompilerSourceMapper( IPath sourcePath, String rootPath, Map options )
 	{
 		super( sourcePath, rootPath, options );
 	}
@@ -102,27 +101,18 @@ public abstract class DecompilerSourceMapper extends SourceMapper
 	{
 		String result = null;
 
-		IPreferenceStore prefs = JavaDecompilerPlugin.getDefault( )
-				.getPreferenceStore( );
-		boolean useFormatter = prefs
-				.getBoolean( JavaDecompilerPlugin.USE_ECLIPSE_FORMATTER );
+		IPreferenceStore prefs = JavaDecompilerPlugin.getDefault( ).getPreferenceStore( );
+		boolean useFormatter = prefs.getBoolean( JavaDecompilerPlugin.USE_ECLIPSE_FORMATTER );
 
 		if ( source != null && useFormatter )
 		{
 			CompilerOptions option = new CompilerOptions( );
 			Map<String, String> options = option.getMap( );
-			options.put( CompilerOptions.OPTION_Compliance,
-					DecompilerOutputUtil.getMaxDecompileLevel( ) ); // $NON-NLS-1$
-			options.put( CompilerOptions.OPTION_Source,
-					DecompilerOutputUtil.getMaxDecompileLevel( ) ); // $NON-NLS-1$
+			options.put( CompilerOptions.OPTION_Compliance, DecompilerOutputUtil.getMaxDecompileLevel( ) ); // $NON-NLS-1$
+			options.put( CompilerOptions.OPTION_Source, DecompilerOutputUtil.getMaxDecompileLevel( ) ); // $NON-NLS-1$
 			CodeFormatter formatter = ToolFactory.createCodeFormatter( options );
-			TextEdit textEdit = formatter.format(
-					CodeFormatter.K_COMPILATION_UNIT,
-					source,
-					0,
-					source.length( ),
-					0,
-					null );
+			TextEdit textEdit = formatter
+					.format( CodeFormatter.K_COMPILATION_UNIT, source, 0, source.length( ), 0, null );
 			if ( textEdit != null )
 			{
 				IDocument document = new Document( source );
@@ -132,18 +122,14 @@ public abstract class DecompilerSourceMapper extends SourceMapper
 				}
 				catch ( BadLocationException e )
 				{
-					JavaDecompilerPlugin.log( IStatus.WARNING,
-							e,
-							"Unable to apply text formatting." ); //$NON-NLS-1$
+					JavaDecompilerPlugin.log( IStatus.WARNING, e, "Unable to apply text formatting." ); //$NON-NLS-1$
 				}
 				result = document.get( );
 			}
 
 			if ( result == null )
 			{
-				JavaDecompilerPlugin.log( IStatus.WARNING,
-						null,
-						"Could not format code, it will remain unformatted." ); //$NON-NLS-1$
+				JavaDecompilerPlugin.log( IStatus.WARNING, null, "Could not format code, it will remain unformatted." ); //$NON-NLS-1$
 				result = source;
 			}
 		}
@@ -188,9 +174,7 @@ public abstract class DecompilerSourceMapper extends SourceMapper
 	protected IJavaElement findElement( IJavaElement elt, int position )
 	{
 		ISourceRange range = getSourceRange( elt );
-		if ( range == null
-				|| position < range.getOffset( )
-				|| range.getOffset( ) + range.getLength( ) - 1 < position )
+		if ( range == null || position < range.getOffset( ) || range.getOffset( ) + range.getLength( ) - 1 < position )
 		{
 			return null;
 		}

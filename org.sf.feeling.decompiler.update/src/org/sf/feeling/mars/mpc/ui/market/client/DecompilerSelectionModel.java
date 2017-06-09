@@ -30,6 +30,7 @@ public class DecompilerSelectionModel extends SelectionModel
 		super( installProfile );
 	}
 
+	@Override
 	public Set<CatalogItem> getSelectedCatalogItems( )
 	{
 		Set<CatalogItem> items = new HashSet<CatalogItem>( );

@@ -19,6 +19,7 @@ import org.sf.feeling.decompiler.jd.JDCoreDecompilerPlugin;
 public class DecompileWithJDCoreHandler extends BaseDecompilerHandler
 {
 
+	@Override
 	public Object execute( ExecutionEvent event ) throws ExecutionException
 	{
 		return handleDecompile( JDCoreDecompilerPlugin.decompilerType );

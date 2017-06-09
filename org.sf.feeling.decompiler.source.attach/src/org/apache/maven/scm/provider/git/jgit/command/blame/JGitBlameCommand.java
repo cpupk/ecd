@@ -1,6 +1,10 @@
 
 package org.apache.maven.scm.provider.git.jgit.command.blame;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -30,10 +34,6 @@ import org.apache.maven.scm.provider.git.command.GitCommand;
 import org.apache.maven.scm.provider.git.jgit.command.JGitUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.blame.BlameResult;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Dominik Bartholdi (imod)

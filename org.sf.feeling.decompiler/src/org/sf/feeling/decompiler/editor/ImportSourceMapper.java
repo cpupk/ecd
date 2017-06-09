@@ -50,10 +50,8 @@ public class ImportSourceMapper extends SourceMapper
 	{
 		CompilerOptions option = new CompilerOptions( );
 		options = option.getMap( );
-		options.put( CompilerOptions.OPTION_Compliance,
-				DecompilerOutputUtil.getMaxDecompileLevel( ) ); // $NON-NLS-1$
-		options.put( CompilerOptions.OPTION_Source,
-				DecompilerOutputUtil.getMaxDecompileLevel( ) ); // $NON-NLS-1$
+		options.put( CompilerOptions.OPTION_Compliance, DecompilerOutputUtil.getMaxDecompileLevel( ) ); // $NON-NLS-1$
+		options.put( CompilerOptions.OPTION_Source, DecompilerOutputUtil.getMaxDecompileLevel( ) ); // $NON-NLS-1$
 	}
 
 	public ImportSourceMapper( IPath sourcePath, String rootPath )
@@ -77,6 +75,7 @@ public class ImportSourceMapper extends SourceMapper
 
 	private JavaModelManager manager = JavaModelManager.getJavaModelManager( );
 
+	@Override
 	public void enterCompilationUnit( )
 	{
 		this.infoStack = new Stack( );
@@ -86,8 +85,9 @@ public class ImportSourceMapper extends SourceMapper
 		this.handleStack.push( this.unit );
 	}
 
-	public synchronized ISourceRange mapSource( IType type, char[] contents,
-			IBinaryType info, IJavaElement elementToFind )
+	@Override
+	public synchronized ISourceRange mapSource( IType type, char[] contents, IBinaryType info,
+			IJavaElement elementToFind )
 	{
 		this.binaryType = (BinaryType) type;
 		this.unit = (ClassFile) binaryType.getClassFile( );
@@ -99,20 +99,19 @@ public class ImportSourceMapper extends SourceMapper
 		{
 			Logger.debug( e );
 		}
-		
+
 		return super.mapSource( type, contents, info, elementToFind );
 	}
 
+	@Override
 	public void exitCompilationUnit( int declarationEnd )
 	{
-		IJavaElement[] oldChildren = (IJavaElement[]) ReflectionUtils
-				.getFieldValue( this.unitInfo, "children" );
+		IJavaElement[] oldChildren = (IJavaElement[]) ReflectionUtils.getFieldValue( this.unitInfo, "children" ); //$NON-NLS-1$
 
 		if ( this.importContainerInfo != null )
 		{
-			ReflectionUtils.setFieldValue( this.importContainerInfo,
-					"children",
-					getChildren( this.importContainerInfo ) );
+			ReflectionUtils
+					.setFieldValue( this.importContainerInfo, "children", getChildren( this.importContainerInfo ) ); //$NON-NLS-1$
 		}
 
 		List<IJavaElement> children = new ArrayList<IJavaElement>( );
@@ -127,15 +126,13 @@ public class ImportSourceMapper extends SourceMapper
 
 		children.addAll( Arrays.asList( getChildren( this.unitInfo ) ) );
 
-		ReflectionUtils.setFieldValue( this.unitInfo,
-				"children",
-				children.toArray( new IJavaElement[0] ) );
+		ReflectionUtils.setFieldValue( this.unitInfo, "children", children.toArray( new IJavaElement[0] ) ); //$NON-NLS-1$
 
 		if ( this.importContainer != null )
 		{
 			manager.getTemporaryCache( ).put( this.importContainer, this.importContainerInfo );
 		}
-		ReflectionUtils.invokeMethod( manager, "putInfos", new Class[]{
+		ReflectionUtils.invokeMethod( manager, "putInfos", new Class[]{ //$NON-NLS-1$
 				IJavaElement.class, Object.class, boolean.class, Map.class
 		}, new Object[]{
 				unit, unitInfo, false, manager.getTemporaryCache( )
@@ -147,8 +144,7 @@ public class ImportSourceMapper extends SourceMapper
 		ArrayList childrenList = (ArrayList) this.children.get( info );
 		if ( childrenList != null )
 		{
-			return (IJavaElement[]) childrenList
-					.toArray( new IJavaElement[childrenList.size( )] );
+			return (IJavaElement[]) childrenList.toArray( new IJavaElement[childrenList.size( )] );
 		}
 		return new JavaElement[0];
 	}
@@ -166,18 +162,14 @@ public class ImportSourceMapper extends SourceMapper
 		childrenList.add( handle );
 	}
 
-	protected ImportDeclaration createImportDeclaration( ImportContainer parent,
-			String name, boolean onDemand )
+	protected ImportDeclaration createImportDeclaration( ImportContainer parent, String name, boolean onDemand )
 	{
 		try
 		{
-			Constructor c = ImportDeclaration.class.getDeclaredConstructor(
-					ImportContainer.class,
-					String.class,
-					boolean.class );
+			Constructor c = ImportDeclaration.class
+					.getDeclaredConstructor( ImportContainer.class, String.class, boolean.class );
 			c.setAccessible( true );
-			ImportDeclaration dec = (ImportDeclaration) c
-					.newInstance( parent, name, onDemand );
+			ImportDeclaration dec = (ImportDeclaration) c.newInstance( parent, name, onDemand );
 			return dec;
 		}
 		catch ( Exception e )
@@ -187,9 +179,9 @@ public class ImportSourceMapper extends SourceMapper
 		return null;
 	}
 
-	public void acceptImport( int declarationStart, int declarationEnd,
-			int nameSourceStart, int nameSourceEnd, char[][] tokens,
-			boolean onDemand, int modifiers )
+	@Override
+	public void acceptImport( int declarationStart, int declarationEnd, int nameSourceStart, int nameSourceEnd,
+			char[][] tokens, boolean onDemand, int modifiers )
 	{
 		JavaElement parentHandle = (JavaElement) this.handleStack.peek( );
 		if ( !( parentHandle.getElementType( ) == IJavaElement.CLASS_FILE ) )
@@ -207,31 +199,16 @@ public class ImportSourceMapper extends SourceMapper
 			addToChildren( parentInfo, this.importContainer );
 		}
 
-		String elementName = JavaModelManager.getJavaModelManager( ).intern(
-				new String( CharOperation.concatWith( tokens, '.' ) ) );
-		ImportDeclaration handle = createImportDeclaration(
-				this.importContainer,
-				elementName,
-				onDemand );
+		String elementName = JavaModelManager.getJavaModelManager( )
+				.intern( new String( CharOperation.concatWith( tokens, '.' ) ) );
+		ImportDeclaration handle = createImportDeclaration( this.importContainer, elementName, onDemand );
 
 		ImportDeclarationElementInfo info = new ImportDeclarationElementInfo( );
-		ReflectionUtils.invokeMethod( info,
-				"setSourceRangeStart",
-				int.class,
-				declarationStart );
-		ReflectionUtils.invokeMethod( info,
-				"setSourceRangeEnd",
-				int.class,
-				declarationEnd );
-		ReflectionUtils.invokeMethod( info,
-				"setNameSourceStart",
-				int.class,
-				nameSourceStart );
-		ReflectionUtils.invokeMethod( info,
-				"setNameSourceEnd",
-				int.class,
-				nameSourceEnd );
-		ReflectionUtils.invokeMethod( info, "setFlags", int.class, modifiers );
+		ReflectionUtils.invokeMethod( info, "setSourceRangeStart", int.class, declarationStart ); //$NON-NLS-1$
+		ReflectionUtils.invokeMethod( info, "setSourceRangeEnd", int.class, declarationEnd ); //$NON-NLS-1$
+		ReflectionUtils.invokeMethod( info, "setNameSourceStart", int.class, nameSourceStart ); //$NON-NLS-1$
+		ReflectionUtils.invokeMethod( info, "setNameSourceEnd", int.class, nameSourceEnd ); //$NON-NLS-1$
+		ReflectionUtils.invokeMethod( info, "setFlags", int.class, modifiers ); //$NON-NLS-1$
 
 		addToChildren( this.importContainerInfo, handle );
 		manager.getTemporaryCache( ).put( handle, info );

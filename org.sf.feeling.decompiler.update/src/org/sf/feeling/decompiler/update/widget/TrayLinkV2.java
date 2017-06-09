@@ -41,11 +41,13 @@ public class TrayLinkV2
 					"Tray Link", //$NON-NLS-1$
 					SWT.BOTTOM | SWT.TOP ) {
 
+				@Override
 				public void handleClose( )
 				{
 					getControl( ).dispose( );
 				}
 
+				@Override
 				public boolean isCloseable( )
 				{
 					return true;

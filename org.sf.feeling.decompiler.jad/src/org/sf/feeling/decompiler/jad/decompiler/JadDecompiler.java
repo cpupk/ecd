@@ -167,7 +167,7 @@ public class JadDecompiler implements IDecompiler
 			{
 				if ( OPTION_LNC.equals( TOGGLE_OPTION[i] ) )
 				{
-					//cmdLine.add( "-lnc" ); //$NON-NLS-1$
+					// cmdLine.add( "-lnc" ); //$NON-NLS-1$
 				}
 				else
 					cmdLine.add( TOGGLE_OPTION[i] );
@@ -218,6 +218,7 @@ public class JadDecompiler implements IDecompiler
 	 * 
 	 * @see IDecompiler#decompile(String, String, String)
 	 */
+	@Override
 	public void decompile( String root, String packege, String className )
 	{
 		log = new StringBuffer( );
@@ -288,6 +289,7 @@ public class JadDecompiler implements IDecompiler
 	 * 
 	 * @see IDecompiler#decompileFromArchive(String, String, String)
 	 */
+	@Override
 	public void decompileFromArchive( String archivePath, String packege, String className )
 	{
 		start = System.currentTimeMillis( );
@@ -331,11 +333,13 @@ public class JadDecompiler implements IDecompiler
 		root.delete( );
 	}
 
+	@Override
 	public long getDecompilationTime( )
 	{
 		return time;
 	}
 
+	@Override
 	public List getExceptions( )
 	{
 		return excList;
@@ -344,6 +348,7 @@ public class JadDecompiler implements IDecompiler
 	/**
 	 * @see IDecompiler#getLog()
 	 */
+	@Override
 	public String getLog( )
 	{
 		return log == null ? "" : log.toString( ); //$NON-NLS-1$
@@ -371,16 +376,19 @@ public class JadDecompiler implements IDecompiler
 	/**
 	 * @see IDecompiler#getSource()
 	 */
+	@Override
 	public String getSource( )
 	{
 		return source;
 	}
 
+	@Override
 	public String getDecompilerType( )
 	{
 		return JadDecompilerPlugin.decompilerType;
 	}
 
+	@Override
 	public String removeComment( String source )
 	{
 
@@ -438,16 +446,19 @@ public class JadDecompiler implements IDecompiler
 
 	}
 
+	@Override
 	public boolean supportLevel( int level )
 	{
 		return level < 8;
 	}
 
+	@Override
 	public boolean supportDebugLevel( int level )
 	{
 		return level < 8;
 	}
 
+	@Override
 	public boolean supportDebug( )
 	{
 		return true;

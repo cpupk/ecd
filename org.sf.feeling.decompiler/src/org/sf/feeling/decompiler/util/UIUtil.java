@@ -74,18 +74,12 @@ public class UIUtil
 		try
 		{
 			final URL urlToOpen = new URL( appendUUID( url ) );
-			IWebBrowser browser = PlatformUI.getWorkbench( )
-					.getBrowserSupport( )
-					.getExternalBrowser( );
+			IWebBrowser browser = PlatformUI.getWorkbench( ).getBrowserSupport( ).getExternalBrowser( );
 			if ( browser != null )
 			{
 				browser.openURL( urlToOpen );
-				JavaDecompilerPlugin.getDefault( )
-						.getPreferenceStore( )
-						.setValue( JavaDecompilerPlugin.ADCLICK_COUNT,
-								JavaDecompilerPlugin.getDefault( )
-										.getAdClickCount( )
-										.getAndIncrement( ) );
+				JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).setValue( JavaDecompilerPlugin.ADCLICK_COUNT,
+						JavaDecompilerPlugin.getDefault( ).getAdClickCount( ).getAndIncrement( ) );
 			}
 		}
 		catch ( Exception e )
@@ -96,18 +90,18 @@ public class UIUtil
 
 	private static String appendUUID( String url )
 	{
-		if ( url.indexOf( "cpupk.com" ) != -1 && url.indexOf( "uuid" ) == -1 )
+		if ( url.indexOf( "cpupk.com" ) != -1 && url.indexOf( "uuid" ) == -1 ) //$NON-NLS-1$ //$NON-NLS-2$
 		{
 			String uuid = UserUtil.getUserUUID( );
 			if ( uuid != null )
 			{
-				if ( url.indexOf( "?" ) != -1 )
+				if ( url.indexOf( "?" ) != -1 ) //$NON-NLS-1$
 				{
-					url += ( "&uuid=" + uuid );
+					url += ( "&uuid=" + uuid ); //$NON-NLS-1$
 				}
 				else
 				{
-					url += ( "?uuid=" + uuid );
+					url += ( "?uuid=" + uuid ); //$NON-NLS-1$
 				}
 			}
 		}
@@ -119,6 +113,7 @@ public class UIUtil
 		final JavaDecompilerClassFileEditor[] editors = new JavaDecompilerClassFileEditor[1];
 		Display.getDefault( ).syncExec( new Runnable( ) {
 
+			@Override
 			public void run( )
 			{
 				IWorkbenchPart editor = getActiveEditor( true );
@@ -128,8 +123,7 @@ public class UIUtil
 				}
 				else
 				{
-					IWorkbenchWindow window = PlatformUI.getWorkbench( )
-							.getActiveWorkbenchWindow( );
+					IWorkbenchWindow window = PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( );
 
 					if ( window != null )
 					{
@@ -155,6 +149,7 @@ public class UIUtil
 		final JavaDecompilerClassFileEditor[] editors = new JavaDecompilerClassFileEditor[1];
 		Display.getDefault( ).syncExec( new Runnable( ) {
 
+			@Override
 			public void run( )
 			{
 				IWorkbenchPart editor = getActiveEditor( true );
@@ -169,10 +164,8 @@ public class UIUtil
 
 	public static List getActiveSelection( )
 	{
-		IWorkbenchWindow window = PlatformUI.getWorkbench( )
-				.getActiveWorkbenchWindow( );
-		final List classes = getSelectedElements( window.getSelectionService( ),
-				IClassFile.class );
+		IWorkbenchWindow window = PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( );
+		final List classes = getSelectedElements( window.getSelectionService( ), IClassFile.class );
 		if ( classes != null && !classes.isEmpty( ) )
 		{
 			return classes;
@@ -185,6 +178,7 @@ public class UIUtil
 		final String[] ids = new String[1];
 		Display.getDefault( ).syncExec( new Runnable( ) {
 
+			@Override
 			public void run( )
 			{
 				IWorkbench wb = PlatformUI.getWorkbench( );
@@ -222,10 +216,8 @@ public class UIUtil
 
 	public static boolean isDebug( )
 	{
-		IPreferenceStore prefs = JavaDecompilerPlugin.getDefault( )
-				.getPreferenceStore( );
-		boolean showLineNumber = prefs
-				.getBoolean( JavaDecompilerPlugin.PREF_DISPLAY_LINE_NUMBERS );
+		IPreferenceStore prefs = JavaDecompilerPlugin.getDefault( ).getPreferenceStore( );
+		boolean showLineNumber = prefs.getBoolean( JavaDecompilerPlugin.PREF_DISPLAY_LINE_NUMBERS );
 		boolean align = prefs.getBoolean( JavaDecompilerPlugin.ALIGN );
 		boolean debug = ( showLineNumber && align )
 				|| UIUtil.isDebugPerspective( )
@@ -239,8 +231,7 @@ public class UIUtil
 				.equals( getActivePerspectiveId( ) );
 	}
 
-	public static List getSelectedElements( ISelectionService selService,
-			Class eleClass )
+	public static List getSelectedElements( ISelectionService selService, Class eleClass )
 	{
 
 		Iterator selections = getSelections( selService );
@@ -275,8 +266,7 @@ public class UIUtil
 
 	public static IWorkbenchPart getActiveEditor( boolean activePageOnly )
 	{
-		IWorkbenchWindow window = PlatformUI.getWorkbench( )
-				.getActiveWorkbenchWindow( );
+		IWorkbenchWindow window = PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( );
 
 		if ( window != null )
 		{
@@ -290,13 +280,11 @@ public class UIUtil
 					if ( activePart instanceof ContentOutline )
 					{
 						ContentOutline outline = (ContentOutline) activePart;
-						IWorkbenchPart part = (IWorkbenchPart) ReflectionUtils
-								.invokeMethod( outline,
-										"getCurrentContributingPart" );
+						IWorkbenchPart part = (IWorkbenchPart) ReflectionUtils.invokeMethod( outline,
+								"getCurrentContributingPart" ); //$NON-NLS-1$
 						if ( part == null )
 						{
-							return (IWorkbenchPart) ReflectionUtils
-									.getFieldValue( outline, "hiddenPart" );
+							return (IWorkbenchPart) ReflectionUtils.getFieldValue( outline, "hiddenPart" ); //$NON-NLS-1$
 						}
 					}
 					else
@@ -329,8 +317,7 @@ public class UIUtil
 
 	public static boolean isOpenClassEditor( )
 	{
-		IWorkbenchWindow[] windows = PlatformUI.getWorkbench( )
-				.getWorkbenchWindows( );
+		IWorkbenchWindow[] windows = PlatformUI.getWorkbench( ).getWorkbenchWindows( );
 
 		if ( windows != null )
 		{
@@ -361,11 +348,8 @@ public class UIUtil
 
 	public static List getExportSelections( )
 	{
-		IWorkbenchWindow window = PlatformUI.getWorkbench( )
-				.getActiveWorkbenchWindow( );
-		final List selectedJars = getSelectedElements(
-				window.getSelectionService( ),
-				IPackageFragmentRoot.class );
+		IWorkbenchWindow window = PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( );
+		final List selectedJars = getSelectedElements( window.getSelectionService( ), IPackageFragmentRoot.class );
 		if ( selectedJars.size( ) == 1 )
 		{
 			return selectedJars;
@@ -374,12 +358,8 @@ public class UIUtil
 		if ( selectedJars.size( ) > 1 )
 			return null;
 
-		final List selectedPackages = getSelectedElements(
-				window.getSelectionService( ),
-				IPackageFragment.class );
-		final List selectedClasses = getSelectedElements(
-				window.getSelectionService( ),
-				IClassFile.class );
+		final List selectedPackages = getSelectedElements( window.getSelectionService( ), IPackageFragment.class );
+		final List selectedClasses = getSelectedElements( window.getSelectionService( ), IClassFile.class );
 		selectedClasses.addAll( selectedPackages );
 		if ( !selectedClasses.isEmpty( ) )
 		{
@@ -397,34 +377,27 @@ public class UIUtil
 			IWorkbenchPart view = getActiveEditor( true );
 			if ( view != null )
 			{
-				if ( view.getSite( ).getId( ).equals(
-						"org.eclipse.ui.navigator.ProjectExplorer" ) ) //$NON-NLS-1$
+				if ( view.getSite( ).getId( ).equals( "org.eclipse.ui.navigator.ProjectExplorer" ) ) //$NON-NLS-1$
 				{
 					CommonNavigator explorer = (CommonNavigator) view;
-					Field field = CommonNavigator.class
-							.getDeclaredField( "commonManager" ); //$NON-NLS-1$
+					Field field = CommonNavigator.class.getDeclaredField( "commonManager" ); //$NON-NLS-1$
 					if ( field != null )
 					{
 						field.setAccessible( true );
-						CommonNavigatorManager manager = (CommonNavigatorManager) field
-								.get( explorer );
+						CommonNavigatorManager manager = (CommonNavigatorManager) field.get( explorer );
 
-						field = CommonNavigatorManager.class
-								.getDeclaredField( "contentService" ); //$NON-NLS-1$
+						field = CommonNavigatorManager.class.getDeclaredField( "contentService" ); //$NON-NLS-1$
 						if ( field != null )
 						{
 							field.setAccessible( true );
-							INavigatorContentService service = (INavigatorContentService) field
-									.get( manager );
-							IExtensionStateModel model = service.findStateModel(
-									"org.eclipse.jdt.java.ui.javaContent" ); //$NON-NLS-1$
-							isFlat = model.getBooleanProperty(
-									Values.IS_LAYOUT_FLAT );
+							INavigatorContentService service = (INavigatorContentService) field.get( manager );
+							IExtensionStateModel model = service
+									.findStateModel( "org.eclipse.jdt.java.ui.javaContent" ); //$NON-NLS-1$
+							isFlat = model.getBooleanProperty( Values.IS_LAYOUT_FLAT );
 						}
 					}
 				}
-				else if ( view.getSite( ).getId( ).equals(
-						"org.eclipse.jdt.ui.PackageExplorer" ) ) //$NON-NLS-1$
+				else if ( view.getSite( ).getId( ).equals( "org.eclipse.jdt.ui.PackageExplorer" ) ) //$NON-NLS-1$
 				{
 					PackageExplorerPart explorer = (PackageExplorerPart) view;
 					isFlat = explorer.isFlatLayout( );
@@ -469,7 +442,7 @@ public class UIUtil
 				return false;
 
 			if ( stacks[i].getClassName( ).indexOf( "JavadocHover" ) != -1 //$NON-NLS-1$
-					&& stacks[i].getMethodName( ).equals( "getHoverInfo" ) )
+					&& stacks[i].getMethodName( ).equals( "getHoverInfo" ) ) //$NON-NLS-1$
 				return true;
 		}
 		return false;
@@ -492,8 +465,7 @@ public class UIUtil
 					&& stacks[i].getMethodName( ).equals( "getHoverInfo" ) ) //$NON-NLS-1$
 				return true;
 
-			if ( stacks[i].getClassName( )
-					.indexOf( "FindOccurrencesInFileAction" ) != -1 //$NON-NLS-1$
+			if ( stacks[i].getClassName( ).indexOf( "FindOccurrencesInFileAction" ) != -1 //$NON-NLS-1$
 					&& stacks[i].getMethodName( ).equals( "getMember" ) ) //$NON-NLS-1$
 				return true;
 
@@ -518,56 +490,36 @@ public class UIUtil
 		StackTraceElement[] stacks = Thread.currentThread( ).getStackTrace( );
 		for ( int i = 0; i < stacks.length; i++ )
 		{
-			if ( stacks[i].getClassName( )
-					.indexOf( "JavaSearchResultPage" ) != -1 //$NON-NLS-1$
+			if ( stacks[i].getClassName( ).indexOf( "JavaSearchResultPage" ) != -1 //$NON-NLS-1$
 					&& stacks[i].getMethodName( ).equals( "showMatch" ) ) //$NON-NLS-1$
 				return true;
 		}
 		return false;
 	}
 
-	public static StyleRange getAdTextStyleRange( StyledText textWidget,
-			int offset, int length )
+	public static StyleRange getAdTextStyleRange( StyledText textWidget, int offset, int length )
 	{
 		JavaTextTools textTools = JavaPlugin.getDefault( ).getJavaTextTools( );
-		IPreferenceStore preferences = (IPreferenceStore) ReflectionUtils
-				.getFieldValue( textTools, "fPreferenceStore" );
-		String textColor = preferences
-				.getString( IJavaColorConstants.JAVADOC_LINK );
+		IPreferenceStore preferences = (IPreferenceStore) ReflectionUtils.getFieldValue( textTools,
+				"fPreferenceStore" ); //$NON-NLS-1$
+		String textColor = preferences.getString( IJavaColorConstants.JAVADOC_LINK );
 
 		StyleRange styleRange = null;
 		if ( isDark( textWidget ) )
 		{
-			String darkStyleValue = JavaDecompilerPlugin.getDefault( )
-					.getPreferenceStore( )
-					.getString( "darkStyle" );
-			if ( darkStyleValue != null
-					&& darkStyleValue.trim( ).length( ) > 0 )
+			String darkStyleValue = JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).getString( "darkStyle" ); //$NON-NLS-1$
+			if ( darkStyleValue != null && darkStyleValue.trim( ).length( ) > 0 )
 			{
-				styleRange = handleStyleValue( textWidget,
-						offset,
-						length,
-						darkStyleValue,
-						"text",
-						textColor,
-						false );
+				styleRange = handleStyleValue( textWidget, offset, length, darkStyleValue, "text", textColor, false ); //$NON-NLS-1$
 			}
 		}
 		else
 		{
-			String brightStyleValue = JavaDecompilerPlugin.getDefault( )
-					.getPreferenceStore( )
-					.getString( "brightStyle" );
-			if ( brightStyleValue != null
-					&& brightStyleValue.trim( ).length( ) > 0 )
+			String brightStyleValue = JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).getString(
+					"brightStyle" ); //$NON-NLS-1$
+			if ( brightStyleValue != null && brightStyleValue.trim( ).length( ) > 0 )
 			{
-				styleRange = handleStyleValue( textWidget,
-						offset,
-						length,
-						brightStyleValue,
-						"text",
-						textColor,
-						false );
+				styleRange = handleStyleValue( textWidget, offset, length, brightStyleValue, "text", textColor, false ); //$NON-NLS-1$
 			}
 
 		}
@@ -579,9 +531,8 @@ public class UIUtil
 		return styleRange;
 	}
 
-	private static StyleRange handleStyleValue( StyledText textWidget,
-			int offset, int length, String brightStyleValue, String property,
-			String defaultColor, boolean isLink )
+	private static StyleRange handleStyleValue( StyledText textWidget, int offset, int length, String brightStyleValue,
+			String property, String defaultColor, boolean isLink )
 	{
 		JsonValue styleValue = null;
 		try
@@ -596,8 +547,7 @@ public class UIUtil
 		if ( styleValue != null && styleValue.isObject( ) )
 		{
 			JsonObject style = styleValue.asObject( );
-			if ( style.get( property ) != null
-					&& style.get( property ).isObject( ) )
+			if ( style.get( property ) != null && style.get( property ).isObject( ) )
 			{
 				return getStyleRange( textWidget,
 						offset,
@@ -611,26 +561,24 @@ public class UIUtil
 		return null;
 	}
 
-	private static StyleRange getStyleRange( StyledText textWidget, int offset,
-			int length, JsonObject style, String defaultColor, boolean isLink )
+	private static StyleRange getStyleRange( StyledText textWidget, int offset, int length, JsonObject style,
+			String defaultColor, boolean isLink )
 	{
 		int contentLength = textWidget.getCharCount( );
 		if ( contentLength - offset < 0 )
 			return null;
 		StyleRange range = new StyleRange( offset,
-				offset + length < contentLength ? length
-						: contentLength - offset,
+				offset + length < contentLength ? length : contentLength - offset,
 				defaultColor == null ? null
-						: JFaceResources.getResources( ).createColor(
-								ColorUtil.getColorValue( defaultColor ) ),
+						: JFaceResources.getResources( ).createColor( ColorUtil.getColorValue( defaultColor ) ),
 				null );
-		JsonValue fontStyleValue = style.get( "fontStyle" );
+		JsonValue fontStyleValue = style.get( "fontStyle" ); //$NON-NLS-1$
 		if ( fontStyleValue != null && fontStyleValue.isNumber( ) )
 		{
 			range.fontStyle = fontStyleValue.asInt( );
 		}
 
-		JsonValue fontFamilyValue = style.get( "fontFamily" );
+		JsonValue fontFamilyValue = style.get( "fontFamily" ); //$NON-NLS-1$
 		if ( fontFamilyValue != null && fontFamilyValue.isString( ) )
 		{
 			if ( range.font == null )
@@ -647,7 +595,7 @@ public class UIUtil
 			}
 		}
 
-		JsonValue fontSizeValue = style.get( "fontSize" );
+		JsonValue fontSizeValue = style.get( "fontSize" ); //$NON-NLS-1$
 		if ( fontSizeValue != null && fontSizeValue.isNumber( ) )
 		{
 			FontData textFontData = textWidget.getFont( ).getFontData( )[0];
@@ -674,7 +622,7 @@ public class UIUtil
 			range.underlineStyle = SWT.UNDERLINE_LINK;
 		}
 
-		JsonValue underlineValue = style.get( "underline" );
+		JsonValue underlineValue = style.get( "underline" ); //$NON-NLS-1$
 		if ( underlineValue != null && underlineValue.isBoolean( ) )
 		{
 			range.underline = underlineValue.asBoolean( );
@@ -684,13 +632,13 @@ public class UIUtil
 			}
 		}
 
-		JsonValue underlineStyleValue = style.get( "underlineStyle" );
+		JsonValue underlineStyleValue = style.get( "underlineStyle" ); //$NON-NLS-1$
 		if ( underlineStyleValue != null && underlineStyleValue.isNumber( ) )
 		{
 			range.underlineStyle = underlineStyleValue.asInt( );
 		}
 
-		JsonValue hideUnderlineValue = style.get( "hideUnderline" );
+		JsonValue hideUnderlineValue = style.get( "hideUnderline" ); //$NON-NLS-1$
 		if ( hideUnderlineValue != null && hideUnderlineValue.isBoolean( ) )
 		{
 			if ( hideUnderlineValue.asBoolean( ) )
@@ -699,7 +647,7 @@ public class UIUtil
 			}
 		}
 
-		JsonValue backgroundValue = style.get( "background" );
+		JsonValue backgroundValue = style.get( "background" ); //$NON-NLS-1$
 		if ( backgroundValue != null && backgroundValue.isString( ) )
 		{
 			String backgroundString = backgroundValue.asString( );
@@ -710,7 +658,7 @@ public class UIUtil
 			}
 		}
 
-		JsonValue foregroundValue = style.get( "foreground" );
+		JsonValue foregroundValue = style.get( "foreground" ); //$NON-NLS-1$
 		if ( foregroundValue != null && foregroundValue.isString( ) )
 		{
 			String foregroundString = foregroundValue.asString( );
@@ -741,48 +689,29 @@ public class UIUtil
 		return false;
 	}
 
-	public static StyleRange getAdLinkStyleRange( StyledText textWidget,
-			int offset, int length )
+	public static StyleRange getAdLinkStyleRange( StyledText textWidget, int offset, int length )
 	{
 		JavaTextTools textTools = JavaPlugin.getDefault( ).getJavaTextTools( );
-		IPreferenceStore preferences = (IPreferenceStore) ReflectionUtils
-				.getFieldValue( textTools, "fPreferenceStore" );
-		String linkColor = preferences
-				.getString( IJavaColorConstants.JAVADOC_DEFAULT );
+		IPreferenceStore preferences = (IPreferenceStore) ReflectionUtils.getFieldValue( textTools,
+				"fPreferenceStore" ); //$NON-NLS-1$
+		String linkColor = preferences.getString( IJavaColorConstants.JAVADOC_DEFAULT );
 
 		StyleRange styleRange = null;
 		if ( isDark( textWidget ) )
 		{
-			String darkStyleValue = JavaDecompilerPlugin.getDefault( )
-					.getPreferenceStore( )
-					.getString( "darkStyle" );
-			if ( darkStyleValue != null
-					&& darkStyleValue.trim( ).length( ) > 0 )
+			String darkStyleValue = JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).getString( "darkStyle" ); //$NON-NLS-1$
+			if ( darkStyleValue != null && darkStyleValue.trim( ).length( ) > 0 )
 			{
-				styleRange = handleStyleValue( textWidget,
-						offset,
-						length,
-						darkStyleValue,
-						"link",
-						linkColor,
-						true );
+				styleRange = handleStyleValue( textWidget, offset, length, darkStyleValue, "link", linkColor, true ); //$NON-NLS-1$
 			}
 		}
 		else
 		{
-			String brightStyleValue = JavaDecompilerPlugin.getDefault( )
-					.getPreferenceStore( )
-					.getString( "brightStyle" );
-			if ( brightStyleValue != null
-					&& brightStyleValue.trim( ).length( ) > 0 )
+			String brightStyleValue = JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).getString(
+					"brightStyle" ); //$NON-NLS-1$
+			if ( brightStyleValue != null && brightStyleValue.trim( ).length( ) > 0 )
 			{
-				styleRange = handleStyleValue( textWidget,
-						offset,
-						length,
-						brightStyleValue,
-						"link",
-						linkColor,
-						true );
+				styleRange = handleStyleValue( textWidget, offset, length, brightStyleValue, "link", linkColor, true ); //$NON-NLS-1$
 			}
 		}
 
@@ -793,19 +722,16 @@ public class UIUtil
 		return styleRange;
 	}
 
-	private static StyleRange getDefaultLinkRange( StyledText textWidget,
-			int offset, int length )
+	private static StyleRange getDefaultLinkRange( StyledText textWidget, int offset, int length )
 	{
 		JavaTextTools textTools = JavaPlugin.getDefault( ).getJavaTextTools( );
-		IPreferenceStore preferences = (IPreferenceStore) ReflectionUtils
-				.getFieldValue( textTools, "fPreferenceStore" );
-		String linkColor = preferences
-				.getString( IJavaColorConstants.JAVADOC_LINK );
+		IPreferenceStore preferences = (IPreferenceStore) ReflectionUtils.getFieldValue( textTools,
+				"fPreferenceStore" ); //$NON-NLS-1$
+		String linkColor = preferences.getString( IJavaColorConstants.JAVADOC_LINK );
 
 		StyleRange range = new StyleRange( offset,
 				length,
-				JFaceResources.getResources( )
-						.createColor( ColorUtil.getColorValue( linkColor ) ),
+				JFaceResources.getResources( ).createColor( ColorUtil.getColorValue( linkColor ) ),
 				null );
 		range.font = textWidget.getFont( );
 		range.underline = true;
@@ -813,19 +739,16 @@ public class UIUtil
 		return range;
 	}
 
-	private static StyleRange getDefaultCommonRange( StyledText textWidget,
-			int offset, int length )
+	private static StyleRange getDefaultCommonRange( StyledText textWidget, int offset, int length )
 	{
 		JavaTextTools textTools = JavaPlugin.getDefault( ).getJavaTextTools( );
-		IPreferenceStore preferences = (IPreferenceStore) ReflectionUtils
-				.getFieldValue( textTools, "fPreferenceStore" );
-		String commentColor = preferences
-				.getString( IJavaColorConstants.JAVADOC_DEFAULT );
+		IPreferenceStore preferences = (IPreferenceStore) ReflectionUtils.getFieldValue( textTools,
+				"fPreferenceStore" ); //$NON-NLS-1$
+		String commentColor = preferences.getString( IJavaColorConstants.JAVADOC_DEFAULT );
 
 		StyleRange range = new StyleRange( offset,
 				length,
-				new Color( textWidget.getDisplay( ),
-						ColorUtil.getColorValue( commentColor ) ),
+				new Color( textWidget.getDisplay( ), ColorUtil.getColorValue( commentColor ) ),
 				null );
 		range.font = textWidget.getFont( );
 		return range;

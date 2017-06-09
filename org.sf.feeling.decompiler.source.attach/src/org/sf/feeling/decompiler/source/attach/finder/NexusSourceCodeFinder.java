@@ -52,11 +52,13 @@ public class NexusSourceCodeFinder extends AbstractSourceCodeFinder implements S
 		return this.getClass( ) + "; serviceUrl=" + serviceUrl; //$NON-NLS-1$
 	}
 
+	@Override
 	public void cancel( )
 	{
 		this.canceled = true;
 	}
 
+	@Override
 	public void find( String binFile, List<SourceFileResult> results )
 	{
 		Collection<GAV> gavs = new HashSet<GAV>( );
@@ -168,7 +170,7 @@ public class NexusSourceCodeFinder extends AbstractSourceCodeFinder implements S
 		String nexusUrl = getNexusContextUrl( );
 
 		String[] endpoints = new String[]{
-				nexusUrl + "service/local/data_index"/*
+				nexusUrl + "service/local/data_index"/* //$NON-NLS-1$
 														 * //$NON-NLS-1$ ,
 														 * nexusUrl +
 														 * "service/local/lucene/search"

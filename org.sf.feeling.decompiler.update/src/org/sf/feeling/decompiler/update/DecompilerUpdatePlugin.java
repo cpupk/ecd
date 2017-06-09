@@ -48,19 +48,23 @@ public class DecompilerUpdatePlugin extends AbstractUIPlugin implements IPropert
 
 	private IWindowListener windowListener = new IWindowListener( ) {
 
+		@Override
 		public void windowOpened( IWorkbenchWindow window )
 		{
 			TrayLinkUtil.displayTrayLink( window );
 		}
 
+		@Override
 		public void windowActivated( IWorkbenchWindow window )
 		{
 		}
 
+		@Override
 		public void windowDeactivated( IWorkbenchWindow window )
 		{
 		}
 
+		@Override
 		public void windowClosed( IWorkbenchWindow window )
 		{
 		}
@@ -79,6 +83,7 @@ public class DecompilerUpdatePlugin extends AbstractUIPlugin implements IPropert
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.
 	 * BundleContext )
 	 */
+	@Override
 	public void start( BundleContext context ) throws Exception
 	{
 		super.start( context );
@@ -87,6 +92,7 @@ public class DecompilerUpdatePlugin extends AbstractUIPlugin implements IPropert
 		PlatformUI.getWorkbench( ).addWindowListener( windowListener );
 	}
 
+	@Override
 	public IPreferenceStore getPreferenceStore( )
 	{
 		if ( preferenceStore == null )
@@ -103,6 +109,7 @@ public class DecompilerUpdatePlugin extends AbstractUIPlugin implements IPropert
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.
 	 * BundleContext )
 	 */
+	@Override
 	public void stop( BundleContext context ) throws Exception
 	{
 		if ( PlatformUI.getWorkbench( ) != null )
@@ -143,6 +150,7 @@ public class DecompilerUpdatePlugin extends AbstractUIPlugin implements IPropert
 		return plugin;
 	}
 
+	@Override
 	public void propertyChange( PropertyChangeEvent event )
 	{
 

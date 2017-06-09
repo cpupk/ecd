@@ -35,6 +35,7 @@ public class TrayLinkUtil
 	{
 		Display.getDefault( ).asyncExec( new Runnable( ) {
 
+			@Override
 			public void run( )
 			{
 				new LinkTrimChecker( ).displayTrayLink( window, enableShowTrayLink( ) );

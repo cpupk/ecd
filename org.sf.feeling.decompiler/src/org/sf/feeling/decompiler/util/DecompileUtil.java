@@ -37,8 +37,8 @@ import org.sf.feeling.decompiler.editor.SourceMapperFactory;
 public class DecompileUtil
 {
 
-	public static String decompile( IClassFile cf, String type, boolean always,
-			boolean reuseBuf, boolean force ) throws CoreException
+	public static String decompile( IClassFile cf, String type, boolean always, boolean reuseBuf, boolean force )
+			throws CoreException
 	{
 		String decompilerType = type;
 		String origSrc = cf.getSource( );
@@ -46,19 +46,14 @@ public class DecompileUtil
 		// in debug align mode
 		if ( origSrc == null
 				|| always && !MarkUtil.containsMark( origSrc )
-				|| ( MarkUtil.containsMark( origSrc )
-						&& ( !reuseBuf || force ) ) )
+				|| ( MarkUtil.containsMark( origSrc ) && ( !reuseBuf || force ) ) )
 		{
-			DecompilerSourceMapper sourceMapper = SourceMapperFactory
-					.getSourceMapper( decompilerType );
+			DecompilerSourceMapper sourceMapper = SourceMapperFactory.getSourceMapper( decompilerType );
 			char[] src = sourceMapper.findSource( cf.getType( ) );
 
-			if ( src == null
-					&& !DecompilerType.FernFlower.equals( decompilerType ) )
+			if ( src == null && !DecompilerType.FernFlower.equals( decompilerType ) )
 			{
-				src = SourceMapperFactory
-						.getSourceMapper( DecompilerType.FernFlower )
-						.findSource( cf.getType( ) );
+				src = SourceMapperFactory.getSourceMapper( DecompilerType.FernFlower ).findSource( cf.getType( ) );
 			}
 			if ( src == null )
 			{
@@ -71,12 +66,10 @@ public class DecompileUtil
 		return origSrc;
 	}
 
-	public static String decompiler( FileStoreEditorInput input,
-			String decompilerType )
+	public static String decompiler( FileStoreEditorInput input, String decompilerType )
 	{
-		DecompilerSourceMapper sourceMapper = SourceMapperFactory
-				.getSourceMapper( decompilerType );
-		File file = new File( ( (FileStoreEditorInput) input ).getURI( ) );
+		DecompilerSourceMapper sourceMapper = SourceMapperFactory.getSourceMapper( decompilerType );
+		File file = new File( input.getURI( ) );
 		return sourceMapper.decompile( decompilerType, file );
 
 	}
@@ -96,17 +89,15 @@ public class DecompileUtil
 		return null;
 	}
 
-	public static String checkAndUpdateCopyright(
-			JavaDecompilerClassFileEditor editor, IClassFile cf,
-			String origSrc ) throws JavaModelException
+	public static String checkAndUpdateCopyright( JavaDecompilerClassFileEditor editor, IClassFile cf, String origSrc )
+			throws JavaModelException
 	{
 		if ( MarkUtil.containsMark( new String( origSrc ) ) )
 		{
 			editor.clearSelection( );
 		}
 
-		if ( !MarkUtil.containsSourceMark( origSrc )
-				&& !MarkUtil.containsMark( origSrc ) )
+		if ( !MarkUtil.containsSourceMark( origSrc ) && !MarkUtil.containsMark( origSrc ) )
 		{
 			IBuffer buffer = cf.getBuffer( );
 			ReflectionUtils.invokeMethod( buffer, "setReadOnly", new Class[]{ //$NON-NLS-1$
@@ -119,9 +110,8 @@ public class DecompileUtil
 
 			buffer.setContents( contents );
 
-			ReflectionUtils.invokeMethod( BufferManager
-					.getDefaultBufferManager( ), "addBuffer", new Class[]{ //$NON-NLS-1$
-							IBuffer.class
+			ReflectionUtils.invokeMethod( BufferManager.getDefaultBufferManager( ), "addBuffer", new Class[]{ //$NON-NLS-1$
+					IBuffer.class
 			}, new Object[]{
 					buffer
 			} );
@@ -136,11 +126,9 @@ public class DecompileUtil
 		return origSrc;
 	}
 
-	public static String updateBuffer( IClassFile cf, String origSrc )
-			throws JavaModelException
+	public static String updateBuffer( IClassFile cf, String origSrc ) throws JavaModelException
 	{
-		if ( !MarkUtil.containsSourceMark( origSrc )
-				&& !MarkUtil.containsMark( origSrc ) )
+		if ( !MarkUtil.containsSourceMark( origSrc ) && !MarkUtil.containsMark( origSrc ) )
 		{
 			IBuffer buffer = cf.getBuffer( );
 			ReflectionUtils.invokeMethod( buffer, "setReadOnly", new Class[]{ //$NON-NLS-1$
@@ -153,9 +141,8 @@ public class DecompileUtil
 
 			buffer.setContents( contents );
 
-			ReflectionUtils.invokeMethod( BufferManager
-					.getDefaultBufferManager( ), "addBuffer", new Class[]{ //$NON-NLS-1$
-							IBuffer.class
+			ReflectionUtils.invokeMethod( BufferManager.getDefaultBufferManager( ), "addBuffer", new Class[]{ //$NON-NLS-1$
+					IBuffer.class
 			}, new Object[]{
 					buffer
 			} );
@@ -170,48 +157,44 @@ public class DecompileUtil
 		return origSrc;
 	}
 
-	public static void updateSourceRanges( IClassFile cf, String contents )
-			throws JavaModelException
+	public static void updateSourceRanges( IClassFile cf, String contents ) throws JavaModelException
 	{
 		if ( cf instanceof ClassFile )
 		{
 			ClassFile classFile = (ClassFile) cf;
 			Object info = classFile.getElementInfo( );
-			IBinaryType typeInfo = info instanceof IBinaryType
-					? (IBinaryType) info
-					: null;
+			IBinaryType typeInfo = info instanceof IBinaryType ? (IBinaryType) info : null;
 			SourceMapper mapper = classFile.getSourceMapper( );
 			IType type = (IType) ReflectionUtils.invokeMethod( classFile,
 					"getOuterMostEnclosingType", //$NON-NLS-1$
 					new Class[0],
 					new Object[0] );
-			HashMap sourceRange = (HashMap) ReflectionUtils
-					.getFieldValue( mapper, "sourceRanges" ); //$NON-NLS-1$
+			HashMap sourceRange = (HashMap) ReflectionUtils.getFieldValue( mapper, "sourceRanges" ); //$NON-NLS-1$
 			sourceRange.remove( type );
 			mapper.mapSource( type, contents.toCharArray( ), typeInfo );
 
-//			List rootPaths = (List) ReflectionUtils.getFieldValue( mapper,
-//					"rootPaths" );
-//			String rootPath = null;
-//			if ( rootPaths != null && rootPaths.size( ) > 0 )
-//			{
-//				rootPath = (String) rootPaths.get( 0 );
-//			}
-//
-//			if ( "".equals( rootPath ) )
-//				rootPath = null;
-//
-//			ImportSourceMapper importMapper = new ImportSourceMapper(
-//					(IPath) ReflectionUtils.getFieldValue( mapper,
-//							"sourcePath" ),
-//					rootPath,
-//					(Map) ReflectionUtils.getFieldValue( mapper, "options" ) );
-//			importMapper.mapSource( type, contents.toCharArray( ), typeInfo );
+			// List rootPaths = (List) ReflectionUtils.getFieldValue( mapper,
+			// "rootPaths" );
+			// String rootPath = null;
+			// if ( rootPaths != null && rootPaths.size( ) > 0 )
+			// {
+			// rootPath = (String) rootPaths.get( 0 );
+			// }
+			//
+			// if ( "".equals( rootPath ) )
+			// rootPath = null;
+			//
+			// ImportSourceMapper importMapper = new ImportSourceMapper(
+			// (IPath) ReflectionUtils.getFieldValue( mapper,
+			// "sourcePath" ),
+			// rootPath,
+			// (Map) ReflectionUtils.getFieldValue( mapper, "options" ) );
+			// importMapper.mapSource( type, contents.toCharArray( ), typeInfo
+			// );
 		}
 	}
 
-	public static String getCopyRightContent( IClassFile classFile,
-			String origSrc )
+	public static String getCopyRightContent( IClassFile classFile, String origSrc )
 	{
 		if ( origSrc != null && !MarkUtil.containsSourceMark( origSrc ) )
 		{
@@ -232,18 +215,16 @@ public class DecompileUtil
 
 	private static String foldOneLine( String origSrc )
 	{
-		int index = origSrc.indexOf( "\r\n" );
+		int index = origSrc.indexOf( "\r\n" ); //$NON-NLS-1$
 		if ( index != -1 )
 		{
-			return origSrc.substring( 0, index )
-					+ origSrc.substring( index + 2 );
+			return origSrc.substring( 0, index ) + origSrc.substring( index + 2 );
 		}
 
-		index = origSrc.indexOf( "\n" );
+		index = origSrc.indexOf( "\n" ); //$NON-NLS-1$
 		if ( index != -1 )
 		{
-			return origSrc.substring( 0, index )
-					+ origSrc.substring( index + 1 );
+			return origSrc.substring( 0, index ) + origSrc.substring( index + 1 );
 		}
 		return origSrc;
 	}
@@ -259,8 +240,7 @@ public class DecompileUtil
 		String prefix = origSrc.substring( 0, index + 1 );
 		String suffix = origSrc.substring( index + 1 );
 
-		List<String> splits = new ArrayList(
-				Arrays.asList( prefix.split( "\n" ) ) ); //$NON-NLS-1$
+		List<String> splits = new ArrayList( Arrays.asList( prefix.split( "\n" ) ) ); //$NON-NLS-1$
 		boolean flag = false;
 		for ( int i = 0; i < splits.size( ); i++ )
 		{

@@ -72,6 +72,7 @@ public class HtmlLinkTrimItem extends Composite
 			this.linkItem = linkItem;
 		}
 
+		@Override
 		public Object function( Object[] arguments )
 		{
 			if ( "gotoUrl".equals( funcName ) ) //$NON-NLS-1$
@@ -88,7 +89,7 @@ public class HtmlLinkTrimItem extends Composite
 			}
 			else if ( "resize".equals( funcName ) ) //$NON-NLS-1$
 			{
-				linkItem.resize( "" );
+				linkItem.resize( "" ); //$NON-NLS-1$
 			}
 			return super.function( arguments );
 		}
@@ -130,11 +131,13 @@ public class HtmlLinkTrimItem extends Composite
 		final ProgressListener[] listeners = new ProgressListener[1];
 		ProgressListener listener = new ProgressListener( ) {
 
+			@Override
 			public void completed( ProgressEvent event )
 			{
 				handleEvent( );
 				getDisplay( ).asyncExec( new Runnable( ) {
 
+					@Override
 					public void run( )
 					{
 						if ( !browser.isDisposed( ) )
@@ -151,6 +154,7 @@ public class HtmlLinkTrimItem extends Composite
 
 				getDisplay( ).asyncExec( new Runnable( ) {
 
+					@Override
 					public void run( )
 					{
 						if ( browser == null || browser.isDisposed( ) )
@@ -173,6 +177,7 @@ public class HtmlLinkTrimItem extends Composite
 
 			}
 
+			@Override
 			public void changed( ProgressEvent event )
 			{
 				handleEvent( );
@@ -196,6 +201,7 @@ public class HtmlLinkTrimItem extends Composite
 				container.layout( );
 			}
 
+			@Override
 			public void controlResized( ControlEvent e )
 			{
 				computeSize( );
@@ -250,6 +256,7 @@ public class HtmlLinkTrimItem extends Composite
 		{
 			ExecutorUtil.submitTask( new Callable<Boolean>( ) {
 
+				@Override
 				public Boolean call( ) throws Exception
 				{
 					Socket socket = new Socket( );
@@ -260,6 +267,7 @@ public class HtmlLinkTrimItem extends Composite
 						socket.connect( new InetSocketAddress( new URL( trayLinkUrl ).getHost( ), 80 ), 5000 );
 						HtmlLinkTrimItem.this.getDisplay( ).asyncExec( new Runnable( ) {
 
+							@Override
 							public void run( )
 							{
 								if ( browser != null && !browser.isDisposed( ) )
@@ -281,6 +289,7 @@ public class HtmlLinkTrimItem extends Composite
 						browserUrl = null;
 						HtmlLinkTrimItem.this.getDisplay( ).asyncExec( new Runnable( ) {
 
+							@Override
 							public void run( )
 							{
 								if ( browser != null && !browser.isDisposed( ) )
@@ -306,6 +315,7 @@ public class HtmlLinkTrimItem extends Composite
 
 		ExecutorUtil.submitScheduledTask( new Runnable( ) {
 
+			@Override
 			public void run( )
 			{
 				updateTrimUrl( );
@@ -491,6 +501,7 @@ public class HtmlLinkTrimItem extends Composite
 		}
 		getDisplay( ).asyncExec( new Runnable( ) {
 
+			@Override
 			public void run( )
 			{
 				if ( browser.isDisposed( ) )
@@ -499,6 +510,7 @@ public class HtmlLinkTrimItem extends Composite
 				}
 				getDisplay( ).timerExec( 50, new Runnable( ) {
 
+					@Override
 					public void run( )
 					{
 						if ( !browser.isDisposed( ) && !browser.isVisible( ) )

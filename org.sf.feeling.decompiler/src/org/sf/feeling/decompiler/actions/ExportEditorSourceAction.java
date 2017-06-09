@@ -36,6 +36,7 @@ public class ExportEditorSourceAction extends Action
 		this.setDisabledImageDescriptor( JavaDecompilerPlugin.getImageDescriptor( "icons/dtool16/export_wiz.png" ) ); //$NON-NLS-1$
 	}
 
+	@Override
 	public void run( )
 	{
 		JavaDecompilerClassFileEditor classEditor = null;
@@ -46,12 +47,11 @@ public class ExportEditorSourceAction extends Action
 		{
 			IClassFile cf = ( (IClassFileEditorInput) classEditor.getEditorInput( ) ).getClassFile( );
 
-			FileDialog dialog = new FileDialog( classEditor.getEditorSite( )
-					.getShell( ), SWT.SAVE | SWT.SHEET );
+			FileDialog dialog = new FileDialog( classEditor.getEditorSite( ).getShell( ), SWT.SAVE | SWT.SHEET );
 			dialog.setFileName( cf.getElementName( ).replaceAll( "\\..+", //$NON-NLS-1$
 					"" ) ); //$NON-NLS-1$
 			dialog.setFilterExtensions( new String[]{
-				"*.java" //$NON-NLS-1$
+					"*.java" //$NON-NLS-1$
 			} );
 			String file = dialog.open( );
 			if ( file != null && file.trim( ).length( ) > 0 )
@@ -60,14 +60,14 @@ public class ExportEditorSourceAction extends Action
 				try
 				{
 
-					FileUtil.writeToFile( new File( projectFile ),
-							cf.getSource( ) );
+					FileUtil.writeToFile( new File( projectFile ), cf.getSource( ) );
 				}
 				catch ( CoreException e )
 				{
 					ExceptionHandler.handle( e,
 							Messages.getString( "JavaDecompilerActionBarContributor.ErrorDialog.Title" ), //$NON-NLS-1$
-							Messages.getString( "JavaDecompilerActionBarContributor.ErrorDialog.Message.ExportFailed" ) ); //$NON-NLS-1$
+							Messages.getString(
+									"JavaDecompilerActionBarContributor.ErrorDialog.Message.ExportFailed" ) ); //$NON-NLS-1$
 				}
 			}
 			else
@@ -77,6 +77,7 @@ public class ExportEditorSourceAction extends Action
 		}
 	}
 
+	@Override
 	public boolean isEnabled( )
 	{
 		JavaDecompilerClassFileEditor editor = UIUtil.getActiveEditor( );

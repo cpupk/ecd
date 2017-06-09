@@ -23,19 +23,17 @@ public class DecompilerPeferenceAction extends Action
 
 	public DecompilerPeferenceAction( )
 	{
-		super( Messages.getString(
-				"JavaDecompilerActionBarContributor.Action.Preferences" ) ); //$NON-NLS-1$
+		super( Messages.getString( "JavaDecompilerActionBarContributor.Action.Preferences" ) ); //$NON-NLS-1$
 	}
 
+	@Override
 	public void run( )
 	{
-		JavaDecompilerClassFileEditor editor = UIUtil
-				.getActiveDecompilerEditor( );
+		JavaDecompilerClassFileEditor editor = UIUtil.getActiveDecompilerEditor( );
 		if ( editor != null )
 		{
 			PreferencesUtil
-					.createPreferenceDialogOn(
-							Display.getDefault( ).getActiveShell( ),
+					.createPreferenceDialogOn( Display.getDefault( ).getActiveShell( ),
 							"org.sf.feeling.decompiler.Main", //$NON-NLS-1$
 							editor.collectContextMenuPreferencePages( ),
 							null )
@@ -43,8 +41,7 @@ public class DecompilerPeferenceAction extends Action
 		}
 		else
 		{
-			PreferencesUtil.createPreferenceDialogOn(
-					Display.getDefault( ).getActiveShell( ),
+			PreferencesUtil.createPreferenceDialogOn( Display.getDefault( ).getActiveShell( ),
 					"org.sf.feeling.decompiler.Main", //$NON-NLS-1$
 					new String[]{
 							"org.sf.feeling.decompiler.Main" //$NON-NLS-1$
@@ -53,6 +50,7 @@ public class DecompilerPeferenceAction extends Action
 		}
 	}
 
+	@Override
 	public boolean isEnabled( )
 	{
 		return true;

@@ -635,8 +635,7 @@ public class IOUtils
 	 */
 	public static BufferedReader toBufferedReader( final Reader reader )
 	{
-		return reader instanceof BufferedReader ? (BufferedReader) reader
-				: new BufferedReader( reader );
+		return reader instanceof BufferedReader ? (BufferedReader) reader : new BufferedReader( reader );
 	}
 
 	/**
@@ -654,11 +653,9 @@ public class IOUtils
 	 * @see #buffer(Reader)
 	 * @since 2.5
 	 */
-	public static BufferedReader toBufferedReader( final Reader reader,
-			int size )
+	public static BufferedReader toBufferedReader( final Reader reader, int size )
 	{
-		return reader instanceof BufferedReader ? (BufferedReader) reader
-				: new BufferedReader( reader, size );
+		return reader instanceof BufferedReader ? (BufferedReader) reader : new BufferedReader( reader, size );
 	}
 
 	/**
@@ -675,8 +672,7 @@ public class IOUtils
 	 */
 	public static BufferedReader buffer( final Reader reader )
 	{
-		return reader instanceof BufferedReader ? (BufferedReader) reader
-				: new BufferedReader( reader );
+		return reader instanceof BufferedReader ? (BufferedReader) reader : new BufferedReader( reader );
 	}
 
 	/**
@@ -695,8 +691,7 @@ public class IOUtils
 	 */
 	public static BufferedReader buffer( final Reader reader, int size )
 	{
-		return reader instanceof BufferedReader ? (BufferedReader) reader
-				: new BufferedReader( reader, size );
+		return reader instanceof BufferedReader ? (BufferedReader) reader : new BufferedReader( reader, size );
 	}
 
 	/**
@@ -713,8 +708,7 @@ public class IOUtils
 	 */
 	public static BufferedWriter buffer( final Writer writer )
 	{
-		return writer instanceof BufferedWriter ? (BufferedWriter) writer
-				: new BufferedWriter( writer );
+		return writer instanceof BufferedWriter ? (BufferedWriter) writer : new BufferedWriter( writer );
 	}
 
 	/**
@@ -733,8 +727,7 @@ public class IOUtils
 	 */
 	public static BufferedWriter buffer( final Writer writer, int size )
 	{
-		return writer instanceof BufferedWriter ? (BufferedWriter) writer
-				: new BufferedWriter( writer, size );
+		return writer instanceof BufferedWriter ? (BufferedWriter) writer : new BufferedWriter( writer, size );
 	}
 
 	/**
@@ -757,8 +750,7 @@ public class IOUtils
 		{ // not checked by BufferedOutputStream
 			throw new NullPointerException( );
 		}
-		return outputStream instanceof BufferedOutputStream
-				? (BufferedOutputStream) outputStream
+		return outputStream instanceof BufferedOutputStream ? (BufferedOutputStream) outputStream
 				: new BufferedOutputStream( outputStream );
 	}
 
@@ -777,16 +769,14 @@ public class IOUtils
 	 *             if the input parameter is null
 	 * @since 2.5
 	 */
-	public static BufferedOutputStream buffer( final OutputStream outputStream,
-			int size )
+	public static BufferedOutputStream buffer( final OutputStream outputStream, int size )
 	{
 		// reject null early on rather than waiting for IO operation to fail
 		if ( outputStream == null )
 		{ // not checked by BufferedOutputStream
 			throw new NullPointerException( );
 		}
-		return outputStream instanceof BufferedOutputStream
-				? (BufferedOutputStream) outputStream
+		return outputStream instanceof BufferedOutputStream ? (BufferedOutputStream) outputStream
 				: new BufferedOutputStream( outputStream, size );
 	}
 
@@ -810,8 +800,7 @@ public class IOUtils
 		{ // not checked by BufferedInputStream
 			throw new NullPointerException( );
 		}
-		return inputStream instanceof BufferedInputStream
-				? (BufferedInputStream) inputStream
+		return inputStream instanceof BufferedInputStream ? (BufferedInputStream) inputStream
 				: new BufferedInputStream( inputStream );
 	}
 
@@ -830,16 +819,14 @@ public class IOUtils
 	 *             if the input parameter is null
 	 * @since 2.5
 	 */
-	public static BufferedInputStream buffer( final InputStream inputStream,
-			int size )
+	public static BufferedInputStream buffer( final InputStream inputStream, int size )
 	{
 		// reject null early on rather than waiting for IO operation to fail
 		if ( inputStream == null )
 		{ // not checked by BufferedInputStream
 			throw new NullPointerException( );
 		}
-		return inputStream instanceof BufferedInputStream
-				? (BufferedInputStream) inputStream
+		return inputStream instanceof BufferedInputStream ? (BufferedInputStream) inputStream
 				: new BufferedInputStream( inputStream, size );
 	}
 
@@ -866,14 +853,12 @@ public class IOUtils
 	 * @see IOUtils#toByteArray(java.io.InputStream, int)
 	 * @since 2.1
 	 */
-	public static byte[] toByteArray( final InputStream input, final long size )
-			throws IOException
+	public static byte[] toByteArray( final InputStream input, final long size ) throws IOException
 	{
 
 		if ( size > Integer.MAX_VALUE )
 		{
-			throw new IllegalArgumentException(
-					"Size cannot be greater than Integer max value: " + size ); //$NON-NLS-1$
+			throw new IllegalArgumentException( "Size cannot be greater than Integer max value: " + size ); //$NON-NLS-1$
 		}
 
 		return toByteArray( input, (int) size );
@@ -897,14 +882,12 @@ public class IOUtils
 	 *             if size is less than zero
 	 * @since 2.1
 	 */
-	public static byte[] toByteArray( final InputStream input, final int size )
-			throws IOException
+	public static byte[] toByteArray( final InputStream input, final int size ) throws IOException
 	{
 
 		if ( size < 0 )
 		{
-			throw new IllegalArgumentException(
-					"Size must be equal or greater than zero: " + size ); //$NON-NLS-1$
+			throw new IllegalArgumentException( "Size must be equal or greater than zero: " + size ); //$NON-NLS-1$
 		}
 
 		if ( size == 0 )
@@ -916,9 +899,7 @@ public class IOUtils
 		int offset = 0;
 		int readed;
 
-		while ( offset < size
-				&& ( readed = input
-						.read( data, offset, size - offset ) ) != EOF )
+		while ( offset < size && ( readed = input.read( data, offset, size - offset ) ) != EOF )
 		{
 			offset += readed;
 		}
@@ -974,14 +955,11 @@ public class IOUtils
 	 * 
 	 * @since 2.6
 	 */
-	public static URL resourceToURL( final String name,
-			final ClassLoader classLoader ) throws IOException
+	public static URL resourceToURL( final String name, final ClassLoader classLoader ) throws IOException
 	{
 		// What about the thread context class loader?
 		// What about the system class loader?
-		final URL resource = classLoader == null
-				? IOUtils.class.getResource( name )
-				: classLoader.getResource( name );
+		final URL resource = classLoader == null ? IOUtils.class.getResource( name ) : classLoader.getResource( name );
 
 		if ( resource == null )
 		{
@@ -1020,8 +998,7 @@ public class IOUtils
 	 * @return an input stream
 	 * @since 2.3
 	 */
-	public static InputStream toInputStream( final CharSequence input,
-			final Charset encoding )
+	public static InputStream toInputStream( final CharSequence input, final Charset encoding )
 	{
 		return toInputStream( input.toString( ), encoding );
 	}
@@ -1043,8 +1020,7 @@ public class IOUtils
 	 *             if an I/O error occurs
 	 * @since 1.1
 	 */
-	public static void write( final byte[] data, final OutputStream output )
-			throws IOException
+	public static void write( final byte[] data, final OutputStream output ) throws IOException
 	{
 		if ( data != null )
 		{
@@ -1069,8 +1045,7 @@ public class IOUtils
 	 *             if an I/O error occurs
 	 * @since 2.5
 	 */
-	public static void writeChunked( final byte[] data,
-			final OutputStream output ) throws IOException
+	public static void writeChunked( final byte[] data, final OutputStream output ) throws IOException
 	{
 		if ( data != null )
 		{
@@ -1103,8 +1078,7 @@ public class IOUtils
 	 *             if an I/O error occurs
 	 * @since 1.1
 	 */
-	public static void write( final char[] data, final Writer output )
-			throws IOException
+	public static void write( final char[] data, final Writer output ) throws IOException
 	{
 		if ( data != null )
 		{
@@ -1129,8 +1103,7 @@ public class IOUtils
 	 *             if an I/O error occurs
 	 * @since 2.5
 	 */
-	public static void writeChunked( final char[] data, final Writer output )
-			throws IOException
+	public static void writeChunked( final char[] data, final Writer output ) throws IOException
 	{
 		if ( data != null )
 		{
@@ -1162,8 +1135,7 @@ public class IOUtils
 	 *             if an I/O error occurs
 	 * @since 2.0
 	 */
-	public static void write( final CharSequence data, final Writer output )
-			throws IOException
+	public static void write( final CharSequence data, final Writer output ) throws IOException
 	{
 		if ( data != null )
 		{
@@ -1191,8 +1163,7 @@ public class IOUtils
 	 *             instead
 	 */
 	@Deprecated
-	public static void write( final CharSequence data,
-			final OutputStream output ) throws IOException
+	public static void write( final CharSequence data, final OutputStream output ) throws IOException
 	{
 		write( data, output, Charset.defaultCharset( ) );
 	}
@@ -1215,8 +1186,7 @@ public class IOUtils
 	 *             if an I/O error occurs
 	 * @since 2.3
 	 */
-	public static void write( final CharSequence data,
-			final OutputStream output, final Charset encoding )
+	public static void write( final CharSequence data, final OutputStream output, final Charset encoding )
 			throws IOException
 	{
 		if ( data != null )
@@ -1251,8 +1221,7 @@ public class IOUtils
 	 *             if an I/O error occurs
 	 * @since 1.1
 	 */
-	public static int copy( final InputStream input, final OutputStream output )
-			throws IOException
+	public static int copy( final InputStream input, final OutputStream output ) throws IOException
 	{
 		final long count = copyLarge( input, output );
 		if ( count > Integer.MAX_VALUE )
@@ -1283,8 +1252,8 @@ public class IOUtils
 	 *             if an I/O error occurs
 	 * @since 2.5
 	 */
-	public static long copy( final InputStream input, final OutputStream output,
-			final int bufferSize ) throws IOException
+	public static long copy( final InputStream input, final OutputStream output, final int bufferSize )
+			throws IOException
 	{
 		return copyLarge( input, output, new byte[bufferSize] );
 	}
@@ -1309,8 +1278,7 @@ public class IOUtils
 	 *             if an I/O error occurs
 	 * @since 1.3
 	 */
-	public static long copyLarge( final InputStream input,
-			final OutputStream output ) throws IOException
+	public static long copyLarge( final InputStream input, final OutputStream output ) throws IOException
 	{
 		return copy( input, output, DEFAULT_BUFFER_SIZE );
 	}
@@ -1336,8 +1304,8 @@ public class IOUtils
 	 *             if an I/O error occurs
 	 * @since 2.2
 	 */
-	public static long copyLarge( final InputStream input,
-			final OutputStream output, final byte[] buffer ) throws IOException
+	public static long copyLarge( final InputStream input, final OutputStream output, final byte[] buffer )
+			throws IOException
 	{
 		long count = 0;
 		int n;
@@ -1380,15 +1348,10 @@ public class IOUtils
 	 *             if an I/O error occurs
 	 * @since 2.2
 	 */
-	public static long copyLarge( final InputStream input,
-			final OutputStream output, final long inputOffset,
+	public static long copyLarge( final InputStream input, final OutputStream output, final long inputOffset,
 			final long length ) throws IOException
 	{
-		return copyLarge( input,
-				output,
-				inputOffset,
-				length,
-				new byte[DEFAULT_BUFFER_SIZE] );
+		return copyLarge( input, output, inputOffset, length, new byte[DEFAULT_BUFFER_SIZE] );
 	}
 
 	/**
@@ -1423,8 +1386,7 @@ public class IOUtils
 	 *             if an I/O error occurs
 	 * @since 2.2
 	 */
-	public static long copyLarge( final InputStream input,
-			final OutputStream output, final long inputOffset,
+	public static long copyLarge( final InputStream input, final OutputStream output, final long inputOffset,
 			final long length, final byte[] buffer ) throws IOException
 	{
 		if ( inputOffset > 0 )
@@ -1443,16 +1405,14 @@ public class IOUtils
 		}
 		int read;
 		long totalRead = 0;
-		while ( bytesToRead > 0
-				&& EOF != ( read = input.read( buffer, 0, bytesToRead ) ) )
+		while ( bytesToRead > 0 && EOF != ( read = input.read( buffer, 0, bytesToRead ) ) )
 		{
 			output.write( buffer, 0, read );
 			totalRead += read;
 			if ( length > 0 )
 			{ // only adjust length if not reading to the end
 				// Note the cast must work because buffer.length is an integer
-				bytesToRead = (int) Math.min( length - totalRead,
-						bufferLength );
+				bytesToRead = (int) Math.min( length - totalRead, bufferLength );
 			}
 		}
 		return totalRead;
@@ -1479,8 +1439,7 @@ public class IOUtils
 	 * @throws IOException
 	 *             if an I/O error occurs
 	 */
-	public static boolean contentEquals( InputStream input1,
-			InputStream input2 ) throws IOException
+	public static boolean contentEquals( InputStream input1, InputStream input2 ) throws IOException
 	{
 		if ( input1 == input2 )
 		{
@@ -1529,8 +1488,7 @@ public class IOUtils
 	 *             if an I/O error occurs
 	 * @since 1.1
 	 */
-	public static boolean contentEquals( Reader input1, Reader input2 )
-			throws IOException
+	public static boolean contentEquals( Reader input1, Reader input2 ) throws IOException
 	{
 		if ( input1 == input2 )
 		{
@@ -1574,8 +1532,7 @@ public class IOUtils
 	 *             if an I/O error occurs
 	 * @since 2.2
 	 */
-	public static boolean contentEqualsIgnoreEOL( final Reader input1,
-			final Reader input2 ) throws IOException
+	public static boolean contentEqualsIgnoreEOL( final Reader input1, final Reader input2 ) throws IOException
 	{
 		if ( input1 == input2 )
 		{
@@ -1591,8 +1548,7 @@ public class IOUtils
 			line1 = br1.readLine( );
 			line2 = br2.readLine( );
 		}
-		return line1 == null ? line2 == null ? true : false
-				: line1.equals( line2 );
+		return line1 == null ? line2 == null ? true : false : line1.equals( line2 );
 	}
 
 	/**
@@ -1622,13 +1578,11 @@ public class IOUtils
 	 *      skipFully() method for InputStreams</a>
 	 * @since 2.0
 	 */
-	public static long skip( final InputStream input, final long toSkip )
-			throws IOException
+	public static long skip( final InputStream input, final long toSkip ) throws IOException
 	{
 		if ( toSkip < 0 )
 		{
-			throw new IllegalArgumentException(
-					"Skip count must be non-negative, actual: " + toSkip ); //$NON-NLS-1$
+			throw new IllegalArgumentException( "Skip count must be non-negative, actual: " + toSkip ); //$NON-NLS-1$
 		}
 		/*
 		 * N.B. no need to synchronize this because: - we don't care if the
@@ -1646,9 +1600,7 @@ public class IOUtils
 		{
 			// See https://issues.apache.org/jira/browse/IO-203 for why we use
 			// read() rather than delegating to skip()
-			final long n = input.read( SKIP_BYTE_BUFFER,
-					0,
-					(int) Math.min( remain, SKIP_BUFFER_SIZE ) );
+			final long n = input.read( SKIP_BYTE_BUFFER, 0, (int) Math.min( remain, SKIP_BUFFER_SIZE ) );
 			if ( n < 0 )
 			{ // EOF
 				break;
@@ -1673,16 +1625,13 @@ public class IOUtils
 	 *             if toSkip is negative
 	 * @since 2.5
 	 */
-	public static long skip( final ReadableByteChannel input,
-			final long toSkip ) throws IOException
+	public static long skip( final ReadableByteChannel input, final long toSkip ) throws IOException
 	{
 		if ( toSkip < 0 )
 		{
-			throw new IllegalArgumentException(
-					"Skip count must be non-negative, actual: " + toSkip ); //$NON-NLS-1$
+			throw new IllegalArgumentException( "Skip count must be non-negative, actual: " + toSkip ); //$NON-NLS-1$
 		}
-		final ByteBuffer skipByteBuffer = ByteBuffer
-				.allocate( (int) Math.min( toSkip, SKIP_BUFFER_SIZE ) );
+		final ByteBuffer skipByteBuffer = ByteBuffer.allocate( (int) Math.min( toSkip, SKIP_BUFFER_SIZE ) );
 		long remain = toSkip;
 		while ( remain > 0 )
 		{
@@ -1725,13 +1674,11 @@ public class IOUtils
 	 *      skipFully() method for InputStreams</a>
 	 * @since 2.0
 	 */
-	public static long skip( final Reader input, final long toSkip )
-			throws IOException
+	public static long skip( final Reader input, final long toSkip ) throws IOException
 	{
 		if ( toSkip < 0 )
 		{
-			throw new IllegalArgumentException(
-					"Skip count must be non-negative, actual: " + toSkip ); //$NON-NLS-1$
+			throw new IllegalArgumentException( "Skip count must be non-negative, actual: " + toSkip ); //$NON-NLS-1$
 		}
 		/*
 		 * N.B. no need to synchronize this because: - we don't care if the
@@ -1749,9 +1696,7 @@ public class IOUtils
 		{
 			// See https://issues.apache.org/jira/browse/IO-203 for why we use
 			// read() rather than delegating to skip()
-			final long n = input.read( SKIP_CHAR_BUFFER,
-					0,
-					(int) Math.min( remain, SKIP_BUFFER_SIZE ) );
+			final long n = input.read( SKIP_CHAR_BUFFER, 0, (int) Math.min( remain, SKIP_BUFFER_SIZE ) );
 			if ( n < 0 )
 			{ // EOF
 				break;
@@ -1787,19 +1732,16 @@ public class IOUtils
 	 * @see InputStream#skip(long)
 	 * @since 2.0
 	 */
-	public static void skipFully( final InputStream input, final long toSkip )
-			throws IOException
+	public static void skipFully( final InputStream input, final long toSkip ) throws IOException
 	{
 		if ( toSkip < 0 )
 		{
-			throw new IllegalArgumentException(
-					"Bytes to skip must not be negative: " + toSkip ); //$NON-NLS-1$
+			throw new IllegalArgumentException( "Bytes to skip must not be negative: " + toSkip ); //$NON-NLS-1$
 		}
 		final long skipped = skip( input, toSkip );
 		if ( skipped != toSkip )
 		{
-			throw new EOFException(
-					"Bytes to skip: " + toSkip + " actual: " + skipped ); //$NON-NLS-1$ //$NON-NLS-2$
+			throw new EOFException( "Bytes to skip: " + toSkip + " actual: " + skipped ); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -1818,19 +1760,16 @@ public class IOUtils
 	 *             if the number of bytes skipped was incorrect
 	 * @since 2.5
 	 */
-	public static void skipFully( final ReadableByteChannel input,
-			final long toSkip ) throws IOException
+	public static void skipFully( final ReadableByteChannel input, final long toSkip ) throws IOException
 	{
 		if ( toSkip < 0 )
 		{
-			throw new IllegalArgumentException(
-					"Bytes to skip must not be negative: " + toSkip ); //$NON-NLS-1$
+			throw new IllegalArgumentException( "Bytes to skip must not be negative: " + toSkip ); //$NON-NLS-1$
 		}
 		final long skipped = skip( input, toSkip );
 		if ( skipped != toSkip )
 		{
-			throw new EOFException(
-					"Bytes to skip: " + toSkip + " actual: " + skipped ); //$NON-NLS-1$ //$NON-NLS-2$
+			throw new EOFException( "Bytes to skip: " + toSkip + " actual: " + skipped ); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -1861,14 +1800,12 @@ public class IOUtils
 	 * @see Reader#skip(long)
 	 * @since 2.0
 	 */
-	public static void skipFully( final Reader input, final long toSkip )
-			throws IOException
+	public static void skipFully( final Reader input, final long toSkip ) throws IOException
 	{
 		final long skipped = skip( input, toSkip );
 		if ( skipped != toSkip )
 		{
-			throw new EOFException(
-					"Chars to skip: " + toSkip + " actual: " + skipped ); //$NON-NLS-1$ //$NON-NLS-2$
+			throw new EOFException( "Chars to skip: " + toSkip + " actual: " + skipped ); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -1890,20 +1827,18 @@ public class IOUtils
 	 *             if a read error occurs
 	 * @since 2.2
 	 */
-	public static int read( final Reader input, final char[] buffer,
-			final int offset, final int length ) throws IOException
+	public static int read( final Reader input, final char[] buffer, final int offset, final int length )
+			throws IOException
 	{
 		if ( length < 0 )
 		{
-			throw new IllegalArgumentException(
-					"Length must not be negative: " + length ); //$NON-NLS-1$
+			throw new IllegalArgumentException( "Length must not be negative: " + length ); //$NON-NLS-1$
 		}
 		int remaining = length;
 		while ( remaining > 0 )
 		{
 			final int location = length - remaining;
-			final int count = input
-					.read( buffer, offset + location, remaining );
+			final int count = input.read( buffer, offset + location, remaining );
 			if ( EOF == count )
 			{ // EOF
 				break;
@@ -1927,8 +1862,7 @@ public class IOUtils
 	 *             if a read error occurs
 	 * @since 2.2
 	 */
-	public static int read( final Reader input, final char[] buffer )
-			throws IOException
+	public static int read( final Reader input, final char[] buffer ) throws IOException
 	{
 		return read( input, buffer, 0, buffer.length );
 	}
@@ -1951,20 +1885,18 @@ public class IOUtils
 	 *             if a read error occurs
 	 * @since 2.2
 	 */
-	public static int read( final InputStream input, final byte[] buffer,
-			final int offset, final int length ) throws IOException
+	public static int read( final InputStream input, final byte[] buffer, final int offset, final int length )
+			throws IOException
 	{
 		if ( length < 0 )
 		{
-			throw new IllegalArgumentException(
-					"Length must not be negative: " + length ); //$NON-NLS-1$
+			throw new IllegalArgumentException( "Length must not be negative: " + length ); //$NON-NLS-1$
 		}
 		int remaining = length;
 		while ( remaining > 0 )
 		{
 			final int location = length - remaining;
-			final int count = input
-					.read( buffer, offset + location, remaining );
+			final int count = input.read( buffer, offset + location, remaining );
 			if ( EOF == count )
 			{ // EOF
 				break;
@@ -1988,8 +1920,7 @@ public class IOUtils
 	 *             if a read error occurs
 	 * @since 2.2
 	 */
-	public static int read( final InputStream input, final byte[] buffer )
-			throws IOException
+	public static int read( final InputStream input, final byte[] buffer ) throws IOException
 	{
 		return read( input, buffer, 0, buffer.length );
 	}
@@ -2011,8 +1942,7 @@ public class IOUtils
 	 *             if a read error occurs
 	 * @since 2.5
 	 */
-	public static int read( final ReadableByteChannel input,
-			final ByteBuffer buffer ) throws IOException
+	public static int read( final ReadableByteChannel input, final ByteBuffer buffer ) throws IOException
 	{
 		final int length = buffer.remaining( );
 		while ( buffer.remaining( ) > 0 )
@@ -2050,14 +1980,13 @@ public class IOUtils
 	 *             if the number of characters read was incorrect
 	 * @since 2.2
 	 */
-	public static void readFully( final Reader input, final char[] buffer,
-			final int offset, final int length ) throws IOException
+	public static void readFully( final Reader input, final char[] buffer, final int offset, final int length )
+			throws IOException
 	{
 		final int actual = read( input, buffer, offset, length );
 		if ( actual != length )
 		{
-			throw new EOFException(
-					"Length to read: " + length + " actual: " + actual ); //$NON-NLS-1$ //$NON-NLS-2$
+			throw new EOFException( "Length to read: " + length + " actual: " + actual ); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -2081,8 +2010,7 @@ public class IOUtils
 	 *             if the number of characters read was incorrect
 	 * @since 2.2
 	 */
-	public static void readFully( final Reader input, final char[] buffer )
-			throws IOException
+	public static void readFully( final Reader input, final char[] buffer ) throws IOException
 	{
 		readFully( input, buffer, 0, buffer.length );
 	}
@@ -2110,14 +2038,13 @@ public class IOUtils
 	 *             if the number of bytes read was incorrect
 	 * @since 2.2
 	 */
-	public static void readFully( final InputStream input, final byte[] buffer,
-			final int offset, final int length ) throws IOException
+	public static void readFully( final InputStream input, final byte[] buffer, final int offset, final int length )
+			throws IOException
 	{
 		final int actual = read( input, buffer, offset, length );
 		if ( actual != length )
 		{
-			throw new EOFException(
-					"Length to read: " + length + " actual: " + actual ); //$NON-NLS-1$ //$NON-NLS-2$
+			throw new EOFException( "Length to read: " + length + " actual: " + actual ); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -2140,8 +2067,7 @@ public class IOUtils
 	 *             if the number of bytes read was incorrect
 	 * @since 2.2
 	 */
-	public static void readFully( final InputStream input, final byte[] buffer )
-			throws IOException
+	public static void readFully( final InputStream input, final byte[] buffer ) throws IOException
 	{
 		readFully( input, buffer, 0, buffer.length );
 	}
@@ -2166,8 +2092,7 @@ public class IOUtils
 	 *             if the number of bytes read was incorrect
 	 * @since 2.5
 	 */
-	public static byte[] readFully( final InputStream input, final int length )
-			throws IOException
+	public static byte[] readFully( final InputStream input, final int length ) throws IOException
 	{
 		final byte[] buffer = new byte[length];
 		readFully( input, buffer, 0, buffer.length );
@@ -2191,20 +2116,17 @@ public class IOUtils
 	 *             if the number of bytes read was incorrect
 	 * @since 2.5
 	 */
-	public static void readFully( final ReadableByteChannel input,
-			final ByteBuffer buffer ) throws IOException
+	public static void readFully( final ReadableByteChannel input, final ByteBuffer buffer ) throws IOException
 	{
 		final int expected = buffer.remaining( );
 		final int actual = read( input, buffer );
 		if ( actual != expected )
 		{
-			throw new EOFException(
-					"Length to read: " + expected + " actual: " + actual ); //$NON-NLS-1$ //$NON-NLS-2$
+			throw new EOFException( "Length to read: " + expected + " actual: " + actual ); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
-	public static byte[] readInputStream( InputStream inStream )
-			throws Exception
+	public static byte[] readInputStream( InputStream inStream ) throws Exception
 	{
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream( );
 		byte[] buffer = new byte[1024];

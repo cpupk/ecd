@@ -52,6 +52,7 @@ public class JadSourceMapper extends BaseDecompilerSourceMapper
 		}
 	}
 
+	@Override
 	protected void printDecompileReport( StringBuffer source, String fileLocation, Collection exceptions,
 			long decompilationTime )
 	{

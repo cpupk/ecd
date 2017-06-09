@@ -37,6 +37,7 @@ public class MavenRepoSourceCodeFinder extends AbstractSourceCodeFinder implemen
 
 	private boolean canceled = false;
 
+	@Override
 	public void cancel( )
 	{
 		this.canceled = true;
@@ -49,6 +50,7 @@ public class MavenRepoSourceCodeFinder extends AbstractSourceCodeFinder implemen
 		return this.getClass( ).toString( );
 	}
 
+	@Override
 	public void find( String binFile, List<SourceFileResult> results )
 	{
 		Collection<GAV> gavs = new HashSet<GAV>( );
@@ -95,9 +97,7 @@ public class MavenRepoSourceCodeFinder extends AbstractSourceCodeFinder implemen
 			try
 			{
 				String[] sourceFiles = SourceBindingUtil.getSourceFileByDownloadUrl( entry.getValue( ) );
-				if ( sourceFiles != null
-						&& sourceFiles[0] != null
-						&& new File( sourceFiles[0] ).exists( ) )
+				if ( sourceFiles != null && sourceFiles[0] != null && new File( sourceFiles[0] ).exists( ) )
 				{
 					File sourceFile = new File( sourceFiles[0] );
 					File tempFile = new File( sourceFiles[1] );

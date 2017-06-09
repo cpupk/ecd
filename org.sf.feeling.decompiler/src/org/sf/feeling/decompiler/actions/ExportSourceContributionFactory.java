@@ -30,25 +30,22 @@ import org.eclipse.ui.menus.ExtensionContributionFactory;
 import org.eclipse.ui.menus.IContributionRoot;
 import org.eclipse.ui.services.IServiceLocator;
 
-public class ExportSourceContributionFactory extends
-		ExtensionContributionFactory
+public class ExportSourceContributionFactory extends ExtensionContributionFactory
 {
 
-	public void createContributionItems( IServiceLocator serviceLocator,
-			IContributionRoot additions )
+	@Override
+	public void createContributionItems( IServiceLocator serviceLocator, IContributionRoot additions )
 	{
-		final ISelectionService selService = (ISelectionService) serviceLocator.getService( ISelectionService.class );
-		final List selectedJars = getSelectedElements( selService,
-				IPackageFragmentRoot.class );
+		final ISelectionService selService = serviceLocator.getService( ISelectionService.class );
+		final List selectedJars = getSelectedElements( selService, IPackageFragmentRoot.class );
 		boolean exportRoot = ( selectedJars.size( ) == 1 );
 		if ( exportRoot )
 		{
 			additions.addContributionItem( new ActionContributionItem( new ExportSourceAction( selectedJars ) ),
 					new Expression( ) {
 
-						public EvaluationResult evaluate(
-								IEvaluationContext context )
-								throws CoreException
+						@Override
+						public EvaluationResult evaluate( IEvaluationContext context ) throws CoreException
 						{
 							return EvaluationResult.TRUE;
 						}
@@ -59,10 +56,8 @@ public class ExportSourceContributionFactory extends
 		if ( selectedJars.size( ) > 1 )
 			return;
 
-		final List selectedPackages = getSelectedElements( selService,
-				IPackageFragment.class );
-		final List selectedClasses = getSelectedElements( selService,
-				IClassFile.class );
+		final List selectedPackages = getSelectedElements( selService, IPackageFragment.class );
+		final List selectedClasses = getSelectedElements( selService, IClassFile.class );
 		selectedClasses.addAll( selectedPackages );
 		boolean exportClasses = ( !selectedClasses.isEmpty( ) );
 		if ( exportClasses )
@@ -70,9 +65,8 @@ public class ExportSourceContributionFactory extends
 			additions.addContributionItem( new ActionContributionItem( new ExportSourceAction( selectedClasses ) ),
 					new Expression( ) {
 
-						public EvaluationResult evaluate(
-								IEvaluationContext context )
-								throws CoreException
+						@Override
+						public EvaluationResult evaluate( IEvaluationContext context ) throws CoreException
 						{
 							boolean menuVisible = isMenuVisible( selectedClasses );
 
@@ -102,8 +96,7 @@ public class ExportSourceContributionFactory extends
 			else if ( obj instanceof IClassFile )
 			{
 				IClassFile classFile = (IClassFile) obj;
-				packRoot = (IPackageFragmentRoot) classFile.getParent( )
-						.getParent( );
+				packRoot = (IPackageFragmentRoot) classFile.getParent( ).getParent( );
 			}
 			else
 				return false;
@@ -120,8 +113,7 @@ public class ExportSourceContributionFactory extends
 		return true;
 	}
 
-	private List getSelectedElements( ISelectionService selService,
-			Class eleClass )
+	private List getSelectedElements( ISelectionService selService, Class eleClass )
 	{
 
 		Iterator selections = getSelections( selService );

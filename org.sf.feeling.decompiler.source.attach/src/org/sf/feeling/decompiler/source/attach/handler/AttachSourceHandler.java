@@ -29,6 +29,7 @@ import org.sf.feeling.decompiler.util.Logger;
 public class AttachSourceHandler implements IAttachSourceHandler
 {
 
+	@Override
 	public void execute( final IPackageFragmentRoot library, final boolean showUI )
 	{
 		if ( !JavaDecompilerPlugin.getDefault( ).isEnableExtension( ) )
@@ -49,6 +50,7 @@ public class AttachSourceHandler implements IAttachSourceHandler
 			{
 				final Job job = new Job( Messages.getString( "AttachSourceHandler.Job.Name" ) ) { //$NON-NLS-1$
 
+					@Override
 					protected IStatus run( final IProgressMonitor monitor )
 					{
 						return JavaSourceAttacherHandler.updateSourceAttachments( selections, monitor );
@@ -61,6 +63,7 @@ public class AttachSourceHandler implements IAttachSourceHandler
 			{
 				Thread thread = new Thread( ) {
 
+					@Override
 					public void run( )
 					{
 						JavaSourceAttacherHandler.updateSourceAttachments( selections, null );

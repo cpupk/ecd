@@ -28,6 +28,7 @@ public class EclipsePluginSourceByFTPSearchv3Finder extends EclipsePluginSourceB
 		super( "http://www.search-ftp.com/lsftp.ashx?s={0}" ); //$NON-NLS-1$
 	}
 
+	@Override
 	protected String getHtmlFromUrl( URL baseUrl, String fileName ) throws Exception
 	{
 		String html = getString( baseUrl );
@@ -48,6 +49,7 @@ public class EclipsePluginSourceByFTPSearchv3Finder extends EclipsePluginSourceB
 		return html;
 	}
 
+	@Override
 	protected void addLink( URL baseUrl, String fileName, javax.swing.text.html.HTMLDocument doc,
 			HTMLDocument.Iterator aElement, List<String> links ) throws Exception
 	{

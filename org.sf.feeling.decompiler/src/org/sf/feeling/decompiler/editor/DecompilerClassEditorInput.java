@@ -24,6 +24,7 @@ public class DecompilerClassEditorInput extends FileStoreEditorInput
 		super( fileStore );
 	}
 
+	@Override
 	public String getToolTipText( )
 	{
 		if ( toolTipText != null )

@@ -41,8 +41,7 @@ public class HashUtils
 			try
 			{
 				fis = new FileInputStream( file );
-				String result = new String(
-						Hex.encodeHex( DigestUtils.md5( fis ) ) );
+				String result = new String( Hex.encodeHex( DigestUtils.md5( fis ) ) );
 				return result;
 			}
 			catch ( IOException e )
@@ -76,8 +75,7 @@ public class HashUtils
 			try
 			{
 				fis = new FileInputStream( file );
-				String result = new String(
-						Hex.encodeHex( DigestUtils.sha( fis ) ) );
+				String result = new String( Hex.encodeHex( DigestUtils.sha( fis ) ) );
 				return result;
 			}
 			catch ( IOException e )
@@ -109,8 +107,7 @@ public class HashUtils
 		byte[] content = string.getBytes( );
 		if ( content != null )
 		{
-			String result = new String(
-					Hex.encodeHex( DigestUtils.sha( content ) ) );
+			String result = new String( Hex.encodeHex( DigestUtils.sha( content ) ) );
 			return result;
 		}
 		return null;
@@ -123,8 +120,7 @@ public class HashUtils
 		byte[] content = string.getBytes( );
 		if ( content != null )
 		{
-			String result = new String(
-					Hex.encodeHex( DigestUtils.md5( content ) ) );
+			String result = new String( Hex.encodeHex( DigestUtils.md5( content ) ) );
 			return result;
 		}
 		return null;

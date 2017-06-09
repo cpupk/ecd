@@ -107,6 +107,7 @@ public class SourceCodeFinderFacade implements SourceCodeFinder
 
 	private boolean canceled;
 
+	@Override
 	public void find( String binFile, List<SourceFileResult> results )
 	{
 		String sha1 = HashUtils.sha1Hash( new File( binFile ) );
@@ -145,6 +146,7 @@ public class SourceCodeFinderFacade implements SourceCodeFinder
 		}
 	}
 
+	@Override
 	public void cancel( )
 	{
 		this.canceled = true;

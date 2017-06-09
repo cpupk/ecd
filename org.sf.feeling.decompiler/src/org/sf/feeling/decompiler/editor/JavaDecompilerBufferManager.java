@@ -41,8 +41,7 @@ public class JavaDecompilerBufferManager extends BufferManager
 			while ( enumeration.hasMoreElements( ) )
 			{
 				IBuffer buffer = (IBuffer) enumeration.nextElement( );
-				( (JavaDecompilerBufferManager) manager )
-						.removeBuffer( buffer );
+				( (JavaDecompilerBufferManager) manager ).removeBuffer( buffer );
 			}
 		}
 	}
@@ -62,6 +61,7 @@ public class JavaDecompilerBufferManager extends BufferManager
 		}
 	}
 
+	@Override
 	public void addBuffer( final IBuffer buffer )
 	{
 		if ( buffer == null || buffer.getContents( ) == null )
@@ -79,6 +79,7 @@ public class JavaDecompilerBufferManager extends BufferManager
 	{
 		new Thread( ) {
 
+			@Override
 			public void run( )
 			{
 				if ( buffer.getContents( ) != null )
@@ -97,11 +98,13 @@ public class JavaDecompilerBufferManager extends BufferManager
 		}.start( );
 	}
 
+	@Override
 	public void removeBuffer( IBuffer buffer )
 	{
 		super.removeBuffer( buffer );
 	}
 
+	@Override
 	public IBuffer getBuffer( final IOpenable owner )
 	{
 		IBuffer buffer = super.getBuffer( owner );
@@ -120,21 +123,17 @@ public class JavaDecompilerBufferManager extends BufferManager
 
 				Display.getDefault( ).asyncExec( new Runnable( ) {
 
+					@Override
 					public void run( )
 					{
-						JavaDecompilerClassFileEditor editor = UIUtil
-								.getActiveEditor( );
-						if ( editor != null
-								&& editor
-										.getEditorInput( ) instanceof IClassFileEditorInput )
+						JavaDecompilerClassFileEditor editor = UIUtil.getActiveEditor( );
+						if ( editor != null && editor.getEditorInput( ) instanceof IClassFileEditorInput )
 						{
-							IClassFile input = ( (IClassFileEditorInput) editor
-									.getEditorInput( ) ).getClassFile( );
+							IClassFile input = ( (IClassFileEditorInput) editor.getEditorInput( ) ).getClassFile( );
 							if ( owner.equals( input ) )
 							{
 								buffers[0] = editor.getClassBuffer( );
-								JavaDecompilerBufferManager.this
-										.addBuffer( buffers[0] );
+								JavaDecompilerBufferManager.this.addBuffer( buffers[0] );
 							}
 						}
 					}
@@ -145,17 +144,12 @@ public class JavaDecompilerBufferManager extends BufferManager
 		{
 
 			JavaDecompilerClassFileEditor editor = UIUtil.getActiveEditor( );
-			if ( editor != null
-					&& editor
-							.getEditorInput( ) instanceof IClassFileEditorInput )
+			if ( editor != null && editor.getEditorInput( ) instanceof IClassFileEditorInput )
 			{
-				IClassFile input = ( (IClassFileEditorInput) editor
-						.getEditorInput( ) ).getClassFile( );
+				IClassFile input = ( (IClassFileEditorInput) editor.getEditorInput( ) ).getClassFile( );
 				if ( owner.equals( input ) )
 				{
-					String content = editor.getDocumentProvider( )
-							.getDocument( editor.getEditorInput( ) )
-							.get( );
+					String content = editor.getDocumentProvider( ).getDocument( editor.getEditorInput( ) ).get( );
 					if ( buffers[0] != null )
 					{
 						if ( !content.equals( buffers[0].getContents( ) ) )
@@ -170,10 +164,7 @@ public class JavaDecompilerBufferManager extends BufferManager
 
 						try
 						{
-							ClassFileSourceMap.updateSource(
-									editor.getBufferManager( ),
-									(ClassFile) cf,
-									content.toCharArray( ) );
+							ClassFileSourceMap.updateSource( editor.getBufferManager( ), cf, content.toCharArray( ) );
 						}
 						catch ( JavaModelException e )
 						{
@@ -181,8 +172,7 @@ public class JavaDecompilerBufferManager extends BufferManager
 						}
 
 						buffers[0] = classBuffer;
-						JavaDecompilerBufferManager.this
-								.addBuffer( buffers[0] );
+						JavaDecompilerBufferManager.this.addBuffer( buffers[0] );
 					}
 				}
 			}

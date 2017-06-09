@@ -18,6 +18,7 @@ import org.eclipse.core.commands.ExecutionException;
 public class DebugModeHandler extends AbstractHandler
 {
 
+	@Override
 	public Object execute( ExecutionEvent event ) throws ExecutionException
 	{
 		new DebugModeAction( ).run( );

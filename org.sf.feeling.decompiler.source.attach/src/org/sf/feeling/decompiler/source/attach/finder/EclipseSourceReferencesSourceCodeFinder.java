@@ -64,6 +64,7 @@ public class EclipseSourceReferencesSourceCodeFinder extends AbstractSourceCodeF
 		return result;
 	}
 
+	@Override
 	public void find( String binFile, List<SourceFileResult> results )
 	{
 		try
@@ -102,6 +103,7 @@ public class EclipseSourceReferencesSourceCodeFinder extends AbstractSourceCodeF
 		}
 	}
 
+	@Override
 	public void cancel( )
 	{
 	}

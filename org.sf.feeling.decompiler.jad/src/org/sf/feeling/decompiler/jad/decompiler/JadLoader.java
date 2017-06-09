@@ -46,7 +46,7 @@ public final class JadLoader
 			throw new Error( "Can't obtain jad executable file." ); //$NON-NLS-1$
 		}
 
-		InputStream is = JadLoader.class.getResourceAsStream( jadFilePath ); //$NON-NLS-1$
+		InputStream is = JadLoader.class.getResourceAsStream( jadFilePath ); // $NON-NLS-1$
 		if ( is == null )
 		{
 			throw new Error( "Can't obtain jad executable file." ); //$NON-NLS-1$
@@ -74,18 +74,22 @@ public final class JadLoader
 			{
 				if ( Platform.OS_LINUX.equalsIgnoreCase( Platform.getOS( ) ) )
 				{
-					Runtime.getRuntime( ).exec( "chmod a+x " //$NON-NLS-1$
-							+ jad.getAbsolutePath( ) ).waitFor( );
+					Runtime.getRuntime( )
+							.exec( "chmod a+x " //$NON-NLS-1$
+									+ jad.getAbsolutePath( ) )
+							.waitFor( );
 				}
 				else if ( Platform.OS_MACOSX.equalsIgnoreCase( Platform.getOS( ) ) )
 				{
-					Runtime.getRuntime( ).exec( "chmod a+x " //$NON-NLS-1$
-							+ jad.getAbsolutePath( ) ).waitFor( );
+					Runtime.getRuntime( )
+							.exec( "chmod a+x " //$NON-NLS-1$
+									+ jad.getAbsolutePath( ) )
+							.waitFor( );
 				}
 			}
 			catch ( InterruptedException e )
 			{
-				e.printStackTrace();
+				e.printStackTrace( );
 			}
 
 			// jad.setExecutable( true );

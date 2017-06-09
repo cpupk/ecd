@@ -80,7 +80,7 @@ public class InternalBasedSourceAttacherImpl35 implements SourceAttacher
 					return false;
 				}
 				entry = JavaModelUtil.findEntryInContainer( container, fRoot.getPath( ) );
-				Assert.isNotNull( (Object) entry );
+				Assert.isNotNull( entry );
 			}
 			fContainerPath = containerPath;
 			fEntry = entry;
@@ -90,11 +90,11 @@ public class InternalBasedSourceAttacherImpl35 implements SourceAttacher
 			{
 				final File sourceAttacherDir = newSourcePath.getParentFile( );
 				JavaCore.setClasspathVariable( "SOURCE_ATTACHER", //$NON-NLS-1$
-						(IPath) new Path( sourceAttacherDir.getAbsolutePath( ) ),
+						new Path( sourceAttacherDir.getAbsolutePath( ) ),
 						(IProgressMonitor) null );
-				srcAttPath = (IPath) new Path( "SOURCE_ATTACHER/" + newSourcePath.getName( ) ); //$NON-NLS-1$
+				srcAttPath = new Path( "SOURCE_ATTACHER/" + newSourcePath.getName( ) ); //$NON-NLS-1$
 			}
-			elem.setAttribute( "sourcepath", (Object) srcAttPath ); //$NON-NLS-1$
+			elem.setAttribute( "sourcepath", srcAttPath ); //$NON-NLS-1$
 			final IClasspathEntry entry2 = elem.getClasspathEntry( );
 			if ( entry2.equals( fEntry ) )
 			{
@@ -107,7 +107,7 @@ public class InternalBasedSourceAttacherImpl35 implements SourceAttacher
 			};
 			try
 			{
-				MethodUtils.invokeExactStaticMethod( (Class<?>) BuildPathSupport.class,
+				MethodUtils.invokeExactStaticMethod( BuildPathSupport.class,
 						"modifyClasspathEntry", //$NON-NLS-1$
 						new Object[]{
 								null, newEntry, changedAttributes, jproject, fContainerPath, new NullProgressMonitor( )
@@ -137,7 +137,7 @@ public class InternalBasedSourceAttacherImpl35 implements SourceAttacher
 		}
 		catch ( CoreException e4 )
 		{
-			Logger.debug( "error", (Throwable) e4 ); //$NON-NLS-1$
+			Logger.debug( "error", e4 ); //$NON-NLS-1$
 			return false;
 		}
 		return true;

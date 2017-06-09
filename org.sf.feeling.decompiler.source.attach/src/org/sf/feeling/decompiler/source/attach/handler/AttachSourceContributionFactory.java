@@ -39,6 +39,7 @@ import org.sf.feeling.decompiler.util.Logger;
 public class AttachSourceContributionFactory extends ExtensionContributionFactory
 {
 
+	@Override
 	public void createContributionItems( IServiceLocator serviceLocator, IContributionRoot additions )
 	{
 		if ( !JavaDecompilerPlugin.getDefault( ).isEnableExtension( ) )
@@ -46,7 +47,7 @@ public class AttachSourceContributionFactory extends ExtensionContributionFactor
 			return;
 		}
 
-		final ISelectionService selService = (ISelectionService) serviceLocator.getService( ISelectionService.class );
+		final ISelectionService selService = serviceLocator.getService( ISelectionService.class );
 		final List selectedJars = getSelectedElements( selService, IPackageFragmentRoot.class );
 		boolean attachRoot = ( selectedJars.size( ) == 1 );
 		if ( attachRoot )
@@ -54,6 +55,7 @@ public class AttachSourceContributionFactory extends ExtensionContributionFactor
 			additions.addContributionItem( new ActionContributionItem( new AttachSourceAction( selectedJars ) ),
 					new Expression( ) {
 
+						@Override
 						public EvaluationResult evaluate( IEvaluationContext context ) throws CoreException
 						{
 							boolean menuVisible = isMenuVisible( selectedJars );
@@ -79,6 +81,7 @@ public class AttachSourceContributionFactory extends ExtensionContributionFactor
 			additions.addContributionItem( new ActionContributionItem( new AttachSourceAction( selectedClasses ) ),
 					new Expression( ) {
 
+						@Override
 						public EvaluationResult evaluate( IEvaluationContext context ) throws CoreException
 						{
 							boolean menuVisible = isMenuVisible( selectedClasses );

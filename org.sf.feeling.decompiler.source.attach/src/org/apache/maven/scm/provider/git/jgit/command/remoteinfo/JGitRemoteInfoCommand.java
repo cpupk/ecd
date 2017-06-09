@@ -1,6 +1,10 @@
 
 package org.apache.maven.scm.provider.git.jgit.command.remoteinfo;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -34,10 +38,6 @@ import org.eclipse.jgit.api.LsRemoteCommand;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.transport.CredentialsProvider;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Dominik Bartholdi (imod)

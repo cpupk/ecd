@@ -29,8 +29,8 @@ public class JarClassExtractor
 	 * extracts class files from jar/zip archive to specified path. See
 	 * <code>IDecompiler</code> documentation for the format of pareameters.
 	 */
-	public static void extract( String archivePath, String packege,
-			String className, boolean inner, String to ) throws IOException
+	public static void extract( String archivePath, String packege, String className, boolean inner, String to )
+			throws IOException
 	{
 		ZipFile archive = new ZipFile( archivePath );
 		List entries = findRelevant( archive, packege, className, inner );
@@ -71,14 +71,13 @@ public class JarClassExtractor
 
 	}
 
-	private static List findRelevant( ZipFile archive, String packege,
-			String className, boolean inner )
+	private static List findRelevant( ZipFile archive, String packege, String className, boolean inner )
 	{
-		String entryName = ( packege.length( ) == 0 ) ? className : packege
-				+ "/" //$NON-NLS-1$
-				+ className;
-		String innerPrefix = entryName.substring( 0, entryName.length( ) - 6 )
-				+ "$"; //$NON-NLS-1$
+		String entryName = ( packege.length( ) == 0 ) ? className
+				: packege
+						+ "/" //$NON-NLS-1$
+						+ className;
+		String innerPrefix = entryName.substring( 0, entryName.length( ) - 6 ) + "$"; //$NON-NLS-1$
 		// strip .class + $
 		Enumeration entries = archive.entries( );
 		ZipEntry entry;
@@ -89,8 +88,7 @@ public class JarClassExtractor
 		{
 			entry = (ZipEntry) entries.nextElement( );
 			name = entry.getName( );
-			if ( name.equals( entryName )
-					|| ( name.startsWith( innerPrefix ) && inner ) )
+			if ( name.equals( entryName ) || ( name.startsWith( innerPrefix ) && inner ) )
 				relevant.add( entry );
 		}
 		return relevant;

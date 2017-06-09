@@ -40,7 +40,7 @@ import com.eclipsesource.json.JsonValue;
 public class PatchUtil
 {
 
-	public static final String DECOMPILER_FRAGMENT_ID = "org.sf.feeling.decompiler.fragment";
+	public static final String DECOMPILER_FRAGMENT_ID = "org.sf.feeling.decompiler.fragment"; //$NON-NLS-1$
 	public static final String DEFAULT_PATCH_PLUGIN_ID = "org.sf.feeling.decompiler.patch"; //$NON-NLS-1$
 
 	public static File getLatestPatch( File patchFolder, final String patchId )
@@ -49,6 +49,7 @@ public class PatchUtil
 		{
 			File[] children = patchFolder.listFiles( new FileFilter( ) {
 
+				@Override
 				public boolean accept( File file )
 				{
 					if ( file.isDirectory( ) )
@@ -65,6 +66,7 @@ public class PatchUtil
 				{
 					Arrays.sort( children, new Comparator<File>( ) {
 
+						@Override
 						public int compare( File o1, File o2 )
 						{
 							Version v1 = getPatchFileVersion( o1, patchId );
@@ -85,6 +87,7 @@ public class PatchUtil
 		{
 			File[] children = patchFolder.listFiles( new FileFilter( ) {
 
+				@Override
 				public boolean accept( File file )
 				{
 					if ( file.isDirectory( ) )
@@ -101,6 +104,7 @@ public class PatchUtil
 				{
 					Arrays.sort( children, new Comparator<File>( ) {
 
+						@Override
 						public int compare( File o1, File o2 )
 						{
 							Version v1 = getFileVersion( o1, patchId );
@@ -121,6 +125,7 @@ public class PatchUtil
 		{
 			File[] children = patchFolder.listFiles( new FileFilter( ) {
 
+				@Override
 				public boolean accept( File file )
 				{
 					if ( file.isDirectory( ) )
@@ -137,6 +142,7 @@ public class PatchUtil
 				{
 					Arrays.sort( children, new Comparator<File>( ) {
 
+						@Override
 						public int compare( File o1, File o2 )
 						{
 							Version v1 = getPatchFileVersion( o1, patchId );
@@ -167,11 +173,11 @@ public class PatchUtil
 		try
 		{
 			String fileName = file.getName( );
-			int index = fileName.indexOf( "_" );
+			int index = fileName.indexOf( "_" ); //$NON-NLS-1$
 			if ( index != -1 )
 			{
 				String versionString = fileName.substring( index + 1 );
-				versionString = versionString.replaceAll( "(?i)\\.jar", "" ).trim( );
+				versionString = versionString.replaceAll( "(?i)\\.jar", "" ).trim( ); //$NON-NLS-1$ //$NON-NLS-2$
 				return Version.parseVersion( versionString );
 			}
 		}
@@ -334,6 +340,7 @@ public class PatchUtil
 
 		Display.getDefault( ).asyncExec( new Runnable( ) {
 
+			@Override
 			public void run( )
 			{
 				IPath path = JavaDecompilerPlugin.getDefault( ).getStateLocation( );
@@ -367,15 +374,16 @@ public class PatchUtil
 
 		Display.getDefault( ).syncExec( new Runnable( ) {
 
+			@Override
 			public void run( )
 			{
 				try
 				{
-					String eclipseHome = System.getProperty( "eclipse.home.location" );
+					String eclipseHome = System.getProperty( "eclipse.home.location" ); //$NON-NLS-1$
 					if ( eclipseHome == null )
 						return;
 					File eclipseDir = new File( new URL( eclipseHome ).toURI( ) );
-					File dropinDir = new File( eclipseDir, "dropins" );
+					File dropinDir = new File( eclipseDir, "dropins" ); //$NON-NLS-1$
 					if ( dropinDir.exists( ) )
 					{
 						IPath path = JavaDecompilerPlugin.getDefault( ).getStateLocation( );
@@ -384,7 +392,7 @@ public class PatchUtil
 						File fragmentFile = getLatestFragment( fragmentFolder, DECOMPILER_FRAGMENT_ID );
 						if ( fragmentFile != null && fragmentFile.exists( ) && fragmentFile.isFile( ) )
 						{
-							File pluginsDir = new File( dropinDir, "eclipse/plugins" );
+							File pluginsDir = new File( dropinDir, "eclipse/plugins" ); //$NON-NLS-1$
 							if ( !pluginsDir.exists( ) )
 							{
 								pluginsDir.mkdirs( );

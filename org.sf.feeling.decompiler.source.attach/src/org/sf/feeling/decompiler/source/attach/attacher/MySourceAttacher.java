@@ -52,9 +52,7 @@ public class MySourceAttacher implements SourceAttacher
 		}
 		if ( !attached )
 		{
-			root.attachSource( (IPath) new Path( sourcePath.getAbsolutePath( ) ),
-					(IPath) null,
-					(IProgressMonitor) null );
+			root.attachSource( new Path( sourcePath.getAbsolutePath( ) ), (IPath) null, (IProgressMonitor) null );
 		}
 		javaProject.setRawClasspath( entries, (IProgressMonitor) null );
 		return true;
@@ -70,8 +68,8 @@ public class MySourceAttacher implements SourceAttacher
 			case 1 :
 			{
 				result = JavaCore.newLibraryEntry( entry.getPath( ),
-						(IPath) ( ( sourcePath == null ) ? null : new Path( sourcePath ) ),
-						(IPath) ( ( sourceRoot == null ) ? null : new Path( sourceRoot ) ),
+						( sourcePath == null ) ? null : new Path( sourcePath ),
+						( sourceRoot == null ) ? null : new Path( sourceRoot ),
 						entry.getAccessRules( ),
 						entry.getExtraAttributes( ),
 						entry.isExported( ) );
@@ -81,12 +79,12 @@ public class MySourceAttacher implements SourceAttacher
 			{
 				final File sourceAttacherDir = new File( sourcePath ).getParentFile( );
 				JavaCore.setClasspathVariable( "SOURCE_ATTACHER", //$NON-NLS-1$
-						(IPath) new Path( sourceAttacherDir.getAbsolutePath( ) ),
+						new Path( sourceAttacherDir.getAbsolutePath( ) ),
 						(IProgressMonitor) null );
 				final Path varAttPath = new Path( "SOURCE_ATTACHER/" + new File( sourcePath ).getName( ) ); //$NON-NLS-1$
 				result = JavaCore.newVariableEntry( entry.getPath( ),
-						(IPath) varAttPath,
-						(IPath) ( ( sourceRoot == null ) ? null : new Path( sourceRoot ) ),
+						varAttPath,
+						( sourceRoot == null ) ? null : new Path( sourceRoot ),
 						entry.getAccessRules( ),
 						entry.getExtraAttributes( ),
 						entry.isExported( ) );

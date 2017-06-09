@@ -40,6 +40,7 @@ class StreamRedirectThread extends Thread
 	/**
 	 * Copy.
 	 */
+	@Override
 	public void run( )
 	{
 		try

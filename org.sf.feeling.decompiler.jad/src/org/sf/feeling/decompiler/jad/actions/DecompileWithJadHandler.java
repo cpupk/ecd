@@ -19,6 +19,7 @@ import org.sf.feeling.decompiler.jad.JadDecompilerPlugin;
 public class DecompileWithJadHandler extends BaseDecompilerHandler
 {
 
+	@Override
 	public Object execute( ExecutionEvent event ) throws ExecutionException
 	{
 		return handleDecompile( JadDecompilerPlugin.decompilerType );

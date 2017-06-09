@@ -95,8 +95,7 @@ public class DecompilerAdapter
 		return includeWorkbenchContribute;
 	}
 
-	public void setIncludeWorkbenchContribute(
-			boolean includeWorkbenchContribute )
+	public void setIncludeWorkbenchContribute( boolean includeWorkbenchContribute )
 	{
 		this.includeWorkbenchContribute = includeWorkbenchContribute;
 	}
@@ -210,8 +209,7 @@ public class DecompilerAdapter
 		}
 		if ( apt == null && this.includeWorkbenchContribute )
 		{
-			apt = Platform.getAdapterManager( ).getAdapter( adaptableObject,
-					this.adapterType );
+			apt = Platform.getAdapterManager( ).getAdapter( adaptableObject, this.adapterType );
 		}
 
 		if ( this.isSingleton )
@@ -245,6 +243,7 @@ public class DecompilerAdapter
 		return this.getId( ).hashCode( );
 	}
 
+	@Override
 	public String toString( )
 	{
 		return this.getId( );

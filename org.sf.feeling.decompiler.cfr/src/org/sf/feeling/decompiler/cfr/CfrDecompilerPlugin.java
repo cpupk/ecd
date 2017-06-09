@@ -12,8 +12,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 
-public class CfrDecompilerPlugin extends AbstractUIPlugin implements
-		IPropertyChangeListener
+public class CfrDecompilerPlugin extends AbstractUIPlugin implements IPropertyChangeListener
 {
 
 	public static final String PLUGIN_ID = "org.sf.feeling.decompiler.cfr"; //$NON-NLS-1$
@@ -31,6 +30,7 @@ public class CfrDecompilerPlugin extends AbstractUIPlugin implements
 	 * org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext
 	 * )
 	 */
+	@Override
 	public void start( BundleContext context ) throws Exception
 	{
 		super.start( context );
@@ -43,6 +43,7 @@ public class CfrDecompilerPlugin extends AbstractUIPlugin implements
 	 * @see
 	 * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void stop( BundleContext context ) throws Exception
 	{
 		super.stop( context );
@@ -50,17 +51,18 @@ public class CfrDecompilerPlugin extends AbstractUIPlugin implements
 		plugin = null;
 	}
 
+	@Override
 	public void propertyChange( PropertyChangeEvent event )
 	{
 
 	}
 
+	@Override
 	public IPreferenceStore getPreferenceStore( )
 	{
 		if ( preferenceStore == null )
 		{
-			preferenceStore = JavaDecompilerPlugin.getDefault( )
-					.getPreferenceStore( );
+			preferenceStore = JavaDecompilerPlugin.getDefault( ).getPreferenceStore( );
 		}
 		return preferenceStore;
 	}
@@ -77,9 +79,7 @@ public class CfrDecompilerPlugin extends AbstractUIPlugin implements
 
 	public static ImageDescriptor getImageDescriptor( String path )
 	{
-		URL base = CfrDecompilerPlugin.getDefault( )
-				.getBundle( )
-				.getEntry( "/" ); //$NON-NLS-1$
+		URL base = CfrDecompilerPlugin.getDefault( ).getBundle( ).getEntry( "/" ); //$NON-NLS-1$
 		URL url = null;
 		try
 		{

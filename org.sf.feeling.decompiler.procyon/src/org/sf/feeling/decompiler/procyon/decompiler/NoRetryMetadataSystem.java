@@ -37,8 +37,8 @@ public final class NoRetryMetadataSystem extends MetadataSystem
 		super( typeLoader );
 	}
 
-	protected TypeDefinition resolveType( String descriptor,
-			boolean mightBePrimitive )
+	@Override
+	protected TypeDefinition resolveType( String descriptor, boolean mightBePrimitive )
 	{
 		if ( this._failedTypes.contains( descriptor ) )
 		{

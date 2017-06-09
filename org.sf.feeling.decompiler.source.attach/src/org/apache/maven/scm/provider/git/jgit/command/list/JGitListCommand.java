@@ -1,6 +1,10 @@
 
 package org.apache.maven.scm.provider.git.jgit.command.list;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -34,10 +38,6 @@ import org.apache.maven.scm.provider.git.repository.GitScmProviderRepository;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.transport.CredentialsProvider;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * @author Dominik Bartholdi (imod)

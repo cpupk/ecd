@@ -1,6 +1,13 @@
 
 package org.apache.maven.scm.provider.git.jgit.command.checkin;
 
+import java.io.File;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -39,13 +46,6 @@ import org.eclipse.jgit.lib.UserConfig;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.transport.RefSpec;
 
-import java.io.File;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
 /**
  * This provider uses the following strategy to discover the committer and
  * author name/mail for a commit:
@@ -78,6 +78,7 @@ public class JGitCheckInCommand extends AbstractCheckInCommand implements GitCom
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	protected CheckInScmResult executeCheckInCommand( ScmProviderRepository repo, ScmFileSet fileSet, String message,
 			ScmVersion version ) throws ScmException
 	{

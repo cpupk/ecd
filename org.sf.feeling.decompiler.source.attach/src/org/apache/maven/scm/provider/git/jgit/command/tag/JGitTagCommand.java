@@ -1,6 +1,9 @@
 
 package org.apache.maven.scm.provider.git.jgit.command.tag;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -41,9 +44,6 @@ import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.transport.RefSpec;
 import org.eclipse.jgit.treewalk.TreeWalk;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @author <a href="mailto:struberg@yahoo.de">Mark Struberg</a>
  * @author Dominik Bartholdi (imod)
@@ -52,6 +52,7 @@ import java.util.List;
 public class JGitTagCommand extends AbstractTagCommand implements GitCommand
 {
 
+	@Override
 	public ScmResult executeTagCommand( ScmProviderRepository repo, ScmFileSet fileSet, String tag, String message )
 			throws ScmException
 	{
@@ -61,6 +62,7 @@ public class JGitTagCommand extends AbstractTagCommand implements GitCommand
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public ScmResult executeTagCommand( ScmProviderRepository repo, ScmFileSet fileSet, String tag,
 			ScmTagParameters scmTagParameters ) throws ScmException
 	{

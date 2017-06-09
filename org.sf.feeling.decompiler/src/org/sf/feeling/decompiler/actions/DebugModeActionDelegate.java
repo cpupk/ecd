@@ -19,22 +19,22 @@ import org.eclipse.ui.actions.ActionDelegate;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.editor.JavaDecompilerClassFileEditor;
 
-public class DebugModeActionDelegate extends ActionDelegate implements
-		IEditorActionDelegate
+public class DebugModeActionDelegate extends ActionDelegate implements IEditorActionDelegate
 {
 
 	JavaDecompilerClassFileEditor editor;
 
+	@Override
 	public void setActiveEditor( IAction action, IEditorPart targetEditor )
 	{
 		if ( targetEditor instanceof JavaDecompilerClassFileEditor )
 		{
 			editor = (JavaDecompilerClassFileEditor) targetEditor;
-			action.setChecked(
-					JavaDecompilerPlugin.getDefault( ).isDebugMode( ) );
+			action.setChecked( JavaDecompilerPlugin.getDefault( ).isDebugMode( ) );
 		}
 	}
 
+	@Override
 	public void run( IAction action )
 	{
 		new DebugModeAction( ).run( );

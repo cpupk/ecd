@@ -19,16 +19,19 @@ public class ProcyonDecompilerDescriptor implements IDecompilerDescriptor
 
 	private Action decompileAction = null;
 
+	@Override
 	public String getDecompilerType( )
 	{
 		return ProcyonDecompilerPlugin.decompilerType;
 	}
 
+	@Override
 	public String getDecompilerPreferenceLabel( )
 	{
 		return Messages.getString( "ProcyonDecompilerDescriptor.PreferenceLabel" ); //$NON-NLS-1$
 	}
 
+	@Override
 	public IDecompiler getDecompiler( )
 	{
 		if ( decompiler == null )
@@ -36,6 +39,7 @@ public class ProcyonDecompilerDescriptor implements IDecompilerDescriptor
 		return decompiler;
 	}
 
+	@Override
 	public BaseDecompilerSourceMapper getDecompilerSourceMapper( )
 	{
 		if ( sourceMapper == null )
@@ -45,6 +49,7 @@ public class ProcyonDecompilerDescriptor implements IDecompilerDescriptor
 		return sourceMapper;
 	}
 
+	@Override
 	public Action getDecompileAction( )
 	{
 		if ( decompileAction == null )
@@ -54,18 +59,21 @@ public class ProcyonDecompilerDescriptor implements IDecompilerDescriptor
 		return decompileAction;
 	}
 
+	@Override
 	public boolean isEnabled( )
 	{
 		return !( System.getProperty( "java.version" ).compareTo( "1.7" ) < 0 ); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	@Override
 	public boolean isDefault( )
 	{
 		return false;
 	}
 
+	@Override
 	public ImageDescriptor getDecompilerIcon( )
 	{
-		return ProcyonDecompilerPlugin.getImageDescriptor( "icons/procyon_16.png" ); //$NON-NLS-1$;
+		return ProcyonDecompilerPlugin.getImageDescriptor( "icons/procyon_16.png" ); //$NON-NLS-1$ ;
 	}
 }

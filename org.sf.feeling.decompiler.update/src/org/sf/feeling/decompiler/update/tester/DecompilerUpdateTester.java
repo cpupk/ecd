@@ -18,6 +18,7 @@ import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 public class DecompilerUpdateTester extends PropertyTester
 {
 
+	@Override
 	public boolean test( Object receiver, String property, Object[] args, Object expectedValue )
 	{
 		if ( receiver instanceof JavaDecompilerPlugin && "mpcInstall".equals( property ) ) //$NON-NLS-1$

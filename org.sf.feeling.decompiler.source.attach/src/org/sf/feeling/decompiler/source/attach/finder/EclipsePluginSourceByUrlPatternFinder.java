@@ -49,10 +49,12 @@ public class EclipsePluginSourceByUrlPatternFinder extends AbstractSourceCodeFin
 		return this.getClass( ) + "; urlPattern=" + urlPattern; //$NON-NLS-1$
 	}
 
+	@Override
 	public void cancel( )
 	{
 	}
 
+	@Override
 	public void find( String binFile, List<SourceFileResult> results )
 	{
 		File bin = new File( binFile );
@@ -101,7 +103,7 @@ public class EclipsePluginSourceByUrlPatternFinder extends AbstractSourceCodeFin
 		String link;
 		for ( Iterator<String> it = links.iterator( ); it.hasNext( ); )
 		{
-			link = (String) it.next( );
+			link = it.next( );
 			boolean keep = false;
 			if ( link.endsWith( "/" + fileName ) ) //$NON-NLS-1$
 			{

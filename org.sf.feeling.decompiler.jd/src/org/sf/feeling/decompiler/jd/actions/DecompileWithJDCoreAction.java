@@ -26,6 +26,7 @@ public class DecompileWithJDCoreAction extends Action
 		this.setImageDescriptor( JDCoreDecompilerPlugin.getImageDescriptor( "icons/jd_16.png" ) ); //$NON-NLS-1$
 	}
 
+	@Override
 	public void run( )
 	{
 		try
@@ -37,9 +38,9 @@ public class DecompileWithJDCoreAction extends Action
 		}
 	}
 
+	@Override
 	public boolean isEnabled( )
 	{
-		return UIUtil.getActiveEditor( ) != null
-				|| UIUtil.getActiveSelection( ) != null;
+		return UIUtil.getActiveEditor( ) != null || UIUtil.getActiveSelection( ) != null;
 	}
 }

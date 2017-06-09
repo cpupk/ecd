@@ -48,6 +48,7 @@ public class DecompilerAdapterManager
 
 		private static final long serialVersionUID = 534728316184090251L;
 
+		@Override
 		public Object get( Object key )
 		{
 			Object obj = super.get( key );
@@ -87,7 +88,8 @@ public class DecompilerAdapterManager
 						DecompilerAdapter adapter = new DecompilerAdapter( );
 						adapter.setId( adapters[k].getAttribute( "id" ) ); //$NON-NLS-1$
 
-						adapter.setSingleton( !"false".equals( adapters[k].getAttribute( "singleton" ) ) ); //$NON-NLS-1$ //$NON-NLS-2$
+						adapter.setSingleton( !"false".equals( //$NON-NLS-1$
+								adapters[k].getAttribute( "singleton" ) ) ); //$NON-NLS-1$
 
 						if ( adapters[k].getAttribute( "class" ) != null //$NON-NLS-1$
 								&& !adapters[k].getAttribute( "class" ) //$NON-NLS-1$
@@ -97,7 +99,8 @@ public class DecompilerAdapterManager
 
 							if ( !adapter.isSingleton( ) )
 							{
-								// cache the config element to create new instance
+								// cache the config element to create new
+								// instance
 								adapter.setAdapterConfig( adapters[k] );
 							}
 						}
@@ -145,12 +148,12 @@ public class DecompilerAdapterManager
 							adapter.setOverwrite( adapters[k].getAttribute( "overwrite" ) //$NON-NLS-1$
 									.split( ";" ) ); //$NON-NLS-1$
 						}
-						adapter.setIncludeWorkbenchContribute( "true".equals( adapters[k].getAttribute( "includeWorkbenchContribute" ) ) ); //$NON-NLS-1$ //$NON-NLS-2$
+						adapter.setIncludeWorkbenchContribute( "true".equals( adapters[k].getAttribute( //$NON-NLS-1$
+								"includeWorkbenchContribute" ) ) ); //$NON-NLS-1$
 
 						IConfigurationElement[] enablements = adapters[k].getChildren( "enablement" ); //$NON-NLS-1$
 						if ( enablements != null && enablements.length > 0 )
-							adapter.setExpression( ExpressionConverter.getDefault( )
-									.perform( enablements[0] ) );
+							adapter.setExpression( ExpressionConverter.getDefault( ).perform( enablements[0] ) );
 						registerAdapter( adaptableType, adapter );
 					}
 					catch ( ClassNotFoundException ce )
@@ -159,7 +162,7 @@ public class DecompilerAdapterManager
 						{
 							System.out.println( MessageFormat.format( "Adaptable Type class '{0}' not found!", //$NON-NLS-1$
 									new Object[]{
-										adaptableClassName
+											adaptableClassName
 									} ) );
 							logger.log( Level.SEVERE, ce.getMessage( ), ce );
 						}
@@ -167,7 +170,7 @@ public class DecompilerAdapterManager
 						{
 							System.out.println( MessageFormat.format( "Adapter Type class '{0}' not found!", //$NON-NLS-1$
 									new Object[]{
-										adapterClassName
+											adapterClassName
 									} ) );
 							logger.log( Level.SEVERE, ce.getMessage( ), ce );
 						}
@@ -182,8 +185,7 @@ public class DecompilerAdapterManager
 		}
 	}
 
-	private static Class<?> classForName( String className,
-			Object adapterInstance, IAdapterFactory adapterFacotry )
+	private static Class<?> classForName( String className, Object adapterInstance, IAdapterFactory adapterFacotry )
 			throws ClassNotFoundException
 	{
 		Class<?> clazz = null;
@@ -192,9 +194,7 @@ public class DecompilerAdapterManager
 		{
 			try
 			{
-				clazz = adapterInstance.getClass( )
-						.getClassLoader( )
-						.loadClass( className );
+				clazz = adapterInstance.getClass( ).getClassLoader( ).loadClass( className );
 			}
 			catch ( ClassNotFoundException ex )
 			{
@@ -206,9 +206,7 @@ public class DecompilerAdapterManager
 		{
 			try
 			{
-				clazz = adapterFacotry.getClass( )
-						.getClassLoader( )
-						.loadClass( className );
+				clazz = adapterFacotry.getClass( ).getClassLoader( ).loadClass( className );
 			}
 			catch ( ClassNotFoundException ex )
 			{
@@ -238,8 +236,7 @@ public class DecompilerAdapterManager
 		return clazz;
 	}
 
-	public static void registerAdapter( Class adaptableType,
-			DecompilerAdapter adapter )
+	public static void registerAdapter( Class adaptableType, DecompilerAdapter adapter )
 	{
 		synchronized ( adaptersMap )
 		{
@@ -258,12 +255,12 @@ public class DecompilerAdapterManager
 		}
 	}
 
-	public static Object[] getAdapters( Object adaptableObject,
-			Class adatperType )
+	public static Object[] getAdapters( Object adaptableObject, Class adatperType )
 	{
 		List adapterObjects = getAdapterList( adaptableObject, adatperType );
 
-		return ( adapterObjects != null && adapterObjects.size( ) > 0 ) ? adapterObjects.toArray( new Object[adapterObjects.size( )] )
+		return ( adapterObjects != null && adapterObjects.size( ) > 0 )
+				? adapterObjects.toArray( new Object[adapterObjects.size( )] )
 				: null;
 	}
 
@@ -275,15 +272,12 @@ public class DecompilerAdapterManager
 		else if ( adapterObjects.size( ) == 1 )
 			return adapterObjects.get( 0 );
 		else
-			return Proxy.newProxyInstance( adatperType.getClassLoader( ),
-					new Class[]{
-						adatperType
-					},
-					new DecompilerAdapterInvocationHandler( adapterObjects ) );
+			return Proxy.newProxyInstance( adatperType.getClassLoader( ), new Class[]{
+					adatperType
+			}, new DecompilerAdapterInvocationHandler( adapterObjects ) );
 	}
 
-	private static List getAdapterList( Object adaptableObject,
-			Class adatperType )
+	private static List getAdapterList( Object adaptableObject, Class adatperType )
 	{
 		Set adapters = getAdapters( adaptableObject );
 		if ( adapters == null )
@@ -295,8 +289,7 @@ public class DecompilerAdapterManager
 			DecompilerAdapter adapter = (DecompilerAdapter) iter.next( );
 			if ( adapter.getExpression( ) != null )
 			{
-				EvaluationContext context = new EvaluationContext( null,
-						adaptableObject );
+				EvaluationContext context = new EvaluationContext( null, adaptableObject );
 				context.setAllowPluginActivation( true );
 				try
 				{
@@ -355,6 +348,7 @@ class ElementAdapterSet extends TreeSet
 
 	private static Comparator comparator = new Comparator( ) {
 
+		@Override
 		public int compare( Object o1, Object o2 )
 		{
 			if ( o1 instanceof DecompilerAdapter && o2 instanceof DecompilerAdapter )
@@ -382,6 +376,7 @@ class ElementAdapterSet extends TreeSet
 		super( comparator );
 	}
 
+	@Override
 	public boolean add( Object o )
 	{
 		if ( o instanceof DecompilerAdapter )
@@ -418,8 +413,7 @@ class ElementAdapterSet extends TreeSet
 				if ( this.overwriteList.contains( adapter.getId( ) ) )
 				{
 					iterator.remove( );
-					DecompilerAdapterManager.logger.log( Level.FINE,
-							"<" + adapter.getId( ) + "> is overwritten." ); //$NON-NLS-1$ //$NON-NLS-2$
+					DecompilerAdapterManager.logger.log( Level.FINE, "<" + adapter.getId( ) + "> is overwritten." ); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 			this.isReset = true;

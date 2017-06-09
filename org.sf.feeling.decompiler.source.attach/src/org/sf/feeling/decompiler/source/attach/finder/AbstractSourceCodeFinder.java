@@ -36,6 +36,7 @@ public abstract class AbstractSourceCodeFinder implements SourceCodeFinder
 
 	protected String downloadUrl;
 
+	@Override
 	public String getDownloadUrl( )
 	{
 		return downloadUrl;

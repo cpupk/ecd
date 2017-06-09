@@ -47,6 +47,7 @@ public class CfrDecompiler implements IDecompiler
 	 * 
 	 * @see IDecompiler#decompile(String, String, String)
 	 */
+	@Override
 	public void decompile( String root, String packege, String className )
 	{
 		start = System.currentTimeMillis( );
@@ -60,16 +61,15 @@ public class CfrDecompiler implements IDecompiler
 
 		try
 		{
-			Options options = (Options) getOptParser.parse( new String[]{
-				classPathStr
+			Options options = getOptParser.parse( new String[]{
+					classPathStr
 			}, OptionsImpl.getFactory( ) );
 			ClassFileSource classFileSource = new ClassFileSourceImpl( options );
-			DCCommonState dcCommonState = new DCCommonState( options,
-					classFileSource );
+			DCCommonState dcCommonState = new DCCommonState( options, classFileSource );
 
 			IllegalIdentifierDump illegalIdentifierDump = IllegalIdentifierDump.Factory.get( options );
 
-			ClassFile c = dcCommonState.getClassFileMaybePath( (String) options.getOption( OptionsImpl.FILENAME ) );
+			ClassFile c = dcCommonState.getClassFileMaybePath( options.getOption( OptionsImpl.FILENAME ) );
 			dcCommonState.configureWith( c );
 			try
 			{
@@ -78,7 +78,7 @@ public class CfrDecompiler implements IDecompiler
 			catch ( CannotLoadClassException e )
 			{
 			}
-			if ( ( (Boolean) options.getOption( OptionsImpl.DECOMPILE_INNER_CLASSES ) ).booleanValue( ) )
+			if ( options.getOption( OptionsImpl.DECOMPILE_INNER_CLASSES ).booleanValue( ) )
 			{
 				c.loadInnerClasses( dcCommonState );
 			}
@@ -128,24 +128,19 @@ public class CfrDecompiler implements IDecompiler
 	 * 
 	 * @see IDecompiler#decompileFromArchive(String, String, String)
 	 */
-	public void decompileFromArchive( String archivePath, String packege,
-			String className )
+	@Override
+	public void decompileFromArchive( String archivePath, String packege, String className )
 	{
 		start = System.currentTimeMillis( );
-		File workingDir = new File( JavaDecompilerPlugin.getDefault( )
-				.getPreferenceStore( )
-				.getString( JavaDecompilerPlugin.TEMP_DIR )
-				+ "/" //$NON-NLS-1$
-				+ System.currentTimeMillis( ) );
+		File workingDir = new File(
+				JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).getString( JavaDecompilerPlugin.TEMP_DIR )
+						+ "/" //$NON-NLS-1$
+						+ System.currentTimeMillis( ) );
 
 		try
 		{
 			workingDir.mkdirs( );
-			JarClassExtractor.extract( archivePath,
-					packege,
-					className,
-					true,
-					workingDir.getAbsolutePath( ) );
+			JarClassExtractor.extract( archivePath, packege, className, true, workingDir.getAbsolutePath( ) );
 			decompile( workingDir.getAbsolutePath( ), "", className ); //$NON-NLS-1$
 		}
 		catch ( Exception e )
@@ -159,11 +154,13 @@ public class CfrDecompiler implements IDecompiler
 		}
 	}
 
+	@Override
 	public long getDecompilationTime( )
 	{
 		return time;
 	}
 
+	@Override
 	public List getExceptions( )
 	{
 		return Collections.EMPTY_LIST;
@@ -172,6 +169,7 @@ public class CfrDecompiler implements IDecompiler
 	/**
 	 * @see IDecompiler#getLog()
 	 */
+	@Override
 	public String getLog( )
 	{
 		return log;
@@ -180,31 +178,37 @@ public class CfrDecompiler implements IDecompiler
 	/**
 	 * @see IDecompiler#getSource()
 	 */
+	@Override
 	public String getSource( )
 	{
 		return source;
 	}
 
+	@Override
 	public String getDecompilerType( )
 	{
 		return CfrDecompilerPlugin.decompilerType;
 	}
 
+	@Override
 	public String removeComment( String source )
 	{
 		return source;
 	}
 
+	@Override
 	public boolean supportLevel( int level )
 	{
 		return true;
 	}
 
+	@Override
 	public boolean supportDebugLevel( int level )
 	{
 		return false;
 	}
 
+	@Override
 	public boolean supportDebug( )
 	{
 		return false;

@@ -43,6 +43,7 @@ public class FernFlowerDecompiler implements IDecompiler
 	 * 
 	 * @see IDecompiler#decompile(String, String, String)
 	 */
+	@Override
 	public void decompile( String root, String packege, String className )
 	{
 		start = System.currentTimeMillis( );
@@ -53,18 +54,15 @@ public class FernFlowerDecompiler implements IDecompiler
 		Map<String, Object> mapOptions = new HashMap<String, Object>( );
 
 		mapOptions.put( IFernflowerPreferences.REMOVE_SYNTHETIC, "1" ); //$NON-NLS-1$
-		mapOptions.put( IFernflowerPreferences.DECOMPILE_GENERIC_SIGNATURES,
-				"1" ); //$NON-NLS-1$
+		mapOptions.put( IFernflowerPreferences.DECOMPILE_GENERIC_SIGNATURES, "1" ); //$NON-NLS-1$
 		mapOptions.put( IFernflowerPreferences.DECOMPILE_INNER, "1" ); //$NON-NLS-1$
 		mapOptions.put( IFernflowerPreferences.DECOMPILE_ENUM, "1" ); //$NON-NLS-1$
-		mapOptions.put( IFernflowerPreferences.LOG_LEVEL,
-				IFernflowerLogger.Severity.ERROR.name( ) );
+		mapOptions.put( IFernflowerPreferences.LOG_LEVEL, IFernflowerLogger.Severity.ERROR.name( ) );
 		mapOptions.put( IFernflowerPreferences.ASCII_STRING_CHARACTERS, "1" ); //$NON-NLS-1$
 		if ( ClassUtil.isDebug( ) )
 		{
 			mapOptions.put( IFernflowerPreferences.DUMP_ORIGINAL_LINES, "1" ); //$NON-NLS-1$
-			mapOptions.put( IFernflowerPreferences.BYTECODE_SOURCE_MAPPING,
-					"1" ); //$NON-NLS-1$
+			mapOptions.put( IFernflowerPreferences.BYTECODE_SOURCE_MAPPING, "1" ); //$NON-NLS-1$
 		}
 
 		File tmpDir = new File( System.getProperty( "java.io.tmpdir" ), //$NON-NLS-1$
@@ -73,8 +71,7 @@ public class FernFlowerDecompiler implements IDecompiler
 		if ( !tmpDir.exists( ) )
 			tmpDir.mkdirs( );
 
-		ConsoleDecompiler decompiler = new ConsoleDecompiler( tmpDir,
-				mapOptions );
+		ConsoleDecompiler decompiler = new ConsoleDecompiler( tmpDir, mapOptions );
 		File[] files = workingDir.listFiles( );
 		if ( files != null )
 		{
@@ -86,8 +83,7 @@ public class FernFlowerDecompiler implements IDecompiler
 
 		decompiler.decompileContext( );
 
-		File classFile = new File( tmpDir,
-				className.replaceAll( "(?i)\\.class", ".java" ) ); //$NON-NLS-1$ //$NON-NLS-2$
+		File classFile = new File( tmpDir, className.replaceAll( "(?i)\\.class", ".java" ) ); //$NON-NLS-1$ //$NON-NLS-2$
 
 		source = UnicodeUtil.decode( FileUtil.getContent( classFile ) );
 
@@ -122,24 +118,19 @@ public class FernFlowerDecompiler implements IDecompiler
 	 * 
 	 * @see IDecompiler#decompileFromArchive(String, String, String)
 	 */
-	public void decompileFromArchive( String archivePath, String packege,
-			String className )
+	@Override
+	public void decompileFromArchive( String archivePath, String packege, String className )
 	{
 		start = System.currentTimeMillis( );
-		File workingDir = new File( JavaDecompilerPlugin.getDefault( )
-				.getPreferenceStore( )
-				.getString( JavaDecompilerPlugin.TEMP_DIR )
-				+ "/" //$NON-NLS-1$
-				+ System.currentTimeMillis( ) );
+		File workingDir = new File(
+				JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).getString( JavaDecompilerPlugin.TEMP_DIR )
+						+ "/" //$NON-NLS-1$
+						+ System.currentTimeMillis( ) );
 
 		try
 		{
 			workingDir.mkdirs( );
-			JarClassExtractor.extract( archivePath,
-					packege,
-					className,
-					true,
-					workingDir.getAbsolutePath( ) );
+			JarClassExtractor.extract( archivePath, packege, className, true, workingDir.getAbsolutePath( ) );
 			decompile( workingDir.getAbsolutePath( ), "", className ); //$NON-NLS-1$
 		}
 		catch ( Exception e )
@@ -170,11 +161,13 @@ public class FernFlowerDecompiler implements IDecompiler
 		root.delete( );
 	}
 
+	@Override
 	public long getDecompilationTime( )
 	{
 		return time;
 	}
 
+	@Override
 	public List getExceptions( )
 	{
 		return Collections.EMPTY_LIST;
@@ -183,6 +176,7 @@ public class FernFlowerDecompiler implements IDecompiler
 	/**
 	 * @see IDecompiler#getLog()
 	 */
+	@Override
 	public String getLog( )
 	{
 		return log;
@@ -191,31 +185,37 @@ public class FernFlowerDecompiler implements IDecompiler
 	/**
 	 * @see IDecompiler#getSource()
 	 */
+	@Override
 	public String getSource( )
 	{
 		return source;
 	}
 
+	@Override
 	public String getDecompilerType( )
 	{
 		return DecompilerType.FernFlower;
 	}
 
+	@Override
 	public String removeComment( String source )
 	{
 		return source;
 	}
 
+	@Override
 	public boolean supportLevel( int level )
 	{
 		return true;
 	}
 
+	@Override
 	public boolean supportDebugLevel( int level )
 	{
 		return true;
 	}
 
+	@Override
 	public boolean supportDebug( )
 	{
 		return true;

@@ -25,9 +25,7 @@ public class UnicodeUtil
 		StringBuffer sb = new StringBuffer( s.length( ) );
 		while ( m.find( ) )
 		{
-			m.appendReplacement( sb,
-					Character.toString( (char) Integer.parseInt( m.group( 1 ),
-							16 ) ) );
+			m.appendReplacement( sb, Character.toString( (char) Integer.parseInt( m.group( 1 ), 16 ) ) );
 		}
 		m.appendTail( sb );
 		return sb.toString( );

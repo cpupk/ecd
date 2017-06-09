@@ -26,6 +26,7 @@ public class DecompileWithProcyonAction extends Action
 		this.setImageDescriptor( ProcyonDecompilerPlugin.getImageDescriptor( "icons/procyon_16.png" ) ); //$NON-NLS-1$
 	}
 
+	@Override
 	public void run( )
 	{
 		try
@@ -37,9 +38,9 @@ public class DecompileWithProcyonAction extends Action
 		}
 	}
 
+	@Override
 	public boolean isEnabled( )
 	{
-		return UIUtil.getActiveEditor( ) != null
-				|| UIUtil.getActiveSelection( ) != null;
+		return UIUtil.getActiveEditor( ) != null || UIUtil.getActiveSelection( ) != null;
 	}
 }

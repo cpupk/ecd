@@ -32,8 +32,7 @@ public class StringChoiceFieldEditor extends FieldEditor
 	private String fOldKey;
 	private boolean fIsValid;
 
-	public StringChoiceFieldEditor( String name, String label,
-			Composite parent )
+	public StringChoiceFieldEditor( String name, String label, Composite parent )
 	{
 		super( name, label, parent );
 		initList( );
@@ -58,6 +57,7 @@ public class StringChoiceFieldEditor extends FieldEditor
 		return fCombo;
 	}
 
+	@Override
 	protected void adjustForNumColumns( int numColumns )
 	{
 		if ( fCombo != null )
@@ -67,6 +67,7 @@ public class StringChoiceFieldEditor extends FieldEditor
 		}
 	}
 
+	@Override
 	protected void doFillIntoGrid( Composite parent, int numColumns )
 	{
 		Label l = new Label( parent, SWT.NULL );
@@ -75,6 +76,7 @@ public class StringChoiceFieldEditor extends FieldEditor
 		fCombo = new Combo( parent, SWT.READ_ONLY );
 		fCombo.addSelectionListener( new SelectionAdapter( ) {
 
+			@Override
 			public void widgetSelected( SelectionEvent e )
 			{
 				valueChanged( );
@@ -87,6 +89,7 @@ public class StringChoiceFieldEditor extends FieldEditor
 
 	}
 
+	@Override
 	protected void doLoad( )
 	{
 		String value = getPreferenceStore( ).getString( getPreferenceName( ) );
@@ -95,10 +98,10 @@ public class StringChoiceFieldEditor extends FieldEditor
 			fCombo.select( index );
 	}
 
+	@Override
 	protected void doLoadDefault( )
 	{
-		String value = getPreferenceStore( )
-				.getDefaultString( getPreferenceName( ) );
+		String value = getPreferenceStore( ).getDefaultString( getPreferenceName( ) );
 		int index = fLabels.indexOf( value );
 		if ( index >= 0 )
 		{
@@ -107,6 +110,7 @@ public class StringChoiceFieldEditor extends FieldEditor
 		}
 	}
 
+	@Override
 	protected void doStore( )
 	{
 		String value = ""; //$NON-NLS-1$
@@ -117,6 +121,7 @@ public class StringChoiceFieldEditor extends FieldEditor
 		getPreferenceStore( ).setValue( getPreferenceName( ), value );
 	}
 
+	@Override
 	public int getNumberOfControls( )
 	{
 		return 2;
@@ -137,11 +142,13 @@ public class StringChoiceFieldEditor extends FieldEditor
 		fOldKey = getSelectedKey( );
 	}
 
+	@Override
 	public boolean isValid( )
 	{
 		return fIsValid;
 	}
 
+	@Override
 	protected void refreshValidState( )
 	{
 		fIsValid = fCombo.getSelectionIndex( ) >= 0;
@@ -161,6 +168,7 @@ public class StringChoiceFieldEditor extends FieldEditor
 	/**
 	 * Set the focus to this field editor.
 	 */
+	@Override
 	public void setFocus( )
 	{
 		if ( fCombo != null )

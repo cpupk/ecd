@@ -15,17 +15,19 @@ public class StringDumper extends StreamDumper
 
 	private StringWriter sw = new StringWriter( );
 
-	public StringDumper( TypeUsageInformation typeUsageInformation,
-			Options options, IllegalIdentifierDump illegalIdentifierDump )
+	public StringDumper( TypeUsageInformation typeUsageInformation, Options options,
+			IllegalIdentifierDump illegalIdentifierDump )
 	{
 		super( typeUsageInformation, options, illegalIdentifierDump );
 	}
 
+	@Override
 	public void addSummaryError( Method paramMethod, String paramString )
 	{
 
 	}
 
+	@Override
 	public void close( )
 	{
 		try
@@ -44,6 +46,7 @@ public class StringDumper extends StreamDumper
 		sw.write( source );
 	}
 
+	@Override
 	public String toString( )
 	{
 		return sw.toString( );
