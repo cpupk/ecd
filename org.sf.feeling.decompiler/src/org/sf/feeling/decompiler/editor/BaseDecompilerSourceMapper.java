@@ -503,7 +503,7 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper
 			if ( showReport )
 				code = currentDecompiler.removeComment( code );
 			DecompilerOutputUtil decompilerOutputUtil = new DecompilerOutputUtil( currentDecompiler
-					.getDecompilerType( ), usedDecompiler.getDecompilerType( ), code );
+					.getDecompilerType( ), currentDecompiler.getDecompilerType( ), code );
 			code = decompilerOutputUtil.realign( );
 		}
 
