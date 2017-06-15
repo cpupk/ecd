@@ -29,6 +29,7 @@ import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.core.BufferManager;
 import org.eclipse.jdt.internal.core.ClassFile;
+import org.eclipse.jdt.internal.core.PackageFragment;
 import org.eclipse.jdt.internal.ui.actions.CompositeActionGroup;
 import org.eclipse.jdt.internal.ui.javaeditor.ClassFileEditor;
 import org.eclipse.jdt.internal.ui.javaeditor.IClassFileEditorInput;
@@ -457,23 +458,30 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 			{
 				InternalClassFileEditorInput classInput = (InternalClassFileEditorInput) input;
 
-				IPath relativePath = classInput.getClassFile( ).getParent( ).getPath( );
-				String location = UIUtil.getPathLocation( relativePath );
-				if ( !( FileUtil.isZipFile( location ) || FileUtil.isZipFile( relativePath.toOSString( ) ) ) )
+				if ( classInput.getClassFile( ).getParent( ) instanceof PackageFragment )
 				{
-					String filePath = UIUtil.getPathLocation( classInput.getClassFile( ).getPath( ) );
-					if ( filePath != null )
+					doOpenBuffer( input, false );
+				}
+				else
+				{
+					IPath relativePath = classInput.getClassFile( ).getParent( ).getPath( );
+					String location = UIUtil.getPathLocation( relativePath );
+					if ( !( FileUtil.isZipFile( location ) || FileUtil.isZipFile( relativePath.toOSString( ) ) ) )
 					{
-						DecompilerClassEditorInput editorInput = new DecompilerClassEditorInput(
-								EFS.getLocalFileSystem( ).getStore( new Path( filePath ) ) );
-						doSetInput( editorInput );
+						String filePath = UIUtil.getPathLocation( classInput.getClassFile( ).getPath( ) );
+						if ( filePath != null )
+						{
+							DecompilerClassEditorInput editorInput = new DecompilerClassEditorInput(
+									EFS.getLocalFileSystem( ).getStore( new Path( filePath ) ) );
+							doSetInput( editorInput );
+						}
+						else
+						{
+							doSetInput( new DecompilerClassEditorInput(
+									EFS.getLocalFileSystem( ).getStore( classInput.getClassFile( ).getPath( ) ) ) );
+						}
+						return;
 					}
-					else
-					{
-						doSetInput( new DecompilerClassEditorInput(
-								EFS.getLocalFileSystem( ).getStore( classInput.getClassFile( ).getPath( ) ) ) );
-					}
-					return;
 				}
 			}
 			try
