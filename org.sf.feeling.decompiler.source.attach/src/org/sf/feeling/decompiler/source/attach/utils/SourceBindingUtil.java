@@ -73,7 +73,7 @@ public class SourceBindingUtil
 			for ( int j = 0; j < shaArray.size( ); j++ )
 			{
 				String shaString = shaArray.get( j ).asString( );
-				if ( sha.equalsIgnoreCase( shaString ) )
+				if ( sha != null && sha.equalsIgnoreCase( shaString ) )
 				{
 					String source = item.getString( "source", null ); //$NON-NLS-1$
 					String temp = item.getString( "temp", null ); //$NON-NLS-1$
