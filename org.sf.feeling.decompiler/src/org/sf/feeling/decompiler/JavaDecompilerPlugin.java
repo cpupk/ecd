@@ -444,8 +444,7 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 		Object updateAdapter = DecompilerAdapterManager.getAdapter( this, IDecompilerUpdateHandler.class );
 		if ( updateAdapter instanceof IDecompilerUpdateHandler )
 		{
-			IDecompilerUpdateHandler updateHandler = (IDecompilerUpdateHandler) updateAdapter;
-			return !updateHandler.isForce( null );
+			return true;
 		}
 		return false;
 	}

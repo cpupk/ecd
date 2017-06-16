@@ -11,7 +11,6 @@
 
 package org.sf.feeling.decompiler;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -116,20 +115,6 @@ public class SetupRunnable implements Runnable
 			if ( showUI )
 			{
 				updateHandler.execute( showUI );
-			}
-			else
-			{
-				new Thread( ) {
-
-					@Override
-					public void run( )
-					{
-						if ( updateHandler.isForce( new NullProgressMonitor( ) ) )
-						{
-							updateHandler.execute( false );
-						}
-					}
-				}.start( );
 			}
 		}
 	}

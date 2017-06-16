@@ -14,7 +14,6 @@ package org.sf.feeling.decompiler.update;
 import java.net.URI;
 import java.net.URL;
 import java.util.Iterator;
-import java.util.Random;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -34,8 +33,6 @@ import org.eclipse.equinox.p2.ui.ProvisioningUI;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.update.i18n.Messages;
@@ -112,10 +109,9 @@ public class DecompilerUpdateHandler implements IDecompilerUpdateHandler
 		}
 
 		final String versionString = getVersion( version );
-		final boolean force = isForce( monitor );
 		if ( versionString != null
 				&& ( !versionString.equals( JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).getString(
-						DecompilerUpdatePlugin.NOT_UPDATE_VERSION ) ) || force ) )
+						DecompilerUpdatePlugin.NOT_UPDATE_VERSION ) ) ) )
 		{
 			Display.getDefault( ).asyncExec( new Runnable( ) {
 
@@ -126,8 +122,7 @@ public class DecompilerUpdateHandler implements IDecompilerUpdateHandler
 							Display.getDefault( ).getActiveShell( ),
 							Messages.getString( "DecompilerUpdateHandler.ConfirmDialog.Title" ), //$NON-NLS-1$
 							null, // accept the default window icon
-							force ? Messages.getString( "DecompilerUpdateHandler.ConfirmDialog.Force.Message" ) //$NON-NLS-1$
-									: Messages.getString( "DecompilerUpdateHandler.ConfirmDialog.Message" ), //$NON-NLS-1$
+							Messages.getString( "DecompilerUpdateHandler.ConfirmDialog.Message" ), //$NON-NLS-1$
 							MessageDialog.CONFIRM,
 							new String[]{
 									Messages.getString( "DecompilerUpdateHandler.ConfirmDialog.Button.NotNow" ), //$NON-NLS-1$
@@ -135,23 +130,11 @@ public class DecompilerUpdateHandler implements IDecompilerUpdateHandler
 					},
 							1,
 							Messages.getString( "DecompilerUpdateHandler.ConfirmDialog.Button.NotAskAgain" ), //$NON-NLS-1$
-							false ) {
-
-						@Override
-						protected Button createToggleButton( Composite parent )
-						{
-							Button button = super.createToggleButton( parent );
-							if ( force )
-							{
-								button.setVisible( false );
-							}
-							return button;
-						}
-					};
+							false );
 
 					int result = dialog.open( );
 
-					if ( !force && dialog.getToggleState( ) )
+					if ( dialog.getToggleState( ) )
 					{
 						JavaDecompilerPlugin.getDefault( )
 								.getPreferenceStore( )
@@ -227,45 +210,10 @@ public class DecompilerUpdateHandler implements IDecompilerUpdateHandler
 					else if ( remoteVersion.getMajor( ) == installVersion.getMajor( )
 							&& remoteVersion.getMinor( ) > installVersion.getMinor( ) )
 						return remoteVersion;
-					else if ( remoteVersion.getMajor( ) == installVersion.getMajor( )
-							&& remoteVersion.getMinor( ) == installVersion.getMinor( )
-							&& remoteVersion.getMicro( ) > installVersion.getMicro( )
-							&& isForceVersion( remoteVersion ) )
-						return remoteVersion;
 				}
 			}
 		}
 		return null;
-	}
-
-	private boolean isForceVersion( OSGiVersion remoteVersion )
-	{
-		if ( remoteVersion != null && remoteVersion.getQualifier( ) != null )
-		{
-			String qualifier = remoteVersion.getQualifier( );
-			if ( qualifier.toLowerCase( ).startsWith( "f" ) ) //$NON-NLS-1$
-				return true;
-
-			if ( qualifier.toLowerCase( ).startsWith( "r" ) && qualifier.length( ) > 9 ) //$NON-NLS-1$
-			{
-				try
-				{
-					int number = Integer.parseInt( qualifier.substring( 9 ) );
-					if ( new Random( ).nextInt( number ) == number / 2 )
-						return true;
-				}
-				catch ( NumberFormatException e )
-				{
-				}
-			}
-
-			OSGiVersion installVersion = (OSGiVersion) VersionUtil.getFeatureVersion( "org.sf.feeling.decompiler" ); //$NON-NLS-1$
-			if ( installVersion != null && installVersion.getMajor( ) == 1 && remoteVersion.getMajor( ) > 1 )
-			{
-				return true;
-			}
-		}
-		return false;
 	}
 
 	@SuppressWarnings({
@@ -297,22 +245,4 @@ public class DecompilerUpdateHandler implements IDecompilerUpdateHandler
 	{
 		return remoteVersion.getMajor( ) + "." + remoteVersion.getMinor( ); //$NON-NLS-1$
 	}
-
-	@Override
-	public boolean isForce( IProgressMonitor monitor )
-	{
-		if ( version == null && monitor != null )
-		{
-			try
-			{
-				version = getUpdateVersion( monitor );
-			}
-			catch ( Exception e )
-			{
-				return false;
-			}
-		}
-		return version != null && isForceVersion( version );
-	}
-
 }
