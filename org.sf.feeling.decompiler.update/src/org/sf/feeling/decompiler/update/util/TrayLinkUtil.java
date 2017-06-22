@@ -102,15 +102,18 @@ public class TrayLinkUtil
 				}
 			}
 
-			int randomWeight = new Random( new Random( System.currentTimeMillis( ) ).nextLong( ) )
-					.nextInt( weight * 100 );
-			Iterator<Integer> iter = urlMap.keySet( ).iterator( );
-			while ( iter.hasNext( ) )
+			if ( weight > 0 )
 			{
-				Integer priority = iter.next( );
-				if ( randomWeight < priority * 100 )
+				int randomWeight = new Random( new Random( System.currentTimeMillis( ) ).nextLong( ) )
+						.nextInt( weight * 100 );
+				Iterator<Integer> iter = urlMap.keySet( ).iterator( );
+				while ( iter.hasNext( ) )
 				{
-					return urlMap.get( priority );
+					Integer priority = iter.next( );
+					if ( randomWeight < priority * 100 )
+					{
+						return urlMap.get( priority );
+					}
 				}
 			}
 		}
