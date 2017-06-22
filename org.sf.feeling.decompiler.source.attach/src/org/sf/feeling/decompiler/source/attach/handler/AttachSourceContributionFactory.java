@@ -46,7 +46,7 @@ public class AttachSourceContributionFactory extends ExtensionContributionFactor
 			return;
 		}
 
-		final ISelectionService selService = serviceLocator.getService( ISelectionService.class );
+		final ISelectionService selService = (ISelectionService)serviceLocator.getService( ISelectionService.class );
 		final List selectedJars = getSelectedElements( selService, IPackageFragmentRoot.class );
 		boolean attachRoot = ( selectedJars.size( ) == 1 );
 		if ( attachRoot )

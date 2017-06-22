@@ -150,7 +150,7 @@ public class OpenClassWithContributionFactory extends ExtensionContributionFacto
 	public void createContributionItems( IServiceLocator serviceLocator, IContributionRoot additions )
 	{
 
-		final ISelectionService selService = serviceLocator.getService( ISelectionService.class );
+		final ISelectionService selService = (ISelectionService)serviceLocator.getService( ISelectionService.class );
 
 		// Define a dynamic set of submenu entries
 		String dynamicMenuId = "org.sf.feeling.decompiler.openwith.items"; //$NON-NLS-1$
