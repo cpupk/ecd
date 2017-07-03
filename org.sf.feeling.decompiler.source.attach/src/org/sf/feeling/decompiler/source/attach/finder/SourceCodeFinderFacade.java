@@ -108,25 +108,28 @@ public class SourceCodeFinderFacade implements SourceCodeFinder
 	private boolean canceled;
 
 	@Override
-	public void find( String binFile, List<SourceFileResult> results )
+	public void find( String binFilePath, List<SourceFileResult> results )
 	{
-		String sha1 = HashUtils.sha1Hash( new File( binFile ) );
+		File binFile = new File( binFilePath );
+		if ( !binFile.exists( ) || binFile.isDirectory( ) )
+			return;
+		String sha1 = HashUtils.sha1Hash( binFile );
 		String[] sourceFiles = SourceBindingUtil.getSourceFileBySha( sha1 );
 		if ( sourceFiles != null && sourceFiles[0] != null && new File( sourceFiles[0] ).exists( ) )
 		{
 			File sourceFile = new File( sourceFiles[0] );
 			File tempFile = new File( sourceFiles[1] );
-			SourceFileResult result = new SourceFileResult( this, binFile, sourceFile, tempFile, 100 );
+			SourceFileResult result = new SourceFileResult( this, binFilePath, sourceFile, tempFile, 100 );
 			results.add( result );
 			return;
 		}
 
 		SourceCodeFinder[] searchFinders = finders;
-		if ( binFile.toLowerCase( ).indexOf( "jre" ) != -1 ) //$NON-NLS-1$
+		if ( binFilePath.toLowerCase( ).indexOf( "jre" ) != -1 ) //$NON-NLS-1$
 		{
 			searchFinders = jreFinders;
 		}
-		else if ( binFile.toLowerCase( ).indexOf( "eclipse" ) != -1 ) //$NON-NLS-1$
+		else if ( binFilePath.toLowerCase( ).indexOf( "eclipse" ) != -1 ) //$NON-NLS-1$
 		{
 			searchFinders = eclipseFinders;
 		}
@@ -137,7 +140,7 @@ public class SourceCodeFinderFacade implements SourceCodeFinder
 			SourceCodeFinder finder = searchFinders[i];
 			Logger.debug( finder + " " + binFile, null ); //$NON-NLS-1$
 
-			finder.find( binFile, results2 );
+			finder.find( binFilePath, results2 );
 			if ( !results2.isEmpty( ) )
 			{
 				results.addAll( results2 );

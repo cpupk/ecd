@@ -138,9 +138,11 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 				if ( source != null && MarkUtil.containsMark( source ) )
 				{
 
-					if ( UIUtil.isDebug( ) && breakpoint.getMarker( ) != null )
+					try
 					{
-						try
+						if ( UIUtil.isDebug( )
+								&& breakpoint.getMarker( ) != null
+								&& breakpoint.getMarker( ).getAttribute( IMarker.LINE_NUMBER ) != null )
 						{
 							int lineNumber = (Integer) breakpoint.getMarker( ).getAttribute( IMarker.LINE_NUMBER );
 							String[] lines = source.split( "\n" ); //$NON-NLS-1$
@@ -174,36 +176,37 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 								}
 							}
 						}
-						catch ( CoreException e )
+						else if ( !UIUtil.isDebug( ) )
 						{
-							Logger.debug( e );
+
+							Display.getDefault( ).asyncExec( new Runnable( ) {
+
+								@Override
+								public void run( )
+								{
+									boolean setDebug = MessageDialog.openConfirm(
+											Display.getDefault( ).getActiveShell( ),
+											Messages.getString( "JavaDecompilerPlugin.BreakpoingDialog.Title" ), //$NON-NLS-1$
+											Messages.getString( "JavaDecompilerPlugin.BreakpoingDialog.Message" ) ); //$NON-NLS-1$
+									try
+									{
+										breakpoint.delete( );
+									}
+									catch ( CoreException e )
+									{
+										Logger.debug( e );
+									}
+									if ( setDebug )
+									{
+										new DebugModeAction( ).run( );
+									}
+								}
+							} );
 						}
 					}
-					else if ( !UIUtil.isDebug( ) )
+					catch ( CoreException e )
 					{
-
-						Display.getDefault( ).asyncExec( new Runnable( ) {
-
-							@Override
-							public void run( )
-							{
-								boolean setDebug = MessageDialog.openConfirm( Display.getDefault( ).getActiveShell( ),
-										Messages.getString( "JavaDecompilerPlugin.BreakpoingDialog.Title" ), //$NON-NLS-1$
-										Messages.getString( "JavaDecompilerPlugin.BreakpoingDialog.Message" ) ); //$NON-NLS-1$
-								try
-								{
-									breakpoint.delete( );
-								}
-								catch ( CoreException e )
-								{
-									Logger.debug( e );
-								}
-								if ( setDebug )
-								{
-									new DebugModeAction( ).run( );
-								}
-							}
-						} );
+						Logger.debug( e );
 					}
 				}
 			}

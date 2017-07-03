@@ -492,7 +492,15 @@ public class FileUtil
 
 	public static void zipDir( File dir, String classPackage, String zipFile ) throws Exception
 	{
-		File[] files = dir.listFiles( );
+		File[] files = null;
+		if ( new File( dir, classPackage ).exists( ) )
+		{
+			files = new File( dir, classPackage ).listFiles( );
+		}
+		else if ( dir.exists( ) )
+		{
+			files = dir.listFiles( );
+		}
 		if ( files != null )
 		{
 			ZipOutputStream zos = new ZipOutputStream( new FileOutputStream( zipFile ) );

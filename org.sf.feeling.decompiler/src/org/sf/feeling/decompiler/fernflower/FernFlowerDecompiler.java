@@ -12,6 +12,7 @@
 package org.sf.feeling.decompiler.fernflower;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -44,8 +45,11 @@ public class FernFlowerDecompiler implements IDecompiler
 	 * @see IDecompiler#decompile(String, String, String)
 	 */
 	@Override
-	public void decompile( String root, String packege, String className )
+	public void decompile( String root, String packege, final String className )
 	{
+		if ( root == null || packege == null || className == null )
+			return;
+
 		start = System.currentTimeMillis( );
 		log = ""; //$NON-NLS-1$
 		source = ""; //$NON-NLS-1$
@@ -72,7 +76,16 @@ public class FernFlowerDecompiler implements IDecompiler
 			tmpDir.mkdirs( );
 
 		ConsoleDecompiler decompiler = new ConsoleDecompiler( tmpDir, mapOptions );
-		File[] files = workingDir.listFiles( );
+		File[] files = workingDir.listFiles( new FilenameFilter( ) {
+
+			@Override
+			public boolean accept( File dir, String name )
+			{
+				if ( name.toLowerCase( ).indexOf( className.toLowerCase( ) ) != -1 )
+					return true;
+				return false;
+			}
+		} );
 		if ( files != null )
 		{
 			for ( int j = 0; j < files.length; j++ )
@@ -143,7 +156,6 @@ public class FernFlowerDecompiler implements IDecompiler
 			FileUtil.deltree( workingDir );
 		}
 	}
-
 
 	@Override
 	public long getDecompilationTime( )

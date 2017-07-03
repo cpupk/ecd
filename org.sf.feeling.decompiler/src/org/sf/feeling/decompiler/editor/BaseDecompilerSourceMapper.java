@@ -33,6 +33,7 @@ import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.internal.compiler.env.IBinaryType;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.jdt.internal.core.ClassFile;
+import org.eclipse.jdt.internal.core.ExternalPackageFragmentRoot;
 import org.eclipse.jdt.internal.core.PackageFragmentRoot;
 import org.eclipse.jdt.internal.core.SourceMapper;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
@@ -430,19 +431,42 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper
 			}
 			else
 			{
+				String rootLocation = null;
 				try
 				{
-					classLocation += root.getUnderlyingResource( ).getLocation( ).toOSString( )
-							+ "/" //$NON-NLS-1$
-							+ pkg
-							+ "/" //$NON-NLS-1$
-							+ className;
+					if ( root.getUnderlyingResource( ) != null )
+					{
+						rootLocation = root.getUnderlyingResource( ).getLocation( ).toOSString( );
+						classLocation += rootLocation
+								+ "/" //$NON-NLS-1$
+								+ pkg
+								+ "/" //$NON-NLS-1$
+								+ className;
+					}
+					else if ( root instanceof ExternalPackageFragmentRoot )
+					{
+						rootLocation = ( (ExternalPackageFragmentRoot) root ).getPath( ).toOSString( );
+						classLocation += rootLocation
+								+ "/" //$NON-NLS-1$
+								+ pkg
+								+ "/" //$NON-NLS-1$
+								+ className;
+					}
+					else
+					{
+						rootLocation = root.getPath( ).toOSString( );
+						classLocation += rootLocation
+								+ "/" //$NON-NLS-1$
+								+ pkg
+								+ "/" //$NON-NLS-1$
+								+ className;
+					}
 
 					if ( result == null )
 					{
 						result = ClassUtil.checkAvailableDecompiler( origionalDecompiler, new File( classLocation ) );
 					}
-					result.decompile( root.getUnderlyingResource( ).getLocation( ).toOSString( ), pkg, className );
+					result.decompile( rootLocation, pkg, className );
 				}
 				catch ( JavaModelException e )
 				{
