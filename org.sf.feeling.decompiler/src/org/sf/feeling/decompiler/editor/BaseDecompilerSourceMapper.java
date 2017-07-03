@@ -182,12 +182,16 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper
 
 		usedDecompiler = decompile( null, type, exceptions, root, className );
 
-		if ( usedDecompiler.getSource( ) == null || usedDecompiler.getSource( ).length( ) == 0 )
+		if ( usedDecompiler == null
+				|| usedDecompiler.getSource( ) == null
+				|| usedDecompiler.getSource( ).length( ) == 0 )
 		{
-			if ( !DecompilerType.FernFlower.equals( usedDecompiler.getDecompilerType( ) ) )
+			if ( usedDecompiler == null || !DecompilerType.FernFlower.equals( usedDecompiler.getDecompilerType( ) ) )
 			{
 				usedDecompiler = decompile( new FernFlowerDecompiler( ), type, exceptions, root, className );
-				if ( usedDecompiler.getSource( ) == null || usedDecompiler.getSource( ).length( ) == 0 )
+				if ( usedDecompiler == null
+						|| usedDecompiler.getSource( ) == null
+						|| usedDecompiler.getSource( ).length( ) == 0 )
 				{
 					return null;
 				}
