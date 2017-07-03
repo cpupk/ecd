@@ -25,6 +25,7 @@ import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.editor.IDecompiler;
 import org.sf.feeling.decompiler.jad.JadDecompilerPlugin;
 import org.sf.feeling.decompiler.util.ClassUtil;
+import org.sf.feeling.decompiler.util.FileUtil;
 import org.sf.feeling.decompiler.util.JarClassExtractor;
 import org.sf.feeling.decompiler.util.UnicodeUtil;
 
@@ -312,25 +313,8 @@ public class JadDecompiler implements IDecompiler
 		}
 		finally
 		{
-			deltree( workingDir );
+			FileUtil.deltree( workingDir );
 		}
-	}
-
-	void deltree( File root )
-	{
-		if ( root.isFile( ) )
-		{
-			root.delete( );
-			return;
-		}
-
-		File[] children = root.listFiles( );
-		for ( int i = 0; i < children.length; i++ )
-		{
-			deltree( children[i] );
-		}
-
-		root.delete( );
 	}
 
 	@Override

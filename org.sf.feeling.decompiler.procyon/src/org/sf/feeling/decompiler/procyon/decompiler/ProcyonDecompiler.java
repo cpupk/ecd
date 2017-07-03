@@ -215,25 +215,8 @@ public class ProcyonDecompiler implements IDecompiler
 		}
 		finally
 		{
-			deltree( workingDir );
+			FileUtil.deltree( workingDir );
 		}
-	}
-
-	void deltree( File root )
-	{
-		if ( root.isFile( ) )
-		{
-			root.delete( );
-			return;
-		}
-
-		File[] children = root.listFiles( );
-		for ( int i = 0; i < children.length; i++ )
-		{
-			deltree( children[i] );
-		}
-
-		root.delete( );
 	}
 
 	@Override

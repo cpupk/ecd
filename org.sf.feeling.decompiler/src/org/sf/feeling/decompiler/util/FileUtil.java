@@ -667,6 +667,11 @@ public class FileUtil
 
 	public static void deltree( File root )
 	{
+		if ( root == null || !root.exists( ) )
+		{
+			return;
+		}
+
 		if ( root.isFile( ) )
 		{
 			root.delete( );
@@ -674,9 +679,12 @@ public class FileUtil
 		}
 
 		File[] children = root.listFiles( );
-		for ( int i = 0; i < children.length; i++ )
+		if ( children != null )
 		{
-			deltree( children[i] );
+			for ( int i = 0; i < children.length; i++ )
+			{
+				deltree( children[i] );
+			}
 		}
 
 		root.delete( );
