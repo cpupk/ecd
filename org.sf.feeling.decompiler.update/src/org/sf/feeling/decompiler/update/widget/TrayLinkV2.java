@@ -21,7 +21,6 @@ import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.layout.TrimLayout;
 import org.sf.feeling.decompiler.util.ReflectionUtils;
 
-@SuppressWarnings("restriction")
 public class TrayLinkV2
 {
 

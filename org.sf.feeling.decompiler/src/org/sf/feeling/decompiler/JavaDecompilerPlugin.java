@@ -57,6 +57,7 @@ import org.sf.feeling.decompiler.i18n.Messages;
 import org.sf.feeling.decompiler.source.attach.IAttachSourceHandler;
 import org.sf.feeling.decompiler.update.IDecompilerUpdateHandler;
 import org.sf.feeling.decompiler.util.DecompilerOutputUtil;
+import org.sf.feeling.decompiler.util.FileUtil;
 import org.sf.feeling.decompiler.util.Logger;
 import org.sf.feeling.decompiler.util.MarkUtil;
 import org.sf.feeling.decompiler.util.SortMemberUtil;
@@ -289,7 +290,8 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 		store.setDefault( TEMP_DIR,
 				System.getProperty( "java.io.tmpdir" ) //$NON-NLS-1$
 						+ File.separator
-						+ ".org.sf.feeling.decompiler" ); //$NON-NLS-1$
+						+ ".org.sf.feeling.decompiler" //$NON-NLS-1$
+						+ System.currentTimeMillis( ) );
 		store.setDefault( REUSE_BUFFER, true );
 		store.setDefault( IGNORE_EXISTING, false );
 		store.setDefault( USE_ECLIPSE_FORMATTER, true );
@@ -404,16 +406,22 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 	@Override
 	public void stop( BundleContext context ) throws Exception
 	{
+		FileUtil.deltree( new File( getPreferenceStore( ).getString( JavaDecompilerPlugin.TEMP_DIR ) ) );
+		
 		if ( PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( ) != null )
 		{
-			PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( ).addPerspectiveListener( perspectiveListener );
+			PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( ).removePerspectiveListener( perspectiveListener );
 		}
 
 		manager.removeBreakpointListener( breakpintListener );
+		
 		getPreferenceStore( ).setValue( DECOMPILE_COUNT, decompileCount.get( ) );
 		getPreferenceStore( ).setValue( ADCLICK_COUNT, adClickCount.get( ) );
+		
 		super.stop( context );
+		
 		getPreferenceStore( ).removePropertyChangeListener( this );
+		
 		plugin = null;
 	}
 

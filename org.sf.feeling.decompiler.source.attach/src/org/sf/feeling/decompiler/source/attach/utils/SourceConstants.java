@@ -13,17 +13,18 @@ package org.sf.feeling.decompiler.source.attach.utils;
 
 import java.io.File;
 
+import org.sf.feeling.decompiler.JavaDecompilerPlugin;
+
 public class SourceConstants
 {
 
 	public static final File SourceAttacherDir = new File( String.valueOf(
 			System.getProperty( "user.home" ) ) + File.separatorChar + ".decompiler" + File.separatorChar + "source" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-	public static final File SourceTempDir = new File( String.valueOf( System.getProperty( "java.io.tmpdir" ) ) //$NON-NLS-1$
-			+ File.separatorChar
-			+ "decompiler" //$NON-NLS-1$
-			+ File.separatorChar
-			+ "source" ); //$NON-NLS-1$
+	public static final File SourceTempDir = new File(
+			JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).getString( JavaDecompilerPlugin.TEMP_DIR )
+					+ File.separatorChar
+					+ "source" ); //$NON-NLS-1$
 
 	public static final String SourceAttachPath = SourceAttacherDir.getAbsolutePath( );
 	public static final String SourceTempPath = SourceTempDir.getAbsolutePath( );

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Eclipse Class Decompiler Update
 Bundle-SymbolicName: org.sf.feeling.decompiler.update;singleton:=true
-Bundle-Version: 2.9.4.qualifier
+Bundle-Version: 2.9.5.qualifier
 Bundle-Activator: org.sf.feeling.decompiler.update.DecompilerUpdatePlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
@@ -30,6 +30,6 @@ Export-Package: org.sf.feeling.decompiler.update,
  org.sf.feeling.decompiler.update.util,
  org.sf.feeling.decompiler.update.widget
 Bundle-ClassPath: .,
- lib/org.eclipse.ui.workbench_3.7.1.v20120104-1859.jar;resolution:=optional
+ lib/org.eclipse.ui.workbench_3.7.1.v20120104-1859.jar
 Import-Package: javax.annotation;version="1.0.0";resolution:=optional,
  javax.inject;version="1.0.0";resolution:=optional
