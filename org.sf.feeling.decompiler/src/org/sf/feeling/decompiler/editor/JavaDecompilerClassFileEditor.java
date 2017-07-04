@@ -39,6 +39,8 @@ import org.eclipse.jdt.internal.ui.javaeditor.InternalClassFileEditorInput;
 import org.eclipse.jdt.internal.ui.text.JavaPresentationReconciler;
 import org.eclipse.jdt.ui.text.IJavaPartitions;
 import org.eclipse.jdt.ui.text.JavaTextTools;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.Region;
@@ -78,7 +80,9 @@ import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
+import org.sf.feeling.decompiler.actions.ByteCodeAction;
 import org.sf.feeling.decompiler.actions.DecompileActionGroup;
+import org.sf.feeling.decompiler.actions.DisassemblerAction;
 import org.sf.feeling.decompiler.util.ClassUtil;
 import org.sf.feeling.decompiler.util.DecompileUtil;
 import org.sf.feeling.decompiler.util.DecompilerOutputUtil;
@@ -795,7 +799,14 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 		String[] inheritedPages = super.collectContextMenuPreferencePages( );
 		int length = 1;
 		String[] result = new String[inheritedPages.length + length];
-		result[0] = "org.sf.feeling.decompiler.Main"; //$NON-NLS-1$
+		if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.SOURCE_MODE )
+		{
+			result[0] = "org.sf.feeling.decompiler.Main"; //$NON-NLS-1$
+		}
+		else
+		{
+			result[0] = "org.eclipse.ui.preferencePages.ColorsAndFonts"; //$NON-NLS-1$
+		}
 		System.arraycopy( inheritedPages, 0, result, length, inheritedPages.length );
 		return result;
 	}
@@ -978,6 +989,12 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 										}
 									};
 									text.addMouseListener( mouseAdapter );
+									MenuManager manager = new MenuManager( "#PopupMenu" );
+									manager.add( new ByteCodeAction( ) );
+									manager.add( new DisassemblerAction( ) );
+									manager.add( new Separator( ) );
+									manager.add( getAction( ITextEditorActionConstants.RULER_PREFERENCES ) );
+									text.setMenu( manager.createContextMenu( text ) );
 								}
 							}
 							fSourceAttachmentForm.layout( );
