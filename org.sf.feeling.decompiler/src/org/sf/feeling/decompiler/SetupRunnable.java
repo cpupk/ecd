@@ -90,6 +90,7 @@ public class SetupRunnable implements Runnable
 					{
 						( (JavaDecompilerClassFileEditor) part ).doSetInput( false );
 					}
+					( (JavaDecompilerClassFileEditor) part ).showSource( );
 				}
 			}
 

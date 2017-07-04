@@ -101,6 +101,21 @@
             name="Decompile"  
             categoryId="org.sf.feeling.decompiler"  
             id="org.sf.feeling.decompiler.debugMode">  
+      </command>
+      <command  
+            name="Show Byte Code"  
+            categoryId="org.sf.feeling.decompiler"  
+            id="org.sf.feeling.decompiler.bytecode">  
+      </command>
+      <command  
+            name="Show Disassembler"  
+            categoryId="org.sf.feeling.decompiler"  
+            id="org.sf.feeling.decompiler.disassembler">  
+      </command>
+      <command  
+            name="Decompile"  
+            categoryId="org.sf.feeling.decompiler"  
+            id="org.sf.feeling.decompiler.decompile">  
       </command>  
       <command  
             name="Decompile With FernFlower"  
@@ -128,6 +143,14 @@
             class="org.sf.feeling.decompiler.actions.DecompileHandler">  
       </handler>
       <handler  
+            commandId="org.sf.feeling.decompiler.disassembler"  
+            class="org.sf.feeling.decompiler.actions.DisassemblerHandler">  
+      </handler> 
+      <handler  
+            commandId="org.sf.feeling.decompiler.bytecode"  
+            class="org.sf.feeling.decompiler.actions.ByteCodeHandler">  
+      </handler> 
+      <handler  
             commandId="org.sf.feeling.decompiler.debugMode"  
             class="org.sf.feeling.decompiler.actions.DebugModeHandler">  
       </handler>  
@@ -154,6 +177,22 @@
                class="org.sf.feeling.decompiler.actions.DebugModeActionDelegate"
                menubarPath="org.sf.feeling.decompiler.menu"
                id="org.sf.feeling.decompiler.actions.DebugModeAction"
+               style="toggle"
+               >
+         </action>
+         <action
+               label="%Disassembler"
+               class="org.sf.feeling.decompiler.actions.DisassemblerActionDelegate"
+               menubarPath="org.sf.feeling.decompiler.menu"
+               id="org.sf.feeling.decompiler.actions.DisassemblerAction"
+               style="toggle"
+               >
+         </action>
+         <action
+               label="%ByteCode"
+               class="org.sf.feeling.decompiler.actions.ByteCodeActionDelegate"
+               menubarPath="org.sf.feeling.decompiler.menu"
+               id="org.sf.feeling.decompiler.actions.ByteCodeAction"
                style="toggle"
                >
          </action>
@@ -229,6 +268,22 @@
                enablesFor="*"
                id="org.sf.feeling.decompiler.actions.debugModeMenu"
                label="%DebugMode"
+               style="toggle"
+               menubarPath="decompilerMenu/debugGroup">
+         </action>
+         <action
+               class="org.sf.feeling.decompiler.actions.DisassemblerMenuItemAction"
+               enablesFor="*"
+               id="org.sf.feeling.decompiler.actions.disassemblerMenu"
+               label="%Disassembler"
+               style="toggle"
+               menubarPath="decompilerMenu/debugGroup">
+         </action>
+         <action
+               class="org.sf.feeling.decompiler.actions.ByteCodeMenuItemAction"
+               enablesFor="*"
+               id="org.sf.feeling.decompiler.actions.byteCodeMenu"
+               label="%ByteCode"
                style="toggle"
                menubarPath="decompilerMenu/debugGroup">
          </action>

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Eclipse Class Decompiler Source Attach
 Bundle-SymbolicName: org.sf.feeling.decompiler.source.attach;singleton:=true
-Bundle-Version: 2.9.5.qualifier
+Bundle-Version: 2.9.6.qualifier
 Bundle-Activator: org.sf.feeling.decompiler.source.attach.SourceAttachPlugin
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,

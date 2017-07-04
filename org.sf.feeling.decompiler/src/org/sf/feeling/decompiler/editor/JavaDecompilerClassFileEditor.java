@@ -14,6 +14,7 @@ package org.sf.feeling.decompiler.editor;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,17 +31,24 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.core.BufferManager;
 import org.eclipse.jdt.internal.core.ClassFile;
 import org.eclipse.jdt.internal.core.PackageFragment;
+import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.actions.CompositeActionGroup;
 import org.eclipse.jdt.internal.ui.javaeditor.ClassFileEditor;
 import org.eclipse.jdt.internal.ui.javaeditor.IClassFileEditorInput;
 import org.eclipse.jdt.internal.ui.javaeditor.InternalClassFileEditorInput;
+import org.eclipse.jdt.internal.ui.text.JavaPresentationReconciler;
+import org.eclipse.jdt.ui.text.IJavaPartitions;
+import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.hyperlink.HyperlinkManager;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.text.hyperlink.IHyperlinkPresenter;
 import org.eclipse.jface.text.hyperlink.URLHyperlink;
+import org.eclipse.jface.text.hyperlink.URLHyperlinkDetector;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -48,6 +56,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.search2.internal.ui.text.AnnotationManagers;
 import org.eclipse.search2.internal.ui.text.EditorAnnotationManager;
 import org.eclipse.search2.internal.ui.text.WindowAnnotationManager;
+import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.MouseAdapter;
@@ -55,6 +64,10 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -70,9 +83,15 @@ import org.sf.feeling.decompiler.util.ClassUtil;
 import org.sf.feeling.decompiler.util.DecompileUtil;
 import org.sf.feeling.decompiler.util.DecompilerOutputUtil;
 import org.sf.feeling.decompiler.util.FileUtil;
+import org.sf.feeling.decompiler.util.Logger;
 import org.sf.feeling.decompiler.util.MarkUtil;
 import org.sf.feeling.decompiler.util.ReflectionUtils;
 import org.sf.feeling.decompiler.util.UIUtil;
+
+import com.drgarbage.asm.ClassReader;
+import com.drgarbage.asm.render.impl.ClassFileDocument;
+import com.drgarbage.asm.render.impl.ClassFileOutlineElement;
+import com.drgarbage.classfile.editors.ClassFileParser;
 
 public class JavaDecompilerClassFileEditor extends ClassFileEditor
 {
@@ -524,10 +543,17 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 					}
 				}
 			}
+
 			super.doSetInput( input );
 		}
 
 		handleMarkLink( );
+	}
+
+	public void createPartControl( Composite parent )
+	{
+		super.createPartControl( parent );
+		showSource( );
 	}
 
 	private void handleMarkLink( )
@@ -782,5 +808,220 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 		CompositeActionGroup fContextMenuGroup = (CompositeActionGroup) ReflectionUtils.getFieldValue( this,
 				"fContextMenuGroup" ); //$NON-NLS-1$
 		fContextMenuGroup.addGroup( group );
+	}
+
+	public void showSource( )
+	{
+		if ( getEditorInput( ) instanceof IClassFileEditorInput )
+		{
+			showSource( (IClassFileEditorInput) getEditorInput( ) );
+		}
+	}
+
+	protected void showSource( IClassFileEditorInput classFileEditorInput )
+	{
+		try
+		{
+			StackLayout fStackLayout = (StackLayout) ReflectionUtils.getFieldValue( this, "fStackLayout" );
+			Composite fParent = (Composite) ReflectionUtils.getFieldValue( this, "fParent" );
+			Composite fViewerComposite = (Composite) ReflectionUtils.getFieldValue( this, "fViewerComposite" );
+			Composite fSourceAttachmentForm = (Composite) ReflectionUtils.getFieldValue( this,
+					"fSourceAttachmentForm" );
+			if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.SOURCE_MODE )
+			{
+				if ( fStackLayout != null && fViewerComposite != null && fParent != null )
+				{
+					fStackLayout.topControl = fViewerComposite;
+					fParent.layout( );
+				}
+			}
+			else
+			{
+				if ( fStackLayout != null && fParent != null )
+				{
+					if ( fSourceAttachmentForm != null )
+						fSourceAttachmentForm.dispose( );
+
+					IClassFile file = classFileEditorInput.getClassFile( );
+					Class clazz = Class
+							.forName( "org.eclipse.jdt.internal.ui.javaeditor.ClassFileEditor$SourceAttachmentForm" );
+					Constructor c1 = clazz.getDeclaredConstructor( new Class[]{
+							ClassFileEditor.class, IClassFile.class
+					} );
+					c1.setAccessible( true );
+					Object form = c1.newInstance( new Object[]{
+							JavaDecompilerClassFileEditor.this, file
+					} );
+
+					fSourceAttachmentForm = (Composite) ReflectionUtils
+							.invokeMethod( form, "createControl", new Class[]{
+									Composite.class
+					}, new Object[]{
+							fParent
+					} );
+
+					if ( fSourceAttachmentForm != null )
+					{
+						if ( fSourceAttachmentForm.getLayout( ) instanceof GridLayout )
+						{
+							GridLayout layout = (GridLayout) fSourceAttachmentForm.getLayout( );
+							layout.verticalSpacing = 0;
+							layout.marginTop = 0;
+
+							Control[] children = fSourceAttachmentForm.getChildren( );
+							for ( int i = 0; i < children.length; i++ )
+							{
+								Control child = children[i];
+								if ( !( child instanceof StyledText ) )
+								{
+									GridData gd = (GridData) child.getLayoutData( );
+									if ( gd != null )
+									{
+										gd.heightHint = 0;
+									}
+									else
+									{
+										gd = new GridData( );
+										gd.heightHint = 0;
+										child.setLayoutData( gd );
+									}
+									child.setVisible( false );
+								}
+								else
+								{
+									final StyledText text = (StyledText) child;
+									text.setFont( getSourceViewer( ).getTextWidget( ).getFont( ) );
+									String content = getClassContent( file );
+
+									String classContent = getDocumentProvider( ).getDocument( getEditorInput( ) )
+											.get( );
+									String mark = MarkUtil.getMark( classContent );
+
+									if ( content != null && content.length( ) > 0 )
+									{
+
+										String contents = mark
+												+ "\n\n" //$NON-NLS-1$
+												+ content;
+										text.setText( contents );
+									}
+									else
+									{
+										String contents = mark
+												+ "\n\n" //$NON-NLS-1$
+												+ text.getText( );
+										text.setText( contents );
+									}
+
+									JavaPresentationReconciler reconciler = (JavaPresentationReconciler) getSourceViewerConfiguration( )
+											.getPresentationReconciler( getSourceViewer( ) );
+
+									Document document = new Document( text.getText( ) );
+									JavaTextTools tools = JavaPlugin.getDefault( ).getJavaTextTools( );
+									tools.setupJavaDocumentPartitioner( document, IJavaPartitions.JAVA_PARTITIONING );
+									TextPresentation presentation = reconciler.createRepairDescription(
+											new Region( 0, text.getText( ).length( ) ),
+											document );
+									TextPresentation.applyTextPresentation( presentation, text );
+
+									String ad = mark.replaceAll( "/(\\*)+", "" ) //$NON-NLS-1$ //$NON-NLS-2$
+											.replaceAll( "(\\*)+/", "" ) //$NON-NLS-1$ //$NON-NLS-2$
+											.trim( );
+									int length = ad.length( );
+									int offset = mark.indexOf( ad );
+
+									StyleRange textRange = UIUtil.getAdTextStyleRange( text, offset, length );
+									if ( textRange != null )
+									{
+										text.setStyleRange( textRange );
+									}
+
+									URLHyperlinkDetector detector = new URLHyperlinkDetector( );
+									final int index = mark.indexOf( "://" ); //$NON-NLS-1$
+									final IHyperlink[] links = detector
+											.detectHyperlinks( getSourceViewer( ), new Region( index, 0 ), true );
+									for ( int j = 0; j < links.length; j++ )
+									{
+										IHyperlink link = links[j];
+										StyleRange linkRange = UIUtil.getAdLinkStyleRange( text,
+												link.getHyperlinkRegion( ).getOffset( ),
+												link.getHyperlinkRegion( ).getLength( ) );
+										if ( linkRange != null )
+										{
+											text.setStyleRange( linkRange );
+										}
+									}
+
+									MouseAdapter mouseAdapter = new MouseAdapter( ) {
+
+										@Override
+										public void mouseUp( MouseEvent e )
+										{
+
+											int offset = text.getCaretOffset( );
+											if ( offset == -1 )
+												return;
+											for ( int j = 0; j < links.length; j++ )
+											{
+												int linkOffset = links[j].getHyperlinkRegion( ).getOffset( );
+												int linkLength = links[j].getHyperlinkRegion( ).getLength( );
+												if ( offset >= linkOffset && offset < linkOffset + linkLength )
+												{
+													if ( links[j] instanceof URLHyperlink )
+													{
+														String url = ( (URLHyperlink) links[j] ).getURLString( );
+														UIUtil.openBrowser( url );
+													}
+													return;
+												}
+											}
+										}
+									};
+									text.addMouseListener( mouseAdapter );
+								}
+							}
+							fSourceAttachmentForm.layout( );
+						}
+
+						fStackLayout.topControl = fSourceAttachmentForm;
+						fParent.layout( );
+					}
+				}
+			}
+		}
+		catch ( Exception e )
+		{
+			Logger.debug( e );
+		}
+	}
+
+	private String getClassContent( IClassFile file )
+	{
+		if ( file == null )
+			return null;
+
+		try
+		{
+			if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.BYTE_CODE_MODE )
+			{
+				ClassFileParser parser = new ClassFileParser( );
+				return parser.parseClassFile( file.getBytes( ) );
+			}
+			else if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.DISASSEMBLER_MODE )
+			{
+				ClassFileOutlineElement outlineElement = new ClassFileOutlineElement( );
+				ClassFileDocument document = new ClassFileDocument( outlineElement );
+				outlineElement.setClassFileDocument( document );
+				ClassReader cr = new ClassReader( file.getBytes( ), document );
+				cr.accept( document, 0 );
+				return document.toString( );
+			}
+		}
+		catch ( Exception e )
+		{
+			Logger.debug( e );
+		}
+
+		return null;
 	}
 }

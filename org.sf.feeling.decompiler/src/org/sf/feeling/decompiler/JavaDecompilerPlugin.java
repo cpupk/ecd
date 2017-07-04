@@ -93,7 +93,15 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 	private AtomicInteger adClickCount = new AtomicInteger( 0 );
 
 	private boolean isDebugMode = false;
+	
+	public static final int SOURCE_MODE = 0;
+	public static final int BYTE_CODE_MODE = 1;
+	public static final int DISASSEMBLER_MODE = 2;
+	
+	private int sourceMode = 0;
 	private boolean enableExtension = false;
+	
+	
 
 	private IPerspectiveListener perspectiveListener = new IPerspectiveListener( ) {
 
@@ -568,6 +576,16 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 	public void setDebugMode( boolean isDebugMode )
 	{
 		this.isDebugMode = isDebugMode;
+	}
+	
+	public int getSourceMode( )
+	{
+		return sourceMode;
+	}
+
+	public void setSourceMode( int sourceMode )
+	{
+		this.sourceMode = sourceMode;
 	}
 
 	public void resetCount( )

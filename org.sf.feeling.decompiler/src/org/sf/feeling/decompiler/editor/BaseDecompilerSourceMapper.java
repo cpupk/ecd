@@ -537,7 +537,7 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper
 
 		StringBuffer source = new StringBuffer( );
 
-		if ( !UIUtil.isDebugPerspective( ) )
+		if ( !( UIUtil.isDebugPerspective( ) || JavaDecompilerPlugin.getDefault( ).isDebugMode( ) ) )
 		{
 			source.append( formatSource( code ) );
 
