@@ -131,24 +131,26 @@ public class DecompileUtil
 		if ( !MarkUtil.containsSourceMark( origSrc ) && !MarkUtil.containsMark( origSrc ) )
 		{
 			IBuffer buffer = cf.getBuffer( );
-			ReflectionUtils.invokeMethod( buffer, "setReadOnly", new Class[]{ //$NON-NLS-1$
-					boolean.class
-			}, new Object[]{
-					false
-			} );
+			if ( buffer != null )
+			{
+				ReflectionUtils.invokeMethod( buffer, "setReadOnly", new Class[]{ //$NON-NLS-1$
+						boolean.class
+				}, new Object[]{
+						false
+				} );
 
-			String contents = getCopyRightContent( cf, origSrc );
+				String contents = getCopyRightContent( cf, origSrc );
 
-			buffer.setContents( contents );
+				buffer.setContents( contents );
 
-			ReflectionUtils.invokeMethod( BufferManager.getDefaultBufferManager( ), "addBuffer", new Class[]{ //$NON-NLS-1$
-					IBuffer.class
-			}, new Object[]{
-					buffer
-			} );
-
-			updateSourceRanges( cf, contents );
-			return contents;
+				ReflectionUtils.invokeMethod( BufferManager.getDefaultBufferManager( ), "addBuffer", new Class[]{ //$NON-NLS-1$
+						IBuffer.class
+				}, new Object[]{
+						buffer
+				} );
+				updateSourceRanges( cf, contents );
+				return contents;
+			}
 		}
 		else
 		{
