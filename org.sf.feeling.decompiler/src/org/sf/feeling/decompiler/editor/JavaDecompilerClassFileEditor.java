@@ -52,6 +52,7 @@ import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IRegion;
@@ -64,6 +65,8 @@ import org.eclipse.jface.text.hyperlink.IHyperlinkPresenter;
 import org.eclipse.jface.text.hyperlink.URLHyperlink;
 import org.eclipse.jface.text.hyperlink.URLHyperlinkDetector;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -75,6 +78,8 @@ import org.eclipse.swt.custom.CaretListener;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.PaintEvent;
@@ -1189,7 +1194,7 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 				{
 					fStackLayout.topControl = fViewerComposite;
 					fParent.layout( );
-					if ( fSourceAttachmentForm != null )
+					if ( fSourceAttachmentForm != null && !fSourceAttachmentForm.isDisposed( ) )
 					{
 						fSourceAttachmentForm.dispose( );
 					}
@@ -1199,8 +1204,10 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 			{
 				if ( fStackLayout != null && fParent != null )
 				{
-					if ( fSourceAttachmentForm != null )
+					if ( fSourceAttachmentForm != null && !fSourceAttachmentForm.isDisposed( ) )
+					{
 						fSourceAttachmentForm.dispose( );
+					}
 
 					IClassFile file = classFileEditorInput.getClassFile( );
 					Class clazz = Class
@@ -1219,6 +1226,8 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 					}, new Object[]{
 							fParent
 					} );
+
+					ReflectionUtils.setFieldValue( this, "fSourceAttachmentForm", fSourceAttachmentForm );
 
 					if ( fSourceAttachmentForm != null )
 					{
@@ -1249,8 +1258,29 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 								}
 								else
 								{
+									JFaceResources.getFontRegistry( ).removeListener( (IPropertyChangeListener) form );
+
 									disassemblerText = (StyledText) child;
 									disassemblerText.setFont( getSourceViewer( ).getTextWidget( ).getFont( ) );
+
+									final IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener( ) {
+
+										@Override
+										public void propertyChange( PropertyChangeEvent event )
+										{
+											disassemblerText.setFont( getSourceViewer( ).getTextWidget( ).getFont( ) );
+										}
+									};
+
+									JFaceResources.getFontRegistry( ).addListener( propertyChangeListener );
+									disassemblerText.addDisposeListener( new DisposeListener( ) {
+
+										@Override
+										public void widgetDisposed( DisposeEvent e )
+										{
+											JFaceResources.getFontRegistry( ).removeListener( propertyChangeListener );
+										}
+									} );
 
 									String content = getClassContent( file );
 
