@@ -429,6 +429,10 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 				if ( asmTypeName.indexOf( '$' ) != -1 )
 				{
 					asmTypeName = asmTypeName.substring( asmTypeName.lastIndexOf( '$' ) + 1 );
+					if ( asmTypeName.matches( "\\d+" ) )
+					{
+						asmTypeName = "";
+					}
 				}
 				if ( asmTypeName.equals( jdtType.getElementName( ) ) )
 				{
@@ -500,6 +504,10 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 				if ( asmMethodName.indexOf( '$' ) != -1 )
 				{
 					asmMethodName = asmMethodName.substring( asmMethodName.lastIndexOf( '$' ) + 1 );
+					if ( asmMethodName.matches( "\\d+" ) )
+					{
+						asmMethodName = "";
+					}
 				}
 
 				if ( asmMethodName.equals( jdtMethod.getElementName( ) )
@@ -513,6 +521,10 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 						if ( asmTypeName.indexOf( '$' ) != -1 )
 						{
 							asmTypeName = asmTypeName.substring( asmTypeName.lastIndexOf( '$' ) + 1 );
+							if ( asmTypeName.matches( "\\d+" ) )
+							{
+								asmTypeName = "";
+							}
 						}
 						if ( asmTypeName.equals( jdtType.getElementName( ) ) )
 						{
@@ -1156,6 +1168,10 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 				{
 					fStackLayout.topControl = fViewerComposite;
 					fParent.layout( );
+					if ( fSourceAttachmentForm != null )
+					{
+						fSourceAttachmentForm.dispose( );
+					}
 				}
 			}
 			else
@@ -1214,6 +1230,7 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 								{
 									disassemblerText = (StyledText) child;
 									disassemblerText.setFont( getSourceViewer( ).getTextWidget( ).getFont( ) );
+
 									String content = getClassContent( file );
 
 									String classContent = getDocumentProvider( ).getDocument( getEditorInput( ) )
@@ -1328,6 +1345,7 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 									{
 										setSelectionElement( );
 									}
+
 								}
 							}
 							fSourceAttachmentForm.layout( );
@@ -1437,7 +1455,7 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 		if ( disassemblerClassDocument != null )
 		{
 			/* set selection in the outline */
-			int selectedRange = disassemblerText.getSelectionRange( ).x;
+			int selectedRange = disassemblerText.getSelectionRange( ).x + disassemblerText.getSelectionRange( ).y;
 
 			String mark = MarkUtil.getMark( disassemblerText.getText( ) );
 			int offset = mark.length( ) + 2;

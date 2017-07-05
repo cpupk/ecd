@@ -84,6 +84,7 @@ public class SetupRunnable implements Runnable
 			{
 				if ( part instanceof JavaDecompilerClassFileEditor )
 				{
+					( (JavaDecompilerClassFileEditor) part ).notifyPropertiesChange( );
 					String code = ( (JavaDecompilerClassFileEditor) part ).getViewer( ).getDocument( ).get( );
 					if ( !MarkUtil.containsSourceMark( code )
 							&& ClassUtil.isDebug( ) != JavaDecompilerClassFileEditor.isDebug( code ) )
