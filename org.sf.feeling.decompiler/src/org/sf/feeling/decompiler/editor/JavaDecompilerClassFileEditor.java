@@ -11,6 +11,7 @@
 
 package org.sf.feeling.decompiler.editor;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -27,7 +28,14 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IBuffer;
 import org.eclipse.jdt.core.IClassFile;
+import org.eclipse.jdt.core.IField;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.ISourceReference;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.internal.core.BinaryMethod;
+import org.eclipse.jdt.internal.core.BinaryType;
 import org.eclipse.jdt.internal.core.BufferManager;
 import org.eclipse.jdt.internal.core.ClassFile;
 import org.eclipse.jdt.internal.core.PackageFragment;
@@ -42,7 +50,9 @@ import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.hyperlink.HyperlinkManager;
@@ -58,6 +68,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.search2.internal.ui.text.AnnotationManagers;
 import org.eclipse.search2.internal.ui.text.EditorAnnotationManager;
 import org.eclipse.search2.internal.ui.text.WindowAnnotationManager;
+import org.eclipse.swt.custom.CaretEvent;
+import org.eclipse.swt.custom.CaretListener;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
@@ -92,10 +104,17 @@ import org.sf.feeling.decompiler.util.MarkUtil;
 import org.sf.feeling.decompiler.util.ReflectionUtils;
 import org.sf.feeling.decompiler.util.UIUtil;
 
-import com.drgarbage.asm.ClassReader;
-import com.drgarbage.asm.render.impl.ClassFileDocument;
 import com.drgarbage.asm.render.impl.ClassFileOutlineElement;
+import com.drgarbage.asm.render.impl.OutlineElement;
+import com.drgarbage.asm.render.impl.OutlineElementField;
+import com.drgarbage.asm.render.impl.OutlineElementMethod;
+import com.drgarbage.asm.render.impl.OutlineElementType;
+import com.drgarbage.asm.render.intf.IClassFileDocument;
+import com.drgarbage.asm.render.intf.IFieldSection;
+import com.drgarbage.asm.render.intf.IMethodSection;
+import com.drgarbage.asm.render.intf.IOutlineElementField;
 import com.drgarbage.classfile.editors.ClassFileParser;
+import com.drgarbage.utils.ClassFileDocumentsUtils;
 
 public class JavaDecompilerClassFileEditor extends ClassFileEditor
 {
@@ -106,6 +125,7 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 
 	private PaintListener paintListener;
 	private MouseAdapter mouseAdapter;
+	private StyledText disassemblerText;
 
 	public JavaDecompilerClassFileEditor( )
 	{
@@ -227,12 +247,300 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 
 	private boolean selectionChange = false;
 
+	private BytecodeDocument disassemblerDocument;
+
+	private ClassFileOutlineElement disassemblerRootElement;
+
+	private IClassFileDocument disassemblerClassDocument;
+
+	private ISourceReference selectedElement = null;
+
 	@Override
 	protected void selectionChanged( )
 	{
 		selectionChange = true;
 		super.selectionChanged( );
 		selectionChange = false;
+	}
+
+	protected void setSelection( ISourceReference reference, boolean moveCursor )
+	{
+		super.setSelection( reference, moveCursor );
+
+		this.selectedElement = reference;
+
+		setSelectionElement( );
+	}
+
+	@SuppressWarnings("unlikely-arg-type")
+	private void setSelectionElement( )
+	{
+		if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.DISASSEMBLER_MODE
+				&& disassemblerText != null
+				&& !disassemblerText.isDisposed( )
+				&& disassemblerRootElement != null )
+		{
+			if ( UIUtil.requestFromDisassemblerSelection( ) )
+				return;
+
+			if ( selectedElement == null || selectedElement.equals( getSelectedElement( ) ) )
+				return;
+
+			if ( selectedElement instanceof BinaryMethod
+					|| selectedElement instanceof IField
+					|| selectedElement instanceof BinaryType )
+			{
+				try
+				{
+					OutlineElement element = searchElement( disassemblerRootElement, selectedElement );
+					if ( element != null )
+					{
+						selectElement( disassemblerText, element );
+					}
+				}
+				catch ( Exception e )
+				{
+					Logger.debug( e );
+				}
+			}
+		}
+	}
+
+	private void selectElement( StyledText disassemblerText, OutlineElement element )
+	{
+		int bytecodeDocumentLine = element.getBytecodeDocumentLine( );
+		if ( ( element instanceof IType ) )
+		{
+			IType type = (IType) element;
+			String name = type.getElementName( );
+			selectBytecodeLineAndReveal( bytecodeDocumentLine, name, IJavaElement.CLASS_FILE );
+		}
+		else if ( ( element instanceof IOutlineElementField ) )
+		{
+			IOutlineElementField field = (IOutlineElementField) element;
+			String name = field.getFieldSection( ).getName( );
+			selectBytecodeLineAndReveal( bytecodeDocumentLine, name, IJavaElement.FIELD );
+		}
+		else if ( ( element instanceof IMethod ) )
+		{
+			IMethod method = (IMethod) element;
+			String name = method.getElementName( );
+			selectBytecodeLineAndReveal( bytecodeDocumentLine, name, IJavaElement.METHOD );
+		}
+		else
+		{
+			selectLineAndRevaluate( bytecodeDocumentLine );
+		}
+	}
+
+	public void selectLineAndRevaluate( int bytecodeLine )
+	{
+		try
+		{
+			String mark = MarkUtil.getMark( disassemblerText.getText( ) );
+			int offset = mark.length( ) + 2;
+
+			int lineStartOffset = disassemblerDocument.getLineOffset( bytecodeLine );
+			disassemblerText.setSelection( lineStartOffset + offset );
+
+		}
+		catch ( BadLocationException e )
+		{
+			/* nothing to do */
+		}
+	}
+
+	public void selectBytecodeLineAndReveal( int bytecodeDocumentLine, String elementName, int elementType )
+	{
+		try
+		{
+			/* get line information */
+			IRegion region = disassemblerDocument.getLineInformation( bytecodeDocumentLine );
+			int lineStartOffset = region.getOffset( );
+			int lineLenght = region.getLength( );
+			String lineString = disassemblerDocument.get( lineStartOffset, lineLenght );
+
+			String mark = MarkUtil.getMark( disassemblerText.getText( ) );
+			int offset = mark.length( ) + 2;
+
+			if ( elementName == null )
+			{
+				disassemblerText.setSelection( lineStartOffset + offset );
+			}
+
+			int elementIndex, elementLength;
+			switch ( elementType )
+			{
+				case IJavaElement.CLASS_FILE :
+					lineStartOffset = 0;
+					String header = disassemblerDocument.get( ).substring( 0,
+							disassemblerDocument.get( ).indexOf( "{" ) );
+					int startIndex = 0;
+					if ( ( startIndex = header.indexOf( "class" ) ) != -1
+							|| ( startIndex = header.indexOf( "enum" ) ) != -1
+							|| ( startIndex = header.indexOf( "interface" ) ) != -1 )
+					{
+						elementIndex = startIndex + header.substring( startIndex ).indexOf( elementName );
+					}
+					else
+					{
+						elementIndex = header.indexOf( elementName );
+					}
+					break;
+				case IJavaElement.FIELD :
+					elementIndex = lineString.indexOf( " " + elementName + ";" ) + 1;
+					break;
+				case IJavaElement.METHOD :
+					elementIndex = lineString.indexOf( " " + elementName + "(" ) + 1;
+					break;
+				default :
+					elementIndex = 0;
+					elementLength = 0;
+			}
+
+			/* name not found */
+			if ( elementIndex == 0 )
+			{
+				elementLength = 0;
+			}
+			else
+			{
+				elementLength = elementName.length( );
+			}
+
+			disassemblerText.setSelection( lineStartOffset + elementIndex + offset,
+					lineStartOffset + elementIndex + elementLength + offset );
+		}
+		catch ( BadLocationException e )
+		{
+			/* nothing to do */
+		}
+	}
+
+	private OutlineElement searchElement( OutlineElement element, ISourceReference reference ) throws CoreException
+	{
+		if ( reference instanceof BinaryType )
+		{
+			if ( element instanceof OutlineElementType )
+			{
+				OutlineElementType asmType = (OutlineElementType) element;
+				BinaryType jdtType = (BinaryType) reference;
+				String asmTypeName = asmType.getElementName( );
+				if ( asmTypeName.indexOf( '$' ) != -1 )
+				{
+					asmTypeName = asmTypeName.substring( asmTypeName.lastIndexOf( '$' ) + 1 );
+				}
+				if ( asmTypeName.equals( jdtType.getElementName( ) ) )
+				{
+					return element;
+				}
+
+			}
+			else
+			{
+				IJavaElement[] children = element.getChildren( );
+				for ( int i = 0; i < children.length; i++ )
+				{
+					IJavaElement child = children[i];
+					if ( child instanceof OutlineElement )
+					{
+						OutlineElement result = searchElement( (OutlineElement) child, reference );
+						if ( result != null )
+						{
+							return result;
+						}
+					}
+				}
+			}
+		}
+		else if ( reference instanceof IField )
+		{
+			if ( element instanceof OutlineElementField )
+			{
+				OutlineElementField asmField = (OutlineElementField) element;
+				IField jdtField = (IField) reference;
+				String asmFieldName = (String) ReflectionUtils.getFieldValue( asmField, "elementName" );
+				if ( asmFieldName.indexOf( '$' ) != -1 )
+				{
+					asmFieldName = asmFieldName.substring( asmFieldName.lastIndexOf( '$' ) + 1 );
+				}
+				if ( asmFieldName.equals( jdtField.getElementName( ) ) )
+				{
+					String jdtType = jdtField.getTypeSignature( ).replaceAll( "<.*>", "" );
+					String asmType = asmField.getTypeSignature( ).replace( '/', '.' );
+					if ( jdtType.equals( asmType ) )
+						return element;
+				}
+			}
+			else
+			{
+				IJavaElement[] children = element.getChildren( );
+				for ( int i = 0; i < children.length; i++ )
+				{
+					IJavaElement child = children[i];
+					if ( child instanceof OutlineElement )
+					{
+						OutlineElement result = searchElement( (OutlineElement) child, reference );
+						if ( result != null )
+						{
+							return result;
+						}
+					}
+				}
+			}
+		}
+		else if ( reference instanceof BinaryMethod )
+		{
+			if ( element instanceof OutlineElementMethod )
+			{
+				OutlineElementMethod asmMethod = (OutlineElementMethod) element;
+				BinaryMethod jdtMethod = (BinaryMethod) reference;
+
+				String asmMethodName = asmMethod.getElementName( );
+				if ( asmMethodName.indexOf( '$' ) != -1 )
+				{
+					asmMethodName = asmMethodName.substring( asmMethodName.lastIndexOf( '$' ) + 1 );
+				}
+
+				if ( asmMethodName.equals( jdtMethod.getElementName( ) )
+						&& asmMethod.getSignature( ).equals( jdtMethod.getSignature( ) ) )
+				{
+					if ( jdtMethod.getParent( ) instanceof BinaryType )
+					{
+						BinaryType jdtType = (BinaryType) jdtMethod.getParent( );
+						OutlineElementType asmType = (OutlineElementType) asmMethod.getDeclaringType( );
+						String asmTypeName = asmType.getElementName( );
+						if ( asmTypeName.indexOf( '$' ) != -1 )
+						{
+							asmTypeName = asmTypeName.substring( asmTypeName.lastIndexOf( '$' ) + 1 );
+						}
+						if ( asmTypeName.equals( jdtType.getElementName( ) ) )
+						{
+							return element;
+						}
+					}
+					else
+						return asmMethod;
+				}
+			}
+			else
+			{
+				IJavaElement[] children = element.getChildren( );
+				for ( int i = 0; i < children.length; i++ )
+				{
+					IJavaElement child = children[i];
+					if ( child instanceof OutlineElement )
+					{
+						OutlineElement result = searchElement( (OutlineElement) child, reference );
+						if ( result != null )
+						{
+							return result;
+						}
+					}
+				}
+			}
+		}
+		return null;
 	}
 
 	@Override
@@ -257,7 +565,7 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 				}
 				catch ( JavaModelException e )
 				{
-					e.printStackTrace( );
+					Logger.debug( e );
 				}
 			}
 		} );
@@ -831,6 +1139,10 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 
 	protected void showSource( IClassFileEditorInput classFileEditorInput )
 	{
+		disassemblerText = null;
+		disassemblerRootElement = null;
+		disassemblerDocument = null;
+		disassemblerClassDocument = null;
 		try
 		{
 			StackLayout fStackLayout = (StackLayout) ReflectionUtils.getFieldValue( this, "fStackLayout" );
@@ -900,8 +1212,8 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 								}
 								else
 								{
-									final StyledText text = (StyledText) child;
-									text.setFont( getSourceViewer( ).getTextWidget( ).getFont( ) );
+									disassemblerText = (StyledText) child;
+									disassemblerText.setFont( getSourceViewer( ).getTextWidget( ).getFont( ) );
 									String content = getClassContent( file );
 
 									String classContent = getDocumentProvider( ).getDocument( getEditorInput( ) )
@@ -914,26 +1226,26 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 										String contents = mark
 												+ "\n\n" //$NON-NLS-1$
 												+ content;
-										text.setText( contents );
+										disassemblerText.setText( contents );
 									}
 									else
 									{
 										String contents = mark
 												+ "\n\n" //$NON-NLS-1$
-												+ text.getText( );
-										text.setText( contents );
+												+ disassemblerText.getText( );
+										disassemblerText.setText( contents );
 									}
 
 									JavaPresentationReconciler reconciler = (JavaPresentationReconciler) getSourceViewerConfiguration( )
 											.getPresentationReconciler( getSourceViewer( ) );
 
-									Document document = new Document( text.getText( ) );
+									Document document = new Document( disassemblerText.getText( ) );
 									JavaTextTools tools = JavaPlugin.getDefault( ).getJavaTextTools( );
 									tools.setupJavaDocumentPartitioner( document, IJavaPartitions.JAVA_PARTITIONING );
 									TextPresentation presentation = reconciler.createRepairDescription(
-											new Region( 0, text.getText( ).length( ) ),
+											new Region( 0, disassemblerText.getText( ).length( ) ),
 											document );
-									TextPresentation.applyTextPresentation( presentation, text );
+									TextPresentation.applyTextPresentation( presentation, disassemblerText );
 
 									String ad = mark.replaceAll( "/(\\*)+", "" ) //$NON-NLS-1$ //$NON-NLS-2$
 											.replaceAll( "(\\*)+/", "" ) //$NON-NLS-1$ //$NON-NLS-2$
@@ -941,10 +1253,11 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 									int length = ad.length( );
 									int offset = mark.indexOf( ad );
 
-									StyleRange textRange = UIUtil.getAdTextStyleRange( text, offset, length );
+									StyleRange textRange = UIUtil
+											.getAdTextStyleRange( disassemblerText, offset, length );
 									if ( textRange != null )
 									{
-										text.setStyleRange( textRange );
+										disassemblerText.setStyleRange( textRange );
 									}
 
 									URLHyperlinkDetector detector = new URLHyperlinkDetector( );
@@ -954,14 +1267,29 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 									for ( int j = 0; j < links.length; j++ )
 									{
 										IHyperlink link = links[j];
-										StyleRange linkRange = UIUtil.getAdLinkStyleRange( text,
+										StyleRange linkRange = UIUtil.getAdLinkStyleRange( disassemblerText,
 												link.getHyperlinkRegion( ).getOffset( ),
 												link.getHyperlinkRegion( ).getLength( ) );
 										if ( linkRange != null )
 										{
-											text.setStyleRange( linkRange );
+											disassemblerText.setStyleRange( linkRange );
 										}
 									}
+
+									disassemblerText.addCaretListener( new CaretListener( ) {
+
+										@Override
+										public void caretMoved( CaretEvent event )
+										{
+											Display.getDefault( ).asyncExec( new Runnable( ) {
+
+												public void run( )
+												{
+													doHandleCursorPositionChanged( );
+												}
+											} );
+										}
+									} );
 
 									MouseAdapter mouseAdapter = new MouseAdapter( ) {
 
@@ -969,7 +1297,7 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 										public void mouseUp( MouseEvent e )
 										{
 
-											int offset = text.getCaretOffset( );
+											int offset = disassemblerText.getCaretOffset( );
 											if ( offset == -1 )
 												return;
 											for ( int j = 0; j < links.length; j++ )
@@ -988,13 +1316,18 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 											}
 										}
 									};
-									text.addMouseListener( mouseAdapter );
+									disassemblerText.addMouseListener( mouseAdapter );
 									MenuManager manager = new MenuManager( "#PopupMenu" );
 									manager.add( new ByteCodeAction( ) );
 									manager.add( new DisassemblerAction( ) );
 									manager.add( new Separator( ) );
 									manager.add( getAction( ITextEditorActionConstants.RULER_PREFERENCES ) );
-									text.setMenu( manager.createContextMenu( text ) );
+									disassemblerText.setMenu( manager.createContextMenu( disassemblerText ) );
+
+									if ( selectedElement != null )
+									{
+										setSelectionElement( );
+									}
 								}
 							}
 							fSourceAttachmentForm.layout( );
@@ -1026,12 +1359,12 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 			}
 			else if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.DISASSEMBLER_MODE )
 			{
-				ClassFileOutlineElement outlineElement = new ClassFileOutlineElement( );
-				ClassFileDocument document = new ClassFileDocument( outlineElement );
-				outlineElement.setClassFileDocument( document );
-				ClassReader cr = new ClassReader( file.getBytes( ), document );
-				cr.accept( document, 0 );
-				return document.toString( );
+				BytecodeDocumentProvider provider = new BytecodeDocumentProvider( );
+				disassemblerDocument = new BytecodeDocument( provider );
+				provider.setDocumentContent( disassemblerDocument, new ByteArrayInputStream( file.getBytes( ) ), null );
+				disassemblerClassDocument = provider.getClassFileDocument( );
+				disassemblerRootElement = (ClassFileOutlineElement) provider.getClassFileOutlineElement( );
+				return disassemblerDocument.get( );
 			}
 		}
 		catch ( Exception e )
@@ -1041,4 +1374,120 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 
 		return null;
 	}
+
+	private void doHandleCursorPositionChanged( )
+	{
+		if ( disassemblerClassDocument != null )
+		{
+			/* set selection in the outline */
+			int selectedRange = disassemblerText.getSelectionRange( ).x;
+
+			String mark = MarkUtil.getMark( disassemblerText.getText( ) );
+			int offset = mark.length( ) + 2;
+
+			try
+			{
+				int line = disassemblerDocument.getLineOfOffset( selectedRange - offset );
+				ClassFile cf = (ClassFile) ( (IClassFileEditorInput) getEditorInput( ) ).getClassFile( );
+
+				if ( disassemblerClassDocument
+						.isLineInMethod( line/* changed to 0-based */ ) )
+				{
+					IMethodSection method = disassemblerClassDocument
+							.findMethodSection( line/* changed to 0-based */ );
+
+					if ( method != null )
+					{
+						IMethod m = ClassFileDocumentsUtils
+								.findMethod( cf.getType( ), method.getName( ), method.getDescriptor( ) );
+						if ( m != null )
+						{
+							setSelection( m );
+						}
+					}
+				}
+				else if ( disassemblerClassDocument
+						.isLineInField( line/* changed to 0-based */ ) )
+				{
+					IFieldSection field = disassemblerClassDocument
+							.findFieldSection( line /* changed to 0-based */ );
+					if ( field != null )
+					{
+						IField f = cf.getType( ).getField( field.getName( ) );
+						if ( f != null )
+						{
+							setSelection( f );
+						}
+					}
+				}
+				else
+				{
+					setSelection( cf.getType( ) );
+				}
+			}
+			catch ( Exception e )
+			{
+				Logger.debug( e );
+			}
+		}
+	}
+
+	private IJavaElement getSelectedElement( )
+	{
+		if ( disassemblerClassDocument != null )
+		{
+			/* set selection in the outline */
+			int selectedRange = disassemblerText.getSelectionRange( ).x;
+
+			String mark = MarkUtil.getMark( disassemblerText.getText( ) );
+			int offset = mark.length( ) + 2;
+
+			try
+			{
+				int line = disassemblerDocument.getLineOfOffset( selectedRange - offset );
+				ClassFile cf = (ClassFile) ( (IClassFileEditorInput) getEditorInput( ) ).getClassFile( );
+
+				if ( disassemblerClassDocument
+						.isLineInMethod( line/* changed to 0-based */ ) )
+				{
+					IMethodSection method = disassemblerClassDocument
+							.findMethodSection( line/* changed to 0-based */ );
+
+					if ( method != null )
+					{
+						IMethod m = ClassFileDocumentsUtils
+								.findMethod( cf.getType( ), method.getName( ), method.getDescriptor( ) );
+						if ( m != null )
+						{
+							return m;
+						}
+					}
+				}
+				else if ( disassemblerClassDocument
+						.isLineInField( line/* changed to 0-based */ ) )
+				{
+					IFieldSection field = disassemblerClassDocument
+							.findFieldSection( line /* changed to 0-based */ );
+					if ( field != null )
+					{
+						IField f = cf.getType( ).getField( field.getName( ) );
+						if ( f != null )
+						{
+							return f;
+						}
+					}
+				}
+				else
+				{
+					return cf.getType( );
+				}
+			}
+			catch ( Exception e )
+			{
+				Logger.debug( e );
+			}
+		}
+		return null;
+	}
+
 }

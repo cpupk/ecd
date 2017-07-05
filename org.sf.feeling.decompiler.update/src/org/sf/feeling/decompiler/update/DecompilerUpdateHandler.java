@@ -243,6 +243,8 @@ public class DecompilerUpdateHandler implements IDecompilerUpdateHandler
 
 	private String getVersion( OSGiVersion remoteVersion )
 	{
+		if(remoteVersion == null)
+			return null;
 		return remoteVersion.getMajor( ) + "." + remoteVersion.getMinor( ); //$NON-NLS-1$
 	}
 }

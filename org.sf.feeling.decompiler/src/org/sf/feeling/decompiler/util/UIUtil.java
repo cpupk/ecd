@@ -448,6 +448,18 @@ public class UIUtil
 		return false;
 	}
 
+	public static boolean requestFromDisassemblerSelection( )
+	{
+		StackTraceElement[] stacks = Thread.currentThread( ).getStackTrace( );
+		for ( int i = 0; i < stacks.length && i < 10; i++ )
+		{
+			if ( stacks[i].getClassName( ).indexOf( "JavaDecompilerClassFileEditor" ) != -1 //$NON-NLS-1$
+					&& stacks[i].getMethodName( ).equals( "doHandleCursorPositionChanged" ) ) //$NON-NLS-1$
+				return true;
+		}
+		return false;
+	}
+
 	public static boolean requestCreateBuffer( )
 	{
 		StackTraceElement[] stacks = Thread.currentThread( ).getStackTrace( );
