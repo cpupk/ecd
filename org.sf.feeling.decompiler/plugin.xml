@@ -29,6 +29,10 @@
             /> 
       </editor>
    </extension>
+   <extension
+      point="org.eclipse.core.runtime.preferences">
+   		<initializer class="org.sf.feeling.decompiler.preferences.DisassemblerPreferenceInitializer"/>
+   </extension>
    <extension         
          point="org.eclipse.ui.editorActions">
       <editorContribution

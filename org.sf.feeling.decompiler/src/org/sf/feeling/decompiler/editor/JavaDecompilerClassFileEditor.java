@@ -16,6 +16,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -45,6 +47,7 @@ import org.eclipse.jdt.internal.ui.javaeditor.ClassFileEditor;
 import org.eclipse.jdt.internal.ui.javaeditor.IClassFileEditorInput;
 import org.eclipse.jdt.internal.ui.javaeditor.InternalClassFileEditorInput;
 import org.eclipse.jdt.internal.ui.text.JavaPresentationReconciler;
+import org.eclipse.jdt.ui.text.IColorManager;
 import org.eclipse.jdt.ui.text.IJavaPartitions;
 import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.action.MenuManager;
@@ -89,7 +92,9 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionGroup;
+import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.ide.FileStoreEditorInput;
+import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.actions.ByteCodeAction;
@@ -1149,6 +1154,23 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 		}
 	}
 
+	private IPreferenceStore createCombinedPreferenceStore( )
+	{
+		List<IPreferenceStore> stores = new ArrayList<IPreferenceStore>( 3 );
+
+		/* own bytecode visualizer preferences */
+		stores.add( JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ) );
+
+		/* fond and color preferences */
+		stores.add( JavaPlugin.getDefault( ).getPreferenceStore( ) );
+
+		/* background and current line color preferences */
+		stores.add( EditorsUI.getPreferenceStore( ) );
+
+		return new ChainedPreferenceStore(
+				(IPreferenceStore[]) stores.toArray( new IPreferenceStore[stores.size( )] ) );
+	}
+
 	protected void showSource( IClassFileEditorInput classFileEditorInput )
 	{
 		disassemblerText = null;
@@ -1253,12 +1275,34 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 										disassemblerText.setText( contents );
 									}
 
-									JavaPresentationReconciler reconciler = (JavaPresentationReconciler) getSourceViewerConfiguration( )
-											.getPresentationReconciler( getSourceViewer( ) );
-
 									Document document = new Document( disassemblerText.getText( ) );
-									JavaTextTools tools = JavaPlugin.getDefault( ).getJavaTextTools( );
-									tools.setupJavaDocumentPartitioner( document, IJavaPartitions.JAVA_PARTITIONING );
+
+									JavaPresentationReconciler reconciler;
+									if ( JavaDecompilerPlugin.getDefault( )
+											.getSourceMode( ) == JavaDecompilerPlugin.DISASSEMBLER_MODE )
+									{
+										IPreferenceStore store = createCombinedPreferenceStore( );
+										JavaTextTools textTools = JavaPlugin.getDefault( ).getJavaTextTools( );
+										textTools.setupJavaDocumentPartitioner( document,
+												IJavaPartitions.JAVA_PARTITIONING );
+										final IColorManager colorManager = textTools.getColorManager( );
+										final DisassemblerConfiguration classFileConfiguration = new DisassemblerConfiguration(
+												colorManager,
+												store,
+												this,
+												IJavaPartitions.JAVA_PARTITIONING );
+										reconciler = (JavaPresentationReconciler) classFileConfiguration
+												.getPresentationReconciler( getSourceViewer( ) );
+									}
+									else
+									{
+										reconciler = (JavaPresentationReconciler) getSourceViewerConfiguration( )
+												.getPresentationReconciler( getSourceViewer( ) );
+										JavaTextTools tools = JavaPlugin.getDefault( ).getJavaTextTools( );
+										tools.setupJavaDocumentPartitioner( document,
+												IJavaPartitions.JAVA_PARTITIONING );
+									}
+
 									TextPresentation presentation = reconciler.createRepairDescription(
 											new Region( 0, disassemblerText.getText( ).length( ) ),
 											document );
