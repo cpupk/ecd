@@ -36,7 +36,6 @@ import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.ISourceReference;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.internal.core.BinaryMethod;
 import org.eclipse.jdt.internal.core.BinaryType;
 import org.eclipse.jdt.internal.core.BufferManager;
 import org.eclipse.jdt.internal.core.ClassFile;
@@ -291,7 +290,7 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 			if ( selectedElement == null || selectedElement.equals( getSelectedElement( ) ) )
 				return;
 
-			if ( selectedElement instanceof BinaryMethod
+			if ( selectedElement instanceof IMethod
 					|| selectedElement instanceof IField
 					|| selectedElement instanceof BinaryType )
 			{
@@ -498,12 +497,12 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 				}
 			}
 		}
-		else if ( reference instanceof BinaryMethod )
+		else if ( reference instanceof IMethod )
 		{
 			if ( element instanceof OutlineElementMethod )
 			{
 				OutlineElementMethod asmMethod = (OutlineElementMethod) element;
-				BinaryMethod jdtMethod = (BinaryMethod) reference;
+				IMethod jdtMethod = (IMethod) reference;
 
 				String asmMethodName = asmMethod.getElementName( );
 				if ( asmMethodName.indexOf( '$' ) != -1 )
