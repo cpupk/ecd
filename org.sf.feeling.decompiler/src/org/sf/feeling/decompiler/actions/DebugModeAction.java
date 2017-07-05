@@ -12,6 +12,7 @@
 package org.sf.feeling.decompiler.actions;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.swt.widgets.Display;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.editor.JavaDecompilerClassFileEditor;
 import org.sf.feeling.decompiler.i18n.Messages;
@@ -31,11 +32,18 @@ public class DebugModeAction extends Action
 	{
 		JavaDecompilerPlugin.getDefault( ).setDebugMode( !isChecked( ) );
 		new DecompileAction( ).run( );
-		JavaDecompilerClassFileEditor editor = UIUtil.getActiveEditor( );
+		final JavaDecompilerClassFileEditor editor = UIUtil.getActiveEditor( );
 		if ( editor != null )
 		{
-			editor.setFocus( );
+			editor.showSource( );
 			editor.notifyPropertiesChange( );
+			Display.getDefault( ).asyncExec( new Runnable( ) {
+
+				public void run( )
+				{
+					editor.setFocus( );
+				}
+			} );
 		}
 	}
 

@@ -35,9 +35,11 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
@@ -84,6 +86,15 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 	public static final String CHECK_UPDATE = "org.sf.feeling.decompiler.check_update"; //$NON-NLS-1$ ;
 	public static final String EXPORT_ENCODING = "org.sf.feeling.decompiler.export.encoding"; //$NON-NLS-1$ ;
 	public static final String ATTACH_SOURCE = "org.sf.feeling.decompiler.attach_source"; //$NON-NLS-1$ ;
+	
+	public static final String bytecodeMnemonicPreferencesPrefix = "BYTECODEMNEMONIC_";
+	public static final String BYTECODE_MNEMONIC = bytecodeMnemonicPreferencesPrefix + "bytecodeMnemonic";
+	public static final String BYTECODE_MNEMONIC_BOLD = bytecodeMnemonicPreferencesPrefix + "bytecodeMnemonic_bold";
+	public static final String BYTECODE_MNEMONIC_ITALIC = bytecodeMnemonicPreferencesPrefix + "bytecodeMnemonic_italic";
+	public static final String BYTECODE_MNEMONIC_STRIKETHROUGH = bytecodeMnemonicPreferencesPrefix
+			+ "bytecodeMnemonic_strikethrough";
+	public static final String BYTECODE_MNEMONIC_UNDERLINE = bytecodeMnemonicPreferencesPrefix
+			+ "bytecodeMnemonic_underline";
 
 	private static JavaDecompilerPlugin plugin;
 
@@ -311,6 +322,12 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 		store.setDefault( DECOMPILE_COUNT, 0 );
 		store.setDefault( ADCLICK_COUNT, 0 );
 		store.setDefault( EXPORT_ENCODING, "UTF-8" ); //$NON-NLS-1$
+		
+		PreferenceConverter.setDefault( store, BYTECODE_MNEMONIC, new RGB( 0, 0, 0 ) );
+		store.setDefault( BYTECODE_MNEMONIC_BOLD, true );
+		store.setDefault( BYTECODE_MNEMONIC_ITALIC, false );
+		store.setDefault( BYTECODE_MNEMONIC_STRIKETHROUGH, false );
+		store.setDefault( BYTECODE_MNEMONIC_UNDERLINE, false );
 	}
 
 	private void setDefaultDecompiler( IPreferenceStore store )
