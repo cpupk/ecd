@@ -80,6 +80,8 @@ import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.MenuDetectEvent;
+import org.eclipse.swt.events.MenuDetectListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.PaintEvent;
@@ -131,10 +133,16 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 	public static final String ID = "org.sf.feeling.decompiler.ClassFileEditor"; //$NON-NLS-1$
 
 	private IBuffer classBuffer;
-
 	private PaintListener paintListener;
 	private MouseAdapter mouseAdapter;
 	private StyledText disassemblerText;
+	private int currentSourceMode = -1;
+	private int currentDisassemblerMode = -1;
+	private boolean selectionChange = false;
+	private BytecodeDocument disassemblerDocument;
+	private ClassFileOutlineElement disassemblerRootElement;
+	private IClassFileDocument disassemblerClassDocument;
+	private ISourceReference selectedElement = null;
 
 	public JavaDecompilerClassFileEditor( )
 	{
@@ -253,16 +261,6 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 	{
 		return false;
 	}
-
-	private boolean selectionChange = false;
-
-	private BytecodeDocument disassemblerDocument;
-
-	private ClassFileOutlineElement disassemblerRootElement;
-
-	private IClassFileDocument disassemblerClassDocument;
-
-	private ISourceReference selectedElement = null;
 
 	@Override
 	protected void selectionChanged( )
@@ -1177,10 +1175,9 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 
 	protected void showSource( IClassFileEditorInput classFileEditorInput )
 	{
-		disassemblerText = null;
-		disassemblerRootElement = null;
-		disassemblerDocument = null;
-		disassemblerClassDocument = null;
+		if ( currentSourceMode == JavaDecompilerPlugin.getDefault( ).getSourceMode( ) )
+			return;
+
 		try
 		{
 			StackLayout fStackLayout = (StackLayout) ReflectionUtils.getFieldValue( this, "fStackLayout" );
@@ -1194,238 +1191,281 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 				{
 					fStackLayout.topControl = fViewerComposite;
 					fParent.layout( );
-					if ( fSourceAttachmentForm != null && !fSourceAttachmentForm.isDisposed( ) )
-					{
-						fSourceAttachmentForm.dispose( );
-					}
 				}
 			}
 			else
 			{
-				if ( fStackLayout != null && fParent != null )
+				if ( fSourceAttachmentForm != null
+						&& !fSourceAttachmentForm.isDisposed( )
+						&& currentDisassemblerMode == JavaDecompilerPlugin.getDefault( ).getSourceMode( ) )
 				{
-					if ( fSourceAttachmentForm != null && !fSourceAttachmentForm.isDisposed( ) )
+					fStackLayout.topControl = fSourceAttachmentForm;
+					fParent.layout( );
+				}
+				else
+				{
+					currentDisassemblerMode = JavaDecompilerPlugin.getDefault( ).getSourceMode( );
+					if ( fStackLayout != null && fParent != null )
 					{
-						fSourceAttachmentForm.dispose( );
-					}
 
-					IClassFile file = classFileEditorInput.getClassFile( );
-					Class clazz = Class
-							.forName( "org.eclipse.jdt.internal.ui.javaeditor.ClassFileEditor$SourceAttachmentForm" );
-					Constructor c1 = clazz.getDeclaredConstructor( new Class[]{
-							ClassFileEditor.class, IClassFile.class
-					} );
-					c1.setAccessible( true );
-					Object form = c1.newInstance( new Object[]{
-							JavaDecompilerClassFileEditor.this, file
-					} );
-
-					fSourceAttachmentForm = (Composite) ReflectionUtils
-							.invokeMethod( form, "createControl", new Class[]{
-									Composite.class
-					}, new Object[]{
-							fParent
-					} );
-
-					ReflectionUtils.setFieldValue( this, "fSourceAttachmentForm", fSourceAttachmentForm );
-
-					if ( fSourceAttachmentForm != null )
-					{
-						if ( fSourceAttachmentForm.getLayout( ) instanceof GridLayout )
+						if ( fSourceAttachmentForm != null && !fSourceAttachmentForm.isDisposed( ) )
 						{
-							GridLayout layout = (GridLayout) fSourceAttachmentForm.getLayout( );
-							layout.verticalSpacing = 0;
-							layout.marginTop = 0;
-
-							Control[] children = fSourceAttachmentForm.getChildren( );
-							for ( int i = 0; i < children.length; i++ )
-							{
-								Control child = children[i];
-								if ( !( child instanceof StyledText ) )
-								{
-									GridData gd = (GridData) child.getLayoutData( );
-									if ( gd != null )
-									{
-										gd.heightHint = 0;
-									}
-									else
-									{
-										gd = new GridData( );
-										gd.heightHint = 0;
-										child.setLayoutData( gd );
-									}
-									child.setVisible( false );
-								}
-								else
-								{
-									JFaceResources.getFontRegistry( ).removeListener( (IPropertyChangeListener) form );
-
-									disassemblerText = (StyledText) child;
-									disassemblerText.setFont( getSourceViewer( ).getTextWidget( ).getFont( ) );
-
-									final IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener( ) {
-
-										@Override
-										public void propertyChange( PropertyChangeEvent event )
-										{
-											disassemblerText.setFont( getSourceViewer( ).getTextWidget( ).getFont( ) );
-										}
-									};
-
-									JFaceResources.getFontRegistry( ).addListener( propertyChangeListener );
-									disassemblerText.addDisposeListener( new DisposeListener( ) {
-
-										@Override
-										public void widgetDisposed( DisposeEvent e )
-										{
-											JFaceResources.getFontRegistry( ).removeListener( propertyChangeListener );
-										}
-									} );
-
-									String content = getClassContent( file );
-
-									String classContent = getDocumentProvider( ).getDocument( getEditorInput( ) )
-											.get( );
-									String mark = MarkUtil.getMark( classContent );
-
-									if ( content != null && content.length( ) > 0 )
-									{
-
-										String contents = mark
-												+ "\n\n" //$NON-NLS-1$
-												+ content;
-										disassemblerText.setText( contents );
-									}
-									else
-									{
-										String contents = mark
-												+ "\n\n" //$NON-NLS-1$
-												+ disassemblerText.getText( );
-										disassemblerText.setText( contents );
-									}
-
-									Document document = new Document( disassemblerText.getText( ) );
-
-									JavaPresentationReconciler reconciler;
-									if ( JavaDecompilerPlugin.getDefault( )
-											.getSourceMode( ) == JavaDecompilerPlugin.DISASSEMBLER_MODE )
-									{
-										IPreferenceStore store = createCombinedPreferenceStore( );
-										JavaTextTools textTools = JavaPlugin.getDefault( ).getJavaTextTools( );
-										textTools.setupJavaDocumentPartitioner( document,
-												IJavaPartitions.JAVA_PARTITIONING );
-										final IColorManager colorManager = textTools.getColorManager( );
-										final DisassemblerConfiguration classFileConfiguration = new DisassemblerConfiguration(
-												colorManager,
-												store,
-												this,
-												IJavaPartitions.JAVA_PARTITIONING );
-										reconciler = (JavaPresentationReconciler) classFileConfiguration
-												.getPresentationReconciler( getSourceViewer( ) );
-									}
-									else
-									{
-										reconciler = (JavaPresentationReconciler) getSourceViewerConfiguration( )
-												.getPresentationReconciler( getSourceViewer( ) );
-										JavaTextTools tools = JavaPlugin.getDefault( ).getJavaTextTools( );
-										tools.setupJavaDocumentPartitioner( document,
-												IJavaPartitions.JAVA_PARTITIONING );
-									}
-
-									TextPresentation presentation = reconciler.createRepairDescription(
-											new Region( 0, disassemblerText.getText( ).length( ) ),
-											document );
-									TextPresentation.applyTextPresentation( presentation, disassemblerText );
-
-									String ad = mark.replaceAll( "/(\\*)+", "" ) //$NON-NLS-1$ //$NON-NLS-2$
-											.replaceAll( "(\\*)+/", "" ) //$NON-NLS-1$ //$NON-NLS-2$
-											.trim( );
-									int length = ad.length( );
-									int offset = mark.indexOf( ad );
-
-									StyleRange textRange = UIUtil
-											.getAdTextStyleRange( disassemblerText, offset, length );
-									if ( textRange != null )
-									{
-										disassemblerText.setStyleRange( textRange );
-									}
-
-									URLHyperlinkDetector detector = new URLHyperlinkDetector( );
-									final int index = mark.indexOf( "://" ); //$NON-NLS-1$
-									final IHyperlink[] links = detector
-											.detectHyperlinks( getSourceViewer( ), new Region( index, 0 ), true );
-									for ( int j = 0; j < links.length; j++ )
-									{
-										IHyperlink link = links[j];
-										StyleRange linkRange = UIUtil.getAdLinkStyleRange( disassemblerText,
-												link.getHyperlinkRegion( ).getOffset( ),
-												link.getHyperlinkRegion( ).getLength( ) );
-										if ( linkRange != null )
-										{
-											disassemblerText.setStyleRange( linkRange );
-										}
-									}
-
-									disassemblerText.addCaretListener( new CaretListener( ) {
-
-										@Override
-										public void caretMoved( CaretEvent event )
-										{
-											Display.getDefault( ).asyncExec( new Runnable( ) {
-
-												public void run( )
-												{
-													doHandleCursorPositionChanged( );
-												}
-											} );
-										}
-									} );
-
-									MouseAdapter mouseAdapter = new MouseAdapter( ) {
-
-										@Override
-										public void mouseUp( MouseEvent e )
-										{
-
-											int offset = disassemblerText.getCaretOffset( );
-											if ( offset == -1 )
-												return;
-											for ( int j = 0; j < links.length; j++ )
-											{
-												int linkOffset = links[j].getHyperlinkRegion( ).getOffset( );
-												int linkLength = links[j].getHyperlinkRegion( ).getLength( );
-												if ( offset >= linkOffset && offset < linkOffset + linkLength )
-												{
-													if ( links[j] instanceof URLHyperlink )
-													{
-														String url = ( (URLHyperlink) links[j] ).getURLString( );
-														UIUtil.openBrowser( url );
-													}
-													return;
-												}
-											}
-										}
-									};
-									disassemblerText.addMouseListener( mouseAdapter );
-									MenuManager manager = new MenuManager( "#PopupMenu" );
-									manager.add( new ByteCodeAction( ) );
-									manager.add( new DisassemblerAction( ) );
-									manager.add( new Separator( ) );
-									manager.add( getAction( ITextEditorActionConstants.RULER_PREFERENCES ) );
-									disassemblerText.setMenu( manager.createContextMenu( disassemblerText ) );
-
-									if ( selectedElement != null )
-									{
-										setSelectionElement( );
-									}
-
-								}
-							}
-							fSourceAttachmentForm.layout( );
+							fSourceAttachmentForm.dispose( );
 						}
 
-						fStackLayout.topControl = fSourceAttachmentForm;
-						fParent.layout( );
+						disassemblerText = null;
+						disassemblerRootElement = null;
+						disassemblerDocument = null;
+						disassemblerClassDocument = null;
+
+						IClassFile file = classFileEditorInput.getClassFile( );
+						Class clazz = Class.forName(
+								"org.eclipse.jdt.internal.ui.javaeditor.ClassFileEditor$SourceAttachmentForm" );
+						Constructor c1 = clazz.getDeclaredConstructor( new Class[]{
+								ClassFileEditor.class, IClassFile.class
+						} );
+						c1.setAccessible( true );
+						Object form = c1.newInstance( new Object[]{
+								JavaDecompilerClassFileEditor.this, file
+						} );
+
+						fSourceAttachmentForm = (Composite) ReflectionUtils
+								.invokeMethod( form, "createControl", new Class[]{
+										Composite.class
+						}, new Object[]{
+								fParent
+						} );
+
+						ReflectionUtils.setFieldValue( this, "fSourceAttachmentForm", fSourceAttachmentForm );
+
+						if ( fSourceAttachmentForm != null )
+						{
+							if ( fSourceAttachmentForm.getLayout( ) instanceof GridLayout )
+							{
+								GridLayout layout = (GridLayout) fSourceAttachmentForm.getLayout( );
+								layout.verticalSpacing = 0;
+								layout.marginTop = 0;
+
+								Control[] children = fSourceAttachmentForm.getChildren( );
+								for ( int i = 0; i < children.length; i++ )
+								{
+									Control child = children[i];
+									if ( !( child instanceof StyledText ) )
+									{
+										GridData gd = (GridData) child.getLayoutData( );
+										if ( gd != null )
+										{
+											gd.heightHint = 0;
+										}
+										else
+										{
+											gd = new GridData( );
+											gd.heightHint = 0;
+											child.setLayoutData( gd );
+										}
+										child.setVisible( false );
+									}
+									else
+									{
+										JFaceResources.getFontRegistry( )
+												.removeListener( (IPropertyChangeListener) form );
+
+										disassemblerText = (StyledText) child;
+										disassemblerText.setFont( getSourceViewer( ).getTextWidget( ).getFont( ) );
+
+										String content = getClassContent( file );
+
+										String classContent = getDocumentProvider( ).getDocument( getEditorInput( ) )
+												.get( );
+										String mark = MarkUtil.getMark( classContent );
+
+										if ( content != null && content.length( ) > 0 )
+										{
+
+											String contents = mark
+													+ "\n\n" //$NON-NLS-1$
+													+ content;
+											disassemblerText.setText( contents );
+										}
+										else
+										{
+											String contents = mark
+													+ "\n\n" //$NON-NLS-1$
+													+ disassemblerText.getText( );
+											disassemblerText.setText( contents );
+										}
+
+										Document document = new Document( disassemblerText.getText( ) );
+
+										JavaPresentationReconciler reconciler;
+										if ( JavaDecompilerPlugin.getDefault( )
+												.getSourceMode( ) == JavaDecompilerPlugin.DISASSEMBLER_MODE )
+										{
+											IPreferenceStore store = createCombinedPreferenceStore( );
+											JavaTextTools textTools = JavaPlugin.getDefault( ).getJavaTextTools( );
+											textTools.setupJavaDocumentPartitioner( document,
+													IJavaPartitions.JAVA_PARTITIONING );
+											final IColorManager colorManager = textTools.getColorManager( );
+											final DisassemblerConfiguration classFileConfiguration = new DisassemblerConfiguration(
+													colorManager,
+													store,
+													this,
+													IJavaPartitions.JAVA_PARTITIONING );
+											reconciler = (JavaPresentationReconciler) classFileConfiguration
+													.getPresentationReconciler( getSourceViewer( ) );
+										}
+										else
+										{
+											reconciler = (JavaPresentationReconciler) getSourceViewerConfiguration( )
+													.getPresentationReconciler( getSourceViewer( ) );
+											JavaTextTools tools = JavaPlugin.getDefault( ).getJavaTextTools( );
+											tools.setupJavaDocumentPartitioner( document,
+													IJavaPartitions.JAVA_PARTITIONING );
+										}
+
+										TextPresentation presentation = reconciler.createRepairDescription(
+												new Region( 0, disassemblerText.getText( ).length( ) ),
+												document );
+										TextPresentation.applyTextPresentation( presentation, disassemblerText );
+
+										String ad = mark.replaceAll( "/(\\*)+", "" ) //$NON-NLS-1$ //$NON-NLS-2$
+												.replaceAll( "(\\*)+/", "" ) //$NON-NLS-1$ //$NON-NLS-2$
+												.trim( );
+										int length = ad.length( );
+										int offset = mark.indexOf( ad );
+
+										StyleRange textRange = UIUtil
+												.getAdTextStyleRange( disassemblerText, offset, length );
+										if ( textRange != null )
+										{
+											disassemblerText.setStyleRange( textRange );
+										}
+
+										URLHyperlinkDetector detector = new URLHyperlinkDetector( );
+										final int index = mark.indexOf( "://" ); //$NON-NLS-1$
+										final IHyperlink[] links = detector
+												.detectHyperlinks( getSourceViewer( ), new Region( index, 0 ), true );
+										for ( int j = 0; j < links.length; j++ )
+										{
+											IHyperlink link = links[j];
+											StyleRange linkRange = UIUtil.getAdLinkStyleRange( disassemblerText,
+													link.getHyperlinkRegion( ).getOffset( ),
+													link.getHyperlinkRegion( ).getLength( ) );
+											if ( linkRange != null )
+											{
+												disassemblerText.setStyleRange( linkRange );
+											}
+										}
+
+										final CaretListener caretListener = new CaretListener( ) {
+
+											@Override
+											public void caretMoved( CaretEvent event )
+											{
+												Display.getDefault( ).asyncExec( new Runnable( ) {
+
+													public void run( )
+													{
+														doHandleCursorPositionChanged( );
+													}
+												} );
+											}
+										};
+
+										disassemblerText.addCaretListener( caretListener );
+
+										final MouseAdapter mouseAdapter = new MouseAdapter( ) {
+
+											@Override
+											public void mouseUp( MouseEvent e )
+											{
+												if ( disassemblerText != null )
+												{
+													int offset = disassemblerText.getCaretOffset( );
+													if ( offset == -1 )
+														return;
+													for ( int j = 0; j < links.length; j++ )
+													{
+														int linkOffset = links[j].getHyperlinkRegion( ).getOffset( );
+														int linkLength = links[j].getHyperlinkRegion( ).getLength( );
+														if ( offset >= linkOffset && offset < linkOffset + linkLength )
+														{
+															if ( links[j] instanceof URLHyperlink )
+															{
+																String url = ( (URLHyperlink) links[j] )
+																		.getURLString( );
+																UIUtil.openBrowser( url );
+															}
+															return;
+														}
+													}
+												}
+											}
+										};
+										disassemblerText.addMouseListener( mouseAdapter );
+
+										final MenuDetectListener detectListener = new MenuDetectListener( ) {
+
+											@Override
+											public void menuDetected( MenuDetectEvent e )
+											{
+												if ( disassemblerText != null )
+												{
+													MenuManager manager = new MenuManager( "#PopupMenu" );
+													manager.add( new ByteCodeAction( ) );
+													manager.add( new DisassemblerAction( ) );
+													manager.add( new Separator( ) );
+													manager.add(
+															getAction( ITextEditorActionConstants.RULER_PREFERENCES ) );
+													manager.createContextMenu( disassemblerText ).setVisible( true );
+												}
+											}
+										};
+
+										disassemblerText.addMenuDetectListener( detectListener );
+
+										if ( selectedElement != null )
+										{
+											setSelectionElement( );
+										}
+
+										final IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener( ) {
+
+											@Override
+											public void propertyChange( PropertyChangeEvent event )
+											{
+												if ( disassemblerText != null )
+												{
+													disassemblerText
+															.setFont( getSourceViewer( ).getTextWidget( ).getFont( ) );
+												}
+											}
+										};
+
+										JFaceResources.getFontRegistry( ).addListener( propertyChangeListener );
+										disassemblerText.addDisposeListener( new DisposeListener( ) {
+
+											@Override
+											public void widgetDisposed( DisposeEvent e )
+											{
+												if ( disassemblerText != null )
+												{
+													disassemblerText.removeMenuDetectListener( detectListener );
+													disassemblerText.removeMouseListener( mouseAdapter );
+													disassemblerText.removeCaretListener( caretListener );
+													JFaceResources.getFontRegistry( )
+															.removeListener( propertyChangeListener );
+												}
+											}
+										} );
+									}
+								}
+								fSourceAttachmentForm.layout( );
+							}
+
+							fStackLayout.topControl = fSourceAttachmentForm;
+							fParent.layout( );
+						}
 					}
 				}
 			}
@@ -1434,6 +1474,7 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 		{
 			Logger.debug( e );
 		}
+		currentSourceMode = JavaDecompilerPlugin.getDefault( ).getSourceMode( );
 	}
 
 	private String getClassContent( IClassFile file )
