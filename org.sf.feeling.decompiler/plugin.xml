@@ -357,5 +357,8 @@
                tooltip="%toggleBreadcrumb.tooltip">
          </action>
       </actionSet>
-   </extension>	 
+   </extension>
+   <extension point="org.eclipse.help.toc">
+    <toc file="doc/toc.xml" primary="true" />
+  </extension>	 
 </plugin>

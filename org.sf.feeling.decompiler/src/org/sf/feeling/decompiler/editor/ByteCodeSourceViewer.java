@@ -78,6 +78,11 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor
 		this.editor = editor;
 	}
 
+	public StyledText getTextWidget( )
+	{
+		return getSourceViewer( ).getTextWidget( );
+	}
+
 	private IPreferenceStore createCombinedPreferenceStore( )
 	{
 		List<IPreferenceStore> stores = new ArrayList<IPreferenceStore>( 3 );
@@ -190,7 +195,7 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor
 		if ( ruler instanceof CompositeRuler )
 			updateContributedRulerColumns( (CompositeRuler) ruler );
 
-		IColumnSupport columnSupport = (IColumnSupport)getAdapter( IColumnSupport.class );
+		IColumnSupport columnSupport = (IColumnSupport) getAdapter( IColumnSupport.class );
 
 		RulerColumnDescriptor lineNumberColumnDescriptor = RulerColumnRegistry.getDefault( )
 				.getColumnDescriptor( LineNumberColumn.ID );

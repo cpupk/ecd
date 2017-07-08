@@ -30,7 +30,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui.ide;resolution:=optional,
  org.eclipse.search,
  org.eclipse.core.filesystem,
- org.eclipse.equinox.p2.metadata;resolution:=optional
+ org.eclipse.equinox.p2.metadata;resolution:=optional,
+ org.eclipse.help.base
 Bundle-Vendor: Chen Chao
 Bundle-Version: 2.9.7.qualifier
 Bundle-ManifestVersion: 2

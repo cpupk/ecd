@@ -776,4 +776,15 @@ public class UIUtil
 		}
 		return false;
 	}
+
+	public static boolean requestFromCopyOperation( )
+	{
+		StackTraceElement[] stacks = Thread.currentThread( ).getStackTrace( );
+		for ( int i = 0; i < stacks.length && i < 10; i++ )
+		{
+			if ( stacks[i].getMethodName( ).equals( "doCutCopyWithImportsOperation" ) ) //$NON-NLS-1$
+				return true;
+		}
+		return false;
+	}
 }

@@ -15,12 +15,14 @@ import org.eclipse.jdt.ui.text.java.hover.IJavaEditorTextHover;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
+import org.sf.feeling.decompiler.util.HelpUtils;
 import org.sf.feeling.decompiler.util.Logger;
 import org.sf.feeling.decompiler.util.ReflectionUtils;
 
 import com.drgarbage.asm.render.intf.IClassFileDocument;
 import com.drgarbage.asm.render.intf.IFieldSection;
 import com.drgarbage.asm.render.intf.IMethodSection;
+import com.drgarbage.bytecode.ByteCodeConstants;
 import com.drgarbage.utils.ClassFileDocumentsUtils;
 
 public class DisassemblerJavadocHover extends JavadocHover implements IJavaEditorTextHover
@@ -34,6 +36,24 @@ public class DisassemblerJavadocHover extends JavadocHover implements IJavaEdito
 			{
 				ByteCodeDocument bytecodeDocument = (ByteCodeDocument) textViewer.getDocument( );
 				String text = textViewer.getDocument( ).get( hoverRegion.getOffset( ), hoverRegion.getLength( ) );
+
+				for ( int i = 0; i < ByteCodeConstants.OPCODE_MNEMONICS.length; i++ )
+				{
+					if ( text.equals( ByteCodeConstants.OPCODE_MNEMONICS[i] ) )
+					{
+						StringBuilder sb = HelpUtils.getOpcodeHelpFor( i );
+						if ( sb.length( ) > 0 )
+						{
+							JavadocBrowserInformationControlInput input = new JavadocBrowserInformationControlInput(
+									null,
+									null,
+									sb.toString( ),
+									0 );
+							return input;
+						}
+					}
+				}
+
 				if ( text.indexOf( "$" ) != -1 ) //$NON-NLS-1$
 				{
 					text = text.substring( text.lastIndexOf( "$" ) + 1 ); //$NON-NLS-1$
@@ -46,33 +66,22 @@ public class DisassemblerJavadocHover extends JavadocHover implements IJavaEdito
 
 				int offset = -1;
 
-				if ( disassemblerClassDocument.isLineInMethod( line - 2/*
-																		 * changed
-																		 * to
-																		 * 0-based
-																		 */) )
+				if ( disassemblerClassDocument.isLineInMethod( line - 2 ) )
 				{
-					IMethodSection method = disassemblerClassDocument.findMethodSection( line - 2/*
-																								 * changed
-																								 * to
-																								 * 0
-																								 * -
-																								 * based
-																								 */);
+					IMethodSection method = disassemblerClassDocument.findMethodSection( line - 2 );
 
 					if ( method != null )
 					{
-						IMethod m = ClassFileDocumentsUtils.findMethod( cf.getType( ),
-								method.getName( ),
-								method.getDescriptor( ) );
+						IMethod m = ClassFileDocumentsUtils
+								.findMethod( cf.getType( ), method.getName( ), method.getDescriptor( ) );
 						if ( m != null )
 						{
 							ISourceRange range = m.getSourceRange( );
 							if ( m.getJavadocRange( ) != null )
 							{
-								range = new SourceRange( m.getJavadocRange( ).getOffset( )
-										+ m.getJavadocRange( ).getLength( ), range.getLength( )
-										- m.getJavadocRange( ).getLength( ) );
+								range = new SourceRange(
+										m.getJavadocRange( ).getOffset( ) + m.getJavadocRange( ).getLength( ),
+										range.getLength( ) - m.getJavadocRange( ).getLength( ) );
 							}
 							if ( range != null && range.getOffset( ) != -1 )
 							{
@@ -88,21 +97,9 @@ public class DisassemblerJavadocHover extends JavadocHover implements IJavaEdito
 						}
 					}
 				}
-				else if ( disassemblerClassDocument.isLineInField( line - 2/*
-																			 * changed
-																			 * to
-																			 * 0
-																			 * -
-																			 * based
-																			 */) )
+				else if ( disassemblerClassDocument.isLineInField( line - 2 ) )
 				{
-					IFieldSection field = disassemblerClassDocument.findFieldSection( line - 2 /*
-																								 * changed
-																								 * to
-																								 * 0
-																								 * -
-																								 * based
-																								 */);
+					IFieldSection field = disassemblerClassDocument.findFieldSection( line - 2 );
 					if ( field != null )
 					{
 						IField f = cf.getType( ).getField( field.getName( ) );
@@ -111,9 +108,9 @@ public class DisassemblerJavadocHover extends JavadocHover implements IJavaEdito
 							ISourceRange range = f.getSourceRange( );
 							if ( f.getJavadocRange( ) != null )
 							{
-								range = new SourceRange( f.getJavadocRange( ).getOffset( )
-										+ f.getJavadocRange( ).getLength( ), range.getLength( )
-										- f.getJavadocRange( ).getLength( ) );
+								range = new SourceRange(
+										f.getJavadocRange( ).getOffset( ) + f.getJavadocRange( ).getLength( ),
+										range.getLength( ) - f.getJavadocRange( ).getLength( ) );
 							}
 							if ( range != null && range.getOffset( ) != -1 )
 							{
@@ -169,7 +166,9 @@ public class DisassemblerJavadocHover extends JavadocHover implements IJavaEdito
 
 		IJavaElement[] elements = getJavaElementsAt( textViewer, hoverRegion );
 		if ( elements == null || elements.length == 0 )
+		{
 			return null;
+		}
 
 		return ReflectionUtils.invokeMethod( this, "getHoverInfo", new Class[]{
 				IJavaElement[].class, ITypeRoot.class, IRegion.class, JavadocBrowserInformationControlInput.class

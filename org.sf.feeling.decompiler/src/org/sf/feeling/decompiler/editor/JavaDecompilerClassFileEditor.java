@@ -35,6 +35,8 @@ import org.eclipse.jdt.internal.ui.actions.CompositeActionGroup;
 import org.eclipse.jdt.internal.ui.javaeditor.ClassFileEditor;
 import org.eclipse.jdt.internal.ui.javaeditor.IClassFileEditorInput;
 import org.eclipse.jdt.internal.ui.javaeditor.InternalClassFileEditorInput;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.hyperlink.HyperlinkManager;
@@ -43,6 +45,7 @@ import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.text.hyperlink.IHyperlinkPresenter;
 import org.eclipse.jface.text.hyperlink.URLHyperlink;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -62,6 +65,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionGroup;
@@ -89,7 +93,7 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 	private int currentSourceMode = -1;
 	private boolean selectionChange = false;
 	private ISourceReference selectedElement = null;
-	
+
 	public ISourceReference getSelectedElement( )
 	{
 		return selectedElement;
@@ -101,6 +105,25 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 	public JavaDecompilerClassFileEditor( )
 	{
 		super( );
+	}
+
+	@Override
+	public ISelectionProvider getSelectionProvider( )
+	{
+		if ( UIUtil.requestFromCopyOperation( ) )
+		{
+			if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.DISASSEMBLER_MODE
+					&& fDisassemblerSourceViewer != null )
+			{
+				return fDisassemblerSourceViewer.getSelectionProvider( );
+			}
+			else if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.BYTE_CODE_MODE
+					&& fByteCodeSourceViewer != null )
+			{
+				return fByteCodeSourceViewer.getSelectionProvider( );
+			}
+		}
+		return super.getSelectionProvider( );
 	}
 
 	private boolean doOpenBuffer( IEditorInput input, boolean force ) throws JavaModelException
@@ -820,6 +843,59 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 	protected void createActions( )
 	{
 		super.createActions( );
+
+		setAction( ITextEditorActionConstants.COPY, null );
+		final IAction copyAction = new Action( ) {
+
+			@Override
+			public void run( )
+			{
+				if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.SOURCE_MODE )
+				{
+					( (SourceViewer) JavaDecompilerClassFileEditor.this.getSourceViewer( ) ).getTextWidget( ).copy( );
+				}
+				else if ( JavaDecompilerPlugin.getDefault( )
+						.getSourceMode( ) == JavaDecompilerPlugin.DISASSEMBLER_MODE )
+				{
+					JavaDecompilerClassFileEditor.this.fDisassemblerSourceViewer.getTextWidget( ).copy( );
+				}
+				else if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.BYTE_CODE_MODE )
+				{
+					JavaDecompilerClassFileEditor.this.fByteCodeSourceViewer.getTextWidget( ).copy( );
+				}
+			}
+		};
+		copyAction.setActionDefinitionId( IWorkbenchCommandConstants.EDIT_COPY );
+		setAction( ITextEditorActionConstants.COPY, copyAction );
+
+		setAction( ITextEditorActionConstants.SELECT_ALL, null );
+		final IAction selectAllAction = new Action( ) {
+
+			@Override
+			public void run( )
+			{
+				if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.SOURCE_MODE )
+				{
+					( (SourceViewer) JavaDecompilerClassFileEditor.this.getSourceViewer( ) ).getTextWidget( )
+							.selectAll( );
+				}
+				else if ( JavaDecompilerPlugin.getDefault( )
+						.getSourceMode( ) == JavaDecompilerPlugin.DISASSEMBLER_MODE )
+				{
+					JavaDecompilerClassFileEditor.this.fDisassemblerSourceViewer.getTextWidget( ).selectAll( );
+				}
+				else if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.BYTE_CODE_MODE )
+				{
+					JavaDecompilerClassFileEditor.this.fByteCodeSourceViewer.getTextWidget( ).selectAll( );
+				}
+			}
+		};
+		selectAllAction.setActionDefinitionId( IWorkbenchCommandConstants.EDIT_SELECT_ALL );
+		setAction( ITextEditorActionConstants.SELECT_ALL, copyAction );
+
+		ReflectionUtils.setFieldValue( this, "fSourceCopyAction", copyAction );
+		ReflectionUtils.setFieldValue( this, "fSelectAllAction", selectAllAction );
+
 		final ActionGroup group = new DecompileActionGroup( this, ITextEditorActionConstants.GROUP_SAVE, true );
 		CompositeActionGroup fContextMenuGroup = (CompositeActionGroup) ReflectionUtils.getFieldValue( this,
 				"fContextMenuGroup" ); //$NON-NLS-1$
@@ -875,6 +951,11 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 						fByteCodeSourceViewer = new ByteCodeSourceViewer( this );
 						fByteCodeSourceViewer.createControl( fParent );
 					}
+					ReflectionUtils.invokeMethod( fByteCodeSourceViewer.getTextWidget( ), "clearSelection", new Class[]{
+							boolean.class
+					}, new Object[]{
+							true
+					} );
 					fStackLayout.topControl = fByteCodeSourceViewer.getControl( );
 					fParent.layout( );
 				}
