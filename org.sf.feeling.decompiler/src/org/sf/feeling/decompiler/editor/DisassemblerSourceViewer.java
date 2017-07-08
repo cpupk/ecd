@@ -63,6 +63,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.internal.texteditor.LineNumberColumn;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
@@ -156,6 +157,12 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 
 		createActions( );
 
+		ReflectionUtils.invokeMethod( this, "initializeSourceViewer", new Class[]{
+				IEditorInput.class
+		}, new Object[]{
+				getEditorInput( )
+		} );
+
 		if ( fSourceViewerDecorationSupport != null )
 			fSourceViewerDecorationSupport.install( getPreferenceStore( ) );
 
@@ -233,16 +240,24 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 			}
 		} );
 
+		updateLinkStyle( );
+
+		return container;
+	}
+
+	private void updateLinkStyle( )
+	{
+		String mark = ( (ByteCodeDocumentProvider) getDocumentProvider( ) ).getMark( );
 		String ad = mark.replaceAll( "/(\\*)+", "" ) //$NON-NLS-1$ //$NON-NLS-2$
 				.replaceAll( "(\\*)+/", "" ) //$NON-NLS-1$ //$NON-NLS-2$
 				.trim( );
 		int length = ad.length( );
 		int offset = mark.indexOf( ad );
 
-		StyleRange textRange = UIUtil.getAdTextStyleRange( styledText, offset, length );
+		StyleRange textRange = UIUtil.getAdTextStyleRange( getTextWidget( ), offset, length );
 		if ( textRange != null )
 		{
-			styledText.setStyleRange( textRange );
+			getTextWidget( ).setStyleRange( textRange );
 		}
 
 		URLHyperlinkDetector detector = new URLHyperlinkDetector( );
@@ -251,16 +266,14 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 		for ( int j = 0; j < links.length; j++ )
 		{
 			IHyperlink link = links[j];
-			StyleRange linkRange = UIUtil.getAdLinkStyleRange( styledText,
+			StyleRange linkRange = UIUtil.getAdLinkStyleRange( getTextWidget( ),
 					link.getHyperlinkRegion( ).getOffset( ),
 					link.getHyperlinkRegion( ).getLength( ) );
 			if ( linkRange != null )
 			{
-				styledText.setStyleRange( linkRange );
+				getTextWidget( ).setStyleRange( linkRange );
 			}
 		}
-
-		return container;
 	}
 
 	private void updateDocument( ByteCodeDocumentProvider provider, ISourceViewer fSourceViewer )
@@ -911,6 +924,7 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 					public void run( )
 					{
 						getSourceViewer( ).invalidateTextPresentation( );
+						updateLinkStyle( );
 						styleChanged = false;
 					}
 				} );
@@ -931,10 +945,28 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 						{
 							setSelectionElement( editor.getSelectedElement( ), true );
 						}
+						updateLinkStyle( );
 						docChanged = false;
 					}
 				} );
 			}
 		}
+	}
+
+	@Override
+	public boolean isDirty( )
+	{
+		return false;
+	}
+
+	public boolean isEditable( )
+	{
+		return false;
+	}
+
+	@Override
+	public boolean isEditorInputReadOnly( )
+	{
+		return true;
 	}
 }

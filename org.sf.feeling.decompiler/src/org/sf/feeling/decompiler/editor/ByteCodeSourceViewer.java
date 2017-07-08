@@ -44,6 +44,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.internal.texteditor.LineNumberColumn;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
@@ -120,6 +121,12 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor
 		getSourceViewerDecorationSupport( fSourceViewer );
 
 		createActions( );
+
+		ReflectionUtils.invokeMethod( this, "initializeSourceViewer", new Class[]{
+				IEditorInput.class
+		}, new Object[]{
+				getEditorInput( )
+		} );
 
 		if ( fSourceViewerDecorationSupport != null )
 			fSourceViewerDecorationSupport.install( getPreferenceStore( ) );
@@ -319,4 +326,20 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor
 		return (IConfigurationElement) ReflectionUtils.invokeMethod( editor, "getConfigurationElement" ); //$NON-NLS-1$
 	}
 
+	@Override
+	public boolean isDirty( )
+	{
+		return false;
+	}
+
+	public boolean isEditable( )
+	{
+		return false;
+	}
+
+	@Override
+	public boolean isEditorInputReadOnly( )
+	{
+		return true;
+	}
 }
