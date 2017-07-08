@@ -9,7 +9,6 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
@@ -122,8 +121,7 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 		stores.add( JavaPlugin.getDefault( ).getPreferenceStore( ) );
 		stores.add( EditorsUI.getPreferenceStore( ) );
 
-		return new ChainedPreferenceStore(
-				(IPreferenceStore[]) stores.toArray( new IPreferenceStore[stores.size( )] ) );
+		return new ChainedPreferenceStore( (IPreferenceStore[]) stores.toArray( new IPreferenceStore[stores.size( )] ) );
 	}
 
 	public Composite createControl( Composite parent )
@@ -189,10 +187,11 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 		getSourceViewerDecorationSupport( fSourceViewer ).install( getPreferenceStore( ) );
 		initializeViewerColors( fSourceViewer );
 		ReflectionUtils.invokeMethod( this, "initializeViewerFont", new Class[]{ //$NON-NLS-1$
-				ISourceViewer.class
-		}, new Object[]{
-				fSourceViewer
-		} );
+					ISourceViewer.class
+				},
+				new Object[]{
+					fSourceViewer
+				} );
 
 		final EditorSelectionChangedListener fEditorSelectionChangedListener = new EditorSelectionChangedListener( );
 		fEditorSelectionChangedListener.install( getSelectionProvider( ) );
@@ -203,15 +202,15 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 		if ( ruler instanceof CompositeRuler )
 			updateContributedRulerColumns( (CompositeRuler) ruler );
 
-		IColumnSupport columnSupport = getAdapter( IColumnSupport.class );
+		IColumnSupport columnSupport = (IColumnSupport) getAdapter( IColumnSupport.class );
 
 		RulerColumnDescriptor lineNumberColumnDescriptor = RulerColumnRegistry.getDefault( )
 				.getColumnDescriptor( LineNumberColumn.ID );
 		if ( lineNumberColumnDescriptor != null )
 			columnSupport.setColumnVisible( lineNumberColumnDescriptor, isLineNumberRulerVisible( ) );
 
-		IPropertyChangeListener fFontPropertyChangeListener = (IPropertyChangeListener) ReflectionUtils
-				.getFieldValue( this, "fFontPropertyChangeListener" ); //$NON-NLS-1$
+		IPropertyChangeListener fFontPropertyChangeListener = (IPropertyChangeListener) ReflectionUtils.getFieldValue( this,
+				"fFontPropertyChangeListener" ); //$NON-NLS-1$
 		JFaceResources.getFontRegistry( ).addListener( fFontPropertyChangeListener );
 
 		JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).addPropertyChangeListener( this );
@@ -221,8 +220,9 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 			@Override
 			public void widgetDisposed( DisposeEvent e )
 			{
-				JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).removePropertyChangeListener(
-						DisassemblerSourceViewer.this );
+				JavaDecompilerPlugin.getDefault( )
+						.getPreferenceStore( )
+						.removePropertyChangeListener( DisassemblerSourceViewer.this );
 				fEditorSelectionChangedListener.uninstall( getSelectionProvider( ) );
 
 				DisassemblerSourceViewer.this.dispose( );
@@ -291,8 +291,8 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 	class JdtSelectionProvider extends SelectionProvider
 	{
 
-		private ListenerList<ISelectionChangedListener> fSelectionListeners = new ListenerList<ISelectionChangedListener>( );
-		private ListenerList<ISelectionChangedListener> fPostSelectionListeners = new ListenerList<ISelectionChangedListener>( );
+		private List<ISelectionChangedListener> fSelectionListeners = new ArrayList<ISelectionChangedListener>( );
+		private List<ISelectionChangedListener> fPostSelectionListeners = new ArrayList<ISelectionChangedListener>( );
 		private ITextSelection fInvalidSelection;
 		private ISelection fValidSelection;
 
@@ -460,8 +460,7 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 
 	private void doHandleCursorPositionChanged( )
 	{
-		IClassFileDocument disassemblerClassDocument = ( (ByteCodeDocumentProvider) getDocumentProvider( ) )
-				.getClassFileDocument( );
+		IClassFileDocument disassemblerClassDocument = ( (ByteCodeDocumentProvider) getDocumentProvider( ) ).getClassFileDocument( );
 		if ( disassemblerClassDocument != null )
 		{
 			/* set selection in the outline */
@@ -473,27 +472,46 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 				int line = disassemblerDocument.getLineOfOffset( selectedRange );
 				ClassFile cf = (ClassFile) ( (IClassFileEditorInput) getEditorInput( ) ).getClassFile( );
 
-				if ( disassemblerClassDocument
-						.isLineInMethod( line - 2/* changed to 0-based */ ) )
+				if ( disassemblerClassDocument.isLineInMethod( line - 2/*
+																		 * changed
+																		 * to
+																		 * 0-based
+																		 */) )
 				{
-					IMethodSection method = disassemblerClassDocument
-							.findMethodSection( line - 2/* changed to 0-based */ );
+					IMethodSection method = disassemblerClassDocument.findMethodSection( line - 2/*
+																								 * changed
+																								 * to
+																								 * 0
+																								 * -
+																								 * based
+																								 */);
 
 					if ( method != null )
 					{
-						IMethod m = ClassFileDocumentsUtils
-								.findMethod( cf.getType( ), method.getName( ), method.getDescriptor( ) );
+						IMethod m = ClassFileDocumentsUtils.findMethod( cf.getType( ),
+								method.getName( ),
+								method.getDescriptor( ) );
 						if ( m != null )
 						{
 							editor.setSelection( m );
 						}
 					}
 				}
-				else if ( disassemblerClassDocument
-						.isLineInField( line - 2/* changed to 0-based */ ) )
+				else if ( disassemblerClassDocument.isLineInField( line - 2/*
+																			 * changed
+																			 * to
+																			 * 0
+																			 * -
+																			 * based
+																			 */) )
 				{
-					IFieldSection field = disassemblerClassDocument
-							.findFieldSection( line - 2 /* changed to 0-based */ );
+					IFieldSection field = disassemblerClassDocument.findFieldSection( line - 2 /*
+																								 * changed
+																								 * to
+																								 * 0
+																								 * -
+																								 * based
+																								 */);
 					if ( field != null )
 					{
 						IField f = cf.getType( ).getField( field.getName( ) );
@@ -588,19 +606,26 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 
 	public void setSelectionElement( ISourceReference selectedElement )
 	{
+		setSelectionElement( selectedElement, false );
+	}
+
+	public void setSelectionElement( ISourceReference selectedElement, boolean force )
+	{
 		final StyledText disassemblerText = getSourceViewer( ).getTextWidget( );
-		OutlineElement disassemblerRootElement = (OutlineElement) ( (ByteCodeDocumentProvider) getDocumentProvider( ) )
-				.getClassFileOutlineElement( );
+		OutlineElement disassemblerRootElement = (OutlineElement) ( (ByteCodeDocumentProvider) getDocumentProvider( ) ).getClassFileOutlineElement( );
 		if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.DISASSEMBLER_MODE
 				&& disassemblerText != null
 				&& !disassemblerText.isDisposed( )
 				&& disassemblerRootElement != null )
 		{
-			if ( UIUtil.requestFromDisassemblerSelection( ) )
-				return;
+			if ( !force )
+			{
+				if ( UIUtil.requestFromDisassemblerSelection( ) )
+					return;
 
-			if ( !UIUtil.requestFromLinkToSelection( ) )
-				return;
+				if ( !UIUtil.requestFromLinkToSelection( ) )
+					return;
+			}
 
 			if ( selectedElement instanceof IMethod
 					|| selectedElement instanceof IField
@@ -643,8 +668,8 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 			{
 				case IJavaElement.CLASS_FILE :
 					lineStartOffset = 0;
-					String header = disassemblerDocument.get( ).substring( 0,
-							disassemblerDocument.get( ).indexOf( "{" ) ); //$NON-NLS-1$
+					String header = disassemblerDocument.get( )
+							.substring( 0, disassemblerDocument.get( ).indexOf( "{" ) ); //$NON-NLS-1$
 					int startIndex = 0;
 					if ( ( startIndex = header.indexOf( "class" ) ) != -1 //$NON-NLS-1$
 							|| ( startIndex = header.indexOf( "enum" ) ) != -1 //$NON-NLS-1$
@@ -678,8 +703,9 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 				elementLength = elementName.length( );
 			}
 
-			disassemblerText.setSelection( lineStartOffset + elementIndex,
-					lineStartOffset + elementIndex + elementLength );
+			disassemblerText.setSelection( lineStartOffset + elementIndex, lineStartOffset
+					+ elementIndex
+					+ elementLength );
 		}
 		catch ( BadLocationException e )
 		{
@@ -907,6 +933,10 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 					public void run( )
 					{
 						updateDocument( (ByteCodeDocumentProvider) getDocumentProvider( ), getSourceViewer( ) );
+						if ( editor.getSelectedElement( ) != null )
+						{
+							setSelectionElement( editor.getSelectedElement( ), true );
+						}
 						docChanged = false;
 					}
 				} );

@@ -89,6 +89,12 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 	private int currentSourceMode = -1;
 	private boolean selectionChange = false;
 	private ISourceReference selectedElement = null;
+	
+	public ISourceReference getSelectedElement( )
+	{
+		return selectedElement;
+	}
+
 	private DisassemblerSourceViewer fDisassemblerSourceViewer;
 	private ByteCodeSourceViewer fByteCodeSourceViewer;
 

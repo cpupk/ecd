@@ -190,7 +190,7 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor
 		if ( ruler instanceof CompositeRuler )
 			updateContributedRulerColumns( (CompositeRuler) ruler );
 
-		IColumnSupport columnSupport = getAdapter( IColumnSupport.class );
+		IColumnSupport columnSupport = (IColumnSupport)getAdapter( IColumnSupport.class );
 
 		RulerColumnDescriptor lineNumberColumnDescriptor = RulerColumnRegistry.getDefault( )
 				.getColumnDescriptor( LineNumberColumn.ID );
