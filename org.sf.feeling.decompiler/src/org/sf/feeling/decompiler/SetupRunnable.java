@@ -14,11 +14,15 @@ package org.sf.feeling.decompiler;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IFileEditorMapping;
+import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -38,10 +42,25 @@ public class SetupRunnable implements Runnable
 	@Override
 	public void run( )
 	{
-		checkDecompilerUpdate( );
-		checkClassFileAssociation( );
-		setupPartListener( );
-		checkDecompilerExtension( );
+		if ( PlatformUI.getWorkbench( ) == null
+				|| PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( ) == null
+				|| PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( ).getActivePage( ) == null )
+		{
+			Display.getDefault( ).timerExec( 1000, new Runnable( ) {
+
+				public void run( )
+				{
+					SetupRunnable.this.run( );
+				}
+			} );
+		}
+		else
+		{
+			checkDecompilerUpdate( );
+			checkClassFileAssociation( );
+			setupPartListener( );
+			checkDecompilerExtension( );
+		}
 	}
 
 	private void checkDecompilerExtension( )
@@ -58,8 +77,7 @@ public class SetupRunnable implements Runnable
 
 	private void setupPartListener( )
 	{
-		IWorkbenchPage page = PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( ).getActivePage( );
-		page.addPartListener( new IPartListener( ) {
+		final IPartListener partListener = new IPartListener( ) {
 
 			@Override
 			public void partOpened( IWorkbenchPart part )
@@ -100,7 +118,93 @@ public class SetupRunnable implements Runnable
 			{
 
 			}
-		} );
+		};
+
+		final IPageListener pageListener = new IPageListener( ) {
+
+			@Override
+			public void pageOpened( IWorkbenchPage page )
+			{
+				page.removePartListener( partListener );
+				page.addPartListener( partListener );
+			}
+
+			@Override
+			public void pageClosed( IWorkbenchPage page )
+			{
+				page.removePartListener( partListener );
+
+			}
+
+			@Override
+			public void pageActivated( IWorkbenchPage page )
+			{
+				page.removePartListener( partListener );
+				page.addPartListener( partListener );
+			}
+		};
+
+		IWindowListener windowListener = new IWindowListener( ) {
+
+			@Override
+			public void windowOpened( IWorkbenchWindow window )
+			{
+				window.removePageListener( pageListener );
+				window.addPageListener( pageListener );
+				IWorkbenchPage[] pages = window.getPages( );
+				if ( pages != null )
+				{
+					for ( int i = 0; i < pages.length; i++ )
+					{
+						pages[i].removePartListener( partListener );
+						pages[i].addPartListener( partListener );
+					}
+				}
+			}
+
+			@Override
+			public void windowDeactivated( IWorkbenchWindow window )
+			{
+				window.removePageListener( pageListener );
+			}
+
+			@Override
+			public void windowClosed( IWorkbenchWindow window )
+			{
+				window.removePageListener( pageListener );
+			}
+
+			@Override
+			public void windowActivated( IWorkbenchWindow window )
+			{
+				window.removePageListener( pageListener );
+				window.addPageListener( pageListener );
+				IWorkbenchPage[] pages = window.getPages( );
+				if ( pages != null )
+				{
+					for ( int i = 0; i < pages.length; i++ )
+					{
+						pages[i].removePartListener( partListener );
+						pages[i].addPartListener( partListener );
+					}
+				}
+			}
+		};
+
+		IWorkbenchPage page = PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( ).getActivePage( );
+		if ( page == null )
+		{
+			return;
+		}
+
+		page.removePartListener( partListener );
+		page.addPartListener( partListener );
+
+		PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( ).removePageListener( pageListener );
+		PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( ).addPageListener( pageListener );
+
+		PlatformUI.getWorkbench( ).removeWindowListener( windowListener );
+		PlatformUI.getWorkbench( ).addWindowListener( windowListener );
 	}
 
 	private void checkDecompilerUpdate( )
