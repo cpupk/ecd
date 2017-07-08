@@ -85,7 +85,7 @@ public class DisassemblerPreferencePage extends FieldEditorPreferencePage implem
 	protected void createFieldEditors( )
 	{
 		basicGroup = new Group( getFieldEditorParent( ), SWT.NONE );
-		basicGroup.setText( Messages.getString( "JavaDecompilerPreferencePage.Label.DisassemblerSettings" ) ); //$NON-NLS-1$
+		basicGroup.setText( Messages.getString( "DisassemblerPreferencePage.Label.DisassemblerSettings" ) ); //$NON-NLS-1$
 		GridData gd = new GridData( GridData.FILL_HORIZONTAL );
 		basicGroup.setLayoutData( gd );
 
