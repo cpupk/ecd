@@ -33,6 +33,7 @@ import org.sf.feeling.decompiler.extension.DecompilerAdapterManager;
 import org.sf.feeling.decompiler.extension.IDecompilerExtensionHandler;
 import org.sf.feeling.decompiler.update.IDecompilerUpdateHandler;
 import org.sf.feeling.decompiler.util.ClassUtil;
+import org.sf.feeling.decompiler.util.Logger;
 import org.sf.feeling.decompiler.util.MarkUtil;
 import org.sf.feeling.decompiler.util.ReflectionUtils;
 
@@ -42,24 +43,31 @@ public class SetupRunnable implements Runnable
 	@Override
 	public void run( )
 	{
-		if ( PlatformUI.getWorkbench( ) == null
-				|| PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( ) == null
-				|| PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( ).getActivePage( ) == null )
+		try
 		{
-			Display.getDefault( ).timerExec( 1000, new Runnable( ) {
+			if ( PlatformUI.getWorkbench( ) == null
+					|| PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( ) == null
+					|| PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( ).getActivePage( ) == null )
+			{
+				Display.getDefault( ).timerExec( 1000, new Runnable( ) {
 
-				public void run( )
-				{
-					SetupRunnable.this.run( );
-				}
-			} );
+					public void run( )
+					{
+						SetupRunnable.this.run( );
+					}
+				} );
+			}
+			else
+			{
+				checkDecompilerUpdate( );
+				checkClassFileAssociation( );
+				setupPartListener( );
+				checkDecompilerExtension( );
+			}
 		}
-		else
+		catch ( Throwable e )
 		{
-			checkDecompilerUpdate( );
-			checkClassFileAssociation( );
-			setupPartListener( );
-			checkDecompilerExtension( );
+			Logger.debug( e );
 		}
 	}
 
