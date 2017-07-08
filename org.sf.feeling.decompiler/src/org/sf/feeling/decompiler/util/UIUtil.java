@@ -453,8 +453,7 @@ public class UIUtil
 		StackTraceElement[] stacks = Thread.currentThread( ).getStackTrace( );
 		for ( int i = 0; i < stacks.length && i < 10; i++ )
 		{
-			if ( stacks[i].getClassName( ).indexOf( "JavaDecompilerClassFileEditor" ) != -1 //$NON-NLS-1$
-					&& stacks[i].getMethodName( ).equals( "doHandleCursorPositionChanged" ) ) //$NON-NLS-1$
+			if ( stacks[i].getMethodName( ).equals( "doHandleCursorPositionChanged" ) ) //$NON-NLS-1$
 				return true;
 		}
 		return false;
@@ -764,5 +763,17 @@ public class UIUtil
 				null );
 		range.font = textWidget.getFont( );
 		return range;
+	}
+
+	public static boolean requestFromLinkToSelection( )
+	{
+		StackTraceElement[] stacks = Thread.currentThread( ).getStackTrace( );
+		for ( int i = 0; i < stacks.length && i < 10; i++ )
+		{
+			if ( stacks[i].getMethodName( ).equals( "linkToEditor" ) //$NON-NLS-1$
+					|| stacks[i].getMethodName( ).equals( "showSource" ) ) //$NON-NLS-1$
+				return true;
+		}
+		return false;
 	}
 }

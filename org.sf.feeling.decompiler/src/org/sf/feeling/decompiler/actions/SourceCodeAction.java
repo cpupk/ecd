@@ -19,20 +19,20 @@ import org.sf.feeling.decompiler.editor.JavaDecompilerClassFileEditor;
 import org.sf.feeling.decompiler.i18n.Messages;
 import org.sf.feeling.decompiler.util.UIUtil;
 
-public class ByteCodeAction extends Action implements IUpdate
+public class SourceCodeAction extends Action implements IUpdate
 {
 
-	public static final String ID = "ByteCode"; //$NON-NLS-1$
+	public static final String ID = "SourceCode"; //$NON-NLS-1$
 
-	public ByteCodeAction( )
+	public SourceCodeAction( )
 	{
-		super( Messages.getString( "JavaDecompilerActionBarContributor.Action.ByteCode" ), AS_CHECK_BOX ); //$NON-NLS-1$
+		super( Messages.getString( "JavaDecompilerActionBarContributor.Action.SourceCode" ), AS_CHECK_BOX ); //$NON-NLS-1$
 	}
 
 	@Override
 	public void run( )
 	{
-		JavaDecompilerPlugin.getDefault( ).setSourceMode( JavaDecompilerPlugin.BYTE_CODE_MODE );
+		JavaDecompilerPlugin.getDefault( ).setSourceMode( JavaDecompilerPlugin.SOURCE_MODE );
 		setChecked( true );
 		final JavaDecompilerClassFileEditor editor = UIUtil.getActiveEditor( );
 		if ( editor != null )
@@ -58,7 +58,7 @@ public class ByteCodeAction extends Action implements IUpdate
 
 	public boolean isChecked( )
 	{
-		return JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.BYTE_CODE_MODE;
+		return JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.SOURCE_MODE;
 	}
 
 	@Override

@@ -11,43 +11,42 @@
 
 package org.sf.feeling.decompiler.actions;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.core.runtime.PerformanceStats;
 import org.eclipse.jdt.core.ITypeRoot;
 import org.eclipse.jdt.internal.ui.actions.ActionUtil;
-import org.eclipse.jdt.internal.ui.javaeditor.JavaTextSelection;
 import org.eclipse.jdt.ui.IContextMenuConstants;
 import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.jdt.ui.actions.SelectionDispatchAction;
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.swt.events.MenuAdapter;
-import org.eclipse.swt.events.MenuEvent;
-import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.part.Page;
+import org.eclipse.ui.texteditor.IUpdate;
 import org.sf.feeling.decompiler.editor.JavaDecompilerClassFileEditor;
 import org.sf.feeling.decompiler.i18n.Messages;
 
 public class DecompileActionGroup extends ActionGroup
 {
 
-	public static final String MENU_ID = "org.sf.feeling.decompiler.menu"; //$NON-NLS-1$
+	public static final String MENU_MAIN = "org.sf.feeling.decompiler.main"; //$NON-NLS-1$
+
+	public static final String MENU_SOURCE = "org.sf.feeling.decompiler.source"; //$NON-NLS-1$
 
 	private static final String PERF_DECOMPILE_ACTION_GROUP = "org.sf.feeling.decompiler/perf/DecompileActionGroup"; //$NON-NLS-1$
 
-	private static final String QUICK_MENU_ID = "org.sf.feeling.decompiler.quickMenu"; //$NON-NLS-1$
+	private static final String QUICK_MENU_MAIN = "org.sf.feeling.decompiler.main.quickMenu"; //$NON-NLS-1$
 
-	private final List<SelectionDispatchAction> fActions = new ArrayList<SelectionDispatchAction>( );
+	private static final String QUICK_MENU_SOURCE = "org.sf.feeling.decompiler.source.quickMenu"; //$NON-NLS-1$
 
 	private String fGroupName = IContextMenuConstants.GROUP_REORGANIZE;
 
@@ -87,7 +86,8 @@ public class DecompileActionGroup extends ActionGroup
 	public void fillContextMenu( IMenuManager menu )
 	{
 		super.fillContextMenu( menu );
-		addDecompileSubmenu( menu );
+		addSourceSubmenu( menu );
+		addMainSubmenu( menu );
 	}
 
 	/*
@@ -99,72 +99,76 @@ public class DecompileActionGroup extends ActionGroup
 		super.dispose( );
 	}
 
-	private void addDecompileSubmenu( IMenuManager menu )
+	private void addMainSubmenu( IMenuManager menu )
 	{
-		MenuManager decompileSubmenu = new MenuManager(
+		MenuManager mainSubmenu = new MenuManager(
 				Messages.getString( "JavaDecompilerActionBarContributor.Menu.Decompiler" ), //$NON-NLS-1$
-				MENU_ID );
-		decompileSubmenu.setActionDefinitionId( QUICK_MENU_ID );
+				MENU_MAIN );
+		mainSubmenu.setActionDefinitionId( QUICK_MENU_MAIN );
 		if ( fEditor != null )
 		{
 			final ITypeRoot element = getEditorInput( );
 			if ( element != null && ActionUtil.isOnBuildPath( element ) )
 			{
-				decompileSubmenu.addMenuListener( new IMenuListener( ) {
+				mainSubmenu.addMenuListener( new IMenuListener( ) {
 
 					@Override
 					public void menuAboutToShow( IMenuManager manager )
 					{
-						decompileMenuShown( manager );
+						showMenu( manager );
 					}
 				} );
-				menu.appendToGroup( fGroupName, decompileSubmenu );
+				menu.appendToGroup( fGroupName, new Separator( ) );
+				menu.appendToGroup( fGroupName, mainSubmenu );
+				menu.appendToGroup( fGroupName, new Separator( ) );
 			}
 		}
 	}
 
-	private void decompileMenuShown( IMenuManager decompileSubmenu )
+	private void addSourceSubmenu( IMenuManager menu )
 	{
-		Menu menu = ( (MenuManager) decompileSubmenu ).getMenu( );
-		menu.addMenuListener( new MenuAdapter( ) {
-
-			@Override
-			public void menuHidden( MenuEvent e )
+		MenuManager sourceSubmenu = new MenuManager(
+				Messages.getString( "JavaDecompilerActionBarContributor.Menu.Source" ), //$NON-NLS-1$
+				MENU_SOURCE );
+		sourceSubmenu.setActionDefinitionId( QUICK_MENU_SOURCE );
+		if ( fEditor != null )
+		{
+			final ITypeRoot element = getEditorInput( );
+			if ( element != null && ActionUtil.isOnBuildPath( element ) )
 			{
-				decompileMenuHidden( );
-			}
-		} );
-		ITextSelection textSelection = (ITextSelection) fEditor.getSelectionProvider( ).getSelection( );
-		JavaTextSelection javaSelection = new JavaTextSelection( getEditorInput( ),
-				getDocument( ),
-				textSelection.getOffset( ),
-				textSelection.getLength( ) );
+				sourceSubmenu.addMenuListener( new IMenuListener( ) {
 
-		for ( Iterator<SelectionDispatchAction> iter = fActions.iterator( ); iter.hasNext( ); )
-		{
-			SelectionDispatchAction action = iter.next( );
-			action.update( javaSelection );
+					@Override
+					public void menuAboutToShow( IMenuManager manager )
+					{
+						showMenu( manager );
+					}
+				} );
+				menu.appendToGroup( fGroupName, new Separator( ) );
+				menu.appendToGroup( fGroupName, sourceSubmenu );
+				menu.appendToGroup( fGroupName, new Separator( ) );
+			}
 		}
-		decompileSubmenu.removeAll( );
 	}
 
-	private void decompileMenuHidden( )
+	private void showMenu( IMenuManager submenu )
 	{
-		ITextSelection textSelection = (ITextSelection) fEditor.getSelectionProvider( ).getSelection( );
-		for ( Iterator<SelectionDispatchAction> iter = fActions.iterator( ); iter.hasNext( ); )
+		for ( Iterator<IContributionItem> iter = Arrays.asList( submenu.getItems( ) ).iterator( ); iter.hasNext( ); )
 		{
-			SelectionDispatchAction action = iter.next( );
-			action.update( textSelection );
+			IContributionItem item = iter.next( );
+			if ( item instanceof ActionContributionItem )
+			{
+				IAction action = ( (ActionContributionItem) item ).getAction( );
+				if ( action instanceof IUpdate )
+				{
+					( (IUpdate) action ).update( );
+				}
+			}
 		}
 	}
 
 	private ITypeRoot getEditorInput( )
 	{
 		return JavaUI.getEditorInputTypeRoot( fEditor.getEditorInput( ) );
-	}
-
-	private IDocument getDocument( )
-	{
-		return JavaUI.getDocumentProvider( ).getDocument( fEditor.getEditorInput( ) );
 	}
 }

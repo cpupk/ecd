@@ -12,13 +12,18 @@
 package org.sf.feeling.decompiler.editor;
 
 import java.util.List;
+import java.util.Map;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.text.AbstractJavaScanner;
 import org.eclipse.jdt.internal.ui.text.JavaCommentScanner;
 import org.eclipse.jdt.internal.ui.text.JavaPresentationReconciler;
 import org.eclipse.jdt.internal.ui.text.SingleTokenJavaScanner;
 import org.eclipse.jdt.internal.ui.text.java.JavaDoubleClickSelector;
+import org.eclipse.jdt.internal.ui.text.java.hover.JavaEditorTextHoverDescriptor;
+import org.eclipse.jdt.internal.ui.text.java.hover.JavaEditorTextHoverProxy;
 import org.eclipse.jdt.ui.text.IColorManager;
 import org.eclipse.jdt.ui.text.IJavaColorConstants;
 import org.eclipse.jdt.ui.text.IJavaPartitions;
@@ -28,6 +33,7 @@ import org.eclipse.jface.text.DefaultTextDoubleClickStrategy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextDoubleClickStrategy;
+import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
@@ -97,6 +103,49 @@ public class DisassemblerConfiguration extends TextSourceViewerConfiguration
 		fTextEditor = editor;
 		fDocumentPartitioning = partitioning;
 		initializeScanners( );
+	}
+
+	public int[] getConfiguredTextHoverStateMasks( ISourceViewer sourceViewer, String contentType )
+	{
+		JavaEditorTextHoverDescriptor[] hoverDescs = JavaPlugin.getDefault( ).getJavaEditorTextHoverDescriptors( );
+		int stateMasks[] = new int[hoverDescs.length];
+		int stateMasksLength = 0;
+		for ( int i = 0; i < hoverDescs.length; i++ )
+		{
+			if ( hoverDescs[i].isEnabled( ) )
+			{
+				int j = 0;
+				int stateMask = hoverDescs[i].getStateMask( );
+				while ( j < stateMasksLength )
+				{
+					if ( stateMasks[j] == stateMask )
+						break;
+					j++;
+				}
+				if ( j == stateMasksLength )
+					stateMasks[stateMasksLength++] = stateMask;
+			}
+		}
+		if ( stateMasksLength == hoverDescs.length )
+			return stateMasks;
+
+		int[] shortenedStateMasks = new int[stateMasksLength];
+		System.arraycopy( stateMasks, 0, shortenedStateMasks, 0, stateMasksLength );
+		return shortenedStateMasks;
+	}
+
+	public ITextHover getTextHover( ISourceViewer sourceViewer, String contentType, int stateMask )
+	{
+		JavaEditorTextHoverDescriptor[] hoverDescs = JavaPlugin.getDefault( ).getJavaEditorTextHoverDescriptors( );
+		int i = 0;
+		while ( i < hoverDescs.length )
+		{
+			if ( hoverDescs[i].isEnabled( ) && hoverDescs[i].getStateMask( ) == stateMask )
+				return new JavaEditorTextHoverProxy( hoverDescs[i], fTextEditor );
+			i++;
+		}
+
+		return null;
 	}
 
 	/**
@@ -330,14 +379,14 @@ public class DisassemblerConfiguration extends TextSourceViewerConfiguration
 				return null;
 			}
 
-			if ( lineText.contains( "goto" ) || lineText.contains( "if" ) )
+			if ( lineText.contains( "goto" ) || lineText.contains( "if" ) ) //$NON-NLS-1$ //$NON-NLS-2$
 			{
 				/*
 				 * mark a complete instruction as hyperlink "12 goto 23;" ->goto
 				 * 23
 				 */
-				int begin = lineText.indexOf( " ", 7 );
-				int end = lineText.indexOf( ";" );
+				int begin = lineText.indexOf( " ", 7 ); //$NON-NLS-1$
+				int end = lineText.indexOf( ";" ); //$NON-NLS-1$
 				if ( end < 0
 						|| begin < 0
 						|| end == begin + 1
@@ -351,10 +400,10 @@ public class DisassemblerConfiguration extends TextSourceViewerConfiguration
 						new ClassFileLocalHyperLink( r2, linkText, lineNumber )
 				};
 			}
-			else if ( lineText.contains( "/* ." ) )
+			else if ( lineText.contains( "/* ." ) ) //$NON-NLS-1$
 			{
-				int begin = lineText.indexOf( "/* ." ) + 2;
-				int end = lineText.indexOf( "*/" ) - 1;
+				int begin = lineText.indexOf( "/* ." ) + 2; //$NON-NLS-1$
+				int end = lineText.indexOf( "*/" ) - 1; //$NON-NLS-1$
 				if ( end < 0
 						|| begin < 0
 						|| end == begin + 1
@@ -463,7 +512,7 @@ public class DisassemblerConfiguration extends TextSourceViewerConfiguration
 		public void open( )
 		{
 
-			BytecodeDocumentProvider bdp = (BytecodeDocumentProvider) fTextEditor.getDocumentProvider( );
+			ByteCodeDocumentProvider bdp = (ByteCodeDocumentProvider) fTextEditor.getDocumentProvider( );
 			IMethodSection method = bdp.getClassFileDocument( ).findMethodSection( lineNumber );
 			List<IInstructionLine> instructions = method.getInstructionLines( );
 
@@ -581,7 +630,7 @@ public class DisassemblerConfiguration extends TextSourceViewerConfiguration
 		public void open( )
 		{
 
-			BytecodeDocumentProvider bdp = (BytecodeDocumentProvider) fTextEditor.getDocumentProvider( );
+			ByteCodeDocumentProvider bdp = (ByteCodeDocumentProvider) fTextEditor.getDocumentProvider( );
 			IFieldSection field = bdp.getClassFileDocument( ).findFieldSection( text );
 
 			IDocument document = fTextEditor.getDocumentProvider( ).getDocument( fTextEditor.getEditorInput( ) );
@@ -594,7 +643,7 @@ public class DisassemblerConfiguration extends TextSourceViewerConfiguration
 				destLength = document.getLineLength( field.getBytecodeDocumentLine( ) );
 
 				String lineString = document.get( destOffset, destLength );
-				elementIndex = lineString.indexOf( " " + text + ";" ) + 1;
+				elementIndex = lineString.indexOf( " " + text + ";" ) + 1; //$NON-NLS-1$ //$NON-NLS-2$
 				elementLength = text.length( );
 
 			}
@@ -605,6 +654,12 @@ public class DisassemblerConfiguration extends TextSourceViewerConfiguration
 
 			fTextEditor.selectAndReveal( destOffset + elementIndex, elementLength );
 		}
+	}
 
+	protected Map<String, IAdaptable> getHyperlinkDetectorTargets( ISourceViewer sourceViewer )
+	{
+		Map<String, IAdaptable> targets = super.getHyperlinkDetectorTargets( sourceViewer );
+		targets.put( "org.eclipse.jdt.ui.javaCode", fTextEditor ); //$NON-NLS-1$
+		return targets;
 	}
 }

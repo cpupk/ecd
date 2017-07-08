@@ -310,7 +310,7 @@ public final class RenderedBytecodeScanner extends AbstractJavaScanner implement
 
 		/* character constants */
 		Token token = getToken( IJavaColorConstants.JAVA_STRING );
-		rules.add( new SingleLineRule( "'", "'", token, '\\' ) );
+		rules.add( new SingleLineRule( "'", "'", token, '\\' ) ); //$NON-NLS-1$ //$NON-NLS-2$
 
 		/* whitespace */
 		rules.add( new WhitespaceRule( new WhitespaceDetector( ) ) );

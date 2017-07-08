@@ -32,6 +32,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.editors.text.FileDocumentProvider;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.sf.feeling.decompiler.util.Logger;
+import org.sf.feeling.decompiler.util.UIUtil;
 
 import com.drgarbage.asm.ClassReader;
 import com.drgarbage.asm.render.impl.ClassFileDocument;
@@ -39,7 +40,7 @@ import com.drgarbage.asm.render.impl.ClassFileOutlineElement;
 import com.drgarbage.asm.render.intf.IClassFileDocument;
 import com.drgarbage.asm.render.intf.IDocumentUpdateListener;
 
-public class BytecodeDocumentProvider extends FileDocumentProvider
+public class ByteCodeDocumentProvider extends FileDocumentProvider
 {
 
 	/**
@@ -59,15 +60,25 @@ public class BytecodeDocumentProvider extends FileDocumentProvider
 	 */
 	private ArrayList<IDocumentUpdateListener> documentUpdateListeners;
 
+	private String mark;
+
+	public String getMark( )
+	{
+		return mark;
+	}
+
 	/**
 	 * Constructor.
+	 * 
+	 * @param mark
 	 * 
 	 * @param part
 	 *            bytecode editor
 	 */
-	public BytecodeDocumentProvider( )
+	public ByteCodeDocumentProvider( String mark )
 	{
 		super( );
+		this.mark = mark;
 	}
 
 	/**
@@ -156,7 +167,7 @@ public class BytecodeDocumentProvider extends FileDocumentProvider
 	 */
 	protected IDocument createEmptyDocument( )
 	{
-		return new BytecodeDocument( this );
+		return new ByteCodeDocument( this, UIUtil.getActiveDecompilerEditor( ) );
 	}
 
 	/*
@@ -187,7 +198,7 @@ public class BytecodeDocumentProvider extends FileDocumentProvider
 			ClassReader cr = new ClassReader( in, doc );
 			cr.accept( doc, 0 );
 
-			document.set( doc.toString( ) );
+			document.set( mark + "\n\n" + doc.toString( ) ); //$NON-NLS-1$
 
 			classFileDocument = doc;
 			classFileOutlineElement = outlineElement;

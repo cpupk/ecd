@@ -13,13 +13,16 @@ package org.sf.feeling.decompiler.actions;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.texteditor.IUpdate;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.editor.JavaDecompilerClassFileEditor;
 import org.sf.feeling.decompiler.i18n.Messages;
 import org.sf.feeling.decompiler.util.UIUtil;
 
-public class DisassemblerAction extends Action
+public class DisassemblerAction extends Action implements IUpdate
 {
+
+	public static final String ID = "Disassembler"; //$NON-NLS-1$
 
 	public DisassemblerAction( )
 	{
@@ -29,8 +32,8 @@ public class DisassemblerAction extends Action
 	@Override
 	public void run( )
 	{
-		JavaDecompilerPlugin.getDefault( ).setSourceMode(
-				!isChecked( ) ? JavaDecompilerPlugin.DISASSEMBLER_MODE : JavaDecompilerPlugin.SOURCE_MODE );
+		JavaDecompilerPlugin.getDefault( ).setSourceMode( JavaDecompilerPlugin.DISASSEMBLER_MODE );
+		setChecked( true );
 		final JavaDecompilerClassFileEditor editor = UIUtil.getActiveEditor( );
 		if ( editor != null )
 		{
@@ -56,5 +59,10 @@ public class DisassemblerAction extends Action
 	public boolean isChecked( )
 	{
 		return JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.DISASSEMBLER_MODE;
+	}
+
+	public void update( )
+	{
+		setChecked( isChecked( ) );
 	}
 }
