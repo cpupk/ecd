@@ -89,7 +89,10 @@ public class DecompilerUpdatePlugin extends AbstractUIPlugin implements IPropert
 		super.start( context );
 		plugin = this;
 		getPreferenceStore( ).addPropertyChangeListener( this );
-		PlatformUI.getWorkbench( ).addWindowListener( windowListener );
+		if ( PlatformUI.getWorkbench( ) != null )
+		{
+			PlatformUI.getWorkbench( ).addWindowListener( windowListener );
+		}
 	}
 
 	@Override
@@ -112,6 +115,7 @@ public class DecompilerUpdatePlugin extends AbstractUIPlugin implements IPropert
 	@Override
 	public void stop( BundleContext context ) throws Exception
 	{
+		getPreferenceStore( ).removePropertyChangeListener( this );
 		if ( PlatformUI.getWorkbench( ) != null )
 		{
 			PlatformUI.getWorkbench( ).removeWindowListener( windowListener );

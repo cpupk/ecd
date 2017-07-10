@@ -19,6 +19,8 @@ import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IFileEditorMapping;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -28,6 +30,7 @@ import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.registry.FileEditorMapping;
+import org.sf.feeling.decompiler.actions.DecompileAction;
 import org.sf.feeling.decompiler.editor.JavaDecompilerClassFileEditor;
 import org.sf.feeling.decompiler.extension.DecompilerAdapterManager;
 import org.sf.feeling.decompiler.extension.IDecompilerExtensionHandler;
@@ -36,6 +39,7 @@ import org.sf.feeling.decompiler.util.ClassUtil;
 import org.sf.feeling.decompiler.util.Logger;
 import org.sf.feeling.decompiler.util.MarkUtil;
 import org.sf.feeling.decompiler.util.ReflectionUtils;
+import org.sf.feeling.decompiler.util.UIUtil;
 
 public class SetupRunnable implements Runnable
 {
@@ -85,6 +89,23 @@ public class SetupRunnable implements Runnable
 
 	private void setupPartListener( )
 	{
+		final IPerspectiveListener perspectiveListener = new IPerspectiveListener( ) {
+
+			@Override
+			public void perspectiveChanged( IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId )
+			{
+			}
+
+			@Override
+			public void perspectiveActivated( IWorkbenchPage page, IPerspectiveDescriptor perspective )
+			{
+				if ( UIUtil.isDebugPerspective( ) )
+				{
+					new DecompileAction( ).run( );
+				}
+			}
+		};
+
 		final IPartListener partListener = new IPartListener( ) {
 
 			@Override
@@ -159,6 +180,8 @@ public class SetupRunnable implements Runnable
 			{
 				window.removePageListener( pageListener );
 				window.addPageListener( pageListener );
+				window.removePerspectiveListener( perspectiveListener );
+				window.addPerspectiveListener( perspectiveListener );
 				IWorkbenchPage[] pages = window.getPages( );
 				if ( pages != null )
 				{
@@ -174,12 +197,14 @@ public class SetupRunnable implements Runnable
 			public void windowDeactivated( IWorkbenchWindow window )
 			{
 				window.removePageListener( pageListener );
+				window.removePerspectiveListener( perspectiveListener );
 			}
 
 			@Override
 			public void windowClosed( IWorkbenchWindow window )
 			{
 				window.removePageListener( pageListener );
+				window.removePerspectiveListener( perspectiveListener );
 			}
 
 			@Override
@@ -187,6 +212,8 @@ public class SetupRunnable implements Runnable
 			{
 				window.removePageListener( pageListener );
 				window.addPageListener( pageListener );
+				window.removePerspectiveListener( perspectiveListener );
+				window.addPerspectiveListener( perspectiveListener );
 				IWorkbenchPage[] pages = window.getPages( );
 				if ( pages != null )
 				{
@@ -199,6 +226,25 @@ public class SetupRunnable implements Runnable
 			}
 		};
 
+		if ( PlatformUI.getWorkbench( ) == null )
+		{
+			return;
+		}
+
+		PlatformUI.getWorkbench( ).removeWindowListener( windowListener );
+		PlatformUI.getWorkbench( ).addWindowListener( windowListener );
+
+		if ( PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( ) == null )
+		{
+			return;
+		}
+
+		PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( ).removePageListener( pageListener );
+		PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( ).addPageListener( pageListener );
+
+		PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( ).removePerspectiveListener( perspectiveListener );
+		PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( ).addPerspectiveListener( perspectiveListener );
+
 		IWorkbenchPage page = PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( ).getActivePage( );
 		if ( page == null )
 		{
@@ -207,12 +253,6 @@ public class SetupRunnable implements Runnable
 
 		page.removePartListener( partListener );
 		page.addPartListener( partListener );
-
-		PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( ).removePageListener( pageListener );
-		PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( ).addPageListener( pageListener );
-
-		PlatformUI.getWorkbench( ).removeWindowListener( windowListener );
-		PlatformUI.getWorkbench( ).addWindowListener( windowListener );
 	}
 
 	private void checkDecompilerUpdate( )

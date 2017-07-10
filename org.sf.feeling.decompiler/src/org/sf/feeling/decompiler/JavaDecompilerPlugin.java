@@ -41,14 +41,9 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.IPerspectiveListener;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 import org.sf.feeling.decompiler.actions.DebugModeAction;
-import org.sf.feeling.decompiler.actions.DecompileAction;
 import org.sf.feeling.decompiler.editor.DecompilerType;
 import org.sf.feeling.decompiler.editor.IDecompilerDescriptor;
 import org.sf.feeling.decompiler.editor.JavaDecompilerBufferManager;
@@ -86,7 +81,7 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 	public static final String CHECK_UPDATE = "org.sf.feeling.decompiler.check_update"; //$NON-NLS-1$ ;
 	public static final String EXPORT_ENCODING = "org.sf.feeling.decompiler.export.encoding"; //$NON-NLS-1$ ;
 	public static final String ATTACH_SOURCE = "org.sf.feeling.decompiler.attach_source"; //$NON-NLS-1$ ;
-	
+
 	public static final String bytecodeMnemonicPreferencesPrefix = "BYTECODEMNEMONIC_"; //$NON-NLS-1$
 	public static final String BYTECODE_MNEMONIC = bytecodeMnemonicPreferencesPrefix + "bytecodeMnemonic"; //$NON-NLS-1$
 	public static final String BYTECODE_MNEMONIC_BOLD = bytecodeMnemonicPreferencesPrefix + "bytecodeMnemonic_bold"; //$NON-NLS-1$
@@ -95,18 +90,24 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 			+ "bytecodeMnemonic_strikethrough"; //$NON-NLS-1$
 	public static final String BYTECODE_MNEMONIC_UNDERLINE = bytecodeMnemonicPreferencesPrefix
 			+ "bytecodeMnemonic_underline"; //$NON-NLS-1$
-	
+
 	public static final String classFileAttributePreferencesPrefix = "CLASS_FILE_ATTR_"; //$NON-NLS-1$
-	public static final String CLASS_FILE_ATTR_SHOW_CONSTANT_POOL = classFileAttributePreferencesPrefix + "show_constantPool"; //$NON-NLS-1$
-	public static final String CLASS_FILE_ATTR_SHOW_LINE_NUMBER_TABLE = classFileAttributePreferencesPrefix + "show_lineNumberTable"; //$NON-NLS-1$
-	public static final String CLASS_FILE_ATTR_SHOW_VARIABLE_TABLE = classFileAttributePreferencesPrefix + "show_localVariableTable"; //$NON-NLS-1$
-	public static final String CLASS_FILE_ATTR_SHOW_EXCEPTION_TABLE = classFileAttributePreferencesPrefix + "show_exceptionTable"; //$NON-NLS-1$
+	public static final String CLASS_FILE_ATTR_SHOW_CONSTANT_POOL = classFileAttributePreferencesPrefix
+			+ "show_constantPool"; //$NON-NLS-1$
+	public static final String CLASS_FILE_ATTR_SHOW_LINE_NUMBER_TABLE = classFileAttributePreferencesPrefix
+			+ "show_lineNumberTable"; //$NON-NLS-1$
+	public static final String CLASS_FILE_ATTR_SHOW_VARIABLE_TABLE = classFileAttributePreferencesPrefix
+			+ "show_localVariableTable"; //$NON-NLS-1$
+	public static final String CLASS_FILE_ATTR_SHOW_EXCEPTION_TABLE = classFileAttributePreferencesPrefix
+			+ "show_exceptionTable"; //$NON-NLS-1$
 	public static final String CLASS_FILE_ATTR_SHOW_MAXS = classFileAttributePreferencesPrefix + "show_maxs"; //$NON-NLS-1$
-	public static final String CLASS_FILE_ATTR_RENDER_TRYCATCH_BLOCKS = classFileAttributePreferencesPrefix + "render_tryCatchBlocks"; //$NON-NLS-1$
-	public static final String CLASS_FILE_ATTR_SHOW_SOURCE_LINE_NUMBERS = classFileAttributePreferencesPrefix + "render_sourceLineNumbers"; //$NON-NLS-1$
+	public static final String CLASS_FILE_ATTR_RENDER_TRYCATCH_BLOCKS = classFileAttributePreferencesPrefix
+			+ "render_tryCatchBlocks"; //$NON-NLS-1$
+	public static final String CLASS_FILE_ATTR_SHOW_SOURCE_LINE_NUMBERS = classFileAttributePreferencesPrefix
+			+ "render_sourceLineNumbers"; //$NON-NLS-1$
 	public static final String BRANCH_TARGET_ADDRESS_RENDERING = "BRANCH_TARGET_ADDRESS_RENDERING"; //$NON-NLS-1$
-	public static final String BRANCH_TARGET_ADDRESS_ABSOLUTE = BRANCH_TARGET_ADDRESS_RENDERING +"_ABSOLUTE"; //$NON-NLS-1$
-	public static final String BRANCH_TARGET_ADDRESS_RELATIVE = BRANCH_TARGET_ADDRESS_RENDERING +"_RELATIVE"; //$NON-NLS-1$
+	public static final String BRANCH_TARGET_ADDRESS_ABSOLUTE = BRANCH_TARGET_ADDRESS_RENDERING + "_ABSOLUTE"; //$NON-NLS-1$
+	public static final String BRANCH_TARGET_ADDRESS_RELATIVE = BRANCH_TARGET_ADDRESS_RENDERING + "_RELATIVE"; //$NON-NLS-1$
 
 	private static JavaDecompilerPlugin plugin;
 
@@ -116,33 +117,13 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 	private AtomicInteger adClickCount = new AtomicInteger( 0 );
 
 	private boolean isDebugMode = false;
-	
+
 	public static final int SOURCE_MODE = 0;
 	public static final int BYTE_CODE_MODE = 1;
 	public static final int DISASSEMBLER_MODE = 2;
-	
-	
+
 	private int sourceMode = 0;
 	private boolean enableExtension = false;
-	
-	
-
-	private IPerspectiveListener perspectiveListener = new IPerspectiveListener( ) {
-
-		@Override
-		public void perspectiveChanged( IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId )
-		{
-		}
-
-		@Override
-		public void perspectiveActivated( IWorkbenchPage page, IPerspectiveDescriptor perspective )
-		{
-			if ( UIUtil.isDebugPerspective( ) )
-			{
-				new DecompileAction( ).run( );
-			}
-		}
-	};
 
 	private IBreakpointListener breakpintListener = new IBreakpointListener( ) {
 
@@ -335,22 +316,22 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 		store.setDefault( DECOMPILE_COUNT, 0 );
 		store.setDefault( ADCLICK_COUNT, 0 );
 		store.setDefault( EXPORT_ENCODING, "UTF-8" ); //$NON-NLS-1$
-		
+
 		PreferenceConverter.setDefault( store, BYTECODE_MNEMONIC, new RGB( 0, 0, 0 ) );
 		store.setDefault( BYTECODE_MNEMONIC_BOLD, true );
 		store.setDefault( BYTECODE_MNEMONIC_ITALIC, false );
 		store.setDefault( BYTECODE_MNEMONIC_STRIKETHROUGH, false );
 		store.setDefault( BYTECODE_MNEMONIC_UNDERLINE, false );
-		
-		store.setDefault(CLASS_FILE_ATTR_SHOW_CONSTANT_POOL, false);
-		store.setDefault(CLASS_FILE_ATTR_SHOW_LINE_NUMBER_TABLE, false);
-		store.setDefault(CLASS_FILE_ATTR_SHOW_VARIABLE_TABLE, false);
-		store.setDefault(CLASS_FILE_ATTR_SHOW_EXCEPTION_TABLE, false);
-		store.setDefault(CLASS_FILE_ATTR_SHOW_MAXS, false);
-		store.setDefault(BRANCH_TARGET_ADDRESS_RENDERING, BRANCH_TARGET_ADDRESS_RELATIVE);
-		store.setDefault(CLASS_FILE_ATTR_RENDER_TRYCATCH_BLOCKS, true);
-		store.setDefault(CLASS_FILE_ATTR_SHOW_SOURCE_LINE_NUMBERS, true);
-		store.setDefault(CLASS_FILE_ATTR_SHOW_MAXS, false);
+
+		store.setDefault( CLASS_FILE_ATTR_SHOW_CONSTANT_POOL, false );
+		store.setDefault( CLASS_FILE_ATTR_SHOW_LINE_NUMBER_TABLE, false );
+		store.setDefault( CLASS_FILE_ATTR_SHOW_VARIABLE_TABLE, false );
+		store.setDefault( CLASS_FILE_ATTR_SHOW_EXCEPTION_TABLE, false );
+		store.setDefault( CLASS_FILE_ATTR_SHOW_MAXS, false );
+		store.setDefault( BRANCH_TARGET_ADDRESS_RENDERING, BRANCH_TARGET_ADDRESS_RELATIVE );
+		store.setDefault( CLASS_FILE_ATTR_RENDER_TRYCATCH_BLOCKS, true );
+		store.setDefault( CLASS_FILE_ATTR_SHOW_SOURCE_LINE_NUMBERS, true );
+		store.setDefault( CLASS_FILE_ATTR_SHOW_MAXS, false );
 	}
 
 	private void setDefaultDecompiler( IPreferenceStore store )
@@ -398,16 +379,6 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 		Display.getDefault( ).asyncExec( new SetupRunnable( ) );
 
 		manager.addBreakpointListener( breakpintListener );
-
-		Display.getDefault( ).asyncExec( new Runnable( ) {
-
-			@Override
-			public void run( )
-			{
-				PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( ).addPerspectiveListener( perspectiveListener );
-			}
-		} );
-
 	}
 
 	private void checkEnableExtension( )
@@ -455,21 +426,16 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 	public void stop( BundleContext context ) throws Exception
 	{
 		FileUtil.deltree( new File( getPreferenceStore( ).getString( JavaDecompilerPlugin.TEMP_DIR ) ) );
-		
-		if ( PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( ) != null )
-		{
-			PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( ).removePerspectiveListener( perspectiveListener );
-		}
 
 		manager.removeBreakpointListener( breakpintListener );
-		
+
 		getPreferenceStore( ).setValue( DECOMPILE_COUNT, decompileCount.get( ) );
 		getPreferenceStore( ).setValue( ADCLICK_COUNT, adClickCount.get( ) );
-		
+
 		super.stop( context );
-		
+
 		getPreferenceStore( ).removePropertyChangeListener( this );
-		
+
 		plugin = null;
 	}
 
@@ -617,7 +583,7 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 	{
 		this.isDebugMode = isDebugMode;
 	}
-	
+
 	public int getSourceMode( )
 	{
 		return sourceMode;

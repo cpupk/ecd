@@ -32,7 +32,7 @@ public class DecompileHandler extends AbstractHandler
 	public Object execute( ExecutionEvent event ) throws ExecutionException
 	{
 		final List classes = UIUtil.getActiveSelection( );
-		if ( classes != null && !classes.isEmpty( ) )
+		if ( classes != null && !classes.isEmpty( ) && PlatformUI.getWorkbench( ) != null )
 		{
 			IEditorRegistry registry = PlatformUI.getWorkbench( ).getEditorRegistry( );
 			IEditorDescriptor editor = registry.findEditor( JavaDecompilerPlugin.EDITOR_ID );

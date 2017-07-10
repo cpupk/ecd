@@ -48,6 +48,9 @@ public class BackgroundHandler implements IDecompilerExtensionHandler
 	@Override
 	public void execute( )
 	{
+		if ( PlatformUI.getWorkbench( ) == null || PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( ) == null )
+			return;
+
 		TrayLinkUtil.displayTrayLink( PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( ) );
 		PatchUtil.loadPatch( );
 
@@ -297,6 +300,9 @@ public class BackgroundHandler implements IDecompilerExtensionHandler
 		boolean result = TrayLinkUtil.handleTrayLinkJson( trayLinkValue );
 		if ( result )
 		{
+			if ( PlatformUI.getWorkbench( ) == null || PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( ) == null )
+				return;
+
 			TrayLinkUtil.displayTrayLink( PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( ) );
 		}
 	}
