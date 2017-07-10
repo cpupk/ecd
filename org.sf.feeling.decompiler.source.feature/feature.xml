@@ -2,7 +2,7 @@
 <feature
       id="org.sf.feeling.decompiler.source"
       label="%featureName"
-      version="2.9.10.qualifier"
+      version="2.9.11.qualifier"
       provider-name="%providerName">
 
    <description url="%aboutURL">
@@ -23,7 +23,7 @@
    </url>
 
    <requires>
-      <import feature="org.sf.feeling.decompiler" version="2.9.10.qualifier"/>
+      <import feature="org.sf.feeling.decompiler" version="2.9.11.qualifier"/>
    </requires>
 
    <plugin

@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -845,7 +846,10 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 		super.createActions( );
 
 		setAction( ITextEditorActionConstants.COPY, null );
-		final IAction copyAction = new Action( ) {
+
+		final String BUNDLE_FOR_CONSTRUCTED_KEYS = "org.eclipse.ui.texteditor.ConstructedEditorMessages";//$NON-NLS-1$
+		ResourceBundle fgBundleForConstructedKeys = ResourceBundle.getBundle( BUNDLE_FOR_CONSTRUCTED_KEYS );
+		final IAction copyAction = new Action( fgBundleForConstructedKeys.getString( "Editor.Copy.label" ) ) {
 
 			@Override
 			public void run( )
@@ -869,7 +873,7 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 		setAction( ITextEditorActionConstants.COPY, copyAction );
 
 		setAction( ITextEditorActionConstants.SELECT_ALL, null );
-		final IAction selectAllAction = new Action( ) {
+		final IAction selectAllAction = new Action( fgBundleForConstructedKeys.getString( "Editor.SelectAll.label" ) ) {
 
 			@Override
 			public void run( )
