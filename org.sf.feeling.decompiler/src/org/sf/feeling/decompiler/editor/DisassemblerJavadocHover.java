@@ -157,6 +157,20 @@ public class DisassemblerJavadocHover extends JavadocHover implements IJavaEdito
 					}
 				}
 
+				IJavaElement[] elements = getJavaElementsAt( textViewer, hoverRegion );
+				if ( elements == null || elements.length == 0 )
+				{
+					return null;
+				}
+
+				return ReflectionUtils.invokeMethod( this, "getHoverInfo", new Class[]{
+						IJavaElement[].class,
+						ITypeRoot.class,
+						IRegion.class,
+						JavadocBrowserInformationControlInput.class
+				}, new Object[]{
+						elements, getEditorInputJavaElement( ), hoverRegion, null
+				} );
 			}
 		}
 		catch ( Exception e )
@@ -164,16 +178,6 @@ public class DisassemblerJavadocHover extends JavadocHover implements IJavaEdito
 			Logger.debug( e );
 		}
 
-		IJavaElement[] elements = getJavaElementsAt( textViewer, hoverRegion );
-		if ( elements == null || elements.length == 0 )
-		{
-			return null;
-		}
-
-		return ReflectionUtils.invokeMethod( this, "getHoverInfo", new Class[]{
-				IJavaElement[].class, ITypeRoot.class, IRegion.class, JavadocBrowserInformationControlInput.class
-		}, new Object[]{
-				elements, getEditorInputJavaElement( ), hoverRegion, null
-		} );
+		return null;
 	}
 }

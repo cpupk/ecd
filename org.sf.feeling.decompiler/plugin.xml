@@ -32,8 +32,8 @@
    <extension
          point="org.eclipse.jdt.ui.javaEditorTextHovers">
       <hover
-            label="Javadoc"
-            description="Shows the Javadoc of the selected element."
+            label="%Opcode.Hover.Lable"
+            description="%Opcode.Hover.Description"
             class="org.sf.feeling.decompiler.editor.DisassemblerJavadocHover"
             id="org.sf.feeling.decompiler.editor.DisassemblerJavadocHover">
       </hover>
