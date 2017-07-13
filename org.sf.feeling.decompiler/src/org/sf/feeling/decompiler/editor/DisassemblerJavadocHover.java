@@ -163,7 +163,7 @@ public class DisassemblerJavadocHover extends JavadocHover implements IJavaEdito
 					return null;
 				}
 
-				return ReflectionUtils.invokeMethod( this, "getHoverInfo", new Class[]{
+				return ReflectionUtils.invokeMethod( this, "getHoverInfo", new Class[]{ //$NON-NLS-1$
 						IJavaElement[].class,
 						ITypeRoot.class,
 						IRegion.class,

@@ -30,7 +30,6 @@ import org.eclipse.jdt.ui.text.IJavaPartitions;
 import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.editors.text.FileDocumentProvider;
-import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.sf.feeling.decompiler.util.Logger;
 import org.sf.feeling.decompiler.util.UIUtil;
 
@@ -61,6 +60,8 @@ public class ByteCodeDocumentProvider extends FileDocumentProvider
 	private ArrayList<IDocumentUpdateListener> documentUpdateListeners;
 
 	private String mark;
+
+	private IDocument document;
 
 	public String getMark( )
 	{
@@ -257,28 +258,12 @@ public class ByteCodeDocumentProvider extends FileDocumentProvider
 	@Override
 	public IDocument getDocument( Object element )
 	{
-		return getBytecodeDocument( element );
+		return this.document;
 	}
 
-	/**
-	 * <p>
-	 * Returns the document for the given element. The document contains a
-	 * textual presentation of the class file content.
-	 * </p>
-	 * <p>
-	 * This method wraps the {@link IDocumentProvider#getDocument(Object)} to
-	 * avoid calling this method directly.
-	 * </p>
-	 * 
-	 * @param input
-	 *            the element, or <code>null</code>
-	 * @return the document, or <code>null</code> if none
-	 * 
-	 * @see IDocumentProvider#getDocument(Object)
-	 */
-	public IDocument getBytecodeDocument( Object input )
+	public void setDocument( IDocument document )
 	{
-		return super.getDocument( input );
+		this.document = document;
 	}
 
 }

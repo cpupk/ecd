@@ -36,9 +36,9 @@ public class HelpUtils
 {
 
 	private static String styleSheet;
-	private static final String DOC_BASE = "/"
+	private static final String DOC_BASE = "/" //$NON-NLS-1$
 			+ JavaDecompilerPlugin.getDefault( ).getBundle( ).getSymbolicName( )
-			+ "/doc/";
+			+ "/doc/"; //$NON-NLS-1$
 	private static RGB bg_color_rgb = new RGB( 255, 255, 255 );
 	private static RGB fg_color_rgb = new RGB( 0, 0, 0 );
 
@@ -69,17 +69,17 @@ public class HelpUtils
 			switch ( opcodeName.charAt( 0 ) )
 			{
 				case 'd' :
-					opcodeName += "_d";
+					opcodeName += "_d"; //$NON-NLS-1$
 					break;
 				case 'f' :
-					opcodeName += "_f";
+					opcodeName += "_f"; //$NON-NLS-1$
 					break;
 				case 'l' :
-					opcodeName += "_l";
+					opcodeName += "_l"; //$NON-NLS-1$
 					break;
 				default :
 					// ICONST uses "n"
-					opcodeName += "_n";
+					opcodeName += "_n"; //$NON-NLS-1$
 					break;
 			}
 		}
@@ -106,13 +106,13 @@ public class HelpUtils
 
 	private static URL getHelpResource( String name )
 	{
-		String href = DOC_BASE + "ref-" + name + ".html";
+		String href = DOC_BASE + "ref-" + name + ".html"; //$NON-NLS-1$ //$NON-NLS-2$
 		return resolveToHelpUrl( href );
 	}
 
 	public static URL getHelpIndex( )
 	{
-		String href = DOC_BASE + "opcodes.html";
+		String href = DOC_BASE + "opcodes.html"; //$NON-NLS-1$
 		return resolveToHelpUrl( href );
 	}
 
@@ -171,17 +171,17 @@ public class HelpUtils
 		String css = styleSheet;
 		if ( css == null || css.isEmpty( ) )
 		{
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 		FontData fontData = JFaceResources.getFontRegistry( )
 				.getFontData( PreferenceConstants.APPEARANCE_JAVADOC_FONT )[0];
 		css = HTMLPrinter.convertTopLevelFont( css, fontData );
 		StringBuilder sb = new StringBuilder( css );
-		sb.append( "\nbody {  background-color:" );
+		sb.append( "\nbody {  background-color:" ); //$NON-NLS-1$
 		appendColor( sb, bg_color_rgb );
-		sb.append( ";  color:" );
+		sb.append( ";  color:" ); //$NON-NLS-1$
 		appendColor( sb, fg_color_rgb );
-		sb.append( ";  }\n" );
+		sb.append( ";  }\n" ); //$NON-NLS-1$
 		return sb.toString( );
 	}
 
@@ -197,12 +197,12 @@ public class HelpUtils
 		URL styleSheetURL = bundle.getEntry( "/JavadocHoverStyleSheet.css" ); //$NON-NLS-1$
 		if ( styleSheetURL == null )
 		{
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 		BufferedReader reader = null;
 		try
 		{
-			reader = new BufferedReader( new InputStreamReader( styleSheetURL.openStream( ), "UTF-8" ) );
+			reader = new BufferedReader( new InputStreamReader( styleSheetURL.openStream( ), "UTF-8" ) ); //$NON-NLS-1$
 			StringBuilder sb = new StringBuilder( 1500 );
 			String line;
 			while ( ( line = reader.readLine( ) ) != null )
@@ -214,7 +214,7 @@ public class HelpUtils
 		}
 		catch ( IOException ex )
 		{
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 		finally
 		{
@@ -243,7 +243,7 @@ public class HelpUtils
 		BufferedReader in = null;
 		try
 		{
-			in = new BufferedReader( new InputStreamReader( helpResource.openStream( ), "UTF-8" ) );
+			in = new BufferedReader( new InputStreamReader( helpResource.openStream( ), "UTF-8" ) ); //$NON-NLS-1$
 			String line;
 			while ( ( line = in.readLine( ) ) != null )
 			{
@@ -268,7 +268,7 @@ public class HelpUtils
 				}
 			}
 		}
-		int styleEnd = sb.indexOf( "</style>" );
+		int styleEnd = sb.indexOf( "</style>" ); //$NON-NLS-1$
 		if ( styleEnd > 0 )
 		{
 			sb.insert( styleEnd, getHelpStyleSheet( ) );
@@ -277,7 +277,7 @@ public class HelpUtils
 		String base = getDocBase( );
 		if ( base != null )
 		{
-			sb.insert( endHeadIdx, "\n<base href='" + base + "'>\n" );
+			sb.insert( endHeadIdx, "\n<base href='" + base + "'>\n" ); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return sb;
 	}

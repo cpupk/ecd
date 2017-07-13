@@ -5,15 +5,24 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jdt.core.IClassFile;
+import org.eclipse.jdt.core.IField;
+import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.ISourceReference;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.ToolFactory;
 import org.eclipse.jdt.core.util.ClassFileBytesDisassembler;
+import org.eclipse.jdt.internal.core.BinaryType;
 import org.eclipse.jdt.internal.core.ClassFile;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.javaeditor.IClassFileEditorInput;
 import org.eclipse.jdt.internal.ui.javaeditor.JavaSourceViewer;
+import org.eclipse.jdt.internal.ui.javaeditor.breadcrumb.EditorBreadcrumb;
 import org.eclipse.jdt.ui.text.IColorManager;
 import org.eclipse.jdt.ui.text.IJavaPartitions;
 import org.eclipse.jdt.ui.text.JavaSourceViewerConfiguration;
@@ -27,7 +36,10 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
 import org.eclipse.jface.text.hyperlink.URLHyperlinkDetector;
 import org.eclipse.jface.text.source.CompositeRuler;
@@ -35,6 +47,11 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.viewers.IPostSelectionProvider;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
@@ -64,6 +81,7 @@ import org.sf.feeling.decompiler.util.ReflectionUtils;
 import org.sf.feeling.decompiler.util.UIUtil;
 
 import com.drgarbage.classfile.editors.ClassFileParser;
+import com.drgarbage.utils.ClassFileDocumentsUtils;
 
 public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor
 {
@@ -122,7 +140,7 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor
 
 		createActions( );
 
-		ReflectionUtils.invokeMethod( this, "initializeSourceViewer", new Class[]{
+		ReflectionUtils.invokeMethod( this, "initializeSourceViewer", new Class[]{ //$NON-NLS-1$
 				IEditorInput.class
 		}, new Object[]{
 				getEditorInput( )
@@ -132,6 +150,8 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor
 			fSourceViewerDecorationSupport.install( getPreferenceStore( ) );
 
 		StyledText styledText = fSourceViewer.getTextWidget( );
+		styledText.addMouseListener(getCursorListener());
+		styledText.addKeyListener(getCursorListener());
 
 		ReflectionUtils.setFieldValue( this, "fEditorContextMenuId", "#TextEditorContext" ); //$NON-NLS-1$ //$NON-NLS-2$
 		String id = "#TextEditorContext"; //$NON-NLS-1$
@@ -196,7 +216,13 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor
 				Logger.debug( e );
 			}
 		}
+
+		final EditorSelectionChangedListener fEditorSelectionChangedListener = new EditorSelectionChangedListener( );
+		fEditorSelectionChangedListener.install( getSelectionProvider( ) );
+
 		fSourceViewer.setDocument( byteCodeDocument );
+
+		provider.setDocument( byteCodeDocument );
 
 		IVerticalRuler ruler = getVerticalRuler( );
 		if ( ruler instanceof CompositeRuler )
@@ -250,6 +276,377 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor
 		}
 
 		return container;
+	}
+
+	class JdtSelectionProvider extends SelectionProvider
+	{
+
+		private List<ISelectionChangedListener> fSelectionListeners = new ArrayList<ISelectionChangedListener>( );
+		private List<ISelectionChangedListener> fPostSelectionListeners = new ArrayList<ISelectionChangedListener>( );
+		private ITextSelection fInvalidSelection;
+		private ISelection fValidSelection;
+
+		/*
+		 * @see org.eclipse.jface.viewers.ISelectionProvider#
+		 * addSelectionChangedListener(ISelectionChangedListener)
+		 */
+		@Override
+		public void addSelectionChangedListener( ISelectionChangedListener listener )
+		{
+			super.addSelectionChangedListener( listener );
+			if ( getSourceViewer( ) != null )
+				fSelectionListeners.add( listener );
+		}
+
+		/*
+		 * @see org.eclipse.jface.viewers.ISelectionProvider#getSelection()
+		 */
+		@Override
+		public ISelection getSelection( )
+		{
+			if ( fInvalidSelection != null )
+				return fInvalidSelection;
+			return super.getSelection( );
+		}
+
+		/*
+		 * @see org.eclipse.jface.viewers.ISelectionProvider#
+		 * removeSelectionChangedListener(ISelectionChangedListener)
+		 */
+		@Override
+		public void removeSelectionChangedListener( ISelectionChangedListener listener )
+		{
+			super.removeSelectionChangedListener( listener );
+			if ( getSourceViewer( ) != null )
+				fSelectionListeners.remove( listener );
+		}
+
+		/*
+		 * @see
+		 * org.eclipse.jface.viewers.ISelectionProvider#setSelection(ISelection)
+		 */
+		@Override
+		public void setSelection( ISelection selection )
+		{
+			if ( selection instanceof ITextSelection )
+			{
+				if ( fInvalidSelection != null )
+				{
+					fInvalidSelection = null;
+
+					ITextSelection newSelection = (ITextSelection) selection;
+					ITextSelection oldSelection = (ITextSelection) getSelection( );
+
+					if ( newSelection.getOffset( ) == oldSelection.getOffset( )
+							&& newSelection.getLength( ) == oldSelection.getLength( ) )
+					{
+						markValid( );
+					}
+					else
+					{
+						super.setSelection( selection );
+					}
+				}
+				else
+				{
+					super.setSelection( selection );
+				}
+			}
+			else if ( selection instanceof IStructuredSelection
+					&& ( (IStructuredSelection) selection ).getFirstElement( ) instanceof EditorBreadcrumb )
+			{
+				markInvalid( );
+			}
+		}
+
+		/*
+		 * @see org.eclipse.jface.text.IPostSelectionProvider#
+		 * addPostSelectionChangedListener(org.eclipse.jface.viewers.
+		 * ISelectionChangedListener)
+		 */
+		@Override
+		public void addPostSelectionChangedListener( ISelectionChangedListener listener )
+		{
+			super.addPostSelectionChangedListener( listener );
+			if ( getSourceViewer( ) != null
+					&& getSourceViewer( ).getSelectionProvider( ) instanceof IPostSelectionProvider )
+				fPostSelectionListeners.add( listener );
+		}
+
+		/*
+		 * @see org.eclipse.jface.text.IPostSelectionProvider#
+		 * removePostSelectionChangedListener(org.eclipse.jface.viewers.
+		 * ISelectionChangedListener)
+		 */
+		@Override
+		public void removePostSelectionChangedListener( ISelectionChangedListener listener )
+		{
+			super.removePostSelectionChangedListener( listener );
+			if ( getSourceViewer( ) != null )
+				fPostSelectionListeners.remove( listener );
+		}
+
+		/*
+		 * @see org.eclipse.jface.text.IPostSelectionValidator#isValid()
+		 */
+		@Override
+		public boolean isValid( ISelection postSelection )
+		{
+			return fInvalidSelection == null && super.isValid( postSelection );
+		}
+
+		/**
+		 * Marks this selection provider as currently being invalid. An invalid
+		 * selection is one which can not be selected in the source viewer.
+		 */
+		private void markInvalid( )
+		{
+			fValidSelection = getSelection( );
+			fInvalidSelection = new TextSelection( 0, 0 );
+
+			SelectionChangedEvent event = new SelectionChangedEvent( this, fInvalidSelection );
+
+			for ( ISelectionChangedListener listener : fSelectionListeners )
+			{
+				listener.selectionChanged( event );
+			}
+
+			for ( ISelectionChangedListener listener : fPostSelectionListeners )
+			{
+				listener.selectionChanged( event );
+			}
+		}
+
+		/**
+		 * Marks this selection provider as being valid.
+		 */
+		private void markValid( )
+		{
+			fInvalidSelection = null;
+
+			SelectionChangedEvent event = new SelectionChangedEvent( this, fValidSelection );
+
+			for ( ISelectionChangedListener listener : fSelectionListeners )
+			{
+				listener.selectionChanged( event );
+			}
+
+			for ( ISelectionChangedListener listener : fPostSelectionListeners )
+			{
+				listener.selectionChanged( event );
+			}
+		}
+	}
+
+	private class EditorSelectionChangedListener extends AbstractSelectionChangedListener
+	{
+
+		public void selectionChanged( SelectionChangedEvent event )
+		{
+			doHandleCursorPositionChanged( );
+		}
+
+	}
+
+	private void doHandleCursorPositionChanged( )
+	{
+		StyledText byteCodeText = getSourceViewer( ).getTextWidget( );
+		String byteCode = byteCodeText.getText( );
+		int selectedRange = byteCodeText.getSelectionRange( ).x;
+
+		if ( byteCode.lastIndexOf( "/* Methods: */" ) != -1 ) //$NON-NLS-1$
+		{
+			int methodStartIndex = byteCode.substring( 0, byteCode.lastIndexOf( "/* Methods: */" ) ).lastIndexOf( "\n" ) //$NON-NLS-1$ //$NON-NLS-2$
+					+ 1;
+			int methodEndIndex = byteCode.substring( 0, byteCode.lastIndexOf( "attributes_count" ) ) //$NON-NLS-1$
+					.lastIndexOf( "\n" ); //$NON-NLS-1$
+			if ( selectedRange >= methodStartIndex && selectedRange <= methodEndIndex )
+			{
+				handleSelectMethod( byteCode.substring( methodStartIndex, methodEndIndex ),
+						selectedRange - methodStartIndex );
+
+				return;
+			}
+
+			if ( byteCode.lastIndexOf( "/* Fields: */" ) != -1 ) //$NON-NLS-1$
+			{
+				int fieldStartIndex = byteCode.substring( 0, byteCode.lastIndexOf( "/* Fields: */" ) ).lastIndexOf( //$NON-NLS-1$
+						"\n" ) + 1; //$NON-NLS-1$
+				int fieldEndIndex = methodStartIndex - 1;
+				if ( selectedRange >= fieldStartIndex && selectedRange <= fieldEndIndex )
+				{
+					handleSelectField( byteCode.substring( fieldStartIndex, fieldEndIndex ),
+							selectedRange - fieldStartIndex );
+
+					return;
+				}
+			}
+		}
+		else if ( byteCode.lastIndexOf( "/* Fields: */" ) != -1 ) //$NON-NLS-1$
+		{
+			int fieldStartIndex = byteCode.substring( 0, byteCode.lastIndexOf( "/* Fields: */" ) ).lastIndexOf( "\n" ) //$NON-NLS-1$ //$NON-NLS-2$
+					+ 1;
+			int fieldEndIndex = byteCode.substring( 0, byteCode.lastIndexOf( "attributes_count" ) ).lastIndexOf( "\n" ); //$NON-NLS-1$ //$NON-NLS-2$
+			if ( selectedRange >= fieldStartIndex && selectedRange <= fieldEndIndex )
+			{
+				handleSelectField( byteCode.substring( fieldStartIndex, fieldEndIndex ),
+						selectedRange - fieldStartIndex );
+
+				return;
+			}
+		}
+
+		ClassFile cf = (ClassFile) ( (IClassFileEditorInput) getEditorInput( ) ).getClassFile( );
+		editor.setSelection( cf.getType( ) );
+	}
+
+	private void handleSelectField( String text, int index )
+	{
+		Pattern pattern = Pattern.compile( "Field\\[\\d+\\].+?Field\\[\\d+\\]", Pattern.DOTALL ); //$NON-NLS-1$
+		Matcher matcher = pattern.matcher( text );
+
+		int fieldStartIndex = text.substring( 0, index ).lastIndexOf( "\n" ) + 1; //$NON-NLS-1$
+
+		int findIndex = 0;
+		while ( matcher.find( findIndex ) )
+		{
+			int start = text.substring( 0, matcher.start( ) ).lastIndexOf( "\n" ) + 1; //$NON-NLS-1$
+			int end = text.substring( 0, matcher.end( ) ).lastIndexOf( "\n" ); //$NON-NLS-1$
+			if ( fieldStartIndex >= start && fieldStartIndex <= end )
+			{
+				String field = text.substring( start, end );
+				selectField( field );
+				return;
+			}
+			findIndex = end;
+		}
+
+		int start = text.substring( 0, text.lastIndexOf( "Field[" ) ).lastIndexOf( "\n" ) + 1; //$NON-NLS-1$ //$NON-NLS-2$
+		int end = text.length( );
+		if ( fieldStartIndex >= start && fieldStartIndex <= end )
+		{
+			String field = text.substring( start, end );
+			selectField( field );
+		}
+	}
+
+	private void selectField( String field )
+	{
+		ClassFile cf = (ClassFile) ( (IClassFileEditorInput) getEditorInput( ) ).getClassFile( );
+		int nameIndex = field.indexOf( "name_index" ); //$NON-NLS-1$
+		if ( nameIndex != -1 )
+		{
+			String startText = field.substring( nameIndex );
+			int firstIndex = startText.indexOf( '"' );
+			if ( firstIndex != -1 )
+			{
+				int lastIndex = startText.indexOf( '"', firstIndex + 1 );
+				if ( lastIndex != -1 )
+				{
+					String fieldName = startText.substring( firstIndex + 1, lastIndex );
+					IField f = cf.getType( ).getField( fieldName );
+					if ( f != null )
+					{
+						editor.setSelection( f );
+					}
+				}
+			}
+		}
+	}
+
+	private void handleSelectMethod( String text, int index )
+	{
+		Pattern pattern = Pattern.compile( "Method\\[\\d+\\].+?Method\\[\\d+\\]", Pattern.DOTALL ); //$NON-NLS-1$
+		Matcher matcher = pattern.matcher( text );
+
+		int methodStartIndex = text.substring( 0, index ).lastIndexOf( "\n" ) + 1; //$NON-NLS-1$
+
+		int findIndex = 0;
+		while ( matcher.find( findIndex ) )
+		{
+			int start = text.substring( 0, matcher.start( ) ).lastIndexOf( "\n" ) + 1; //$NON-NLS-1$
+			int end = text.substring( 0, matcher.end( ) ).lastIndexOf( "\n" ); //$NON-NLS-1$
+			if ( methodStartIndex >= start && methodStartIndex <= end )
+			{
+				String method = text.substring( start, end );
+				selectMethod( method );
+				return;
+			}
+			findIndex = end;
+		}
+
+		int start = text.substring( 0, text.lastIndexOf( "Method[" ) ).lastIndexOf( "\n" ) + 1; //$NON-NLS-1$ //$NON-NLS-2$
+		int end = text.length( );
+		if ( methodStartIndex >= start && methodStartIndex <= end )
+		{
+			String method = text.substring( start, end );
+			selectMethod( method );
+		}
+	}
+
+	private void selectMethod( String method )
+	{
+		ClassFile cf = (ClassFile) ( (IClassFileEditorInput) getEditorInput( ) ).getClassFile( );
+
+		String methodName = null;
+		String descriptor = null;
+
+		int nameIndex = method.indexOf( "name_index" ); //$NON-NLS-1$
+		if ( nameIndex != -1 )
+		{
+
+			String startText = method.substring( nameIndex );
+			int firstIndex = startText.indexOf( '"' );
+			if ( firstIndex != -1 )
+			{
+				int lastIndex = startText.indexOf( '"', firstIndex + 1 );
+				if ( lastIndex != -1 )
+				{
+					methodName = startText.substring( firstIndex + 1, lastIndex );
+				}
+			}
+
+		}
+
+		if ( methodName == null )
+			return;
+
+		if ( "<init>".equals( methodName ) ) //$NON-NLS-1$
+		{
+			methodName = cf.getTypeName( );
+		}
+
+		int descriptorIndex = method.indexOf( "descriptor_index" ); //$NON-NLS-1$
+		if ( descriptorIndex != -1 )
+		{
+			String startText = method.substring( descriptorIndex );
+			int firstIndex = startText.indexOf( '"' );
+			if ( firstIndex != -1 )
+			{
+				int lastIndex = startText.indexOf( '"', firstIndex + 1 );
+				if ( lastIndex != -1 )
+				{
+					descriptor = startText.substring( firstIndex + 1, lastIndex );
+				}
+			}
+
+		}
+
+		if ( descriptor == null )
+			return;
+
+		try
+		{
+			IMethod m = ClassFileDocumentsUtils.findMethod( cf.getType( ), methodName, descriptor );
+			if ( m != null )
+			{
+				editor.setSelection( m );
+			}
+		}
+		catch ( JavaModelException e )
+		{
+			Logger.debug( e );
+		}
 	}
 
 	protected void editorContextMenuAboutToShow( IMenuManager menu )
@@ -321,6 +718,135 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor
 		return container;
 	}
 
+	public void setSelectionElement( ISourceReference selectedElement )
+	{
+		setSelectionElement( selectedElement, false );
+	}
+
+	public void setSelectionElement( ISourceReference selectedElement, boolean force )
+	{
+		final StyledText byteCodeText = getSourceViewer( ).getTextWidget( );
+		if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.BYTE_CODE_MODE
+				&& byteCodeText != null
+				&& !byteCodeText.isDisposed( ) )
+		{
+			if ( !force )
+			{
+				if ( UIUtil.requestFromDisassemblerSelection( ) )
+					return;
+
+				if ( !UIUtil.requestFromLinkToSelection( ) )
+					return;
+			}
+
+			if ( selectedElement instanceof IMethod
+					|| selectedElement instanceof IField
+					|| selectedElement instanceof BinaryType )
+			{
+				try
+				{
+					IRegion element = searchElement( byteCodeText, selectedElement );
+					if ( element != null )
+					{
+						selectElement( byteCodeText, element );
+					}
+				}
+				catch ( Exception e )
+				{
+					Logger.debug( e );
+				}
+			}
+		}
+	}
+
+	private IRegion searchElement( StyledText byteCodeText, ISourceReference reference ) throws CoreException
+	{
+		ClassFile cf = (ClassFile) ( (IClassFileEditorInput) getEditorInput( ) ).getClassFile( );
+		if ( reference instanceof BinaryType )
+		{
+			String byteCode = byteCodeText.getText( );
+			String className = ( (BinaryType) reference ).getElementName( );
+			Pattern pattern = Pattern.compile( "this_class.+?\\*", Pattern.DOTALL ); //$NON-NLS-1$
+			Matcher matcher = pattern.matcher( byteCode );
+			while ( matcher.find( ) )
+			{
+				String text = matcher.group( );
+				int classIndex = text.indexOf( className );
+				if ( classIndex != -1 )
+				{
+					return new Region( matcher.start( ) + classIndex, className.length( ) );
+				}
+			}
+		}
+		else if ( reference instanceof IField )
+		{
+			BinaryType jdtType = (BinaryType) ( (IField) reference ).getParent( );
+			if ( jdtType.equals( cf.getType( ) ) )
+			{
+				String byteCode = byteCodeText.getText( );
+				int index = byteCode.indexOf( "/* Fields: */" ); //$NON-NLS-1$
+				if ( index != -1 )
+				{
+					String fieldName = ( (IField) reference ).getElementName( );
+					String fieldByteCode = "bytes=\"" + fieldName + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+					Pattern pattern = Pattern.compile( "Field\\[\\d+\\].+?attributes_count", Pattern.DOTALL ); //$NON-NLS-1$
+					Matcher matcher = pattern.matcher( byteCode );
+					while ( matcher.find( ) )
+					{
+						String text = matcher.group( );
+						int fieldIndex = text.indexOf( fieldByteCode );
+						if ( fieldIndex != -1 )
+						{
+							return new Region( matcher.start( ) + fieldIndex + "bytes=\"".length( ), //$NON-NLS-1$
+									fieldName.length( ) );
+						}
+					}
+				}
+			}
+		}
+		else if ( reference instanceof IMethod )
+		{
+			BinaryType jdtType = (BinaryType) ( (IMethod) reference ).getParent( );
+			if ( jdtType.equals( cf.getType( ) ) )
+			{
+				String byteCode = byteCodeText.getText( );
+				int index = byteCode.indexOf( "/* Methods: */" ); //$NON-NLS-1$
+				if ( index != -1 )
+				{
+					String methodName = ( (IMethod) reference ).getElementName( );
+					if ( ( (IMethod) reference ).isConstructor( ) )
+					{
+						methodName = "<init>"; //$NON-NLS-1$
+					}
+					String methodByteCode = "bytes=\"" + methodName + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+					String methodSignature = ( (IMethod) reference ).getSignature( );
+					Pattern pattern = Pattern.compile( "Method\\[\\d+\\].+?attributes_count", Pattern.DOTALL ); //$NON-NLS-1$
+					Matcher matcher = pattern.matcher( byteCode );
+					while ( matcher.find( ) )
+					{
+						String text = matcher.group( );
+						int methodIndex = text.indexOf( methodByteCode );
+						int methodSignatureIndex = text.indexOf( methodSignature );
+						if ( methodIndex != -1 && methodSignatureIndex != -1 )
+						{
+							return new Region( matcher.start( ) + methodIndex + "bytes=\"".length( ), //$NON-NLS-1$
+									methodName.length( ) );
+						}
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	private void selectElement( StyledText byteCodeText, IRegion region )
+	{
+		if ( region != null && region.getOffset( ) != -1 )
+		{
+			byteCodeText.setSelection( region.getOffset( ), region.getOffset( ) + region.getLength( ) );
+		}
+	}
+
 	protected IConfigurationElement getConfigurationElement( )
 	{
 		return (IConfigurationElement) ReflectionUtils.invokeMethod( editor, "getConfigurationElement" ); //$NON-NLS-1$
@@ -341,5 +867,10 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor
 	public boolean isEditorInputReadOnly( )
 	{
 		return true;
+	}
+
+	protected void handleCursorPositionChanged( )
+	{
+		ReflectionUtils.invokeMethod( editor, "handleCursorPositionChanged" ); //$NON-NLS-1$
 	}
 }

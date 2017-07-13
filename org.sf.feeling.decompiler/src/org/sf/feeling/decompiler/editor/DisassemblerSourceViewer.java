@@ -157,7 +157,7 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 
 		createActions( );
 
-		ReflectionUtils.invokeMethod( this, "initializeSourceViewer", new Class[]{
+		ReflectionUtils.invokeMethod( this, "initializeSourceViewer", new Class[]{ //$NON-NLS-1$
 				IEditorInput.class
 		}, new Object[]{
 				getEditorInput( )
@@ -167,6 +167,8 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 			fSourceViewerDecorationSupport.install( getPreferenceStore( ) );
 
 		StyledText styledText = fSourceViewer.getTextWidget( );
+		styledText.addMouseListener(getCursorListener());
+		styledText.addKeyListener(getCursorListener());
 
 		ReflectionUtils.setFieldValue( this, "fEditorContextMenuId", "#TextEditorContext" ); //$NON-NLS-1$ //$NON-NLS-2$
 		String id = "#TextEditorContext"; //$NON-NLS-1$
@@ -281,6 +283,7 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 		IClassFile cf = (ClassFile) ( (IClassFileEditorInput) editor.getEditorInput( ) ).getClassFile( );
 
 		disassemblerDocument = new ByteCodeDocument( provider, editor );
+		provider.setDocument( disassemblerDocument );
 
 		JavaTextTools tools = JavaPlugin.getDefault( ).getJavaTextTools( );
 		tools.setupJavaDocumentPartitioner( disassemblerDocument, IJavaPartitions.JAVA_PARTITIONING );
@@ -470,7 +473,7 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 
 		public void selectionChanged( SelectionChangedEvent event )
 		{
-			DisassemblerSourceViewer.this.doHandleCursorPositionChanged( );
+			doHandleCursorPositionChanged( );
 		}
 
 	}
@@ -490,15 +493,9 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 				int line = disassemblerDocument.getLineOfOffset( selectedRange );
 				ClassFile cf = (ClassFile) ( (IClassFileEditorInput) getEditorInput( ) ).getClassFile( );
 
-				if ( disassemblerClassDocument
-						.isLineInMethod( line - 2/*
-													 * changed to 0-based
-													 */ ) )
+				if ( disassemblerClassDocument.isLineInMethod( line - 2 ) )
 				{
-					IMethodSection method = disassemblerClassDocument
-							.findMethodSection( line - 2/*
-														 * changed to 0 - based
-														 */ );
+					IMethodSection method = disassemblerClassDocument.findMethodSection( line - 2 );
 
 					if ( method != null )
 					{
@@ -510,15 +507,9 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 						}
 					}
 				}
-				else if ( disassemblerClassDocument
-						.isLineInField( line - 2/*
-												 * changed to 0 - based
-												 */ ) )
+				else if ( disassemblerClassDocument.isLineInField( line - 2 ) )
 				{
-					IFieldSection field = disassemblerClassDocument
-							.findFieldSection( line - 2 /*
-														 * changed to 0 - based
-														 */ );
+					IFieldSection field = disassemblerClassDocument.findFieldSection( line - 2 );
 					if ( field != null )
 					{
 						IField f = cf.getType( ).getField( field.getName( ) );
@@ -968,5 +959,10 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 	public boolean isEditorInputReadOnly( )
 	{
 		return true;
+	}
+
+	protected void handleCursorPositionChanged( )
+	{
+		ReflectionUtils.invokeMethod( editor, "handleCursorPositionChanged" ); //$NON-NLS-1$
 	}
 }
