@@ -99,7 +99,7 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 
 	private JavaDecompilerClassFileEditor editor;
 
-	private ByteCodeDocument disassemblerDocument;
+	private DisassemblerDocument disassemblerDocument;
 
 	private Composite container;
 
@@ -137,7 +137,7 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 
 		String classContent = editor.getDocumentProvider( ).getDocument( editor.getEditorInput( ) ).get( );
 		String mark = MarkUtil.getMark( classContent );
-		ByteCodeDocumentProvider provider = new ByteCodeDocumentProvider( mark );
+		DisassemblerDocumentProvider provider = new DisassemblerDocumentProvider( mark );
 		setDocumentProvider( provider );
 		setInput( editor.getEditorInput( ) );
 
@@ -249,7 +249,7 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 
 	private void updateLinkStyle( )
 	{
-		String mark = ( (ByteCodeDocumentProvider) getDocumentProvider( ) ).getMark( );
+		String mark = ( (DisassemblerDocumentProvider) getDocumentProvider( ) ).getMark( );
 		String ad = mark.replaceAll( "/(\\*)+", "" ) //$NON-NLS-1$ //$NON-NLS-2$
 				.replaceAll( "(\\*)+/", "" ) //$NON-NLS-1$ //$NON-NLS-2$
 				.trim( );
@@ -278,11 +278,11 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 		}
 	}
 
-	private void updateDocument( ByteCodeDocumentProvider provider, ISourceViewer fSourceViewer )
+	private void updateDocument( DisassemblerDocumentProvider provider, ISourceViewer fSourceViewer )
 	{
 		IClassFile cf = (ClassFile) ( (IClassFileEditorInput) editor.getEditorInput( ) ).getClassFile( );
 
-		disassemblerDocument = new ByteCodeDocument( provider, editor );
+		disassemblerDocument = new DisassemblerDocument( provider, editor );
 		provider.setDocument( disassemblerDocument );
 
 		JavaTextTools tools = JavaPlugin.getDefault( ).getJavaTextTools( );
@@ -480,7 +480,7 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 
 	private void doHandleCursorPositionChanged( )
 	{
-		IClassFileDocument disassemblerClassDocument = ( (ByteCodeDocumentProvider) getDocumentProvider( ) )
+		IClassFileDocument disassemblerClassDocument = ( (DisassemblerDocumentProvider) getDocumentProvider( ) )
 				.getClassFileDocument( );
 		if ( disassemblerClassDocument != null )
 		{
@@ -610,7 +610,7 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 	public void setSelectionElement( ISourceReference selectedElement, boolean force )
 	{
 		final StyledText disassemblerText = getSourceViewer( ).getTextWidget( );
-		OutlineElement disassemblerRootElement = (OutlineElement) ( (ByteCodeDocumentProvider) getDocumentProvider( ) )
+		OutlineElement disassemblerRootElement = (OutlineElement) ( (DisassemblerDocumentProvider) getDocumentProvider( ) )
 				.getClassFileOutlineElement( );
 		if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.DISASSEMBLER_MODE
 				&& disassemblerText != null
@@ -931,7 +931,7 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 
 					public void run( )
 					{
-						updateDocument( (ByteCodeDocumentProvider) getDocumentProvider( ), getSourceViewer( ) );
+						updateDocument( (DisassemblerDocumentProvider) getDocumentProvider( ), getSourceViewer( ) );
 						if ( editor.getSelectedElement( ) != null )
 						{
 							setSelectionElement( editor.getSelectedElement( ), true );

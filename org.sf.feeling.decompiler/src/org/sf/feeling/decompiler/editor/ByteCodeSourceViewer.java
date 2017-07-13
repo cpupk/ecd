@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.IField;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.ISourceReference;
 import org.eclipse.jdt.core.JavaModelException;
@@ -35,7 +36,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.Region;
@@ -88,7 +88,7 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor
 
 	private JavaDecompilerClassFileEditor editor;
 
-	private Document byteCodeDocument;
+	private ByteCodeDocument byteCodeDocument;
 
 	private Composite container;
 
@@ -120,7 +120,7 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor
 
 		String classContent = editor.getDocumentProvider( ).getDocument( editor.getEditorInput( ) ).get( );
 		String mark = MarkUtil.getMark( classContent );
-		ByteCodeDocumentProvider provider = new ByteCodeDocumentProvider( mark );
+		DisassemblerDocumentProvider provider = new DisassemblerDocumentProvider( mark );
 		setDocumentProvider( provider );
 		setInput( editor.getEditorInput( ) );
 
@@ -150,8 +150,8 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor
 			fSourceViewerDecorationSupport.install( getPreferenceStore( ) );
 
 		StyledText styledText = fSourceViewer.getTextWidget( );
-		styledText.addMouseListener(getCursorListener());
-		styledText.addKeyListener(getCursorListener());
+		styledText.addMouseListener( getCursorListener( ) );
+		styledText.addKeyListener( getCursorListener( ) );
 
 		ReflectionUtils.setFieldValue( this, "fEditorContextMenuId", "#TextEditorContext" ); //$NON-NLS-1$ //$NON-NLS-2$
 		String id = "#TextEditorContext"; //$NON-NLS-1$
@@ -192,7 +192,7 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor
 
 		IClassFile cf = (ClassFile) ( (IClassFileEditorInput) editor.getEditorInput( ) ).getClassFile( );
 
-		byteCodeDocument = new Document( );
+		byteCodeDocument = new ByteCodeDocument( this );
 
 		JavaTextTools tools = JavaPlugin.getDefault( ).getJavaTextTools( );
 		tools.setupJavaDocumentPartitioner( byteCodeDocument, IJavaPartitions.JAVA_PARTITIONING );
@@ -453,19 +453,24 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor
 		StyledText byteCodeText = getSourceViewer( ).getTextWidget( );
 		String byteCode = byteCodeText.getText( );
 		int selectedRange = byteCodeText.getSelectionRange( ).x;
+		IJavaElement element = getJavaElement( byteCode, selectedRange );
+		if ( element != null )
+		{
+			editor.setSelection( element );
+		}
+	}
 
+	public IJavaElement getJavaElement( String byteCode, int index )
+	{
 		if ( byteCode.lastIndexOf( "/* Methods: */" ) != -1 ) //$NON-NLS-1$
 		{
 			int methodStartIndex = byteCode.substring( 0, byteCode.lastIndexOf( "/* Methods: */" ) ).lastIndexOf( "\n" ) //$NON-NLS-1$ //$NON-NLS-2$
 					+ 1;
 			int methodEndIndex = byteCode.substring( 0, byteCode.lastIndexOf( "attributes_count" ) ) //$NON-NLS-1$
 					.lastIndexOf( "\n" ); //$NON-NLS-1$
-			if ( selectedRange >= methodStartIndex && selectedRange <= methodEndIndex )
+			if ( index >= methodStartIndex && index <= methodEndIndex )
 			{
-				handleSelectMethod( byteCode.substring( methodStartIndex, methodEndIndex ),
-						selectedRange - methodStartIndex );
-
-				return;
+				return getMethod( byteCode.substring( methodStartIndex, methodEndIndex ), index - methodStartIndex );
 			}
 
 			if ( byteCode.lastIndexOf( "/* Fields: */" ) != -1 ) //$NON-NLS-1$
@@ -473,12 +478,9 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor
 				int fieldStartIndex = byteCode.substring( 0, byteCode.lastIndexOf( "/* Fields: */" ) ).lastIndexOf( //$NON-NLS-1$
 						"\n" ) + 1; //$NON-NLS-1$
 				int fieldEndIndex = methodStartIndex - 1;
-				if ( selectedRange >= fieldStartIndex && selectedRange <= fieldEndIndex )
+				if ( index >= fieldStartIndex && index <= fieldEndIndex )
 				{
-					handleSelectField( byteCode.substring( fieldStartIndex, fieldEndIndex ),
-							selectedRange - fieldStartIndex );
-
-					return;
+					return getField( byteCode.substring( fieldStartIndex, fieldEndIndex ), index - fieldStartIndex );
 				}
 			}
 		}
@@ -487,20 +489,17 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor
 			int fieldStartIndex = byteCode.substring( 0, byteCode.lastIndexOf( "/* Fields: */" ) ).lastIndexOf( "\n" ) //$NON-NLS-1$ //$NON-NLS-2$
 					+ 1;
 			int fieldEndIndex = byteCode.substring( 0, byteCode.lastIndexOf( "attributes_count" ) ).lastIndexOf( "\n" ); //$NON-NLS-1$ //$NON-NLS-2$
-			if ( selectedRange >= fieldStartIndex && selectedRange <= fieldEndIndex )
+			if ( index >= fieldStartIndex && index <= fieldEndIndex )
 			{
-				handleSelectField( byteCode.substring( fieldStartIndex, fieldEndIndex ),
-						selectedRange - fieldStartIndex );
-
-				return;
+				return getField( byteCode.substring( fieldStartIndex, fieldEndIndex ), index - fieldStartIndex );
 			}
 		}
 
 		ClassFile cf = (ClassFile) ( (IClassFileEditorInput) getEditorInput( ) ).getClassFile( );
-		editor.setSelection( cf.getType( ) );
+		return cf.getType( );
 	}
 
-	private void handleSelectField( String text, int index )
+	private IField getField( String text, int index )
 	{
 		Pattern pattern = Pattern.compile( "Field\\[\\d+\\].+?Field\\[\\d+\\]", Pattern.DOTALL ); //$NON-NLS-1$
 		Matcher matcher = pattern.matcher( text );
@@ -515,22 +514,25 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor
 			if ( fieldStartIndex >= start && fieldStartIndex <= end )
 			{
 				String field = text.substring( start, end );
-				selectField( field );
-				return;
+				return getField( field );
 			}
 			findIndex = end;
 		}
 
-		int start = text.substring( 0, text.lastIndexOf( "Field[" ) ).lastIndexOf( "\n" ) + 1; //$NON-NLS-1$ //$NON-NLS-2$
-		int end = text.length( );
-		if ( fieldStartIndex >= start && fieldStartIndex <= end )
+		if ( text.lastIndexOf( "Field[" ) != -1 ) //$NON-NLS-1$
 		{
-			String field = text.substring( start, end );
-			selectField( field );
+			int start = text.substring( 0, text.lastIndexOf( "Field[" ) ).lastIndexOf( "\n" ) + 1; //$NON-NLS-1$ //$NON-NLS-2$
+			int end = text.length( );
+			if ( fieldStartIndex >= start && fieldStartIndex <= end )
+			{
+				String field = text.substring( start, end );
+				return getField( field );
+			}
 		}
+		return null;
 	}
 
-	private void selectField( String field )
+	private IField getField( String field )
 	{
 		ClassFile cf = (ClassFile) ( (IClassFileEditorInput) getEditorInput( ) ).getClassFile( );
 		int nameIndex = field.indexOf( "name_index" ); //$NON-NLS-1$
@@ -547,14 +549,15 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor
 					IField f = cf.getType( ).getField( fieldName );
 					if ( f != null )
 					{
-						editor.setSelection( f );
+						return f;
 					}
 				}
 			}
 		}
+		return null;
 	}
 
-	private void handleSelectMethod( String text, int index )
+	private IMethod getMethod( String text, int index )
 	{
 		Pattern pattern = Pattern.compile( "Method\\[\\d+\\].+?Method\\[\\d+\\]", Pattern.DOTALL ); //$NON-NLS-1$
 		Matcher matcher = pattern.matcher( text );
@@ -569,22 +572,25 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor
 			if ( methodStartIndex >= start && methodStartIndex <= end )
 			{
 				String method = text.substring( start, end );
-				selectMethod( method );
-				return;
+				return getMethod( method );
 			}
 			findIndex = end;
 		}
 
-		int start = text.substring( 0, text.lastIndexOf( "Method[" ) ).lastIndexOf( "\n" ) + 1; //$NON-NLS-1$ //$NON-NLS-2$
-		int end = text.length( );
-		if ( methodStartIndex >= start && methodStartIndex <= end )
+		if ( text.lastIndexOf( "Method[" ) != -1 ) //$NON-NLS-1$
 		{
-			String method = text.substring( start, end );
-			selectMethod( method );
+			int start = text.substring( 0, text.lastIndexOf( "Method[" ) ).lastIndexOf( "\n" ) + 1; //$NON-NLS-1$ //$NON-NLS-2$
+			int end = text.length( );
+			if ( methodStartIndex >= start && methodStartIndex <= end )
+			{
+				String method = text.substring( start, end );
+				return getMethod( method );
+			}
 		}
+		return null;
 	}
 
-	private void selectMethod( String method )
+	private IMethod getMethod( String method )
 	{
 		ClassFile cf = (ClassFile) ( (IClassFileEditorInput) getEditorInput( ) ).getClassFile( );
 
@@ -609,7 +615,7 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor
 		}
 
 		if ( methodName == null )
-			return;
+			return null;
 
 		if ( "<init>".equals( methodName ) ) //$NON-NLS-1$
 		{
@@ -633,20 +639,21 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor
 		}
 
 		if ( descriptor == null )
-			return;
+			return null;
 
 		try
 		{
 			IMethod m = ClassFileDocumentsUtils.findMethod( cf.getType( ), methodName, descriptor );
 			if ( m != null )
 			{
-				editor.setSelection( m );
+				return m;
 			}
 		}
 		catch ( JavaModelException e )
 		{
 			Logger.debug( e );
 		}
+		return null;
 	}
 
 	protected void editorContextMenuAboutToShow( IMenuManager menu )

@@ -39,7 +39,7 @@ import com.drgarbage.asm.render.impl.ClassFileOutlineElement;
 import com.drgarbage.asm.render.intf.IClassFileDocument;
 import com.drgarbage.asm.render.intf.IDocumentUpdateListener;
 
-public class ByteCodeDocumentProvider extends FileDocumentProvider
+public class DisassemblerDocumentProvider extends FileDocumentProvider
 {
 
 	/**
@@ -76,7 +76,7 @@ public class ByteCodeDocumentProvider extends FileDocumentProvider
 	 * @param part
 	 *            bytecode editor
 	 */
-	public ByteCodeDocumentProvider( String mark )
+	public DisassemblerDocumentProvider( String mark )
 	{
 		super( );
 		this.mark = mark;
@@ -168,7 +168,7 @@ public class ByteCodeDocumentProvider extends FileDocumentProvider
 	 */
 	protected IDocument createEmptyDocument( )
 	{
-		return new ByteCodeDocument( this, UIUtil.getActiveDecompilerEditor( ) );
+		return new DisassemblerDocument( this, UIUtil.getActiveDecompilerEditor( ) );
 	}
 
 	/*

@@ -512,7 +512,7 @@ public class DisassemblerConfiguration extends TextSourceViewerConfiguration
 		public void open( )
 		{
 
-			ByteCodeDocumentProvider bdp = (ByteCodeDocumentProvider) fTextEditor.getDocumentProvider( );
+			DisassemblerDocumentProvider bdp = (DisassemblerDocumentProvider) fTextEditor.getDocumentProvider( );
 			IMethodSection method = bdp.getClassFileDocument( ).findMethodSection( lineNumber );
 			List<IInstructionLine> instructions = method.getInstructionLines( );
 
@@ -630,7 +630,7 @@ public class DisassemblerConfiguration extends TextSourceViewerConfiguration
 		public void open( )
 		{
 
-			ByteCodeDocumentProvider bdp = (ByteCodeDocumentProvider) fTextEditor.getDocumentProvider( );
+			DisassemblerDocumentProvider bdp = (DisassemblerDocumentProvider) fTextEditor.getDocumentProvider( );
 			IFieldSection field = bdp.getClassFileDocument( ).findFieldSection( text );
 
 			IDocument document = fTextEditor.getDocumentProvider( ).getDocument( fTextEditor.getEditorInput( ) );

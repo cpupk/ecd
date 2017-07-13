@@ -32,9 +32,9 @@ public class DisassemblerJavadocHover extends JavadocHover implements IJavaEdito
 	{
 		try
 		{
-			if ( textViewer.getDocument( ) instanceof ByteCodeDocument )
+			if ( textViewer.getDocument( ) instanceof DisassemblerDocument )
 			{
-				ByteCodeDocument bytecodeDocument = (ByteCodeDocument) textViewer.getDocument( );
+				DisassemblerDocument bytecodeDocument = (DisassemblerDocument) textViewer.getDocument( );
 				String text = textViewer.getDocument( ).get( hoverRegion.getOffset( ), hoverRegion.getLength( ) );
 
 				for ( int i = 0; i < ByteCodeConstants.OPCODE_MNEMONICS.length; i++ )
@@ -59,7 +59,7 @@ public class DisassemblerJavadocHover extends JavadocHover implements IJavaEdito
 					text = text.substring( text.lastIndexOf( "$" ) + 1 ); //$NON-NLS-1$
 				}
 				int line = bytecodeDocument.getLineOfOffset( hoverRegion.getOffset( ) );
-				ByteCodeDocumentProvider provider = bytecodeDocument.getDocumentProvider( );
+				DisassemblerDocumentProvider provider = bytecodeDocument.getDocumentProvider( );
 				IClassFileDocument disassemblerClassDocument = provider.getClassFileDocument( );
 				JavaDecompilerClassFileEditor editor = bytecodeDocument.getEditor( );
 				ClassFile cf = (ClassFile) ( (IClassFileEditorInput) editor.getEditorInput( ) ).getClassFile( );
@@ -171,6 +171,115 @@ public class DisassemblerJavadocHover extends JavadocHover implements IJavaEdito
 				}, new Object[]{
 						elements, getEditorInputJavaElement( ), hoverRegion, null
 				} );
+			}
+			else if ( textViewer.getDocument( ) instanceof ByteCodeDocument )
+			{
+				int offset = -1;
+				String text = textViewer.getDocument( ).get( hoverRegion.getOffset( ), hoverRegion.getLength( ) );
+				ClassFile cf = (ClassFile) ( (IClassFileEditorInput) ( (ByteCodeDocument) textViewer.getDocument( ) )
+						.getEditor( )
+						.getEditorInput( ) ).getClassFile( );
+				if ( hoverRegion.getOffset( ) > -1 )
+				{
+					IJavaElement element = ( (ByteCodeDocument) textViewer.getDocument( ) ).getEditor( )
+							.getJavaElement( textViewer.getDocument( ).get( ), hoverRegion.getOffset( ) );
+					if ( element != null )
+					{
+						if ( element instanceof IMethod )
+						{
+							IMethod m = (IMethod) element;
+							if ( m.isConstructor( ) && "init".equals( text ) ) // $NON-NLS-1$ //$NON-NLS-1$
+							{
+								text = cf.getTypeName( );
+							}
+							ISourceRange range = m.getSourceRange( );
+							if ( m.getJavadocRange( ) != null )
+							{
+								range = new SourceRange(
+										m.getJavadocRange( ).getOffset( ) + m.getJavadocRange( ).getLength( ),
+										range.getLength( ) - m.getJavadocRange( ).getLength( ) );
+							}
+							if ( range != null && range.getOffset( ) != -1 )
+							{
+								offset = m.getClassFile( )
+										.getBuffer( )
+										.getText( range.getOffset( ), range.getLength( ) )
+										.indexOf( text );
+								if ( offset != -1 )
+								{
+									hoverRegion = new Region( range.getOffset( ) + offset, text.length( ) );
+								}
+							}
+						}
+						else if ( element instanceof IField )
+						{
+							IField f = (IField) element;
+							ISourceRange range = f.getSourceRange( );
+							if ( f.getJavadocRange( ) != null )
+							{
+								range = new SourceRange(
+										f.getJavadocRange( ).getOffset( ) + f.getJavadocRange( ).getLength( ),
+										range.getLength( ) - f.getJavadocRange( ).getLength( ) );
+							}
+							if ( range != null && range.getOffset( ) != -1 )
+							{
+								offset = f.getClassFile( )
+										.getBuffer( )
+										.getText( range.getOffset( ), range.getLength( ) )
+										.indexOf( text );
+								if ( offset != -1 )
+								{
+									hoverRegion = new Region( range.getOffset( ) + offset, text.length( ) );
+								}
+							}
+							if ( offset == -1 )
+							{
+								range = cf.getType( ).getSourceRange( );
+								offset = cf.getType( )
+										.getClassFile( )
+										.getBuffer( )
+										.getText( 0, range.getOffset( ) + range.getLength( ) )
+										.indexOf( text );
+								if ( offset != -1 )
+								{
+									hoverRegion = new Region( offset, text.length( ) );
+								}
+							}
+						}
+					}
+
+					if ( offset == -1 )
+					{
+						ISourceRange range = cf.getType( ).getSourceRange( );
+						if ( range != null && range.getOffset( ) + range.getLength( ) > -1 )
+						{
+							offset = cf.getType( )
+									.getClassFile( )
+									.getBuffer( )
+									.getText( 0, range.getOffset( ) + range.getLength( ) )
+									.indexOf( text );
+							if ( offset != -1 )
+							{
+								hoverRegion = new Region( offset, text.length( ) );
+							}
+						}
+					}
+
+					IJavaElement[] elements = getJavaElementsAt( textViewer, hoverRegion );
+					if ( elements == null || elements.length == 0 )
+					{
+						return null;
+					}
+
+					return ReflectionUtils.invokeMethod( this, "getHoverInfo", new Class[]{ //$NON-NLS-1$
+							IJavaElement[].class,
+							ITypeRoot.class,
+							IRegion.class,
+							JavadocBrowserInformationControlInput.class
+					}, new Object[]{
+							elements, getEditorInputJavaElement( ), hoverRegion, null
+					} );
+				}
 			}
 		}
 		catch ( Exception e )
