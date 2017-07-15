@@ -7,7 +7,7 @@ Bundle-Activator: org.sf.feeling.decompiler.update.DecompilerUpdatePlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.core.expressions,
- org.sf.feeling.decompiler,
+ org.sf.feeling.decompiler;bundle-version="[2.9.14,2.9.15)",
  org.eclipse.epp.mpc.ui;resolution:=optional,
  org.eclipse.epp.mpc.core;resolution:=optional,
  org.eclipse.equinox.p2.operations;resolution:=optional,
