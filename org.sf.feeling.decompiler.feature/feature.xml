@@ -44,7 +44,7 @@
       <import plugin="org.eclipse.core.filesystem"/>
       <import plugin="org.eclipse.help.base"/>
       <import plugin="org.eclipse.ui"/>
-      <import plugin="org.sf.feeling.decompiler" version="2.10.0" match="perfect"/>
+      <import plugin="org.sf.feeling.decompiler"/>
       <import plugin="javax.inject"/>
       <import plugin="javax.annotation"/>
       <import plugin="org.eclipse.core.databinding"/>
