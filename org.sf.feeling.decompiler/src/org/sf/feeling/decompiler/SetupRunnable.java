@@ -34,7 +34,6 @@ import org.sf.feeling.decompiler.actions.DecompileAction;
 import org.sf.feeling.decompiler.editor.JavaDecompilerClassFileEditor;
 import org.sf.feeling.decompiler.extension.DecompilerAdapterManager;
 import org.sf.feeling.decompiler.extension.IDecompilerExtensionHandler;
-import org.sf.feeling.decompiler.update.IDecompilerUpdateHandler;
 import org.sf.feeling.decompiler.util.ClassUtil;
 import org.sf.feeling.decompiler.util.Logger;
 import org.sf.feeling.decompiler.util.MarkUtil;
@@ -63,7 +62,6 @@ public class SetupRunnable implements Runnable
 			}
 			else
 			{
-				checkDecompilerUpdate( );
 				checkClassFileAssociation( );
 				setupPartListener( );
 				checkDecompilerExtension( );
@@ -253,24 +251,6 @@ public class SetupRunnable implements Runnable
 
 		page.removePartListener( partListener );
 		page.addPartListener( partListener );
-	}
-
-	private void checkDecompilerUpdate( )
-	{
-		final IPreferenceStore prefs = JavaDecompilerPlugin.getDefault( ).getPreferenceStore( );
-
-		final Object updateAdapter = DecompilerAdapterManager.getAdapter( JavaDecompilerPlugin.getDefault( ),
-				IDecompilerUpdateHandler.class );
-
-		if ( updateAdapter instanceof IDecompilerUpdateHandler )
-		{
-			final IDecompilerUpdateHandler updateHandler = (IDecompilerUpdateHandler) updateAdapter;
-			final boolean showUI = prefs.getBoolean( JavaDecompilerPlugin.CHECK_UPDATE );
-			if ( showUI )
-			{
-				updateHandler.execute( showUI );
-			}
-		}
 	}
 
 	private void checkClassFileAssociation( )

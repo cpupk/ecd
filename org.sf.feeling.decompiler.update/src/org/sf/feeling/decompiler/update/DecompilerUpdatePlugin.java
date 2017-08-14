@@ -42,8 +42,6 @@ public class DecompilerUpdatePlugin extends AbstractUIPlugin implements IPropert
 
 	private IPreferenceStore preferenceStore;
 
-	public static final String NOT_UPDATE_VERSION = "org.sf.feeling.decompiler.not_update_version"; //$NON-NLS-1$ ;
-
 	private File patchFile;
 
 	private IWindowListener windowListener = new IWindowListener( ) {
@@ -101,7 +99,6 @@ public class DecompilerUpdatePlugin extends AbstractUIPlugin implements IPropert
 		if ( preferenceStore == null )
 		{
 			preferenceStore = JavaDecompilerPlugin.getDefault( ).getPreferenceStore( );
-			preferenceStore.setDefault( NOT_UPDATE_VERSION, "" ); //$NON-NLS-1$
 		}
 		return preferenceStore;
 	}

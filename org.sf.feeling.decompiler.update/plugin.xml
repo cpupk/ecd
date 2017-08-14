@@ -12,34 +12,8 @@
 ###############################################################################
 -->
 <plugin>
-	<extension
-      	point="org.eclipse.core.expressions.propertyTesters">
-   		<propertyTester
-         	class="org.sf.feeling.decompiler.update.tester.DecompilerUpdateTester"
-         	id="DecompilerUpdateTester"
-         	namespace="Decompiler"
-         	properties="mpcInstall"
-         	type="org.sf.feeling.decompiler.JavaDecompilerPlugin">
-   		</propertyTester>
-  	</extension>
   	<extension
         point="org.sf.feeling.decompiler.decompilerAdapters">
-     	<adaptable
-           class="org.sf.feeling.decompiler.JavaDecompilerPlugin">
-           <adapter
-                 class="org.sf.feeling.decompiler.update.DecompilerUpdateHandler"
-                 id="org.sf.feeling.decompiler.update.DecompilerUpdateHandler"
-                 singleton="true"
-                 type="org.sf.feeling.decompiler.update.IDecompilerUpdateHandler">
-                 <enablement>
-             	 	<test
-                   		forcePluginActivation="true"
-                   		property="Decompiler.mpcInstall"
-                   		value="true">
-             		</test>
-                 </enablement>
-           </adapter>
-     	</adaptable>
      	<adaptable
            class="org.sf.feeling.decompiler.JavaDecompilerPlugin">
            <adapter

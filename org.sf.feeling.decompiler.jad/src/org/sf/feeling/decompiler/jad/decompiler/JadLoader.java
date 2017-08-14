@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.eclipse.core.runtime.Platform;
+import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 
 public final class JadLoader
 {
@@ -55,8 +56,10 @@ public final class JadLoader
 		FileOutputStream fos = null;
 		try
 		{
-			String property = "java.io.tmpdir"; //$NON-NLS-1$
-			String tempDir = System.getProperty( property );
+			File tempDir = new File(JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).getString( JavaDecompilerPlugin.TEMP_DIR ));
+			if(!tempDir.exists( )) {
+				tempDir.mkdirs( );
+			}
 			File jad = new File( tempDir, jadFileName );
 			jad.createNewFile( );
 			jad.deleteOnExit( );

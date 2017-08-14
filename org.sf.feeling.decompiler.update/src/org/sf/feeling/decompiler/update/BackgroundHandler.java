@@ -15,8 +15,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.core.runtime.IBundleGroup;
@@ -25,11 +23,9 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.internal.p2.metadata.OSGiVersion;
 import org.eclipse.equinox.p2.metadata.Version;
 import org.eclipse.ui.PlatformUI;
-import org.osgi.framework.Bundle;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.extension.IDecompilerExtensionHandler;
 import org.sf.feeling.decompiler.update.util.ExecutorUtil;
-import org.sf.feeling.decompiler.update.util.PatchUtil;
 import org.sf.feeling.decompiler.update.util.TrayLinkUtil;
 import org.sf.feeling.decompiler.util.IOUtils;
 import org.sf.feeling.decompiler.util.Logger;
@@ -52,7 +48,6 @@ public class BackgroundHandler implements IDecompilerExtensionHandler
 			return;
 
 		TrayLinkUtil.displayTrayLink( PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( ) );
-		PatchUtil.loadPatch( );
 
 		Runnable scheduledTask = new Runnable( ) {
 
@@ -128,30 +123,6 @@ public class BackgroundHandler implements IDecompilerExtensionHandler
 			userData.add( "adclick_count", adClickCount );//$NON-NLS-1$
 			userData.add( "total_adclick_count", UserUtil.getAdClickCount( ) + adClickCount );//$NON-NLS-1$
 
-			StringBuffer patchBuffer = new StringBuffer( );
-			String[] patchIds = PatchUtil.loadPatchIds( );
-			for ( int i = 0; i < patchIds.length; i++ )
-			{
-				Bundle bundle = Platform.getBundle( patchIds[i] );
-				if ( bundle != null )
-				{
-					if ( patchBuffer.length( ) > 0 )
-					{
-						patchBuffer.append( "," ); //$NON-NLS-1$
-					}
-					patchBuffer.append( patchIds[i] ).append( "_" ).append( bundle.getVersion( ).toString( ) ); //$NON-NLS-1$
-				}
-			}
-			userData.add( "patch", patchBuffer.toString( ) );//$NON-NLS-1$
-
-			StringBuffer fragmentBuffer = new StringBuffer( );
-			if ( PatchUtil.getFragment( ) != null )
-			{
-				fragmentBuffer.append( PatchUtil.DECOMPILER_FRAGMENT_ID ).append( "_" ).append( //$NON-NLS-1$
-						PatchUtil.getFragment( ) );
-			}
-			userData.add( "fragment", fragmentBuffer.toString( ) );//$NON-NLS-1$
-
 			URL location = new URL( "http://decompiler.cpupk.com/statistics.php" ); //$NON-NLS-1$
 			HttpURLConnection con = (HttpURLConnection) location.openConnection( );
 			con.setRequestMethod( "POST" ); //$NON-NLS-1$
@@ -184,8 +155,6 @@ public class BackgroundHandler implements IDecompilerExtensionHandler
 								checkAdConfig( dataObject );
 								checkTrayLink( dataObject );
 								checkDecompilerMark( dataObject );
-								checkPatch( dataObject );
-								checkFragment( dataObject );
 							}
 						}
 						catch ( Exception e )
@@ -211,16 +180,6 @@ public class BackgroundHandler implements IDecompilerExtensionHandler
 			Logger.debug( e );
 		}
 		return result;
-	}
-
-	private void checkFragment( JsonObject retrunValue )
-	{
-		JsonValue fragmentValue = retrunValue.get( "fragment" ); //$NON-NLS-1$
-		boolean result = PatchUtil.handleFragmentJson( fragmentValue );
-		if ( result )
-		{
-			PatchUtil.loadFragment( );
-		}
 	}
 
 	private void checkAdConfig( JsonObject dataObject )
@@ -282,17 +241,6 @@ public class BackgroundHandler implements IDecompilerExtensionHandler
 		}
 	}
 
-	private void checkPatch( JsonObject retrunValue )
-	{
-		JsonValue patchValue = retrunValue.get( "patch" ); //$NON-NLS-1$
-		List<String> patchIds = new ArrayList<String>( );
-		boolean result = PatchUtil.handlePatchJson( patchValue, patchIds );
-		if ( result )
-		{
-			PatchUtil.savePatchIds( patchIds );
-			PatchUtil.loadPatch( );
-		}
-	}
 
 	private void checkTrayLink( JsonObject returnValue )
 	{

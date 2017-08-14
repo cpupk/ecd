@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Eclipse Class Decompiler Source Attach
 Bundle-SymbolicName: org.sf.feeling.decompiler.source.attach;singleton:=true
-Bundle-Version: 2.9.14.qualifier
+Bundle-Version: 2.10.0.qualifier
 Bundle-Activator: org.sf.feeling.decompiler.source.attach.SourceAttachPlugin
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
@@ -14,7 +14,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.databinding,
  org.eclipse.jface.databinding,
  org.eclipse.core.databinding.beans,
- org.sf.feeling.decompiler;bundle-version="[2.9.14,2.9.15)",
+ org.sf.feeling.decompiler,
  org.apache.ant,
  org.eclipse.jgit;resolution:=optional,
  com.jcraft.jsch;resolution:=optional,
