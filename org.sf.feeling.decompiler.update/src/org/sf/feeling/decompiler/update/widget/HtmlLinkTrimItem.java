@@ -11,12 +11,6 @@
 
 package org.sf.feeling.decompiler.update.widget;
 
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.URL;
-import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
-
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.ui.text.IJavaColorConstants;
 import org.eclipse.jdt.ui.text.JavaTextTools;
@@ -38,9 +32,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.TrimUtil;
 import org.eclipse.ui.themes.ColorUtil;
-import org.sf.feeling.decompiler.JavaDecompilerPlugin;
-import org.sf.feeling.decompiler.update.util.ExecutorUtil;
-import org.sf.feeling.decompiler.update.util.TrayLinkUtil;
 import org.sf.feeling.decompiler.util.Logger;
 import org.sf.feeling.decompiler.util.ReflectionUtils;
 import org.sf.feeling.decompiler.util.UIUtil;
@@ -51,13 +42,10 @@ public class HtmlLinkTrimItem extends Composite
 
 	private double width, height;
 	private Browser browser;
-	private volatile String browserUrl;
-	private volatile boolean isDisposed = false;
 	private boolean isUseExternalBrowser = true;
 
 	private Composite container;
 	private ScrolledComposite sComposite;
-	private String trayLinkUrl;
 
 	static class CustomFunction extends BrowserFunction
 	{
@@ -81,11 +69,6 @@ public class HtmlLinkTrimItem extends Composite
 				{
 					UIUtil.openBrowser( arguments[0].toString( ) );
 				}
-			}
-			else if ( "updateAdCount".equals( funcName ) ) //$NON-NLS-1$
-			{
-				JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).setValue( JavaDecompilerPlugin.ADCLICK_COUNT,
-						JavaDecompilerPlugin.getDefault( ).getAdClickCount( ).getAndIncrement( ) );
 			}
 			else if ( "resize".equals( funcName ) ) //$NON-NLS-1$
 			{
@@ -162,7 +145,6 @@ public class HtmlLinkTrimItem extends Composite
 						try
 						{
 							resize( updateBrowserStyle( ) );
-							browserUrl = browser.getUrl( );
 						}
 						catch ( Exception e )
 						{
@@ -191,8 +173,6 @@ public class HtmlLinkTrimItem extends Composite
 		gd.widthHint = getDisplay( ).getBounds( ).width;
 		browser.setLayoutData( gd );
 
-		updateTrimUrl( );
-
 		sComposite.addControlListener( new ControlAdapter( ) {
 
 			private void computeSize( )
@@ -214,7 +194,7 @@ public class HtmlLinkTrimItem extends Composite
 	{
 		StringBuilder buffer = new StringBuilder( );
 		buffer.append( updateBrowserColor( ) );
-		if ( trayLinkUrl == null || TrayLinkUtil.useSystemColor( trayLinkUrl ) || UIUtil.isDark( getParent( ) ) )
+		if (UIUtil.isDark( getParent( ) ) )
 		{
 			buffer.append( updateBrowserFontColor( ) );
 		}
@@ -222,105 +202,6 @@ public class HtmlLinkTrimItem extends Composite
 		buffer.append( updateBrowserFontSize( ) );
 
 		return buffer.toString( );
-	}
-
-	private void updateTrimUrl( )
-	{
-		if ( isDisposed || browser.isDisposed( ) )
-		{
-			return;
-		}
-
-		trayLinkUrl = TrayLinkUtil.getTrayUrl( );
-		if ( trayLinkUrl == null )
-		{
-			return;
-		}
-
-		Integer time = TrayLinkUtil.getTrayUrlDisplayTime( trayLinkUrl );
-
-		if ( time == null )
-		{
-			time = 10;
-		}
-
-		if ( UIUtil.isWin32( ) )
-		{
-			isUseExternalBrowser = TrayLinkUtil.isUseExternalBrowser( trayLinkUrl );
-		}
-		else
-		{
-			isUseExternalBrowser = true;
-		}
-		if ( !trayLinkUrl.equals( browserUrl ) )
-		{
-			ExecutorUtil.submitTask( new Callable<Boolean>( ) {
-
-				@Override
-				public Boolean call( ) throws Exception
-				{
-					Socket socket = new Socket( );
-					try
-					{
-						if ( HtmlLinkTrimItem.this.isDisposed( ) )
-							return true;
-						socket.connect( new InetSocketAddress( new URL( trayLinkUrl ).getHost( ), 80 ), 5000 );
-						HtmlLinkTrimItem.this.getDisplay( ).asyncExec( new Runnable( ) {
-
-							@Override
-							public void run( )
-							{
-								if ( browser != null && !browser.isDisposed( ) )
-								{
-									browser.setData( "linkClick", false ); //$NON-NLS-1$
-									browser.setVisible( false );
-									browser.setUrl( trayLinkUrl );
-								}
-								else
-								{
-									isDisposed = true;
-								}
-							}
-						} );
-						return true;
-					}
-					catch ( Exception e )
-					{
-						browserUrl = null;
-						HtmlLinkTrimItem.this.getDisplay( ).asyncExec( new Runnable( ) {
-
-							@Override
-							public void run( )
-							{
-								if ( browser != null && !browser.isDisposed( ) )
-								{
-									browser.setVisible( false );
-								}
-								else
-								{
-									isDisposed = true;
-								}
-							}
-						} );
-						Logger.debug( e );
-						return false;
-					}
-					finally
-					{
-						socket.close( );
-					}
-				}
-			} );
-		}
-
-		ExecutorUtil.submitScheduledTask( new Runnable( ) {
-
-			@Override
-			public void run( )
-			{
-				updateTrimUrl( );
-			}
-		}, time, TimeUnit.MINUTES );
 	}
 
 	@Override

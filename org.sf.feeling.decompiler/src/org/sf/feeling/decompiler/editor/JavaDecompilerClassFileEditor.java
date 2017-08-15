@@ -423,7 +423,6 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 	@Override
 	protected void doSetInput( IEditorInput input ) throws CoreException
 	{
-		JavaDecompilerPlugin.getDefault( ).getDecompileCount( ).getAndIncrement( );
 		if ( input instanceof IFileEditorInput )
 		{
 			String filePath = UIUtil.getPathLocation( ( (IFileEditorInput) input ).getStorage( ).getFullPath( ) );

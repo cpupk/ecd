@@ -16,15 +16,11 @@ import java.io.File;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.ui.IWindowListener;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
-import org.sf.feeling.decompiler.update.util.TrayLinkUtil;
 import org.sf.feeling.decompiler.util.Logger;
 import org.sf.feeling.decompiler.util.ReflectionUtils;
 
@@ -43,30 +39,6 @@ public class DecompilerUpdatePlugin extends AbstractUIPlugin implements IPropert
 	private IPreferenceStore preferenceStore;
 
 	private File patchFile;
-
-	private IWindowListener windowListener = new IWindowListener( ) {
-
-		@Override
-		public void windowOpened( IWorkbenchWindow window )
-		{
-			TrayLinkUtil.displayTrayLink( window );
-		}
-
-		@Override
-		public void windowActivated( IWorkbenchWindow window )
-		{
-		}
-
-		@Override
-		public void windowDeactivated( IWorkbenchWindow window )
-		{
-		}
-
-		@Override
-		public void windowClosed( IWorkbenchWindow window )
-		{
-		}
-	};
 
 	/**
 	 * The constructor
@@ -87,10 +59,6 @@ public class DecompilerUpdatePlugin extends AbstractUIPlugin implements IPropert
 		super.start( context );
 		plugin = this;
 		getPreferenceStore( ).addPropertyChangeListener( this );
-		if ( PlatformUI.getWorkbench( ) != null )
-		{
-			PlatformUI.getWorkbench( ).addWindowListener( windowListener );
-		}
 	}
 
 	@Override
@@ -113,10 +81,6 @@ public class DecompilerUpdatePlugin extends AbstractUIPlugin implements IPropert
 	public void stop( BundleContext context ) throws Exception
 	{
 		getPreferenceStore( ).removePropertyChangeListener( this );
-		if ( PlatformUI.getWorkbench( ) != null )
-		{
-			PlatformUI.getWorkbench( ).removeWindowListener( windowListener );
-		}
 		if ( patchFile != null )
 		{
 			try
