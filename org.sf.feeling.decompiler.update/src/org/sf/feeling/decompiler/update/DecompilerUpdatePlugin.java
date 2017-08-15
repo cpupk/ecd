@@ -11,18 +11,12 @@
 
 package org.sf.feeling.decompiler.update;
 
-import java.io.File;
-
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleException;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
-import org.sf.feeling.decompiler.util.Logger;
-import org.sf.feeling.decompiler.util.ReflectionUtils;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -38,7 +32,6 @@ public class DecompilerUpdatePlugin extends AbstractUIPlugin implements IPropert
 
 	private IPreferenceStore preferenceStore;
 
-	private File patchFile;
 
 	/**
 	 * The constructor
@@ -81,26 +74,6 @@ public class DecompilerUpdatePlugin extends AbstractUIPlugin implements IPropert
 	public void stop( BundleContext context ) throws Exception
 	{
 		getPreferenceStore( ).removePropertyChangeListener( this );
-		if ( patchFile != null )
-		{
-			try
-			{
-				Bundle bundle = (Bundle) ReflectionUtils.invokeMethod( context, "getBundle", new Class[]{ //$NON-NLS-1$
-						String.class
-				}, new Object[]{
-						patchFile.toURI( ).toString( )
-				} );
-				if ( bundle == null )
-				{
-					return;
-				}
-				bundle.uninstall( );
-			}
-			catch ( BundleException e )
-			{
-				Logger.debug( e );
-			}
-		}
 		plugin = null;
 		super.stop( context );
 	}
@@ -119,15 +92,5 @@ public class DecompilerUpdatePlugin extends AbstractUIPlugin implements IPropert
 	public void propertyChange( PropertyChangeEvent event )
 	{
 
-	}
-
-	public File getPatchFile( )
-	{
-		return patchFile;
-	}
-
-	public void setPatchFile( File patchFile )
-	{
-		this.patchFile = patchFile;
 	}
 }
