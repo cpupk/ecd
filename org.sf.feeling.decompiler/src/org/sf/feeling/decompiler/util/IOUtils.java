@@ -1,13 +1,19 @@
-/*******************************************************************************
- * Copyright (c) 2017 Chen Chao(cnfree2000@hotmail.com).
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- * Contributors:
- *  Chen Chao  - initial API and implementation
- *******************************************************************************/
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package org.sf.feeling.decompiler.util;
 
@@ -91,11 +97,9 @@ public class IOUtils
 	// or return one of them.
 
 	/**
-	 * Represents the end-of-file (or stream).
-	 * 
-	 * @since 2.5 (made public)
+	 * The system directory separator character.
 	 */
-	public static final int EOF = -1;
+	public static final char DIR_SEPARATOR = File.separatorChar;
 
 	/**
 	 * The Unix directory separator character.
@@ -106,9 +110,11 @@ public class IOUtils
 	 */
 	public static final char DIR_SEPARATOR_WINDOWS = '\\';
 	/**
-	 * The system directory separator character.
+	 * Represents the end-of-file (or stream).
+	 * 
+	 * @since 2.5 (made public)
 	 */
-	public static final char DIR_SEPARATOR = File.separatorChar;
+	public static final int EOF = -1;
 	/**
 	 * The Unix line separator string.
 	 */
@@ -130,6 +136,7 @@ public class IOUtils
 	 */
 	private static final int SKIP_BUFFER_SIZE = 2048;
 
+	private static byte[] SKIP_BYTE_BUFFER;
 	// Allocated in the relevant skip method if necessary.
 	/*
 	 * These buffers are static and are shared between threads. This is possible
@@ -142,7 +149,6 @@ public class IOUtils
 	 * ensure some other thread did not create a smaller one)
 	 */
 	private static char[] SKIP_CHAR_BUFFER;
-	private static byte[] SKIP_BYTE_BUFFER;
 
 	/**
 	 * Instances should NOT be constructed in standard programming.
@@ -153,6 +159,178 @@ public class IOUtils
 	}
 
 	// -----------------------------------------------------------------------
+
+	/**
+	 * Returns the given InputStream if it is already a
+	 * {@link BufferedInputStream}, otherwise creates a BufferedInputStream from
+	 * the given InputStream.
+	 *
+	 * @param inputStream
+	 *            the InputStream to wrap or return (not null)
+	 * @return the given InputStream or a new {@link BufferedInputStream} for
+	 *         the given InputStream
+	 * @throws NullPointerException
+	 *             if the input parameter is null
+	 * @since 2.5
+	 */
+	public static BufferedInputStream buffer( final InputStream inputStream )
+	{
+		// reject null early on rather than waiting for IO operation to fail
+		if ( inputStream == null )
+		{ // not checked by BufferedInputStream
+			throw new NullPointerException( );
+		}
+		return inputStream instanceof BufferedInputStream ? (BufferedInputStream) inputStream
+				: new BufferedInputStream( inputStream );
+	}
+
+	/**
+	 * Returns the given InputStream if it is already a
+	 * {@link BufferedInputStream}, otherwise creates a BufferedInputStream from
+	 * the given InputStream.
+	 *
+	 * @param inputStream
+	 *            the InputStream to wrap or return (not null)
+	 * @param size
+	 *            the buffer size, if a new BufferedInputStream is created.
+	 * @return the given InputStream or a new {@link BufferedInputStream} for
+	 *         the given InputStream
+	 * @throws NullPointerException
+	 *             if the input parameter is null
+	 * @since 2.5
+	 */
+	public static BufferedInputStream buffer( final InputStream inputStream, int size )
+	{
+		// reject null early on rather than waiting for IO operation to fail
+		if ( inputStream == null )
+		{ // not checked by BufferedInputStream
+			throw new NullPointerException( );
+		}
+		return inputStream instanceof BufferedInputStream ? (BufferedInputStream) inputStream
+				: new BufferedInputStream( inputStream, size );
+	}
+
+	/**
+	 * Returns the given OutputStream if it is already a
+	 * {@link BufferedOutputStream}, otherwise creates a BufferedOutputStream
+	 * from the given OutputStream.
+	 *
+	 * @param outputStream
+	 *            the OutputStream to wrap or return (not null)
+	 * @return the given OutputStream or a new {@link BufferedOutputStream} for
+	 *         the given OutputStream
+	 * @throws NullPointerException
+	 *             if the input parameter is null
+	 * @since 2.5
+	 */
+	public static BufferedOutputStream buffer( final OutputStream outputStream )
+	{
+		// reject null early on rather than waiting for IO operation to fail
+		if ( outputStream == null )
+		{ // not checked by BufferedOutputStream
+			throw new NullPointerException( );
+		}
+		return outputStream instanceof BufferedOutputStream ? (BufferedOutputStream) outputStream
+				: new BufferedOutputStream( outputStream );
+	}
+
+	/**
+	 * Returns the given OutputStream if it is already a
+	 * {@link BufferedOutputStream}, otherwise creates a BufferedOutputStream
+	 * from the given OutputStream.
+	 *
+	 * @param outputStream
+	 *            the OutputStream to wrap or return (not null)
+	 * @param size
+	 *            the buffer size, if a new BufferedOutputStream is created.
+	 * @return the given OutputStream or a new {@link BufferedOutputStream} for
+	 *         the given OutputStream
+	 * @throws NullPointerException
+	 *             if the input parameter is null
+	 * @since 2.5
+	 */
+	public static BufferedOutputStream buffer( final OutputStream outputStream, int size )
+	{
+		// reject null early on rather than waiting for IO operation to fail
+		if ( outputStream == null )
+		{ // not checked by BufferedOutputStream
+			throw new NullPointerException( );
+		}
+		return outputStream instanceof BufferedOutputStream ? (BufferedOutputStream) outputStream
+				: new BufferedOutputStream( outputStream, size );
+	}
+
+	/**
+	 * Returns the given reader if it is already a {@link BufferedReader},
+	 * otherwise creates a BufferedReader from the given reader.
+	 *
+	 * @param reader
+	 *            the reader to wrap or return (not null)
+	 * @return the given reader or a new {@link BufferedReader} for the given
+	 *         reader
+	 * @throws NullPointerException
+	 *             if the input parameter is null
+	 * @since 2.5
+	 */
+	public static BufferedReader buffer( final Reader reader )
+	{
+		return reader instanceof BufferedReader ? (BufferedReader) reader : new BufferedReader( reader );
+	}
+
+	/**
+	 * Returns the given reader if it is already a {@link BufferedReader},
+	 * otherwise creates a BufferedReader from the given reader.
+	 *
+	 * @param reader
+	 *            the reader to wrap or return (not null)
+	 * @param size
+	 *            the buffer size, if a new BufferedReader is created.
+	 * @return the given reader or a new {@link BufferedReader} for the given
+	 *         reader
+	 * @throws NullPointerException
+	 *             if the input parameter is null
+	 * @since 2.5
+	 */
+	public static BufferedReader buffer( final Reader reader, int size )
+	{
+		return reader instanceof BufferedReader ? (BufferedReader) reader : new BufferedReader( reader, size );
+	}
+
+	/**
+	 * Returns the given Writer if it is already a {@link BufferedWriter},
+	 * otherwise creates a BufferedWriter from the given Writer.
+	 *
+	 * @param writer
+	 *            the Writer to wrap or return (not null)
+	 * @return the given Writer or a new {@link BufferedWriter} for the given
+	 *         Writer
+	 * @throws NullPointerException
+	 *             if the input parameter is null
+	 * @since 2.5
+	 */
+	public static BufferedWriter buffer( final Writer writer )
+	{
+		return writer instanceof BufferedWriter ? (BufferedWriter) writer : new BufferedWriter( writer );
+	}
+
+	/**
+	 * Returns the given Writer if it is already a {@link BufferedWriter},
+	 * otherwise creates a BufferedWriter from the given Writer.
+	 *
+	 * @param writer
+	 *            the Writer to wrap or return (not null)
+	 * @param size
+	 *            the buffer size, if a new BufferedWriter is created.
+	 * @return the given Writer or a new {@link BufferedWriter} for the given
+	 *         Writer
+	 * @throws NullPointerException
+	 *             if the input parameter is null
+	 * @since 2.5
+	 */
+	public static BufferedWriter buffer( final Writer writer, int size )
+	{
+		return writer instanceof BufferedWriter ? (BufferedWriter) writer : new BufferedWriter( writer, size );
+	}
 
 	/**
 	 * Closes a URLConnection.
@@ -167,170 +345,6 @@ public class IOUtils
 		{
 			( (HttpURLConnection) conn ).disconnect( );
 		}
-	}
-
-	/**
-	 * Closes an <code>Reader</code> unconditionally.
-	 * <p>
-	 * Equivalent to {@link Reader#close()}, except any exceptions will be
-	 * ignored. This is typically used in finally blocks.
-	 * <p>
-	 * Example code:
-	 * 
-	 * <pre>
-	 * char[] data = new char[1024];
-	 * Reader in = null;
-	 * try
-	 * {
-	 * 	in = new FileReader( "foo.txt" );
-	 * 	in.read( data );
-	 * 	in.close( ); // close errors are handled
-	 * }
-	 * catch ( Exception e )
-	 * {
-	 * 	// error handling
-	 * }
-	 * finally
-	 * {
-	 * 	IOUtils.closeQuietly( in );
-	 * }
-	 * </pre>
-	 *
-	 * @param input
-	 *            the Reader to close, may be null or already closed
-	 *
-	 * @deprecated As of 2.6 removed without replacement. Please use the
-	 *             try-with-resources statement or handle suppressed exceptions
-	 *             manually.
-	 * @see Throwable#addSuppressed(java.lang.Throwable)
-	 */
-	@Deprecated
-	public static void closeQuietly( final Reader input )
-	{
-		closeQuietly( (Closeable) input );
-	}
-
-	/**
-	 * Closes an <code>Writer</code> unconditionally.
-	 * <p>
-	 * Equivalent to {@link Writer#close()}, except any exceptions will be
-	 * ignored. This is typically used in finally blocks.
-	 * <p>
-	 * Example code:
-	 * 
-	 * <pre>
-	 * Writer out = null;
-	 * try
-	 * {
-	 * 	out = new StringWriter( );
-	 * 	out.write( "Hello World" );
-	 * 	out.close( ); // close errors are handled
-	 * }
-	 * catch ( Exception e )
-	 * {
-	 * 	// error handling
-	 * }
-	 * finally
-	 * {
-	 * 	IOUtils.closeQuietly( out );
-	 * }
-	 * </pre>
-	 *
-	 * @param output
-	 *            the Writer to close, may be null or already closed
-	 *
-	 * @deprecated As of 2.6 removed without replacement. Please use the
-	 *             try-with-resources statement or handle suppressed exceptions
-	 *             manually.
-	 * @see Throwable#addSuppressed(java.lang.Throwable)
-	 */
-	@Deprecated
-	public static void closeQuietly( final Writer output )
-	{
-		closeQuietly( (Closeable) output );
-	}
-
-	/**
-	 * Closes an <code>InputStream</code> unconditionally.
-	 * <p>
-	 * Equivalent to {@link InputStream#close()}, except any exceptions will be
-	 * ignored. This is typically used in finally blocks.
-	 * <p>
-	 * Example code:
-	 * 
-	 * <pre>
-	 * byte[] data = new byte[1024];
-	 * InputStream in = null;
-	 * try
-	 * {
-	 * 	in = new FileInputStream( "foo.txt" );
-	 * 	in.read( data );
-	 * 	in.close( ); // close errors are handled
-	 * }
-	 * catch ( Exception e )
-	 * {
-	 * 	// error handling
-	 * }
-	 * finally
-	 * {
-	 * 	IOUtils.closeQuietly( in );
-	 * }
-	 * </pre>
-	 *
-	 * @param input
-	 *            the InputStream to close, may be null or already closed
-	 *
-	 * @deprecated As of 2.6 removed without replacement. Please use the
-	 *             try-with-resources statement or handle suppressed exceptions
-	 *             manually.
-	 * @see Throwable#addSuppressed(java.lang.Throwable)
-	 */
-	@Deprecated
-	public static void closeQuietly( final InputStream input )
-	{
-		closeQuietly( (Closeable) input );
-	}
-
-	/**
-	 * Closes an <code>OutputStream</code> unconditionally.
-	 * <p>
-	 * Equivalent to {@link OutputStream#close()}, except any exceptions will be
-	 * ignored. This is typically used in finally blocks.
-	 * <p>
-	 * Example code:
-	 * 
-	 * <pre>
-	 * byte[] data = "Hello, World".getBytes( );
-	 *
-	 * OutputStream out = null;
-	 * try
-	 * {
-	 * 	out = new FileOutputStream( "foo.txt" );
-	 * 	out.write( data );
-	 * 	out.close( ); // close errors are handled
-	 * }
-	 * catch ( IOException e )
-	 * {
-	 * 	// error handling
-	 * }
-	 * finally
-	 * {
-	 * 	IOUtils.closeQuietly( out );
-	 * }
-	 * </pre>
-	 *
-	 * @param output
-	 *            the OutputStream to close, may be null or already closed
-	 *
-	 * @deprecated As of 2.6 removed without replacement. Please use the
-	 *             try-with-resources statement or handle suppressed exceptions
-	 *             manually.
-	 * @see Throwable#addSuppressed(java.lang.Throwable)
-	 */
-	@Deprecated
-	public static void closeQuietly( final OutputStream output )
-	{
-		closeQuietly( (Closeable) output );
 	}
 
 	/**
@@ -468,20 +482,21 @@ public class IOUtils
 	}
 
 	/**
-	 * Closes a <code>Socket</code> unconditionally.
+	 * Closes an <code>InputStream</code> unconditionally.
 	 * <p>
-	 * Equivalent to {@link Socket#close()}, except any exceptions will be
+	 * Equivalent to {@link InputStream#close()}, except any exceptions will be
 	 * ignored. This is typically used in finally blocks.
 	 * <p>
 	 * Example code:
 	 * 
 	 * <pre>
-	 * Socket socket = null;
+	 * byte[] data = new byte[1024];
+	 * InputStream in = null;
 	 * try
 	 * {
-	 * 	socket = new Socket( "http://www.foo.com/", 80 );
-	 * 	// process socket
-	 * 	socket.close( );
+	 * 	in = new FileInputStream( "foo.txt" );
+	 * 	in.read( data );
+	 * 	in.close( ); // close errors are handled
 	 * }
 	 * catch ( Exception e )
 	 * {
@@ -489,13 +504,12 @@ public class IOUtils
 	 * }
 	 * finally
 	 * {
-	 * 	IOUtils.closeQuietly( socket );
+	 * 	IOUtils.closeQuietly( in );
 	 * }
 	 * </pre>
 	 *
-	 * @param sock
-	 *            the Socket to close, may be null or already closed
-	 * @since 2.0
+	 * @param input
+	 *            the InputStream to close, may be null or already closed
 	 *
 	 * @deprecated As of 2.6 removed without replacement. Please use the
 	 *             try-with-resources statement or handle suppressed exceptions
@@ -503,19 +517,92 @@ public class IOUtils
 	 * @see Throwable#addSuppressed(java.lang.Throwable)
 	 */
 	@Deprecated
-	public static void closeQuietly( final Socket sock )
+	public static void closeQuietly( final InputStream input )
 	{
-		if ( sock != null )
-		{
-			try
-			{
-				sock.close( );
-			}
-			catch ( final IOException ioe )
-			{
-				// ignored
-			}
-		}
+		closeQuietly( (Closeable) input );
+	}
+
+	/**
+	 * Closes an <code>OutputStream</code> unconditionally.
+	 * <p>
+	 * Equivalent to {@link OutputStream#close()}, except any exceptions will be
+	 * ignored. This is typically used in finally blocks.
+	 * <p>
+	 * Example code:
+	 * 
+	 * <pre>
+	 * byte[] data = "Hello, World".getBytes( );
+	 *
+	 * OutputStream out = null;
+	 * try
+	 * {
+	 * 	out = new FileOutputStream( "foo.txt" );
+	 * 	out.write( data );
+	 * 	out.close( ); // close errors are handled
+	 * }
+	 * catch ( IOException e )
+	 * {
+	 * 	// error handling
+	 * }
+	 * finally
+	 * {
+	 * 	IOUtils.closeQuietly( out );
+	 * }
+	 * </pre>
+	 *
+	 * @param output
+	 *            the OutputStream to close, may be null or already closed
+	 *
+	 * @deprecated As of 2.6 removed without replacement. Please use the
+	 *             try-with-resources statement or handle suppressed exceptions
+	 *             manually.
+	 * @see Throwable#addSuppressed(java.lang.Throwable)
+	 */
+	@Deprecated
+	public static void closeQuietly( final OutputStream output )
+	{
+		closeQuietly( (Closeable) output );
+	}
+
+	/**
+	 * Closes an <code>Reader</code> unconditionally.
+	 * <p>
+	 * Equivalent to {@link Reader#close()}, except any exceptions will be
+	 * ignored. This is typically used in finally blocks.
+	 * <p>
+	 * Example code:
+	 * 
+	 * <pre>
+	 * char[] data = new char[1024];
+	 * Reader in = null;
+	 * try
+	 * {
+	 * 	in = new FileReader( "foo.txt" );
+	 * 	in.read( data );
+	 * 	in.close( ); // close errors are handled
+	 * }
+	 * catch ( Exception e )
+	 * {
+	 * 	// error handling
+	 * }
+	 * finally
+	 * {
+	 * 	IOUtils.closeQuietly( in );
+	 * }
+	 * </pre>
+	 *
+	 * @param input
+	 *            the Reader to close, may be null or already closed
+	 *
+	 * @deprecated As of 2.6 removed without replacement. Please use the
+	 *             try-with-resources statement or handle suppressed exceptions
+	 *             manually.
+	 * @see Throwable#addSuppressed(java.lang.Throwable)
+	 */
+	@Deprecated
+	public static void closeQuietly( final Reader input )
+	{
+		closeQuietly( (Closeable) input );
 	}
 
 	/**
@@ -621,805 +708,95 @@ public class IOUtils
 	}
 
 	/**
-	 * Returns the given reader if it is a {@link BufferedReader}, otherwise
-	 * creates a BufferedReader from the given reader.
-	 *
-	 * @param reader
-	 *            the reader to wrap or return (not null)
-	 * @return the given reader or a new {@link BufferedReader} for the given
-	 *         reader
-	 * @throws NullPointerException
-	 *             if the input parameter is null
-	 * @see #buffer(Reader)
-	 * @since 2.2
-	 */
-	public static BufferedReader toBufferedReader( final Reader reader )
-	{
-		return reader instanceof BufferedReader ? (BufferedReader) reader : new BufferedReader( reader );
-	}
-
-	/**
-	 * Returns the given reader if it is a {@link BufferedReader}, otherwise
-	 * creates a BufferedReader from the given reader.
-	 *
-	 * @param reader
-	 *            the reader to wrap or return (not null)
-	 * @param size
-	 *            the buffer size, if a new BufferedReader is created.
-	 * @return the given reader or a new {@link BufferedReader} for the given
-	 *         reader
-	 * @throws NullPointerException
-	 *             if the input parameter is null
-	 * @see #buffer(Reader)
-	 * @since 2.5
-	 */
-	public static BufferedReader toBufferedReader( final Reader reader, int size )
-	{
-		return reader instanceof BufferedReader ? (BufferedReader) reader : new BufferedReader( reader, size );
-	}
-
-	/**
-	 * Returns the given reader if it is already a {@link BufferedReader},
-	 * otherwise creates a BufferedReader from the given reader.
-	 *
-	 * @param reader
-	 *            the reader to wrap or return (not null)
-	 * @return the given reader or a new {@link BufferedReader} for the given
-	 *         reader
-	 * @throws NullPointerException
-	 *             if the input parameter is null
-	 * @since 2.5
-	 */
-	public static BufferedReader buffer( final Reader reader )
-	{
-		return reader instanceof BufferedReader ? (BufferedReader) reader : new BufferedReader( reader );
-	}
-
-	/**
-	 * Returns the given reader if it is already a {@link BufferedReader},
-	 * otherwise creates a BufferedReader from the given reader.
-	 *
-	 * @param reader
-	 *            the reader to wrap or return (not null)
-	 * @param size
-	 *            the buffer size, if a new BufferedReader is created.
-	 * @return the given reader or a new {@link BufferedReader} for the given
-	 *         reader
-	 * @throws NullPointerException
-	 *             if the input parameter is null
-	 * @since 2.5
-	 */
-	public static BufferedReader buffer( final Reader reader, int size )
-	{
-		return reader instanceof BufferedReader ? (BufferedReader) reader : new BufferedReader( reader, size );
-	}
-
-	/**
-	 * Returns the given Writer if it is already a {@link BufferedWriter},
-	 * otherwise creates a BufferedWriter from the given Writer.
-	 *
-	 * @param writer
-	 *            the Writer to wrap or return (not null)
-	 * @return the given Writer or a new {@link BufferedWriter} for the given
-	 *         Writer
-	 * @throws NullPointerException
-	 *             if the input parameter is null
-	 * @since 2.5
-	 */
-	public static BufferedWriter buffer( final Writer writer )
-	{
-		return writer instanceof BufferedWriter ? (BufferedWriter) writer : new BufferedWriter( writer );
-	}
-
-	/**
-	 * Returns the given Writer if it is already a {@link BufferedWriter},
-	 * otherwise creates a BufferedWriter from the given Writer.
-	 *
-	 * @param writer
-	 *            the Writer to wrap or return (not null)
-	 * @param size
-	 *            the buffer size, if a new BufferedWriter is created.
-	 * @return the given Writer or a new {@link BufferedWriter} for the given
-	 *         Writer
-	 * @throws NullPointerException
-	 *             if the input parameter is null
-	 * @since 2.5
-	 */
-	public static BufferedWriter buffer( final Writer writer, int size )
-	{
-		return writer instanceof BufferedWriter ? (BufferedWriter) writer : new BufferedWriter( writer, size );
-	}
-
-	/**
-	 * Returns the given OutputStream if it is already a
-	 * {@link BufferedOutputStream}, otherwise creates a BufferedOutputStream
-	 * from the given OutputStream.
-	 *
-	 * @param outputStream
-	 *            the OutputStream to wrap or return (not null)
-	 * @return the given OutputStream or a new {@link BufferedOutputStream} for
-	 *         the given OutputStream
-	 * @throws NullPointerException
-	 *             if the input parameter is null
-	 * @since 2.5
-	 */
-	public static BufferedOutputStream buffer( final OutputStream outputStream )
-	{
-		// reject null early on rather than waiting for IO operation to fail
-		if ( outputStream == null )
-		{ // not checked by BufferedOutputStream
-			throw new NullPointerException( );
-		}
-		return outputStream instanceof BufferedOutputStream ? (BufferedOutputStream) outputStream
-				: new BufferedOutputStream( outputStream );
-	}
-
-	/**
-	 * Returns the given OutputStream if it is already a
-	 * {@link BufferedOutputStream}, otherwise creates a BufferedOutputStream
-	 * from the given OutputStream.
-	 *
-	 * @param outputStream
-	 *            the OutputStream to wrap or return (not null)
-	 * @param size
-	 *            the buffer size, if a new BufferedOutputStream is created.
-	 * @return the given OutputStream or a new {@link BufferedOutputStream} for
-	 *         the given OutputStream
-	 * @throws NullPointerException
-	 *             if the input parameter is null
-	 * @since 2.5
-	 */
-	public static BufferedOutputStream buffer( final OutputStream outputStream, int size )
-	{
-		// reject null early on rather than waiting for IO operation to fail
-		if ( outputStream == null )
-		{ // not checked by BufferedOutputStream
-			throw new NullPointerException( );
-		}
-		return outputStream instanceof BufferedOutputStream ? (BufferedOutputStream) outputStream
-				: new BufferedOutputStream( outputStream, size );
-	}
-
-	/**
-	 * Returns the given InputStream if it is already a
-	 * {@link BufferedInputStream}, otherwise creates a BufferedInputStream from
-	 * the given InputStream.
-	 *
-	 * @param inputStream
-	 *            the InputStream to wrap or return (not null)
-	 * @return the given InputStream or a new {@link BufferedInputStream} for
-	 *         the given InputStream
-	 * @throws NullPointerException
-	 *             if the input parameter is null
-	 * @since 2.5
-	 */
-	public static BufferedInputStream buffer( final InputStream inputStream )
-	{
-		// reject null early on rather than waiting for IO operation to fail
-		if ( inputStream == null )
-		{ // not checked by BufferedInputStream
-			throw new NullPointerException( );
-		}
-		return inputStream instanceof BufferedInputStream ? (BufferedInputStream) inputStream
-				: new BufferedInputStream( inputStream );
-	}
-
-	/**
-	 * Returns the given InputStream if it is already a
-	 * {@link BufferedInputStream}, otherwise creates a BufferedInputStream from
-	 * the given InputStream.
-	 *
-	 * @param inputStream
-	 *            the InputStream to wrap or return (not null)
-	 * @param size
-	 *            the buffer size, if a new BufferedInputStream is created.
-	 * @return the given InputStream or a new {@link BufferedInputStream} for
-	 *         the given InputStream
-	 * @throws NullPointerException
-	 *             if the input parameter is null
-	 * @since 2.5
-	 */
-	public static BufferedInputStream buffer( final InputStream inputStream, int size )
-	{
-		// reject null early on rather than waiting for IO operation to fail
-		if ( inputStream == null )
-		{ // not checked by BufferedInputStream
-			throw new NullPointerException( );
-		}
-		return inputStream instanceof BufferedInputStream ? (BufferedInputStream) inputStream
-				: new BufferedInputStream( inputStream, size );
-	}
-
-	/**
-	 * Gets contents of an <code>InputStream</code> as a <code>byte[]</code>.
-	 * Use this method instead of <code>toByteArray(InputStream)</code> when
-	 * <code>InputStream</code> size is known. <b>NOTE:</b> the method checks
-	 * that the length can safely be cast to an int without truncation before
-	 * using {@link IOUtils#toByteArray(java.io.InputStream, int)} to read into
-	 * the byte array. (Arrays can have no more than Integer.MAX_VALUE entries
-	 * anyway)
-	 *
-	 * @param input
-	 *            the <code>InputStream</code> to read from
-	 * @param size
-	 *            the size of <code>InputStream</code>
-	 * @return the requested byte array
-	 * @throws IOException
-	 *             if an I/O error occurs or <code>InputStream</code> size
-	 *             differ from parameter size
-	 * @throws IllegalArgumentException
-	 *             if size is less than zero or size is greater than
-	 *             Integer.MAX_VALUE
-	 * @see IOUtils#toByteArray(java.io.InputStream, int)
-	 * @since 2.1
-	 */
-	public static byte[] toByteArray( final InputStream input, final long size ) throws IOException
-	{
-
-		if ( size > Integer.MAX_VALUE )
-		{
-			throw new IllegalArgumentException( "Size cannot be greater than Integer max value: " + size ); //$NON-NLS-1$
-		}
-
-		return toByteArray( input, (int) size );
-	}
-
-	/**
-	 * Gets the contents of an <code>InputStream</code> as a
-	 * <code>byte[]</code>. Use this method instead of
-	 * <code>toByteArray(InputStream)</code> when <code>InputStream</code> size
-	 * is known
-	 *
-	 * @param input
-	 *            the <code>InputStream</code> to read from
-	 * @param size
-	 *            the size of <code>InputStream</code>
-	 * @return the requested byte array
-	 * @throws IOException
-	 *             if an I/O error occurs or <code>InputStream</code> size
-	 *             differ from parameter size
-	 * @throws IllegalArgumentException
-	 *             if size is less than zero
-	 * @since 2.1
-	 */
-	public static byte[] toByteArray( final InputStream input, final int size ) throws IOException
-	{
-
-		if ( size < 0 )
-		{
-			throw new IllegalArgumentException( "Size must be equal or greater than zero: " + size ); //$NON-NLS-1$
-		}
-
-		if ( size == 0 )
-		{
-			return new byte[0];
-		}
-
-		final byte[] data = new byte[size];
-		int offset = 0;
-		int readed;
-
-		while ( offset < size && ( readed = input.read( data, offset, size - offset ) ) != EOF )
-		{
-			offset += readed;
-		}
-
-		if ( offset != size )
-		{
-			throw new IOException( "Unexpected readed size. current: " //$NON-NLS-1$
-					+ offset
-					+ ", excepted: " //$NON-NLS-1$
-					+ size );
-		}
-
-		return data;
-	}
-
-	/**
-	 * Gets a URL pointing to the given classpath resource.
-	 *
+	 * Closes a <code>Socket</code> unconditionally.
 	 * <p>
-	 * It is expected the given <code>name</code> to be absolute. The behavior
-	 * is not well-defined otherwise.
-	 * </p>
-	 *
-	 * @param name
-	 *            name of the desired resource
-	 * @return the requested URL
-	 * @throws IOException
-	 *             if an I/O error occurs
-	 * 
-	 * @since 2.6
-	 */
-	public static URL resourceToURL( final String name ) throws IOException
-	{
-		return resourceToURL( name, null );
-	}
-
-	/**
-	 * Gets a URL pointing to the given classpath resource.
-	 *
+	 * Equivalent to {@link Socket#close()}, except any exceptions will be
+	 * ignored. This is typically used in finally blocks.
 	 * <p>
-	 * It is expected the given <code>name</code> to be absolute. The behavior
-	 * is not well-defined otherwise.
-	 * </p>
-	 *
-	 * @param name
-	 *            name of the desired resource
-	 * @param classLoader
-	 *            the class loader that the resolution of the resource is
-	 *            delegated to
-	 * @return the requested URL
-	 * @throws IOException
-	 *             if an I/O error occurs
+	 * Example code:
 	 * 
-	 * @since 2.6
-	 */
-	public static URL resourceToURL( final String name, final ClassLoader classLoader ) throws IOException
-	{
-		// What about the thread context class loader?
-		// What about the system class loader?
-		final URL resource = classLoader == null ? IOUtils.class.getResource( name ) : classLoader.getResource( name );
-
-		if ( resource == null )
-		{
-			throw new IOException( "Resource not found: " + name ); //$NON-NLS-1$
-		}
-
-		return resource;
-	}
-
-	// -----------------------------------------------------------------------
-
-	/**
-	 * Converts the specified CharSequence to an input stream, encoded as bytes
-	 * using the default character encoding of the platform.
+	 * <pre>
+	 * Socket socket = null;
+	 * try
+	 * {
+	 * 	socket = new Socket( "http://www.foo.com/", 80 );
+	 * 	// process socket
+	 * 	socket.close( );
+	 * }
+	 * catch ( Exception e )
+	 * {
+	 * 	// error handling
+	 * }
+	 * finally
+	 * {
+	 * 	IOUtils.closeQuietly( socket );
+	 * }
+	 * </pre>
 	 *
-	 * @param input
-	 *            the CharSequence to convert
-	 * @return an input stream
+	 * @param sock
+	 *            the Socket to close, may be null or already closed
 	 * @since 2.0
-	 * @deprecated 2.5 use {@link #toInputStream(CharSequence, Charset)} instead
+	 *
+	 * @deprecated As of 2.6 removed without replacement. Please use the
+	 *             try-with-resources statement or handle suppressed exceptions
+	 *             manually.
+	 * @see Throwable#addSuppressed(java.lang.Throwable)
 	 */
 	@Deprecated
-	public static InputStream toInputStream( final CharSequence input )
+	public static void closeQuietly( final Socket sock )
 	{
-		return toInputStream( input, Charset.defaultCharset( ) );
-	}
-
-	/**
-	 * Converts the specified CharSequence to an input stream, encoded as bytes
-	 * using the specified character encoding.
-	 *
-	 * @param input
-	 *            the CharSequence to convert
-	 * @param encoding
-	 *            the encoding to use, null means platform default
-	 * @return an input stream
-	 * @since 2.3
-	 */
-	public static InputStream toInputStream( final CharSequence input, final Charset encoding )
-	{
-		return toInputStream( input.toString( ), encoding );
-	}
-
-	// write byte[]
-	// -----------------------------------------------------------------------
-
-	/**
-	 * Writes bytes from a <code>byte[]</code> to an <code>OutputStream</code>.
-	 *
-	 * @param data
-	 *            the byte array to write, do not modify during output, null
-	 *            ignored
-	 * @param output
-	 *            the <code>OutputStream</code> to write to
-	 * @throws NullPointerException
-	 *             if output is null
-	 * @throws IOException
-	 *             if an I/O error occurs
-	 * @since 1.1
-	 */
-	public static void write( final byte[] data, final OutputStream output ) throws IOException
-	{
-		if ( data != null )
+		if ( sock != null )
 		{
-			output.write( data );
-		}
-	}
-
-	/**
-	 * Writes bytes from a <code>byte[]</code> to an <code>OutputStream</code>
-	 * using chunked writes. This is intended for writing very large byte arrays
-	 * which might otherwise cause excessive memory usage if the native code has
-	 * to allocate a copy.
-	 *
-	 * @param data
-	 *            the byte array to write, do not modify during output, null
-	 *            ignored
-	 * @param output
-	 *            the <code>OutputStream</code> to write to
-	 * @throws NullPointerException
-	 *             if output is null
-	 * @throws IOException
-	 *             if an I/O error occurs
-	 * @since 2.5
-	 */
-	public static void writeChunked( final byte[] data, final OutputStream output ) throws IOException
-	{
-		if ( data != null )
-		{
-			int bytes = data.length;
-			int offset = 0;
-			while ( bytes > 0 )
+			try
 			{
-				int chunk = Math.min( bytes, DEFAULT_BUFFER_SIZE );
-				output.write( data, offset, chunk );
-				bytes -= chunk;
-				offset += chunk;
+				sock.close( );
+			}
+			catch ( final IOException ioe )
+			{
+				// ignored
 			}
 		}
 	}
 
-	// write char[]
-	// -----------------------------------------------------------------------
-
 	/**
-	 * Writes chars from a <code>char[]</code> to a <code>Writer</code>
-	 *
-	 * @param data
-	 *            the char array to write, do not modify during output, null
-	 *            ignored
-	 * @param output
-	 *            the <code>Writer</code> to write to
-	 * @throws NullPointerException
-	 *             if output is null
-	 * @throws IOException
-	 *             if an I/O error occurs
-	 * @since 1.1
-	 */
-	public static void write( final char[] data, final Writer output ) throws IOException
-	{
-		if ( data != null )
-		{
-			output.write( data );
-		}
-	}
-
-	/**
-	 * Writes chars from a <code>char[]</code> to a <code>Writer</code> using
-	 * chunked writes. This is intended for writing very large byte arrays which
-	 * might otherwise cause excessive memory usage if the native code has to
-	 * allocate a copy.
-	 *
-	 * @param data
-	 *            the char array to write, do not modify during output, null
-	 *            ignored
-	 * @param output
-	 *            the <code>Writer</code> to write to
-	 * @throws NullPointerException
-	 *             if output is null
-	 * @throws IOException
-	 *             if an I/O error occurs
-	 * @since 2.5
-	 */
-	public static void writeChunked( final char[] data, final Writer output ) throws IOException
-	{
-		if ( data != null )
-		{
-			int bytes = data.length;
-			int offset = 0;
-			while ( bytes > 0 )
-			{
-				int chunk = Math.min( bytes, DEFAULT_BUFFER_SIZE );
-				output.write( data, offset, chunk );
-				bytes -= chunk;
-				offset += chunk;
-			}
-		}
-	}
-
-	// write CharSequence
-	// -----------------------------------------------------------------------
-
-	/**
-	 * Writes chars from a <code>CharSequence</code> to a <code>Writer</code>.
-	 *
-	 * @param data
-	 *            the <code>CharSequence</code> to write, null ignored
-	 * @param output
-	 *            the <code>Writer</code> to write to
-	 * @throws NullPointerException
-	 *             if output is null
-	 * @throws IOException
-	 *             if an I/O error occurs
-	 * @since 2.0
-	 */
-	public static void write( final CharSequence data, final Writer output ) throws IOException
-	{
-		if ( data != null )
-		{
-			write( data.toString( ), output );
-		}
-	}
-
-	/**
-	 * Writes chars from a <code>CharSequence</code> to bytes on an
-	 * <code>OutputStream</code> using the default character encoding of the
-	 * platform.
+	 * Closes an <code>Writer</code> unconditionally.
 	 * <p>
-	 * This method uses {@link String#getBytes()}.
+	 * Equivalent to {@link Writer#close()}, except any exceptions will be
+	 * ignored. This is typically used in finally blocks.
+	 * <p>
+	 * Example code:
+	 * 
+	 * <pre>
+	 * Writer out = null;
+	 * try
+	 * {
+	 * 	out = new StringWriter( );
+	 * 	out.write( "Hello World" );
+	 * 	out.close( ); // close errors are handled
+	 * }
+	 * catch ( Exception e )
+	 * {
+	 * 	// error handling
+	 * }
+	 * finally
+	 * {
+	 * 	IOUtils.closeQuietly( out );
+	 * }
+	 * </pre>
 	 *
-	 * @param data
-	 *            the <code>CharSequence</code> to write, null ignored
 	 * @param output
-	 *            the <code>OutputStream</code> to write to
-	 * @throws NullPointerException
-	 *             if output is null
-	 * @throws IOException
-	 *             if an I/O error occurs
-	 * @since 2.0
-	 * @deprecated 2.5 use {@link #write(CharSequence, OutputStream, Charset)}
-	 *             instead
+	 *            the Writer to close, may be null or already closed
+	 *
+	 * @deprecated As of 2.6 removed without replacement. Please use the
+	 *             try-with-resources statement or handle suppressed exceptions
+	 *             manually.
+	 * @see Throwable#addSuppressed(java.lang.Throwable)
 	 */
 	@Deprecated
-	public static void write( final CharSequence data, final OutputStream output ) throws IOException
+	public static void closeQuietly( final Writer output )
 	{
-		write( data, output, Charset.defaultCharset( ) );
+		closeQuietly( (Closeable) output );
 	}
-
-	/**
-	 * Writes chars from a <code>CharSequence</code> to bytes on an
-	 * <code>OutputStream</code> using the specified character encoding.
-	 * <p>
-	 * This method uses {@link String#getBytes(String)}.
-	 *
-	 * @param data
-	 *            the <code>CharSequence</code> to write, null ignored
-	 * @param output
-	 *            the <code>OutputStream</code> to write to
-	 * @param encoding
-	 *            the encoding to use, null means platform default
-	 * @throws NullPointerException
-	 *             if output is null
-	 * @throws IOException
-	 *             if an I/O error occurs
-	 * @since 2.3
-	 */
-	public static void write( final CharSequence data, final OutputStream output, final Charset encoding )
-			throws IOException
-	{
-		if ( data != null )
-		{
-			write( data.toString( ), output, encoding );
-		}
-	}
-
-	// copy from InputStream
-	// -----------------------------------------------------------------------
-
-	/**
-	 * Copies bytes from an <code>InputStream</code> to an
-	 * <code>OutputStream</code>.
-	 * <p>
-	 * This method buffers the input internally, so there is no need to use a
-	 * <code>BufferedInputStream</code>.
-	 * <p>
-	 * Large streams (over 2GB) will return a bytes copied value of
-	 * <code>-1</code> after the copy has completed since the correct number of
-	 * bytes cannot be returned as an int. For large streams use the
-	 * <code>copyLarge(InputStream, OutputStream)</code> method.
-	 *
-	 * @param input
-	 *            the <code>InputStream</code> to read from
-	 * @param output
-	 *            the <code>OutputStream</code> to write to
-	 * @return the number of bytes copied, or -1 if &gt; Integer.MAX_VALUE
-	 * @throws NullPointerException
-	 *             if the input or output is null
-	 * @throws IOException
-	 *             if an I/O error occurs
-	 * @since 1.1
-	 */
-	public static int copy( final InputStream input, final OutputStream output ) throws IOException
-	{
-		final long count = copyLarge( input, output );
-		if ( count > Integer.MAX_VALUE )
-		{
-			return -1;
-		}
-		return (int) count;
-	}
-
-	/**
-	 * Copies bytes from an <code>InputStream</code> to an
-	 * <code>OutputStream</code> using an internal buffer of the given size.
-	 * <p>
-	 * This method buffers the input internally, so there is no need to use a
-	 * <code>BufferedInputStream</code>.
-	 * <p>
-	 *
-	 * @param input
-	 *            the <code>InputStream</code> to read from
-	 * @param output
-	 *            the <code>OutputStream</code> to write to
-	 * @param bufferSize
-	 *            the bufferSize used to copy from the input to the output
-	 * @return the number of bytes copied
-	 * @throws NullPointerException
-	 *             if the input or output is null
-	 * @throws IOException
-	 *             if an I/O error occurs
-	 * @since 2.5
-	 */
-	public static long copy( final InputStream input, final OutputStream output, final int bufferSize )
-			throws IOException
-	{
-		return copyLarge( input, output, new byte[bufferSize] );
-	}
-
-	/**
-	 * Copies bytes from a large (over 2GB) <code>InputStream</code> to an
-	 * <code>OutputStream</code>.
-	 * <p>
-	 * This method buffers the input internally, so there is no need to use a
-	 * <code>BufferedInputStream</code>.
-	 * <p>
-	 * The buffer size is given by {@link #DEFAULT_BUFFER_SIZE}.
-	 *
-	 * @param input
-	 *            the <code>InputStream</code> to read from
-	 * @param output
-	 *            the <code>OutputStream</code> to write to
-	 * @return the number of bytes copied
-	 * @throws NullPointerException
-	 *             if the input or output is null
-	 * @throws IOException
-	 *             if an I/O error occurs
-	 * @since 1.3
-	 */
-	public static long copyLarge( final InputStream input, final OutputStream output ) throws IOException
-	{
-		return copy( input, output, DEFAULT_BUFFER_SIZE );
-	}
-
-	/**
-	 * Copies bytes from a large (over 2GB) <code>InputStream</code> to an
-	 * <code>OutputStream</code>.
-	 * <p>
-	 * This method uses the provided buffer, so there is no need to use a
-	 * <code>BufferedInputStream</code>.
-	 * <p>
-	 *
-	 * @param input
-	 *            the <code>InputStream</code> to read from
-	 * @param output
-	 *            the <code>OutputStream</code> to write to
-	 * @param buffer
-	 *            the buffer to use for the copy
-	 * @return the number of bytes copied
-	 * @throws NullPointerException
-	 *             if the input or output is null
-	 * @throws IOException
-	 *             if an I/O error occurs
-	 * @since 2.2
-	 */
-	public static long copyLarge( final InputStream input, final OutputStream output, final byte[] buffer )
-			throws IOException
-	{
-		long count = 0;
-		int n;
-		while ( EOF != ( n = input.read( buffer ) ) )
-		{
-			output.write( buffer, 0, n );
-			count += n;
-		}
-		return count;
-	}
-
-	/**
-	 * Copies some or all bytes from a large (over 2GB) <code>InputStream</code>
-	 * to an <code>OutputStream</code>, optionally skipping input bytes.
-	 * <p>
-	 * This method buffers the input internally, so there is no need to use a
-	 * <code>BufferedInputStream</code>.
-	 * </p>
-	 * <p>
-	 * Note that the implementation uses {@link #skip(InputStream, long)}. This
-	 * means that the method may be considerably less efficient than using the
-	 * actual skip implementation, this is done to guarantee that the correct
-	 * number of characters are skipped.
-	 * </p>
-	 * The buffer size is given by {@link #DEFAULT_BUFFER_SIZE}.
-	 *
-	 * @param input
-	 *            the <code>InputStream</code> to read from
-	 * @param output
-	 *            the <code>OutputStream</code> to write to
-	 * @param inputOffset
-	 *            : number of bytes to skip from input before copying -ve values
-	 *            are ignored
-	 * @param length
-	 *            : number of bytes to copy. -ve means all
-	 * @return the number of bytes copied
-	 * @throws NullPointerException
-	 *             if the input or output is null
-	 * @throws IOException
-	 *             if an I/O error occurs
-	 * @since 2.2
-	 */
-	public static long copyLarge( final InputStream input, final OutputStream output, final long inputOffset,
-			final long length ) throws IOException
-	{
-		return copyLarge( input, output, inputOffset, length, new byte[DEFAULT_BUFFER_SIZE] );
-	}
-
-	/**
-	 * Copies some or all bytes from a large (over 2GB) <code>InputStream</code>
-	 * to an <code>OutputStream</code>, optionally skipping input bytes.
-	 * <p>
-	 * This method uses the provided buffer, so there is no need to use a
-	 * <code>BufferedInputStream</code>.
-	 * </p>
-	 * <p>
-	 * Note that the implementation uses {@link #skip(InputStream, long)}. This
-	 * means that the method may be considerably less efficient than using the
-	 * actual skip implementation, this is done to guarantee that the correct
-	 * number of characters are skipped.
-	 * </p>
-	 *
-	 * @param input
-	 *            the <code>InputStream</code> to read from
-	 * @param output
-	 *            the <code>OutputStream</code> to write to
-	 * @param inputOffset
-	 *            : number of bytes to skip from input before copying -ve values
-	 *            are ignored
-	 * @param length
-	 *            : number of bytes to copy. -ve means all
-	 * @param buffer
-	 *            the buffer to use for the copy
-	 * @return the number of bytes copied
-	 * @throws NullPointerException
-	 *             if the input or output is null
-	 * @throws IOException
-	 *             if an I/O error occurs
-	 * @since 2.2
-	 */
-	public static long copyLarge( final InputStream input, final OutputStream output, final long inputOffset,
-			final long length, final byte[] buffer ) throws IOException
-	{
-		if ( inputOffset > 0 )
-		{
-			skipFully( input, inputOffset );
-		}
-		if ( length == 0 )
-		{
-			return 0;
-		}
-		final int bufferLength = buffer.length;
-		int bytesToRead = bufferLength;
-		if ( length > 0 && length < bufferLength )
-		{
-			bytesToRead = (int) length;
-		}
-		int read;
-		long totalRead = 0;
-		while ( bytesToRead > 0 && EOF != ( read = input.read( buffer, 0, bytesToRead ) ) )
-		{
-			output.write( buffer, 0, read );
-			totalRead += read;
-			if ( length > 0 )
-			{ // only adjust length if not reading to the end
-				// Note the cast must work because buffer.length is an integer
-				bytesToRead = (int) Math.min( length - totalRead, bufferLength );
-			}
-		}
-		return totalRead;
-	}
-
-	// content equals
-	// -----------------------------------------------------------------------
 
 	/**
 	 * Compares the contents of two Streams to determine if they are equal or
@@ -1549,6 +926,629 @@ public class IOUtils
 			line2 = br2.readLine( );
 		}
 		return line1 == null ? line2 == null ? true : false : line1.equals( line2 );
+	}
+
+	/**
+	 * Copies bytes from an <code>InputStream</code> to an
+	 * <code>OutputStream</code>.
+	 * <p>
+	 * This method buffers the input internally, so there is no need to use a
+	 * <code>BufferedInputStream</code>.
+	 * <p>
+	 * Large streams (over 2GB) will return a bytes copied value of
+	 * <code>-1</code> after the copy has completed since the correct number of
+	 * bytes cannot be returned as an int. For large streams use the
+	 * <code>copyLarge(InputStream, OutputStream)</code> method.
+	 *
+	 * @param input
+	 *            the <code>InputStream</code> to read from
+	 * @param output
+	 *            the <code>OutputStream</code> to write to
+	 * @return the number of bytes copied, or -1 if &gt; Integer.MAX_VALUE
+	 * @throws NullPointerException
+	 *             if the input or output is null
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @since 1.1
+	 */
+	public static int copy( final InputStream input, final OutputStream output ) throws IOException
+	{
+		final long count = copyLarge( input, output );
+		if ( count > Integer.MAX_VALUE )
+		{
+			return -1;
+		}
+		return (int) count;
+	}
+
+	/**
+	 * Copies bytes from an <code>InputStream</code> to an
+	 * <code>OutputStream</code> using an internal buffer of the given size.
+	 * <p>
+	 * This method buffers the input internally, so there is no need to use a
+	 * <code>BufferedInputStream</code>.
+	 * <p>
+	 *
+	 * @param input
+	 *            the <code>InputStream</code> to read from
+	 * @param output
+	 *            the <code>OutputStream</code> to write to
+	 * @param bufferSize
+	 *            the bufferSize used to copy from the input to the output
+	 * @return the number of bytes copied
+	 * @throws NullPointerException
+	 *             if the input or output is null
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @since 2.5
+	 */
+	public static long copy( final InputStream input, final OutputStream output, final int bufferSize )
+			throws IOException
+	{
+		return copyLarge( input, output, new byte[bufferSize] );
+	}
+
+	/**
+	 * Copies bytes from a large (over 2GB) <code>InputStream</code> to an
+	 * <code>OutputStream</code>.
+	 * <p>
+	 * This method buffers the input internally, so there is no need to use a
+	 * <code>BufferedInputStream</code>.
+	 * <p>
+	 * The buffer size is given by {@link #DEFAULT_BUFFER_SIZE}.
+	 *
+	 * @param input
+	 *            the <code>InputStream</code> to read from
+	 * @param output
+	 *            the <code>OutputStream</code> to write to
+	 * @return the number of bytes copied
+	 * @throws NullPointerException
+	 *             if the input or output is null
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @since 1.3
+	 */
+	public static long copyLarge( final InputStream input, final OutputStream output ) throws IOException
+	{
+		return copy( input, output, DEFAULT_BUFFER_SIZE );
+	}
+
+	// -----------------------------------------------------------------------
+
+	/**
+	 * Copies bytes from a large (over 2GB) <code>InputStream</code> to an
+	 * <code>OutputStream</code>.
+	 * <p>
+	 * This method uses the provided buffer, so there is no need to use a
+	 * <code>BufferedInputStream</code>.
+	 * <p>
+	 *
+	 * @param input
+	 *            the <code>InputStream</code> to read from
+	 * @param output
+	 *            the <code>OutputStream</code> to write to
+	 * @param buffer
+	 *            the buffer to use for the copy
+	 * @return the number of bytes copied
+	 * @throws NullPointerException
+	 *             if the input or output is null
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @since 2.2
+	 */
+	public static long copyLarge( final InputStream input, final OutputStream output, final byte[] buffer )
+			throws IOException
+	{
+		long count = 0;
+		int n;
+		while ( EOF != ( n = input.read( buffer ) ) )
+		{
+			output.write( buffer, 0, n );
+			count += n;
+		}
+		return count;
+	}
+
+	/**
+	 * Copies some or all bytes from a large (over 2GB) <code>InputStream</code>
+	 * to an <code>OutputStream</code>, optionally skipping input bytes.
+	 * <p>
+	 * This method buffers the input internally, so there is no need to use a
+	 * <code>BufferedInputStream</code>.
+	 * </p>
+	 * <p>
+	 * Note that the implementation uses {@link #skip(InputStream, long)}. This
+	 * means that the method may be considerably less efficient than using the
+	 * actual skip implementation, this is done to guarantee that the correct
+	 * number of characters are skipped.
+	 * </p>
+	 * The buffer size is given by {@link #DEFAULT_BUFFER_SIZE}.
+	 *
+	 * @param input
+	 *            the <code>InputStream</code> to read from
+	 * @param output
+	 *            the <code>OutputStream</code> to write to
+	 * @param inputOffset
+	 *            : number of bytes to skip from input before copying -ve values
+	 *            are ignored
+	 * @param length
+	 *            : number of bytes to copy. -ve means all
+	 * @return the number of bytes copied
+	 * @throws NullPointerException
+	 *             if the input or output is null
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @since 2.2
+	 */
+	public static long copyLarge( final InputStream input, final OutputStream output, final long inputOffset,
+			final long length ) throws IOException
+	{
+		return copyLarge( input, output, inputOffset, length, new byte[DEFAULT_BUFFER_SIZE] );
+	}
+
+	// write byte[]
+	// -----------------------------------------------------------------------
+
+	/**
+	 * Copies some or all bytes from a large (over 2GB) <code>InputStream</code>
+	 * to an <code>OutputStream</code>, optionally skipping input bytes.
+	 * <p>
+	 * This method uses the provided buffer, so there is no need to use a
+	 * <code>BufferedInputStream</code>.
+	 * </p>
+	 * <p>
+	 * Note that the implementation uses {@link #skip(InputStream, long)}. This
+	 * means that the method may be considerably less efficient than using the
+	 * actual skip implementation, this is done to guarantee that the correct
+	 * number of characters are skipped.
+	 * </p>
+	 *
+	 * @param input
+	 *            the <code>InputStream</code> to read from
+	 * @param output
+	 *            the <code>OutputStream</code> to write to
+	 * @param inputOffset
+	 *            : number of bytes to skip from input before copying -ve values
+	 *            are ignored
+	 * @param length
+	 *            : number of bytes to copy. -ve means all
+	 * @param buffer
+	 *            the buffer to use for the copy
+	 * @return the number of bytes copied
+	 * @throws NullPointerException
+	 *             if the input or output is null
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @since 2.2
+	 */
+	public static long copyLarge( final InputStream input, final OutputStream output, final long inputOffset,
+			final long length, final byte[] buffer ) throws IOException
+	{
+		if ( inputOffset > 0 )
+		{
+			skipFully( input, inputOffset );
+		}
+		if ( length == 0 )
+		{
+			return 0;
+		}
+		final int bufferLength = buffer.length;
+		int bytesToRead = bufferLength;
+		if ( length > 0 && length < bufferLength )
+		{
+			bytesToRead = (int) length;
+		}
+		int read;
+		long totalRead = 0;
+		while ( bytesToRead > 0 && EOF != ( read = input.read( buffer, 0, bytesToRead ) ) )
+		{
+			output.write( buffer, 0, read );
+			totalRead += read;
+			if ( length > 0 )
+			{ // only adjust length if not reading to the end
+				// Note the cast must work because buffer.length is an integer
+				bytesToRead = (int) Math.min( length - totalRead, bufferLength );
+			}
+		}
+		return totalRead;
+	}
+
+	/**
+	 * Reads bytes from an input stream. This implementation guarantees that it
+	 * will read as many bytes as possible before giving up; this may not always
+	 * be the case for subclasses of {@link InputStream}.
+	 *
+	 * @param input
+	 *            where to read input from
+	 * @param buffer
+	 *            destination
+	 * @return actual length read; may be less than requested if EOF was reached
+	 * @throws IOException
+	 *             if a read error occurs
+	 * @since 2.2
+	 */
+	public static int read( final InputStream input, final byte[] buffer ) throws IOException
+	{
+		return read( input, buffer, 0, buffer.length );
+	}
+
+	// write char[]
+	// -----------------------------------------------------------------------
+
+	/**
+	 * Reads bytes from an input stream. This implementation guarantees that it
+	 * will read as many bytes as possible before giving up; this may not always
+	 * be the case for subclasses of {@link InputStream}.
+	 *
+	 * @param input
+	 *            where to read input from
+	 * @param buffer
+	 *            destination
+	 * @param offset
+	 *            initial offset into buffer
+	 * @param length
+	 *            length to read, must be &gt;= 0
+	 * @return actual length read; may be less than requested if EOF was reached
+	 * @throws IOException
+	 *             if a read error occurs
+	 * @since 2.2
+	 */
+	public static int read( final InputStream input, final byte[] buffer, final int offset, final int length )
+			throws IOException
+	{
+		if ( length < 0 )
+		{
+			throw new IllegalArgumentException( "Length must not be negative: " + length ); //$NON-NLS-1$
+		}
+		int remaining = length;
+		while ( remaining > 0 )
+		{
+			final int location = length - remaining;
+			final int count = input.read( buffer, offset + location, remaining );
+			if ( EOF == count )
+			{ // EOF
+				break;
+			}
+			remaining -= count;
+		}
+		return length - remaining;
+	}
+
+	/**
+	 * Reads bytes from a ReadableByteChannel.
+	 * <p>
+	 * This implementation guarantees that it will read as many bytes as
+	 * possible before giving up; this may not always be the case for subclasses
+	 * of {@link ReadableByteChannel}.
+	 *
+	 * @param input
+	 *            the byte channel to read
+	 * @param buffer
+	 *            byte buffer destination
+	 * @return the actual length read; may be less than requested if EOF was
+	 *         reached
+	 * @throws IOException
+	 *             if a read error occurs
+	 * @since 2.5
+	 */
+	public static int read( final ReadableByteChannel input, final ByteBuffer buffer ) throws IOException
+	{
+		final int length = buffer.remaining( );
+		while ( buffer.remaining( ) > 0 )
+		{
+			final int count = input.read( buffer );
+			if ( EOF == count )
+			{ // EOF
+				break;
+			}
+		}
+		return length - buffer.remaining( );
+	}
+
+	// write CharSequence
+	// -----------------------------------------------------------------------
+
+	/**
+	 * Reads characters from an input character stream. This implementation
+	 * guarantees that it will read as many characters as possible before giving
+	 * up; this may not always be the case for subclasses of {@link Reader}.
+	 *
+	 * @param input
+	 *            where to read input from
+	 * @param buffer
+	 *            destination
+	 * @return actual length read; may be less than requested if EOF was reached
+	 * @throws IOException
+	 *             if a read error occurs
+	 * @since 2.2
+	 */
+	public static int read( final Reader input, final char[] buffer ) throws IOException
+	{
+		return read( input, buffer, 0, buffer.length );
+	}
+
+	/**
+	 * Reads characters from an input character stream. This implementation
+	 * guarantees that it will read as many characters as possible before giving
+	 * up; this may not always be the case for subclasses of {@link Reader}.
+	 *
+	 * @param input
+	 *            where to read input from
+	 * @param buffer
+	 *            destination
+	 * @param offset
+	 *            initial offset into buffer
+	 * @param length
+	 *            length to read, must be &gt;= 0
+	 * @return actual length read; may be less than requested if EOF was reached
+	 * @throws IOException
+	 *             if a read error occurs
+	 * @since 2.2
+	 */
+	public static int read( final Reader input, final char[] buffer, final int offset, final int length )
+			throws IOException
+	{
+		if ( length < 0 )
+		{
+			throw new IllegalArgumentException( "Length must not be negative: " + length ); //$NON-NLS-1$
+		}
+		int remaining = length;
+		while ( remaining > 0 )
+		{
+			final int location = length - remaining;
+			final int count = input.read( buffer, offset + location, remaining );
+			if ( EOF == count )
+			{ // EOF
+				break;
+			}
+			remaining -= count;
+		}
+		return length - remaining;
+	}
+
+	/**
+	 * Reads the requested number of bytes or fail if there are not enough left.
+	 * <p>
+	 * This allows for the possibility that
+	 * {@link InputStream#read(byte[], int, int)} may not read as many bytes as
+	 * requested (most likely because of reaching EOF).
+	 *
+	 * @param input
+	 *            where to read input from
+	 * @param buffer
+	 *            destination
+	 * @throws IOException
+	 *             if there is a problem reading the file
+	 * @throws IllegalArgumentException
+	 *             if length is negative
+	 * @throws EOFException
+	 *             if the number of bytes read was incorrect
+	 * @since 2.2
+	 */
+	public static void readFully( final InputStream input, final byte[] buffer ) throws IOException
+	{
+		readFully( input, buffer, 0, buffer.length );
+	}
+
+	// copy from InputStream
+	// -----------------------------------------------------------------------
+
+	/**
+	 * Reads the requested number of bytes or fail if there are not enough left.
+	 * <p>
+	 * This allows for the possibility that
+	 * {@link InputStream#read(byte[], int, int)} may not read as many bytes as
+	 * requested (most likely because of reaching EOF).
+	 *
+	 * @param input
+	 *            where to read input from
+	 * @param buffer
+	 *            destination
+	 * @param offset
+	 *            initial offset into buffer
+	 * @param length
+	 *            length to read, must be &gt;= 0
+	 * @throws IOException
+	 *             if there is a problem reading the file
+	 * @throws IllegalArgumentException
+	 *             if length is negative
+	 * @throws EOFException
+	 *             if the number of bytes read was incorrect
+	 * @since 2.2
+	 */
+	public static void readFully( final InputStream input, final byte[] buffer, final int offset, final int length )
+			throws IOException
+	{
+		final int actual = read( input, buffer, offset, length );
+		if ( actual != length )
+		{
+			throw new EOFException( "Length to read: " + length + " actual: " + actual ); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
+
+	/**
+	 * Reads the requested number of bytes or fail if there are not enough left.
+	 * <p>
+	 * This allows for the possibility that
+	 * {@link InputStream#read(byte[], int, int)} may not read as many bytes as
+	 * requested (most likely because of reaching EOF).
+	 *
+	 * @param input
+	 *            where to read input from
+	 * @param length
+	 *            length to read, must be &gt;= 0
+	 * @return the bytes read from input
+	 * @throws IOException
+	 *             if there is a problem reading the file
+	 * @throws IllegalArgumentException
+	 *             if length is negative
+	 * @throws EOFException
+	 *             if the number of bytes read was incorrect
+	 * @since 2.5
+	 */
+	public static byte[] readFully( final InputStream input, final int length ) throws IOException
+	{
+		final byte[] buffer = new byte[length];
+		readFully( input, buffer, 0, buffer.length );
+		return buffer;
+	}
+
+	/**
+	 * Reads the requested number of bytes or fail if there are not enough left.
+	 * <p>
+	 * This allows for the possibility that
+	 * {@link ReadableByteChannel#read(ByteBuffer)} may not read as many bytes
+	 * as requested (most likely because of reaching EOF).
+	 *
+	 * @param input
+	 *            the byte channel to read
+	 * @param buffer
+	 *            byte buffer destination
+	 * @throws IOException
+	 *             if there is a problem reading the file
+	 * @throws EOFException
+	 *             if the number of bytes read was incorrect
+	 * @since 2.5
+	 */
+	public static void readFully( final ReadableByteChannel input, final ByteBuffer buffer ) throws IOException
+	{
+		final int expected = buffer.remaining( );
+		final int actual = read( input, buffer );
+		if ( actual != expected )
+		{
+			throw new EOFException( "Length to read: " + expected + " actual: " + actual ); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
+
+	/**
+	 * Reads the requested number of characters or fail if there are not enough
+	 * left.
+	 * <p>
+	 * This allows for the possibility that
+	 * {@link Reader#read(char[], int, int)} may not read as many characters as
+	 * requested (most likely because of reaching EOF).
+	 *
+	 * @param input
+	 *            where to read input from
+	 * @param buffer
+	 *            destination
+	 * @throws IOException
+	 *             if there is a problem reading the file
+	 * @throws IllegalArgumentException
+	 *             if length is negative
+	 * @throws EOFException
+	 *             if the number of characters read was incorrect
+	 * @since 2.2
+	 */
+	public static void readFully( final Reader input, final char[] buffer ) throws IOException
+	{
+		readFully( input, buffer, 0, buffer.length );
+	}
+
+	/**
+	 * Reads the requested number of characters or fail if there are not enough
+	 * left.
+	 * <p>
+	 * This allows for the possibility that
+	 * {@link Reader#read(char[], int, int)} may not read as many characters as
+	 * requested (most likely because of reaching EOF).
+	 *
+	 * @param input
+	 *            where to read input from
+	 * @param buffer
+	 *            destination
+	 * @param offset
+	 *            initial offset into buffer
+	 * @param length
+	 *            length to read, must be &gt;= 0
+	 * @throws IOException
+	 *             if there is a problem reading the file
+	 * @throws IllegalArgumentException
+	 *             if length is negative
+	 * @throws EOFException
+	 *             if the number of characters read was incorrect
+	 * @since 2.2
+	 */
+	public static void readFully( final Reader input, final char[] buffer, final int offset, final int length )
+			throws IOException
+	{
+		final int actual = read( input, buffer, offset, length );
+		if ( actual != length )
+		{
+			throw new EOFException( "Length to read: " + length + " actual: " + actual ); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
+
+	public static byte[] readInputStream( InputStream inStream ) throws Exception
+	{
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream( );
+		byte[] buffer = new byte[1024];
+		int len = 0;
+		while ( ( len = inStream.read( buffer ) ) != -1 )
+		{
+			outStream.write( buffer, 0, len );
+		}
+		byte[] data = outStream.toByteArray( );
+		outStream.close( );
+		inStream.close( );
+		return data;
+	}
+
+	// content equals
+	// -----------------------------------------------------------------------
+
+	/**
+	 * Gets a URL pointing to the given classpath resource.
+	 *
+	 * <p>
+	 * It is expected the given <code>name</code> to be absolute. The behavior
+	 * is not well-defined otherwise.
+	 * </p>
+	 *
+	 * @param name
+	 *            name of the desired resource
+	 * @return the requested URL
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * 
+	 * @since 2.6
+	 */
+	public static URL resourceToURL( final String name ) throws IOException
+	{
+		return resourceToURL( name, null );
+	}
+
+	/**
+	 * Gets a URL pointing to the given classpath resource.
+	 *
+	 * <p>
+	 * It is expected the given <code>name</code> to be absolute. The behavior
+	 * is not well-defined otherwise.
+	 * </p>
+	 *
+	 * @param name
+	 *            name of the desired resource
+	 * @param classLoader
+	 *            the class loader that the resolution of the resource is
+	 *            delegated to
+	 * @return the requested URL
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * 
+	 * @since 2.6
+	 */
+	public static URL resourceToURL( final String name, final ClassLoader classLoader ) throws IOException
+	{
+		// What about the thread context class loader?
+		// What about the system class loader?
+		final URL resource = classLoader == null ? IOUtils.class.getResource( name ) : classLoader.getResource( name );
+
+		if ( resource == null )
+		{
+			throw new IOException( "Resource not found: " + name ); //$NON-NLS-1$
+		}
+
+		return resource;
 	}
 
 	/**
@@ -1810,335 +1810,340 @@ public class IOUtils
 	}
 
 	/**
-	 * Reads characters from an input character stream. This implementation
-	 * guarantees that it will read as many characters as possible before giving
-	 * up; this may not always be the case for subclasses of {@link Reader}.
+	 * Returns the given reader if it is a {@link BufferedReader}, otherwise
+	 * creates a BufferedReader from the given reader.
 	 *
-	 * @param input
-	 *            where to read input from
-	 * @param buffer
-	 *            destination
-	 * @param offset
-	 *            initial offset into buffer
-	 * @param length
-	 *            length to read, must be &gt;= 0
-	 * @return actual length read; may be less than requested if EOF was reached
-	 * @throws IOException
-	 *             if a read error occurs
+	 * @param reader
+	 *            the reader to wrap or return (not null)
+	 * @return the given reader or a new {@link BufferedReader} for the given
+	 *         reader
+	 * @throws NullPointerException
+	 *             if the input parameter is null
+	 * @see #buffer(Reader)
 	 * @since 2.2
 	 */
-	public static int read( final Reader input, final char[] buffer, final int offset, final int length )
-			throws IOException
+	public static BufferedReader toBufferedReader( final Reader reader )
 	{
-		if ( length < 0 )
-		{
-			throw new IllegalArgumentException( "Length must not be negative: " + length ); //$NON-NLS-1$
-		}
-		int remaining = length;
-		while ( remaining > 0 )
-		{
-			final int location = length - remaining;
-			final int count = input.read( buffer, offset + location, remaining );
-			if ( EOF == count )
-			{ // EOF
-				break;
-			}
-			remaining -= count;
-		}
-		return length - remaining;
+		return reader instanceof BufferedReader ? (BufferedReader) reader : new BufferedReader( reader );
 	}
 
 	/**
-	 * Reads characters from an input character stream. This implementation
-	 * guarantees that it will read as many characters as possible before giving
-	 * up; this may not always be the case for subclasses of {@link Reader}.
+	 * Returns the given reader if it is a {@link BufferedReader}, otherwise
+	 * creates a BufferedReader from the given reader.
 	 *
-	 * @param input
-	 *            where to read input from
-	 * @param buffer
-	 *            destination
-	 * @return actual length read; may be less than requested if EOF was reached
-	 * @throws IOException
-	 *             if a read error occurs
-	 * @since 2.2
-	 */
-	public static int read( final Reader input, final char[] buffer ) throws IOException
-	{
-		return read( input, buffer, 0, buffer.length );
-	}
-
-	/**
-	 * Reads bytes from an input stream. This implementation guarantees that it
-	 * will read as many bytes as possible before giving up; this may not always
-	 * be the case for subclasses of {@link InputStream}.
-	 *
-	 * @param input
-	 *            where to read input from
-	 * @param buffer
-	 *            destination
-	 * @param offset
-	 *            initial offset into buffer
-	 * @param length
-	 *            length to read, must be &gt;= 0
-	 * @return actual length read; may be less than requested if EOF was reached
-	 * @throws IOException
-	 *             if a read error occurs
-	 * @since 2.2
-	 */
-	public static int read( final InputStream input, final byte[] buffer, final int offset, final int length )
-			throws IOException
-	{
-		if ( length < 0 )
-		{
-			throw new IllegalArgumentException( "Length must not be negative: " + length ); //$NON-NLS-1$
-		}
-		int remaining = length;
-		while ( remaining > 0 )
-		{
-			final int location = length - remaining;
-			final int count = input.read( buffer, offset + location, remaining );
-			if ( EOF == count )
-			{ // EOF
-				break;
-			}
-			remaining -= count;
-		}
-		return length - remaining;
-	}
-
-	/**
-	 * Reads bytes from an input stream. This implementation guarantees that it
-	 * will read as many bytes as possible before giving up; this may not always
-	 * be the case for subclasses of {@link InputStream}.
-	 *
-	 * @param input
-	 *            where to read input from
-	 * @param buffer
-	 *            destination
-	 * @return actual length read; may be less than requested if EOF was reached
-	 * @throws IOException
-	 *             if a read error occurs
-	 * @since 2.2
-	 */
-	public static int read( final InputStream input, final byte[] buffer ) throws IOException
-	{
-		return read( input, buffer, 0, buffer.length );
-	}
-
-	/**
-	 * Reads bytes from a ReadableByteChannel.
-	 * <p>
-	 * This implementation guarantees that it will read as many bytes as
-	 * possible before giving up; this may not always be the case for subclasses
-	 * of {@link ReadableByteChannel}.
-	 *
-	 * @param input
-	 *            the byte channel to read
-	 * @param buffer
-	 *            byte buffer destination
-	 * @return the actual length read; may be less than requested if EOF was
-	 *         reached
-	 * @throws IOException
-	 *             if a read error occurs
+	 * @param reader
+	 *            the reader to wrap or return (not null)
+	 * @param size
+	 *            the buffer size, if a new BufferedReader is created.
+	 * @return the given reader or a new {@link BufferedReader} for the given
+	 *         reader
+	 * @throws NullPointerException
+	 *             if the input parameter is null
+	 * @see #buffer(Reader)
 	 * @since 2.5
 	 */
-	public static int read( final ReadableByteChannel input, final ByteBuffer buffer ) throws IOException
+	public static BufferedReader toBufferedReader( final Reader reader, int size )
 	{
-		final int length = buffer.remaining( );
-		while ( buffer.remaining( ) > 0 )
-		{
-			final int count = input.read( buffer );
-			if ( EOF == count )
-			{ // EOF
-				break;
-			}
-		}
-		return length - buffer.remaining( );
+		return reader instanceof BufferedReader ? (BufferedReader) reader : new BufferedReader( reader, size );
 	}
 
 	/**
-	 * Reads the requested number of characters or fail if there are not enough
-	 * left.
-	 * <p>
-	 * This allows for the possibility that
-	 * {@link Reader#read(char[], int, int)} may not read as many characters as
-	 * requested (most likely because of reaching EOF).
+	 * Gets the contents of an <code>InputStream</code> as a <code>byte[]</code>
+	 * . Use this method instead of <code>toByteArray(InputStream)</code> when
+	 * <code>InputStream</code> size is known
 	 *
 	 * @param input
-	 *            where to read input from
-	 * @param buffer
-	 *            destination
-	 * @param offset
-	 *            initial offset into buffer
-	 * @param length
-	 *            length to read, must be &gt;= 0
+	 *            the <code>InputStream</code> to read from
+	 * @param size
+	 *            the size of <code>InputStream</code>
+	 * @return the requested byte array
 	 * @throws IOException
-	 *             if there is a problem reading the file
+	 *             if an I/O error occurs or <code>InputStream</code> size
+	 *             differ from parameter size
 	 * @throws IllegalArgumentException
-	 *             if length is negative
-	 * @throws EOFException
-	 *             if the number of characters read was incorrect
-	 * @since 2.2
+	 *             if size is less than zero
+	 * @since 2.1
 	 */
-	public static void readFully( final Reader input, final char[] buffer, final int offset, final int length )
-			throws IOException
+	public static byte[] toByteArray( final InputStream input, final int size ) throws IOException
 	{
-		final int actual = read( input, buffer, offset, length );
-		if ( actual != length )
+
+		if ( size < 0 )
 		{
-			throw new EOFException( "Length to read: " + length + " actual: " + actual ); //$NON-NLS-1$ //$NON-NLS-2$
+			throw new IllegalArgumentException( "Size must be equal or greater than zero: " + size ); //$NON-NLS-1$
 		}
-	}
 
-	/**
-	 * Reads the requested number of characters or fail if there are not enough
-	 * left.
-	 * <p>
-	 * This allows for the possibility that
-	 * {@link Reader#read(char[], int, int)} may not read as many characters as
-	 * requested (most likely because of reaching EOF).
-	 *
-	 * @param input
-	 *            where to read input from
-	 * @param buffer
-	 *            destination
-	 * @throws IOException
-	 *             if there is a problem reading the file
-	 * @throws IllegalArgumentException
-	 *             if length is negative
-	 * @throws EOFException
-	 *             if the number of characters read was incorrect
-	 * @since 2.2
-	 */
-	public static void readFully( final Reader input, final char[] buffer ) throws IOException
-	{
-		readFully( input, buffer, 0, buffer.length );
-	}
-
-	/**
-	 * Reads the requested number of bytes or fail if there are not enough left.
-	 * <p>
-	 * This allows for the possibility that
-	 * {@link InputStream#read(byte[], int, int)} may not read as many bytes as
-	 * requested (most likely because of reaching EOF).
-	 *
-	 * @param input
-	 *            where to read input from
-	 * @param buffer
-	 *            destination
-	 * @param offset
-	 *            initial offset into buffer
-	 * @param length
-	 *            length to read, must be &gt;= 0
-	 * @throws IOException
-	 *             if there is a problem reading the file
-	 * @throws IllegalArgumentException
-	 *             if length is negative
-	 * @throws EOFException
-	 *             if the number of bytes read was incorrect
-	 * @since 2.2
-	 */
-	public static void readFully( final InputStream input, final byte[] buffer, final int offset, final int length )
-			throws IOException
-	{
-		final int actual = read( input, buffer, offset, length );
-		if ( actual != length )
+		if ( size == 0 )
 		{
-			throw new EOFException( "Length to read: " + length + " actual: " + actual ); //$NON-NLS-1$ //$NON-NLS-2$
+			return new byte[0];
 		}
-	}
 
-	/**
-	 * Reads the requested number of bytes or fail if there are not enough left.
-	 * <p>
-	 * This allows for the possibility that
-	 * {@link InputStream#read(byte[], int, int)} may not read as many bytes as
-	 * requested (most likely because of reaching EOF).
-	 *
-	 * @param input
-	 *            where to read input from
-	 * @param buffer
-	 *            destination
-	 * @throws IOException
-	 *             if there is a problem reading the file
-	 * @throws IllegalArgumentException
-	 *             if length is negative
-	 * @throws EOFException
-	 *             if the number of bytes read was incorrect
-	 * @since 2.2
-	 */
-	public static void readFully( final InputStream input, final byte[] buffer ) throws IOException
-	{
-		readFully( input, buffer, 0, buffer.length );
-	}
+		final byte[] data = new byte[size];
+		int offset = 0;
+		int readed;
 
-	/**
-	 * Reads the requested number of bytes or fail if there are not enough left.
-	 * <p>
-	 * This allows for the possibility that
-	 * {@link InputStream#read(byte[], int, int)} may not read as many bytes as
-	 * requested (most likely because of reaching EOF).
-	 *
-	 * @param input
-	 *            where to read input from
-	 * @param length
-	 *            length to read, must be &gt;= 0
-	 * @return the bytes read from input
-	 * @throws IOException
-	 *             if there is a problem reading the file
-	 * @throws IllegalArgumentException
-	 *             if length is negative
-	 * @throws EOFException
-	 *             if the number of bytes read was incorrect
-	 * @since 2.5
-	 */
-	public static byte[] readFully( final InputStream input, final int length ) throws IOException
-	{
-		final byte[] buffer = new byte[length];
-		readFully( input, buffer, 0, buffer.length );
-		return buffer;
-	}
-
-	/**
-	 * Reads the requested number of bytes or fail if there are not enough left.
-	 * <p>
-	 * This allows for the possibility that
-	 * {@link ReadableByteChannel#read(ByteBuffer)} may not read as many bytes
-	 * as requested (most likely because of reaching EOF).
-	 *
-	 * @param input
-	 *            the byte channel to read
-	 * @param buffer
-	 *            byte buffer destination
-	 * @throws IOException
-	 *             if there is a problem reading the file
-	 * @throws EOFException
-	 *             if the number of bytes read was incorrect
-	 * @since 2.5
-	 */
-	public static void readFully( final ReadableByteChannel input, final ByteBuffer buffer ) throws IOException
-	{
-		final int expected = buffer.remaining( );
-		final int actual = read( input, buffer );
-		if ( actual != expected )
+		while ( offset < size && ( readed = input.read( data, offset, size - offset ) ) != EOF )
 		{
-			throw new EOFException( "Length to read: " + expected + " actual: " + actual ); //$NON-NLS-1$ //$NON-NLS-2$
+			offset += readed;
 		}
-	}
 
-	public static byte[] readInputStream( InputStream inStream ) throws Exception
-	{
-		ByteArrayOutputStream outStream = new ByteArrayOutputStream( );
-		byte[] buffer = new byte[1024];
-		int len = 0;
-		while ( ( len = inStream.read( buffer ) ) != -1 )
+		if ( offset != size )
 		{
-			outStream.write( buffer, 0, len );
+			throw new IOException( "Unexpected readed size. current: " //$NON-NLS-1$
+					+ offset
+					+ ", excepted: " //$NON-NLS-1$
+					+ size );
 		}
-		byte[] data = outStream.toByteArray( );
-		outStream.close( );
-		inStream.close( );
+
 		return data;
+	}
+
+	/**
+	 * Gets contents of an <code>InputStream</code> as a <code>byte[]</code>.
+	 * Use this method instead of <code>toByteArray(InputStream)</code> when
+	 * <code>InputStream</code> size is known. <b>NOTE:</b> the method checks
+	 * that the length can safely be cast to an int without truncation before
+	 * using {@link IOUtils#toByteArray(java.io.InputStream, int)} to read into
+	 * the byte array. (Arrays can have no more than Integer.MAX_VALUE entries
+	 * anyway)
+	 *
+	 * @param input
+	 *            the <code>InputStream</code> to read from
+	 * @param size
+	 *            the size of <code>InputStream</code>
+	 * @return the requested byte array
+	 * @throws IOException
+	 *             if an I/O error occurs or <code>InputStream</code> size
+	 *             differ from parameter size
+	 * @throws IllegalArgumentException
+	 *             if size is less than zero or size is greater than
+	 *             Integer.MAX_VALUE
+	 * @see IOUtils#toByteArray(java.io.InputStream, int)
+	 * @since 2.1
+	 */
+	public static byte[] toByteArray( final InputStream input, final long size ) throws IOException
+	{
+
+		if ( size > Integer.MAX_VALUE )
+		{
+			throw new IllegalArgumentException( "Size cannot be greater than Integer max value: " + size ); //$NON-NLS-1$
+		}
+
+		return toByteArray( input, (int) size );
+	}
+
+	/**
+	 * Converts the specified CharSequence to an input stream, encoded as bytes
+	 * using the default character encoding of the platform.
+	 *
+	 * @param input
+	 *            the CharSequence to convert
+	 * @return an input stream
+	 * @since 2.0
+	 * @deprecated 2.5 use {@link #toInputStream(CharSequence, Charset)} instead
+	 */
+	@Deprecated
+	public static InputStream toInputStream( final CharSequence input )
+	{
+		return toInputStream( input, Charset.defaultCharset( ) );
+	}
+
+	/**
+	 * Converts the specified CharSequence to an input stream, encoded as bytes
+	 * using the specified character encoding.
+	 *
+	 * @param input
+	 *            the CharSequence to convert
+	 * @param encoding
+	 *            the encoding to use, null means platform default
+	 * @return an input stream
+	 * @since 2.3
+	 */
+	public static InputStream toInputStream( final CharSequence input, final Charset encoding )
+	{
+		return toInputStream( input.toString( ), encoding );
+	}
+
+	/**
+	 * Writes bytes from a <code>byte[]</code> to an <code>OutputStream</code>.
+	 *
+	 * @param data
+	 *            the byte array to write, do not modify during output, null
+	 *            ignored
+	 * @param output
+	 *            the <code>OutputStream</code> to write to
+	 * @throws NullPointerException
+	 *             if output is null
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @since 1.1
+	 */
+	public static void write( final byte[] data, final OutputStream output ) throws IOException
+	{
+		if ( data != null )
+		{
+			output.write( data );
+		}
+	}
+
+	/**
+	 * Writes chars from a <code>char[]</code> to a <code>Writer</code>
+	 *
+	 * @param data
+	 *            the char array to write, do not modify during output, null
+	 *            ignored
+	 * @param output
+	 *            the <code>Writer</code> to write to
+	 * @throws NullPointerException
+	 *             if output is null
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @since 1.1
+	 */
+	public static void write( final char[] data, final Writer output ) throws IOException
+	{
+		if ( data != null )
+		{
+			output.write( data );
+		}
+	}
+
+	/**
+	 * Writes chars from a <code>CharSequence</code> to bytes on an
+	 * <code>OutputStream</code> using the default character encoding of the
+	 * platform.
+	 * <p>
+	 * This method uses {@link String#getBytes()}.
+	 *
+	 * @param data
+	 *            the <code>CharSequence</code> to write, null ignored
+	 * @param output
+	 *            the <code>OutputStream</code> to write to
+	 * @throws NullPointerException
+	 *             if output is null
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @since 2.0
+	 * @deprecated 2.5 use {@link #write(CharSequence, OutputStream, Charset)}
+	 *             instead
+	 */
+	@Deprecated
+	public static void write( final CharSequence data, final OutputStream output ) throws IOException
+	{
+		write( data, output, Charset.defaultCharset( ) );
+	}
+
+	/**
+	 * Writes chars from a <code>CharSequence</code> to bytes on an
+	 * <code>OutputStream</code> using the specified character encoding.
+	 * <p>
+	 * This method uses {@link String#getBytes(String)}.
+	 *
+	 * @param data
+	 *            the <code>CharSequence</code> to write, null ignored
+	 * @param output
+	 *            the <code>OutputStream</code> to write to
+	 * @param encoding
+	 *            the encoding to use, null means platform default
+	 * @throws NullPointerException
+	 *             if output is null
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @since 2.3
+	 */
+	public static void write( final CharSequence data, final OutputStream output, final Charset encoding )
+			throws IOException
+	{
+		if ( data != null )
+		{
+			write( data.toString( ), output, encoding );
+		}
+	}
+
+	/**
+	 * Writes chars from a <code>CharSequence</code> to a <code>Writer</code>.
+	 *
+	 * @param data
+	 *            the <code>CharSequence</code> to write, null ignored
+	 * @param output
+	 *            the <code>Writer</code> to write to
+	 * @throws NullPointerException
+	 *             if output is null
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @since 2.0
+	 */
+	public static void write( final CharSequence data, final Writer output ) throws IOException
+	{
+		if ( data != null )
+		{
+			write( data.toString( ), output );
+		}
+	}
+
+	/**
+	 * Writes bytes from a <code>byte[]</code> to an <code>OutputStream</code>
+	 * using chunked writes. This is intended for writing very large byte arrays
+	 * which might otherwise cause excessive memory usage if the native code has
+	 * to allocate a copy.
+	 *
+	 * @param data
+	 *            the byte array to write, do not modify during output, null
+	 *            ignored
+	 * @param output
+	 *            the <code>OutputStream</code> to write to
+	 * @throws NullPointerException
+	 *             if output is null
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @since 2.5
+	 */
+	public static void writeChunked( final byte[] data, final OutputStream output ) throws IOException
+	{
+		if ( data != null )
+		{
+			int bytes = data.length;
+			int offset = 0;
+			while ( bytes > 0 )
+			{
+				int chunk = Math.min( bytes, DEFAULT_BUFFER_SIZE );
+				output.write( data, offset, chunk );
+				bytes -= chunk;
+				offset += chunk;
+			}
+		}
+	}
+
+	/**
+	 * Writes chars from a <code>char[]</code> to a <code>Writer</code> using
+	 * chunked writes. This is intended for writing very large byte arrays which
+	 * might otherwise cause excessive memory usage if the native code has to
+	 * allocate a copy.
+	 *
+	 * @param data
+	 *            the char array to write, do not modify during output, null
+	 *            ignored
+	 * @param output
+	 *            the <code>Writer</code> to write to
+	 * @throws NullPointerException
+	 *             if output is null
+	 * @throws IOException
+	 *             if an I/O error occurs
+	 * @since 2.5
+	 */
+	public static void writeChunked( final char[] data, final Writer output ) throws IOException
+	{
+		if ( data != null )
+		{
+			int bytes = data.length;
+			int offset = 0;
+			while ( bytes > 0 )
+			{
+				int chunk = Math.min( bytes, DEFAULT_BUFFER_SIZE );
+				output.write( data, offset, chunk );
+				bytes -= chunk;
+				offset += chunk;
+			}
+		}
 	}
 
 }
