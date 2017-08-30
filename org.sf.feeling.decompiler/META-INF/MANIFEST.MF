@@ -58,5 +58,4 @@ Export-Package: com.eclipsesource.json,
  org.sf.feeling.decompiler.i18n,
  org.sf.feeling.decompiler.preferences,
  org.sf.feeling.decompiler.source.attach,
- org.sf.feeling.decompiler.update,
  org.sf.feeling.decompiler.util
