@@ -22,7 +22,6 @@ import org.eclipse.jdt.internal.core.ClassFile;
 import org.eclipse.jdt.internal.ui.javaeditor.IClassFileEditorInput;
 import org.eclipse.swt.widgets.Display;
 import org.sf.feeling.decompiler.util.Logger;
-import org.sf.feeling.decompiler.util.MarkUtil;
 import org.sf.feeling.decompiler.util.UIUtil;
 
 /**
@@ -116,8 +115,7 @@ public class JavaDecompilerBufferManager extends BufferManager
 		{
 
 			if ( buffers[0] == null
-					|| buffers[0].getContents( ) == null
-					|| MarkUtil.containsMark( buffers[0].getContents( ) ) )
+					|| buffers[0].getContents( ) == null )
 			{
 				buffers[0] = null;
 

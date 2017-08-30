@@ -45,7 +45,6 @@ import org.sf.feeling.decompiler.util.ClassUtil;
 import org.sf.feeling.decompiler.util.DecompileUtil;
 import org.sf.feeling.decompiler.util.DecompilerOutputUtil;
 import org.sf.feeling.decompiler.util.Logger;
-import org.sf.feeling.decompiler.util.MarkUtil;
 import org.sf.feeling.decompiler.util.ReflectionUtils;
 import org.sf.feeling.decompiler.util.SortMemberUtil;
 import org.sf.feeling.decompiler.util.UIUtil;
@@ -103,11 +102,8 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper
 
 			if ( attachedSource != null && !always )
 			{
-				attachedSource = DecompileUtil.getCopyRightContent( type.getClassFile( ), new String( attachedSource ) )
-						.toCharArray( );
 				updateSourceRanges( type, attachedSource );
 				isAttachedSource = true;
-				updateBreakPointStatus( type, new String( attachedSource ) );
 				mapSource( type, attachedSource, true );
 				( (PackageFragmentRoot) root ).getSourceMapper( ).mapSource( type, attachedSource, info );
 				return attachedSource;
@@ -142,12 +138,8 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper
 					attachedSource = sourceMapper.findSource( type, info );
 					if ( attachedSource != null )
 					{
-						attachedSource = DecompileUtil
-								.getCopyRightContent( type.getClassFile( ), new String( attachedSource ) )
-								.toCharArray( );
 						updateSourceRanges( type, attachedSource );
 						isAttachedSource = true;
-						updateBreakPointStatus( type, new String( attachedSource ) );
 						mapSource( type, attachedSource, true );
 						( (PackageFragmentRoot) root ).getSourceMapper( ).mapSource( type, attachedSource, info );
 						return attachedSource;
@@ -199,9 +191,7 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper
 			}
 		}
 
-		String code = MarkUtil.getRandomMark( type.getClassFile( ) )
-				+ "\r\n" //$NON-NLS-1$
-				+ usedDecompiler.getSource( );
+		String code = usedDecompiler.getSource( );
 
 		boolean showReport = prefs.getBoolean( JavaDecompilerPlugin.PREF_DISPLAY_METADATA );
 		if ( !showReport )
@@ -252,8 +242,6 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper
 			source.append( code );
 		}
 
-		updateBreakPointStatus( type, source.toString( ) );
-
 		if ( originalSourceMapper.containsKey( root ) )
 		{
 			if ( originalSourceMapper.get( root ).findSource( type, info ) == null )
@@ -277,78 +265,6 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper
 			catch ( JavaModelException e )
 			{
 				Logger.debug( e );
-			}
-		}
-	}
-
-	private void updateBreakPointStatus( IType type, String source )
-	{
-		if ( MarkUtil.containsSourceMark( source ) )
-		{
-			IBreakpointManager manager = DebugPlugin.getDefault( ).getBreakpointManager( );
-			String modelId = JDIDebugPlugin.getUniqueIdentifier( );
-			IBreakpoint[] breakpoints = manager.getBreakpoints( modelId );
-			for ( int i = 0; i < breakpoints.length; i++ )
-			{
-				if ( !( breakpoints[i] instanceof IJavaLineBreakpoint ) )
-					continue;
-				try
-				{
-					IJavaLineBreakpoint breakPoint = (IJavaLineBreakpoint) breakpoints[i];
-					String breakpointTypeName = breakPoint.getTypeName( );
-					if ( type != null
-							&& breakpointTypeName != null
-							&& breakpointTypeName.equals( type.getFullyQualifiedName( ) ) )
-					{
-						int lineNumber = (Integer) breakPoint.getMarker( ).getAttribute( IMarker.LINE_NUMBER );
-
-						String[] lines = source.split( "\n" ); //$NON-NLS-1$
-
-						int charStart = getCharStart( lines, lineNumber - 1 );
-						int charEnd = getCharEnd( lines, lineNumber - 1 );
-
-						breakPoint.getMarker( ).setAttribute( IMarker.CHAR_START, new Integer( charStart ) );
-						breakPoint.getMarker( ).setAttribute( IMarker.CHAR_END, new Integer( charEnd - 1 ) );
-					}
-				}
-				catch ( CoreException e )
-				{
-					Logger.debug( e );
-				}
-			}
-		}
-		else if ( MarkUtil.containsMark( source ) && UIUtil.isDebug( ) )
-		{
-			IBreakpointManager manager = DebugPlugin.getDefault( ).getBreakpointManager( );
-			String modelId = JDIDebugPlugin.getUniqueIdentifier( );
-			IBreakpoint[] breakpoints = manager.getBreakpoints( modelId );
-			for ( int i = 0; i < breakpoints.length; i++ )
-			{
-				if ( !( breakpoints[i] instanceof IJavaLineBreakpoint ) )
-					continue;
-				try
-				{
-					IJavaLineBreakpoint breakPoint = (IJavaLineBreakpoint) breakpoints[i];
-					String breakpointTypeName = breakPoint.getTypeName( );
-					if ( type != null
-							&& breakpointTypeName != null
-							&& breakpointTypeName.equals( type.getFullyQualifiedName( ) ) )
-					{
-						int lineNumber = (Integer) breakPoint.getMarker( ).getAttribute( IMarker.LINE_NUMBER );
-
-						String[] lines = source.split( "\n" ); //$NON-NLS-1$
-
-						int charStart = getCharStart( lines, lineNumber - 1 );
-						int charEnd = getCharEnd( lines, lineNumber - 1 );
-
-						breakPoint.getMarker( ).setAttribute( IMarker.CHAR_START, new Integer( charStart ) );
-						breakPoint.getMarker( ).setAttribute( IMarker.CHAR_END, new Integer( charEnd - 1 ) );
-					}
-				}
-				catch ( CoreException e )
-				{
-					Logger.debug( e );
-				}
 			}
 		}
 	}
@@ -512,9 +428,7 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper
 		if ( currentDecompiler.getSource( ) == null || currentDecompiler.getSource( ).length( ) == 0 )
 			return null;
 
-		String code = MarkUtil.getRandomMark( file.getAbsolutePath( ) )
-				+ "\r\n" //$NON-NLS-1$
-				+ currentDecompiler.getSource( );
+		String code = currentDecompiler.getSource( );
 
 		boolean showReport = prefs.getBoolean( JavaDecompilerPlugin.PREF_DISPLAY_METADATA );
 		if ( !showReport )

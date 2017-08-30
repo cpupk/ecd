@@ -36,7 +36,6 @@ import org.sf.feeling.decompiler.extension.DecompilerAdapterManager;
 import org.sf.feeling.decompiler.extension.IDecompilerExtensionHandler;
 import org.sf.feeling.decompiler.util.ClassUtil;
 import org.sf.feeling.decompiler.util.Logger;
-import org.sf.feeling.decompiler.util.MarkUtil;
 import org.sf.feeling.decompiler.util.ReflectionUtils;
 import org.sf.feeling.decompiler.util.UIUtil;
 
@@ -131,8 +130,7 @@ public class SetupRunnable implements Runnable
 				{
 					( (JavaDecompilerClassFileEditor) part ).notifyPropertiesChange( );
 					String code = ( (JavaDecompilerClassFileEditor) part ).getViewer( ).getDocument( ).get( );
-					if ( !MarkUtil.containsSourceMark( code )
-							&& ClassUtil.isDebug( ) != JavaDecompilerClassFileEditor.isDebug( code ) )
+					if ( ClassUtil.isDebug( ) != JavaDecompilerClassFileEditor.isDebug( code ) )
 					{
 						( (JavaDecompilerClassFileEditor) part ).doSetInput( false );
 					}

@@ -116,16 +116,8 @@ public class DecompilerOutputUtil
 		options.put( CompilerOptions.OPTION_Source, DecompilerOutputUtil.getMaxDecompileLevel( ) ); // $NON-NLS-1$
 		parser.setCompilerOptions( options );
 
-		if ( MarkUtil.containsMark( input ) )
-		{
-			String content = input.replace( MarkUtil.getMark( input ), "" ); //$NON-NLS-1$
-			parser.setSource( content.toCharArray( ) );
-		}
-		else
-		{
-			parser.setSource( input.toCharArray( ) );
+		parser.setSource( input.toCharArray( ) );
 
-		}
 		unit = (CompilationUnit) parser.createAST( null );
 
 		// Iterate over types (ignoring enums and annotations)
@@ -164,10 +156,7 @@ public class DecompilerOutputUtil
 		if ( javaSrcLines.size( ) == 1 )
 		{
 			String warning = "\r\n" + NO_LINE_NUMBER + "\r\n"; //$NON-NLS-1$ //$NON-NLS-2$
-			return ( MarkUtil.getRandomMark( markKey )
-					+ "\r\n" //$NON-NLS-1$
-					+ warning
-					+ replace( input, MarkUtil.getMark( input ), "" ) ); //$NON-NLS-1$
+			return warning + input ; //$NON-NLS-1$
 		}
 
 		// Add all the source lines above the first type

@@ -78,7 +78,6 @@ import org.sf.feeling.decompiler.actions.ByteCodeAction;
 import org.sf.feeling.decompiler.actions.DisassemblerAction;
 import org.sf.feeling.decompiler.actions.SourceCodeAction;
 import org.sf.feeling.decompiler.util.Logger;
-import org.sf.feeling.decompiler.util.MarkUtil;
 import org.sf.feeling.decompiler.util.ReflectionUtils;
 import org.sf.feeling.decompiler.util.UIUtil;
 
@@ -136,8 +135,7 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 		setSite( editor.getSite( ) );
 
 		String classContent = editor.getDocumentProvider( ).getDocument( editor.getEditorInput( ) ).get( );
-		String mark = MarkUtil.getMark( classContent );
-		DisassemblerDocumentProvider provider = new DisassemblerDocumentProvider( mark );
+		DisassemblerDocumentProvider provider = new DisassemblerDocumentProvider( );
 		setDocumentProvider( provider );
 		setInput( editor.getEditorInput( ) );
 
@@ -242,40 +240,7 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 			}
 		} );
 
-		updateLinkStyle( );
-
 		return container;
-	}
-
-	private void updateLinkStyle( )
-	{
-		String mark = ( (DisassemblerDocumentProvider) getDocumentProvider( ) ).getMark( );
-		String ad = mark.replaceAll( "/(\\*)+", "" ) //$NON-NLS-1$ //$NON-NLS-2$
-				.replaceAll( "(\\*)+/", "" ) //$NON-NLS-1$ //$NON-NLS-2$
-				.trim( );
-		int length = ad.length( );
-		int offset = mark.indexOf( ad );
-
-		StyleRange textRange = UIUtil.getAdTextStyleRange( getTextWidget( ), offset, length );
-		if ( textRange != null )
-		{
-			getTextWidget( ).setStyleRange( textRange );
-		}
-
-		URLHyperlinkDetector detector = new URLHyperlinkDetector( );
-		final int index = mark.indexOf( "://" ); //$NON-NLS-1$
-		final IHyperlink[] links = detector.detectHyperlinks( getSourceViewer( ), new Region( index, 0 ), true );
-		for ( int j = 0; j < links.length; j++ )
-		{
-			IHyperlink link = links[j];
-			StyleRange linkRange = UIUtil.getAdLinkStyleRange( getTextWidget( ),
-					link.getHyperlinkRegion( ).getOffset( ),
-					link.getHyperlinkRegion( ).getLength( ) );
-			if ( linkRange != null )
-			{
-				getTextWidget( ).setStyleRange( linkRange );
-			}
-		}
 	}
 
 	private void updateDocument( DisassemblerDocumentProvider provider, ISourceViewer fSourceViewer )
@@ -298,7 +263,7 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 			try
 			{
 				String content = disassembler.disassemble( cf.getBytes( ), "\n", ClassFileBytesDisassembler.DETAILED ); //$NON-NLS-1$
-				disassemblerDocument.set( provider.getMark( ) + "\n\n" + ( content == null ? "" : content ) ); //$NON-NLS-1$ //$NON-NLS-2$
+				disassemblerDocument.set( ( content == null ? "" : content ) ); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			catch ( Exception ex )
 			{
@@ -742,11 +707,8 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 	{
 		try
 		{
-			String mark = MarkUtil.getMark( disassemblerText.getText( ) );
-			int offset = mark.length( ) + 2;
-
 			int lineStartOffset = disassemblerDocument.getLineOffset( bytecodeLine );
-			disassemblerText.setSelection( lineStartOffset + offset );
+			disassemblerText.setSelection( lineStartOffset );
 
 		}
 		catch ( BadLocationException e )
@@ -915,7 +877,6 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 					public void run( )
 					{
 						getSourceViewer( ).invalidateTextPresentation( );
-						updateLinkStyle( );
 						styleChanged = false;
 					}
 				} );
@@ -936,7 +897,6 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 						{
 							setSelectionElement( editor.getSelectedElement( ), true );
 						}
-						updateLinkStyle( );
 						docChanged = false;
 					}
 				} );

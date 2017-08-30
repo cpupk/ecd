@@ -88,7 +88,6 @@ import org.sf.feeling.decompiler.util.DecompileUtil;
 import org.sf.feeling.decompiler.util.DecompilerOutputUtil;
 import org.sf.feeling.decompiler.util.FileUtil;
 import org.sf.feeling.decompiler.util.Logger;
-import org.sf.feeling.decompiler.util.MarkUtil;
 import org.sf.feeling.decompiler.util.ReflectionUtils;
 import org.sf.feeling.decompiler.util.UIUtil;
 
@@ -167,10 +166,8 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 			String origSrc = cf.getSource( );
 			if ( origSrc == null
 					|| ( origSrc != null
-							&& always
-							&& ( !MarkUtil.containsMark( origSrc )
-									|| ( MarkUtil.containsMark( origSrc ) && !reuseBuf ) ) )
-					|| ( origSrc != null && !always && !MarkUtil.containsMark( origSrc ) && !reuseBuf )
+							&& always )
+					|| ( origSrc != null && !always && !reuseBuf )
 					|| debugOptionChange( origSrc )
 					|| force )
 			{
@@ -206,26 +203,7 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 
 				ClassFileSourceMap.updateSource( getBufferManager( ), (ClassFile) cf, markedSrc );
 
-				String content = new String( markedSrc );
-				if ( MarkUtil.containsMark( content ) )
-				{
-					if ( getSourceViewer( ) != null
-							&& getSourceViewer( ).getTextWidget( ) != null
-							&& !getSourceViewer( ).getTextWidget( ).isDisposed( ) )
-					{
-
-						if ( !getSourceViewer( ).getTextWidget( ).getText( ).equals( content ) )
-						{
-							clearSelection( );
-						}
-					}
-				}
-
 				opened = true;
-			}
-			else
-			{
-				DecompileUtil.checkAndUpdateCopyright( this, cf, origSrc );
 			}
 			return opened;
 
@@ -329,34 +307,6 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 				}
 			};
 		} );
-	}
-
-	@Override
-	public void selectAndReveal( int start, int length )
-	{
-		if ( UIUtil.requestFromShowMatch( ) )
-		{
-			String src = this.getDocumentProvider( ).getDocument( this.getEditorInput( ) ).get( );
-			if ( MarkUtil.containsSourceMark( src ) )
-			{
-				if ( src.indexOf( "\r\n" ) != -1 ) //$NON-NLS-1$
-				{
-					super.selectAndReveal( start + MarkUtil.getMark( src ).length( ) - 1, length );
-				}
-				else
-				{
-					super.selectAndReveal( start + MarkUtil.getMark( src ).length( ), length );
-				}
-			}
-			else
-			{
-				super.selectAndReveal( start, length );
-			}
-		}
-		else
-		{
-			super.selectAndReveal( start, length );
-		}
 	}
 
 	public static boolean debugOptionChange( String source )
@@ -668,8 +618,6 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 
 				fHyperlinkPresenter.showHyperlinks( links );
 
-				updateLinkRanges( links );
-
 				final boolean[] flags = new boolean[1];
 
 				if ( !text.isDisposed( ) && paintListener != null )
@@ -682,15 +630,6 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 					private Boolean isActive( final HyperlinkManager fHyperlinkManager )
 					{
 						return (Boolean) ReflectionUtils.getFieldValue( fHyperlinkManager, "fActive" );//$NON-NLS-1$
-					}
-
-					private void updateHyperlinks( final IHyperlink[] links,
-							final IHyperlinkPresenter fHyperlinkPresenter )
-					{
-						if ( ReflectionUtils.getFieldValue( fHyperlinkPresenter, "fTextViewer" ) != null ) //$NON-NLS-1$
-						{
-							updateLinkRanges( links );
-						}
 					}
 
 					private void addPaintListener( final StyledText text )
@@ -728,7 +667,6 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 								if ( !fActive && !text.isDisposed( ) )
 								{
 									text.removePaintListener( paintListener );
-									updateHyperlinks( links, fHyperlinkPresenter );
 									updateMatchAnnonation( );
 									addPaintListener( text );
 								}
@@ -771,37 +709,6 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 					}
 				};
 				text.addMouseListener( mouseAdapter );
-			}
-		}
-	}
-
-	private void updateLinkRanges( final IHyperlink[] links )
-	{
-		String content = getDocumentProvider( ).getDocument( getEditorInput( ) ).get( );
-
-		String mark = MarkUtil.getMark( content );
-		String ad = mark.replaceAll( "/(\\*)+", "" ) //$NON-NLS-1$ //$NON-NLS-2$
-				.replaceAll( "(\\*)+/", "" ) //$NON-NLS-1$ //$NON-NLS-2$
-				.trim( );
-		int length = ad.length( );
-		int offset = mark.indexOf( ad );
-
-		StyledText textWidget = getViewer( ).getTextWidget( );
-		StyleRange textRange = UIUtil.getAdTextStyleRange( textWidget, offset, length );
-		if ( textRange != null )
-		{
-			textWidget.setStyleRange( textRange );
-		}
-
-		for ( int j = 0; j < links.length; j++ )
-		{
-			IHyperlink link = links[j];
-			StyleRange linkRange = UIUtil.getAdLinkStyleRange( textWidget,
-					link.getHyperlinkRegion( ).getOffset( ),
-					link.getHyperlinkRegion( ).getLength( ) );
-			if ( linkRange != null )
-			{
-				getViewer( ).getTextWidget( ).setStyleRange( linkRange );
 			}
 		}
 	}

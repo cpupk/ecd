@@ -45,8 +45,9 @@ public class DecompileUtil
 		// have to check our mark since all line comments are stripped
 		// in debug align mode
 		if ( origSrc == null
-				|| always && !MarkUtil.containsMark( origSrc )
-				|| ( MarkUtil.containsMark( origSrc ) && ( !reuseBuf || force ) ) )
+				|| always
+				|| !reuseBuf
+				|| force )
 		{
 			DecompilerSourceMapper sourceMapper = SourceMapperFactory.getSourceMapper( decompilerType );
 			char[] src = sourceMapper.findSource( cf.getType( ) );
@@ -89,73 +90,9 @@ public class DecompileUtil
 		return null;
 	}
 
-	public static String checkAndUpdateCopyright( JavaDecompilerClassFileEditor editor, IClassFile cf, String origSrc )
-			throws JavaModelException
-	{
-		if ( MarkUtil.containsMark( new String( origSrc ) ) )
-		{
-			editor.clearSelection( );
-		}
-
-		if ( !MarkUtil.containsSourceMark( origSrc ) && !MarkUtil.containsMark( origSrc ) )
-		{
-			IBuffer buffer = cf.getBuffer( );
-			ReflectionUtils.invokeMethod( buffer, "setReadOnly", new Class[]{ //$NON-NLS-1$
-					boolean.class
-			}, new Object[]{
-					false
-			} );
-
-			String contents = getCopyRightContent( cf, origSrc );
-
-			buffer.setContents( contents );
-
-			ReflectionUtils.invokeMethod( BufferManager.getDefaultBufferManager( ), "addBuffer", new Class[]{ //$NON-NLS-1$
-					IBuffer.class
-			}, new Object[]{
-					buffer
-			} );
-
-			updateSourceRanges( cf, contents );
-			return contents;
-		}
-		else
-		{
-			updateSourceRanges( cf, origSrc );
-		}
-		return origSrc;
-	}
-
 	public static String updateBuffer( IClassFile cf, String origSrc ) throws JavaModelException
 	{
-		if ( !MarkUtil.containsSourceMark( origSrc ) && !MarkUtil.containsMark( origSrc ) )
-		{
-			IBuffer buffer = cf.getBuffer( );
-			if ( buffer != null )
-			{
-				ReflectionUtils.invokeMethod( buffer, "setReadOnly", new Class[]{ //$NON-NLS-1$
-						boolean.class
-				}, new Object[]{
-						false
-				} );
-
-				String contents = getCopyRightContent( cf, origSrc );
-
-				buffer.setContents( contents );
-
-				ReflectionUtils.invokeMethod( BufferManager.getDefaultBufferManager( ), "addBuffer", new Class[]{ //$NON-NLS-1$
-						IBuffer.class
-				}, new Object[]{
-						buffer
-				} );
-				updateSourceRanges( cf, contents );
-				return contents;
-			}
-		}
-		else
-		{
-			updateSourceRanges( cf, origSrc );
-		}
+		updateSourceRanges( cf, origSrc );
 		return origSrc;
 	}
 
@@ -194,41 +131,6 @@ public class DecompileUtil
 			// importMapper.mapSource( type, contents.toCharArray( ), typeInfo
 			// );
 		}
-	}
-
-	public static String getCopyRightContent( IClassFile classFile, String origSrc )
-	{
-		if ( origSrc != null && !MarkUtil.containsSourceMark( origSrc ) )
-		{
-			String src = DecompileUtil.deleteOneEmptyLine( origSrc );
-			String contents = MarkUtil.getRandomSourceMark( classFile )
-					+ "\n" //$NON-NLS-1$
-					+ src;
-			if ( src == null )
-			{
-				contents = MarkUtil.getRandomSourceMark( classFile )
-						+ "\n" //$NON-NLS-1$
-						+ DecompileUtil.foldOneLine( origSrc );
-			}
-			return contents;
-		}
-		return origSrc;
-	}
-
-	private static String foldOneLine( String origSrc )
-	{
-		int index = origSrc.indexOf( "\r\n" ); //$NON-NLS-1$
-		if ( index != -1 )
-		{
-			return origSrc.substring( 0, index ) + origSrc.substring( index + 2 );
-		}
-
-		index = origSrc.indexOf( "\n" ); //$NON-NLS-1$
-		if ( index != -1 )
-		{
-			return origSrc.substring( 0, index ) + origSrc.substring( index + 1 );
-		}
-		return origSrc;
 	}
 
 	public static String deleteOneEmptyLine( String origSrc )

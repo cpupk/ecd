@@ -59,27 +59,14 @@ public class DisassemblerDocumentProvider extends FileDocumentProvider
 	 */
 	private ArrayList<IDocumentUpdateListener> documentUpdateListeners;
 
-	private String mark;
-
 	private IDocument document;
-
-	public String getMark( )
-	{
-		return mark;
-	}
 
 	/**
 	 * Constructor.
-	 * 
-	 * @param mark
-	 * 
-	 * @param part
-	 *            bytecode editor
 	 */
-	public DisassemblerDocumentProvider( String mark )
+	public DisassemblerDocumentProvider( )
 	{
 		super( );
-		this.mark = mark;
 	}
 
 	/**
@@ -199,7 +186,7 @@ public class DisassemblerDocumentProvider extends FileDocumentProvider
 			ClassReader cr = new ClassReader( in, doc );
 			cr.accept( doc, 0 );
 
-			document.set( mark + "\n\n" + doc.toString( ) ); //$NON-NLS-1$
+			document.set( doc.toString( ) ); //$NON-NLS-1$
 
 			classFileDocument = doc;
 			classFileOutlineElement = outlineElement;

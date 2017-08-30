@@ -76,7 +76,6 @@ import org.sf.feeling.decompiler.actions.ByteCodeAction;
 import org.sf.feeling.decompiler.actions.DisassemblerAction;
 import org.sf.feeling.decompiler.actions.SourceCodeAction;
 import org.sf.feeling.decompiler.util.Logger;
-import org.sf.feeling.decompiler.util.MarkUtil;
 import org.sf.feeling.decompiler.util.ReflectionUtils;
 import org.sf.feeling.decompiler.util.UIUtil;
 
@@ -119,8 +118,7 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor
 		setSite( editor.getSite( ) );
 
 		String classContent = editor.getDocumentProvider( ).getDocument( editor.getEditorInput( ) ).get( );
-		String mark = MarkUtil.getMark( classContent );
-		DisassemblerDocumentProvider provider = new DisassemblerDocumentProvider( mark );
+		DisassemblerDocumentProvider provider = new DisassemblerDocumentProvider( );
 		setDocumentProvider( provider );
 		setInput( editor.getEditorInput( ) );
 
@@ -201,7 +199,7 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor
 		{
 			ClassFileParser parser = new ClassFileParser( );
 			String content = parser.parseClassFile( cf.getBytes( ) );
-			byteCodeDocument.set( mark + "\n\n" + ( content == null ? "" : content ) ); //$NON-NLS-1$ //$NON-NLS-2$
+			byteCodeDocument.set( ( content == null ? "" : content ) ); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		catch ( Exception e )
 		{
@@ -209,7 +207,7 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor
 			try
 			{
 				String content = disassembler.disassemble( cf.getBytes( ), "\n", ClassFileBytesDisassembler.DETAILED ); //$NON-NLS-1$
-				byteCodeDocument.set( mark + "\n\n" + ( content == null ? "" : content ) ); //$NON-NLS-1$ //$NON-NLS-2$
+				byteCodeDocument.set( ( content == null ? "" : content ) ); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			catch ( Exception ex )
 			{
@@ -247,33 +245,6 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor
 				ByteCodeSourceViewer.this.dispose( );
 			}
 		} );
-
-		String ad = mark.replaceAll( "/(\\*)+", "" ) //$NON-NLS-1$ //$NON-NLS-2$
-				.replaceAll( "(\\*)+/", "" ) //$NON-NLS-1$ //$NON-NLS-2$
-				.trim( );
-		int length = ad.length( );
-		int offset = mark.indexOf( ad );
-
-		StyleRange textRange = UIUtil.getAdTextStyleRange( styledText, offset, length );
-		if ( textRange != null )
-		{
-			styledText.setStyleRange( textRange );
-		}
-
-		URLHyperlinkDetector detector = new URLHyperlinkDetector( );
-		final int index = mark.indexOf( "://" ); //$NON-NLS-1$
-		final IHyperlink[] links = detector.detectHyperlinks( getSourceViewer( ), new Region( index, 0 ), true );
-		for ( int j = 0; j < links.length; j++ )
-		{
-			IHyperlink link = links[j];
-			StyleRange linkRange = UIUtil.getAdLinkStyleRange( styledText,
-					link.getHyperlinkRegion( ).getOffset( ),
-					link.getHyperlinkRegion( ).getLength( ) );
-			if ( linkRange != null )
-			{
-				styledText.setStyleRange( linkRange );
-			}
-		}
 
 		return container;
 	}

@@ -54,7 +54,6 @@ import org.sf.feeling.decompiler.source.attach.IAttachSourceHandler;
 import org.sf.feeling.decompiler.util.DecompilerOutputUtil;
 import org.sf.feeling.decompiler.util.FileUtil;
 import org.sf.feeling.decompiler.util.Logger;
-import org.sf.feeling.decompiler.util.MarkUtil;
 import org.sf.feeling.decompiler.util.SortMemberUtil;
 import org.sf.feeling.decompiler.util.UIUtil;
 
@@ -117,108 +116,6 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 
 	private int sourceMode = 0;
 	private boolean enableExtension = false;
-
-	private IBreakpointListener breakpintListener = new IBreakpointListener( ) {
-
-		@Override
-		public void breakpointRemoved( IBreakpoint breakpoint, IMarkerDelta delta )
-		{
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void breakpointChanged( IBreakpoint breakpoint, IMarkerDelta delta )
-		{
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void breakpointAdded( final IBreakpoint breakpoint )
-		{
-			JavaDecompilerClassFileEditor editor = UIUtil.getActiveDecompilerEditor( );
-			if ( editor != null && breakpoint != null )
-			{
-				String source = editor.getDocumentProvider( ).getDocument( editor.getEditorInput( ) ).get( );
-
-				if ( source != null && MarkUtil.containsMark( source ) )
-				{
-
-					try
-					{
-						if ( UIUtil.isDebug( )
-								&& breakpoint.getMarker( ) != null
-								&& breakpoint.getMarker( ).getAttribute( IMarker.LINE_NUMBER ) != null )
-						{
-							int lineNumber = (Integer) breakpoint.getMarker( ).getAttribute( IMarker.LINE_NUMBER );
-							String[] lines = source.split( "\n" ); //$NON-NLS-1$
-							if ( lineNumber - 1 < lines.length )
-							{
-								String line = lines[lineNumber - 1];
-								int number = DecompilerOutputUtil.parseJavaLineNumber( line );
-								if ( number == -1 )
-								{
-									Display.getDefault( ).asyncExec( new Runnable( ) {
-
-										@Override
-										public void run( )
-										{
-											MessageDialog.openInformation( Display.getDefault( ).getActiveShell( ),
-													Messages.getString(
-															"JavaDecompilerPlugin.BreakpoingWithNumberDialog.Title" ), //$NON-NLS-1$
-													Messages.getString(
-															"JavaDecompilerPlugin.BreakpoingWithNumberDialog.Message" ) ); //$NON-NLS-1$
-											try
-											{
-												breakpoint.delete( );
-											}
-											catch ( CoreException e )
-											{
-												Logger.debug( e );
-											}
-										}
-									} );
-
-								}
-							}
-						}
-						else if ( !UIUtil.isDebug( ) )
-						{
-
-							Display.getDefault( ).asyncExec( new Runnable( ) {
-
-								@Override
-								public void run( )
-								{
-									boolean setDebug = MessageDialog.openConfirm(
-											Display.getDefault( ).getActiveShell( ),
-											Messages.getString( "JavaDecompilerPlugin.BreakpoingDialog.Title" ), //$NON-NLS-1$
-											Messages.getString( "JavaDecompilerPlugin.BreakpoingDialog.Message" ) ); //$NON-NLS-1$
-									try
-									{
-										breakpoint.delete( );
-									}
-									catch ( CoreException e )
-									{
-										Logger.debug( e );
-									}
-									if ( setDebug )
-									{
-										new DebugModeAction( ).run( );
-									}
-								}
-							} );
-						}
-					}
-					catch ( CoreException e )
-					{
-						Logger.debug( e );
-					}
-				}
-			}
-		}
-	};
 
 	private IBreakpointManager manager = DebugPlugin.getDefault( ).getBreakpointManager( );
 
@@ -355,8 +252,6 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 		getPreferenceStore( ).addPropertyChangeListener( this );
 		SortMemberUtil.deleteDecompilerProject( );
 		Display.getDefault( ).asyncExec( new SetupRunnable( ) );
-
-		manager.addBreakpointListener( breakpintListener );
 	}
 
 	private void checkEnableExtension( )
@@ -404,8 +299,6 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 	public void stop( BundleContext context ) throws Exception
 	{
 		FileUtil.deltree( new File( getPreferenceStore( ).getString( JavaDecompilerPlugin.TEMP_DIR ) ) );
-
-		manager.removeBreakpointListener( breakpintListener );
 
 		super.stop( context );
 
