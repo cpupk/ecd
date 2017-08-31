@@ -10,6 +10,19 @@ Eclipse Class Decompiler integrates **JD**, **Jad**, **FernFlower**, **CFR**, **
 ## Description
 Eclipse Class Decompiler is a plug-in for the Eclipse platform. It integrates JD, Jad, FernFlower, CFR, Procyon seamlessly with Eclipse, allows you to display all the Java sources during your debugging process, even if you do not have them all, and you can debug these class files without source code directly.
 
+## How to build from source?
+
+If you want to test the latest features of this plugin, you have to build it from source. For this, proceed as following:
+
+1. Clone this project
+2. Install _Eclipse for RCP and RAP Developers_
+3. Import all projects into Eclipse by selecting _File_ > _Import_ > _General_ > _Existing Projects into Workspace_ > _Next_ and enter the cloned directory as "root directory".
+4. Open the _org.sf.feeling.decompiler.updatesite_ project in the Package Explorer
+5. Open the file _site.xml_ within the project
+6. Press "Build All"
+7. Copy the jar files generated in the _build/features_ and _build/plugins_ folder of the project into the correspondent folders of your normal Eclipse installation.
+
+
 ## How to install Eclipse Class Decompiler ?
   1. Launch _Eclipse_,
   2. Click on _"Help > Install New Software..."_,
