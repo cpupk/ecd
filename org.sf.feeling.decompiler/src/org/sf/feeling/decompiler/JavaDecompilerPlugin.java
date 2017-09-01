@@ -18,18 +18,10 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IMarkerDelta;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IBreakpointListener;
-import org.eclipse.debug.core.IBreakpointManager;
-import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -39,19 +31,14 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
-import org.sf.feeling.decompiler.actions.DebugModeAction;
 import org.sf.feeling.decompiler.editor.DecompilerType;
 import org.sf.feeling.decompiler.editor.IDecompilerDescriptor;
 import org.sf.feeling.decompiler.editor.JavaDecompilerBufferManager;
-import org.sf.feeling.decompiler.editor.JavaDecompilerClassFileEditor;
 import org.sf.feeling.decompiler.extension.DecompilerAdapterManager;
-import org.sf.feeling.decompiler.i18n.Messages;
 import org.sf.feeling.decompiler.source.attach.IAttachSourceHandler;
-import org.sf.feeling.decompiler.util.DecompilerOutputUtil;
 import org.sf.feeling.decompiler.util.FileUtil;
 import org.sf.feeling.decompiler.util.Logger;
 import org.sf.feeling.decompiler.util.SortMemberUtil;
-import org.sf.feeling.decompiler.util.UIUtil;
 
 public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyChangeListener
 {
@@ -111,9 +98,6 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 	public static final int DISASSEMBLER_MODE = 2;
 
 	private int sourceMode = 0;
-	private boolean enableExtension = true;
-
-	private IBreakpointManager manager = DebugPlugin.getDefault( ).getBreakpointManager( );
 
 	public Map<String, IDecompilerDescriptor> getDecompilerDescriptorMap( )
 	{
@@ -209,27 +193,23 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 
 	private void setDefaultDecompiler( IPreferenceStore store )
 	{
-		if ( isEnableExtension( ) )
-		{
-			Object[] decompilerAdapters = DecompilerAdapterManager.getAdapters( this, IDecompilerDescriptor.class );
+		Object[] decompilerAdapters = DecompilerAdapterManager.getAdapters( this, IDecompilerDescriptor.class );
 
-			if ( decompilerAdapters != null )
+		if ( decompilerAdapters != null )
+		{
+			for ( int i = 0; i < decompilerAdapters.length; i++ )
 			{
-				for ( int i = 0; i < decompilerAdapters.length; i++ )
+				Object adapter = decompilerAdapters[i];
+				if ( adapter instanceof IDecompilerDescriptor )
 				{
-					Object adapter = decompilerAdapters[i];
-					if ( adapter instanceof IDecompilerDescriptor )
+					IDecompilerDescriptor descriptor = (IDecompilerDescriptor) adapter;
+					if ( descriptor.isEnabled( ) )
 					{
-						IDecompilerDescriptor descriptor = (IDecompilerDescriptor) adapter;
-						if ( descriptor.isEnabled( ) )
-						{
-							decompilerDescriptorMap.put( descriptor.getDecompilerType( ), descriptor );
-						}
+						decompilerDescriptorMap.put( descriptor.getDecompilerType( ), descriptor );
 					}
 				}
 			}
 		}
-		store.setDefault( DECOMPILER_TYPE, getDefalutDecompilerType( ) );
 	}
 
 	@Override
@@ -247,11 +227,6 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 		getPreferenceStore( ).addPropertyChangeListener( this );
 		SortMemberUtil.deleteDecompilerProject( );
 		Display.getDefault( ).asyncExec( new SetupRunnable( ) );
-	}
-
-	public boolean isEnableExtension( )
-	{
-		return enableExtension;
 	}
 
 	@Override
@@ -314,14 +289,12 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 
 	public boolean enableAttachSourceSetting( )
 	{
-		if ( isEnableExtension( ) )
+		Object attachSourceAdapter = DecompilerAdapterManager.getAdapter( this, IAttachSourceHandler.class );
+		if ( attachSourceAdapter instanceof IAttachSourceHandler )
 		{
-			Object attachSourceAdapter = DecompilerAdapterManager.getAdapter( this, IAttachSourceHandler.class );
-			if ( attachSourceAdapter instanceof IAttachSourceHandler )
-			{
-				return true;
-			}
+			return true;
 		}
+
 		return false;
 	}
 
@@ -329,68 +302,55 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 
 	public void attachSource( IPackageFragmentRoot library, boolean force )
 	{
-		if ( isEnableExtension( ) )
+		Object attachSourceAdapter = DecompilerAdapterManager.getAdapter( this, IAttachSourceHandler.class );
+		if ( attachSourceAdapter instanceof IAttachSourceHandler )
 		{
-			Object attachSourceAdapter = DecompilerAdapterManager.getAdapter( this, IAttachSourceHandler.class );
-			if ( attachSourceAdapter instanceof IAttachSourceHandler )
+			if ( !librarys.contains( library.getPath( ).toOSString( ) ) || force )
 			{
-				if ( !librarys.contains( library.getPath( ).toOSString( ) ) || force )
-				{
-					librarys.add( library.getPath( ).toOSString( ) );
-					( (IAttachSourceHandler) attachSourceAdapter ).execute( library, force );
-				}
+				librarys.add( library.getPath( ).toOSString( ) );
+				( (IAttachSourceHandler) attachSourceAdapter ).execute( library, force );
 			}
 		}
 	}
 
 	public void syncLibrarySource( IPackageFragmentRoot library )
 	{
-		if ( isEnableExtension( ) )
+		try
 		{
-			try
+			if ( library.getPath( ) != null
+					&& library.getSourceAttachmentPath( ) != null
+					&& !librarys.contains( library.getPath( ).toOSString( ) ) )
 			{
-				if ( library.getPath( ) != null
-						&& library.getSourceAttachmentPath( ) != null
-						&& !librarys.contains( library.getPath( ).toOSString( ) ) )
+				final IPreferenceStore prefs = JavaDecompilerPlugin.getDefault( ).getPreferenceStore( );
+				if ( prefs.getBoolean( JavaDecompilerPlugin.DEFAULT_EDITOR ) )
 				{
-					final IPreferenceStore prefs = JavaDecompilerPlugin.getDefault( ).getPreferenceStore( );
-					if ( prefs.getBoolean( JavaDecompilerPlugin.DEFAULT_EDITOR ) )
+					final Object attachSourceAdapter = DecompilerAdapterManager
+							.getAdapter( JavaDecompilerPlugin.getDefault( ), IAttachSourceHandler.class );
+					if ( attachSourceAdapter instanceof IAttachSourceHandler )
 					{
-						final Object attachSourceAdapter = DecompilerAdapterManager
-								.getAdapter( JavaDecompilerPlugin.getDefault( ), IAttachSourceHandler.class );
-						if ( attachSourceAdapter instanceof IAttachSourceHandler )
+						librarys.add( library.getPath( ).toOSString( ) );
+						if ( !( (IAttachSourceHandler) attachSourceAdapter ).syncAttachSource( library ) )
 						{
-							librarys.add( library.getPath( ).toOSString( ) );
-							if ( !( (IAttachSourceHandler) attachSourceAdapter ).syncAttachSource( library ) )
-							{
-								librarys.remove( library.getPath( ).toOSString( ) );
-							} ;
-						}
+							librarys.remove( library.getPath( ).toOSString( ) );
+						} ;
 					}
 				}
 			}
-			catch ( JavaModelException e )
-			{
-				Logger.debug( e );
-			}
+		}
+		catch ( JavaModelException e )
+		{
+			Logger.debug( e );
 		}
 	}
 
 	public boolean isAutoAttachSource( )
 	{
-		if ( isEnableExtension( ) )
-		{
-			if ( !enableAttachSourceSetting( ) )
-			{
-				return false;
-			}
-
-			return getPreferenceStore( ).getBoolean( ATTACH_SOURCE );
-		}
-		else
+		if ( !enableAttachSourceSetting( ) )
 		{
 			return false;
 		}
+
+		return getPreferenceStore( ).getBoolean( ATTACH_SOURCE );
 	}
 
 	public String getDefalutDecompilerType( )

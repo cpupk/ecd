@@ -35,7 +35,6 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.source.attach.attacher.SourceAttacher;
 import org.sf.feeling.decompiler.source.attach.finder.EclipseSourceReferencesSourceCodeFinder;
 import org.sf.feeling.decompiler.source.attach.finder.FinderManager;
@@ -58,11 +57,6 @@ public class JavaSourceAttacherHandler extends AbstractHandler
 	@Override
 	public Object execute( final ExecutionEvent event ) throws ExecutionException
 	{
-		if ( !JavaDecompilerPlugin.getDefault( ).isEnableExtension( ) )
-		{
-			return null;
-		}
-
 		final ISelection selection = HandlerUtil.getCurrentSelection( event );
 		if ( !( selection instanceof IStructuredSelection ) )
 		{

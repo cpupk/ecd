@@ -52,7 +52,6 @@ import org.eclipse.search2.internal.ui.text.AnnotationManagers;
 import org.eclipse.search2.internal.ui.text.EditorAnnotationManager;
 import org.eclipse.search2.internal.ui.text.WindowAnnotationManager;
 import org.eclipse.swt.custom.StackLayout;
-import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;

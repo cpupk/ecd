@@ -26,7 +26,6 @@ import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.menus.ExtensionContributionFactory;
 import org.eclipse.ui.menus.IContributionRoot;
 import org.eclipse.ui.services.IServiceLocator;
-import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.source.attach.utils.SourceAttachUtil;
 
 @SuppressWarnings({
@@ -38,11 +37,6 @@ public class AttachSourceContributionFactory extends ExtensionContributionFactor
 	@Override
 	public void createContributionItems( IServiceLocator serviceLocator, IContributionRoot additions )
 	{
-		if ( !JavaDecompilerPlugin.getDefault( ).isEnableExtension( ) )
-		{
-			return;
-		}
-
 		final ISelectionService selService = (ISelectionService)serviceLocator.getService( ISelectionService.class );
 		final List selectedJars = getSelectedElements( selService, IPackageFragmentRoot.class );
 		boolean attachRoot = ( selectedJars.size( ) == 1 );

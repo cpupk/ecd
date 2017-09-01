@@ -58,7 +58,6 @@ public class DecompilerOutputUtil
 			"\r\n" ); //$NON-NLS-1$
 
 	private String decompilerType;
-	private Object markKey;
 
 	private class InputLine
 	{
@@ -86,11 +85,10 @@ public class DecompilerOutputUtil
 		}
 	}
 
-	public DecompilerOutputUtil( Object markKey, String decompilerType, String input )
+	public DecompilerOutputUtil(String decompilerType, String input )
 	{
 		this.input = input + line_separator;
 		this.decompilerType = decompilerType;
-		this.markKey = markKey;
 	}
 
 	public String realign( )

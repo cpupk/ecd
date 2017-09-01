@@ -32,45 +32,42 @@ public class AttachSourceAction extends Action
 	@Override
 	public void run( )
 	{
-		if ( JavaDecompilerPlugin.getDefault( ).isEnableExtension( ) )
-		{
-			if ( selection == null || selection.isEmpty( ) )
-				return;
+		if ( selection == null || selection.isEmpty( ) )
+			return;
 
-			Object firstElement = selection.get( 0 );
-			if ( selection.size( ) == 1 && firstElement instanceof IClassFile )
+		Object firstElement = selection.get( 0 );
+		if ( selection.size( ) == 1 && firstElement instanceof IClassFile )
+		{
+			IClassFile classFile = (IClassFile) firstElement;
+			IPackageFragmentRoot root = (IPackageFragmentRoot) classFile.getParent( ).getParent( );
+			JavaDecompilerPlugin.getDefault( ).attachSource( root, true );
+		}
+		else if ( selection.size( ) == 1 && firstElement instanceof IPackageFragmentRoot )
+		{
+			IPackageFragmentRoot root = (IPackageFragmentRoot) firstElement;
+			JavaDecompilerPlugin.getDefault( ).attachSource( root, true );
+		}
+		else
+		{
+			IPackageFragmentRoot root = null;
+			if ( firstElement instanceof IClassFile )
 			{
-				IClassFile classFile = (IClassFile) firstElement;
-				IPackageFragmentRoot root = (IPackageFragmentRoot) classFile.getParent( ).getParent( );
-				JavaDecompilerPlugin.getDefault( ).attachSource( root, true );
+				root = (IPackageFragmentRoot) ( (IClassFile) firstElement ).getParent( ).getParent( );
 			}
-			else if ( selection.size( ) == 1 && firstElement instanceof IPackageFragmentRoot )
+			else if ( firstElement instanceof IPackageFragment )
 			{
-				IPackageFragmentRoot root = (IPackageFragmentRoot) firstElement;
-				JavaDecompilerPlugin.getDefault( ).attachSource( root, true );
+				root = (IPackageFragmentRoot) ( (IPackageFragment) firstElement ).getParent( );
 			}
-			else
-			{
-				IPackageFragmentRoot root = null;
-				if ( firstElement instanceof IClassFile )
-				{
-					root = (IPackageFragmentRoot) ( (IClassFile) firstElement ).getParent( ).getParent( );
-				}
-				else if ( firstElement instanceof IPackageFragment )
-				{
-					root = (IPackageFragmentRoot) ( (IPackageFragment) firstElement ).getParent( );
-				}
-				if ( root == null )
-					return;
-				JavaDecompilerPlugin.getDefault( ).attachSource( root, true );
-			}
+			if ( root == null )
+				return;
+			JavaDecompilerPlugin.getDefault( ).attachSource( root, true );
 		}
 	}
 
 	@Override
 	public boolean isEnabled( )
 	{
-		return JavaDecompilerPlugin.getDefault( ).isEnableExtension( ) && selection != null;
+		return selection != null;
 	}
 
 }

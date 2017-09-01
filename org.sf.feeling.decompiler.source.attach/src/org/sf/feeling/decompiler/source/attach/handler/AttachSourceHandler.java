@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.source.attach.IAttachSourceHandler;
 import org.sf.feeling.decompiler.source.attach.i18n.Messages;
 import org.sf.feeling.decompiler.source.attach.utils.SourceAttachUtil;
@@ -28,11 +27,6 @@ public class AttachSourceHandler implements IAttachSourceHandler
 	@Override
 	public void execute( final IPackageFragmentRoot library, final boolean showUI )
 	{
-		if ( !JavaDecompilerPlugin.getDefault( ).isEnableExtension( ) )
-		{
-			return;
-		}
-
 		if ( !showUI && SourceAttachUtil.isMavenLibrary( library ) && SourceAttachUtil.enableMavenDownload( ) )
 		{
 			return;
@@ -76,11 +70,6 @@ public class AttachSourceHandler implements IAttachSourceHandler
 	@Override
 	public boolean syncAttachSource( final IPackageFragmentRoot root )
 	{
-		if ( !JavaDecompilerPlugin.getDefault( ).isEnableExtension( ) )
-		{
-			return false;
-		}
-
 		try
 		{
 			boolean download = SourceAttachUtil.needDownloadSource( Arrays.asList( new IPackageFragmentRoot[]{

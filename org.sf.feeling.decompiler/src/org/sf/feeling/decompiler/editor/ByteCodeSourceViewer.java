@@ -40,8 +40,6 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextSelection;
-import org.eclipse.jface.text.hyperlink.IHyperlink;
-import org.eclipse.jface.text.hyperlink.URLHyperlinkDetector;
 import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
@@ -53,7 +51,6 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -117,7 +114,6 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor
 	{
 		setSite( editor.getSite( ) );
 
-		String classContent = editor.getDocumentProvider( ).getDocument( editor.getEditorInput( ) ).get( );
 		DisassemblerDocumentProvider provider = new DisassemblerDocumentProvider( );
 		setDocumentProvider( provider );
 		setInput( editor.getEditorInput( ) );

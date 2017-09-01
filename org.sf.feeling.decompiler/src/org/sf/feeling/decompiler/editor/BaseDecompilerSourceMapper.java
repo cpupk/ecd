@@ -15,25 +15,18 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IBreakpointManager;
-import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.internal.compiler.env.IBinaryType;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.jdt.internal.core.ClassFile;
 import org.eclipse.jdt.internal.core.ExternalPackageFragmentRoot;
 import org.eclipse.jdt.internal.core.PackageFragmentRoot;
 import org.eclipse.jdt.internal.core.SourceMapper;
-import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.ui.javaeditor.IClassFileEditorInput;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
@@ -204,7 +197,7 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper
 		{
 			if ( showReport )
 				code = usedDecompiler.removeComment( code );
-			DecompilerOutputUtil decompilerOutputUtil = new DecompilerOutputUtil( type.getClassFile( ),
+			DecompilerOutputUtil decompilerOutputUtil = new DecompilerOutputUtil(
 					usedDecompiler.getDecompilerType( ),
 					code );
 			code = decompilerOutputUtil.realign( );
@@ -264,32 +257,6 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper
 				Logger.debug( e );
 			}
 		}
-	}
-
-	private int getCharEnd( String[] lines, int lineNumber )
-	{
-		int end = 0;
-		if ( lineNumber > -1 && lineNumber < lines.length )
-		{
-			for ( int i = 0; i <= lineNumber; i++ )
-			{
-				end += lines[i].length( ) + 1;
-			}
-		}
-		return end;
-	}
-
-	private int getCharStart( String[] lines, int lineNumber )
-	{
-		int start = 0;
-		if ( lineNumber > -1 && lineNumber < lines.length )
-		{
-			for ( int i = 0; i < lineNumber; i++ )
-			{
-				start += lines[i].length( ) + 1;
-			}
-		}
-		return start;
 	}
 
 	private boolean fromInput( IType type )
@@ -441,8 +408,8 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper
 		{
 			if ( showReport )
 				code = currentDecompiler.removeComment( code );
-			DecompilerOutputUtil decompilerOutputUtil = new DecompilerOutputUtil( currentDecompiler
-					.getDecompilerType( ), currentDecompiler.getDecompilerType( ), code );
+			DecompilerOutputUtil decompilerOutputUtil = new DecompilerOutputUtil(
+					currentDecompiler.getDecompilerType( ), code );
 			code = decompilerOutputUtil.realign( );
 		}
 
