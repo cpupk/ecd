@@ -49,3 +49,9 @@ If you want to test the latest features of this plugin, you have to build it fro
 ## License
 
 The plugin is licensed under the [Eclipse Public License v1.0](http://www.eclipse.org/legal/epl-v10.html)
+
+## Contributors
+
+* Chen Chao - initial API and implementation
+* Robert Zenz
+* Pascal Bihler
