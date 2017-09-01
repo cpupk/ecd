@@ -29,8 +29,6 @@ import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.registry.FileEditorMapping;
 import org.sf.feeling.decompiler.actions.DecompileAction;
 import org.sf.feeling.decompiler.editor.JavaDecompilerClassFileEditor;
-import org.sf.feeling.decompiler.extension.DecompilerAdapterManager;
-import org.sf.feeling.decompiler.extension.IDecompilerExtensionHandler;
 import org.sf.feeling.decompiler.util.ClassUtil;
 import org.sf.feeling.decompiler.util.Logger;
 import org.sf.feeling.decompiler.util.ReflectionUtils;
@@ -60,24 +58,11 @@ public class SetupRunnable implements Runnable
 			{
 				checkClassFileAssociation( );
 				setupPartListener( );
-				checkDecompilerExtension( );
 			}
 		}
 		catch ( Throwable e )
 		{
 			Logger.debug( e );
-		}
-	}
-
-	private void checkDecompilerExtension( )
-	{
-		final Object extensionAdapter = DecompilerAdapterManager.getAdapter( JavaDecompilerPlugin.getDefault( ),
-				IDecompilerExtensionHandler.class );
-
-		if ( extensionAdapter instanceof IDecompilerExtensionHandler )
-		{
-			final IDecompilerExtensionHandler extensionHandler = (IDecompilerExtensionHandler) extensionAdapter;
-			extensionHandler.execute( );
 		}
 	}
 

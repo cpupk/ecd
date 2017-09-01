@@ -45,7 +45,6 @@ import org.sf.feeling.decompiler.editor.IDecompilerDescriptor;
 import org.sf.feeling.decompiler.editor.JavaDecompilerBufferManager;
 import org.sf.feeling.decompiler.editor.JavaDecompilerClassFileEditor;
 import org.sf.feeling.decompiler.extension.DecompilerAdapterManager;
-import org.sf.feeling.decompiler.extension.IDecompilerExtensionHandler;
 import org.sf.feeling.decompiler.i18n.Messages;
 import org.sf.feeling.decompiler.source.attach.IAttachSourceHandler;
 import org.sf.feeling.decompiler.util.DecompilerOutputUtil;
@@ -112,7 +111,7 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 	public static final int DISASSEMBLER_MODE = 2;
 
 	private int sourceMode = 0;
-	private boolean enableExtension = false;
+	private boolean enableExtension = true;
 
 	private IBreakpointManager manager = DebugPlugin.getDefault( ).getBreakpointManager( );
 
@@ -244,26 +243,10 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 	public void start( BundleContext context ) throws Exception
 	{
 		super.start( context );
-		checkEnableExtension( );
 		setDefaultDecompiler( getPreferenceStore( ) );
 		getPreferenceStore( ).addPropertyChangeListener( this );
 		SortMemberUtil.deleteDecompilerProject( );
 		Display.getDefault( ).asyncExec( new SetupRunnable( ) );
-	}
-
-	private void checkEnableExtension( )
-	{
-		final Object extensionAdapter = DecompilerAdapterManager.getAdapter( JavaDecompilerPlugin.getDefault( ),
-				IDecompilerExtensionHandler.class );
-
-		if ( extensionAdapter instanceof IDecompilerExtensionHandler )
-		{
-			enableExtension = true;
-		}
-		else
-		{
-			enableExtension = false;
-		}
 	}
 
 	public boolean isEnableExtension( )
