@@ -6,3 +6,4 @@
 bin/**/*
 /**/bin/*
 /bin/
+org.sf.feeling.decompiler.updatesite/build
