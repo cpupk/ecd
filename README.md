@@ -1,14 +1,15 @@
-**This is a ad-free fork of the Eclipse Decompiler Plugin. It is still under development**
+# Enhanced Class Decompiler
+Enhanced Class Decompiler integrates **JD**, **Jad**, **FernFlower**, **CFR**, **Procyon** seamlessly with Eclipse and allows Java developers to **debug class files without source code directly**. It also integrates with the eclipse class editor, m2e plugin, supports **Javadoc**,  **reference search**, **library source attaching**, **byte code view** and the syntax of JDK8 **lambda** expression.
 
-# Eclipse Class Decompiler
-Eclipse Class Decompiler integrates **JD**, **Jad**, **FernFlower**, **CFR**, **Procyon** seamlessly with Eclipse and allows Java developers to **debug class files without source code directly**. It also integrates with the eclipse class editor, m2e plugin, supports **Javadoc**,  **reference search**, **library source attaching**, **byte code view** and the syntax of JDK8 **lambda** expression.
+<p align="center"><img src="https://pbi-qfs.github.io/ecd/doc//o_debug_class.png"></p>
 
-<p align="center"><img src="http://www.cpupk.com/decompiler/images/o_debug_class.png"></p>
-
-*Currently, there is no update site for this project available, yet.*
+*Remark: Currently, there is no update site for this project available, yet.*
 
 ## Description
-Eclipse Class Decompiler is a plug-in for the Eclipse platform. It integrates JD, Jad, FernFlower, CFR, Procyon seamlessly with Eclipse, allows you to display all the Java sources during your debugging process, even if you do not have them all, and you can debug these class files without source code directly.
+Enhanced Class Decompiler is a plug-in for the Eclipse platform. It integrates JD, Jad, FernFlower, CFR, Procyon seamlessly with Eclipse, allows you to display all the Java sources during your debugging process, even if you do not have them all, and you can debug these class files without source code directly.
+
+## Why is this plug-In "enhanced"?
+This is a ad-free fork of the Eclipse Decompiler Plugin. So it is enhanced by removing all code which might compromise your privacy or security (to the best of our knowledge).
 
 ## How to build from source?
 
@@ -23,12 +24,13 @@ If you want to test the latest features of this plugin, you have to build it fro
 7. Copy the jar files generated in the _build/features_ and _build/plugins_ folder of the project into the correspondent folders of your normal Eclipse installation.
 
 
-## How to install Eclipse Class Decompiler ?
+## How to install Enhanced Class Decompiler ?
+**This option is currently not available, [we're working on it](https://github.com/pbi-qfs/ecd/issues/2).**
   1. Launch _Eclipse_,
   2. Click on _"Help > Install New Software..."_,
   3. Click on button _"Add..."_ to add an new repository,
-  4. Enter name as _"Eclipse Class Decompiler Update Site"_ and enter location as _"//TODO//"_, then click on button _"OK"_,
-  5. Check _"Eclipse Class Decompiler"_,
+  4. Enter name as _"Enhanced Class Decompiler Update Site"_ and enter location as _"//TODO//"_, then click on button _"OK"_,
+  5. Check _"Enhanced Class Decompiler"_,
   6. Next, next, next... and restart.
 
 ## How to check the file associations ?
@@ -36,12 +38,12 @@ If you want to test the latest features of this plugin, you have to build it fro
   2. _"*.class"_ : _"Class Decompiler Viewer"_ is selected by default.
   3. _"*.class without source"_ : _"Class Decompiler Viewer"_ is selected by default.
 
-## How to configure Eclipse Class Decompiler ?
+## How to configure Enhanced Class Decompiler ?
   1. Click on _"Window > Preferences > Java > Decompiler"_
 
-## How to uninstall Eclipse Class Decompiler ?
+## How to uninstall Enhanced Class Decompiler ?
   1. Click on _"Help > About Eclipse > Installation Details > Installation Software"_,
-  2. Select _"Eclipse Class Decompiler"_,
+  2. Select _"Enhanced Class Decompiler"_,
   3. Click on _"Uninstall..."_.
 
 ## License

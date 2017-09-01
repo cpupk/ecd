@@ -18,7 +18,7 @@
    </license>
 
    <url>
-      <update label="Eclipse Class Decompiler Updates" url="http://www.cpupk.com/decompiler/update"/>
+      <update label="Enhanced Class Decompiler Updates" url="http://www.cpupk.com/decompiler/update"/>
       <discovery label="%updateSiteName" url="http://www.cpupk.com/decompiler/update"/>
    </url>
 
