@@ -52,6 +52,6 @@ The plugin is licensed under the [Eclipse Public License v1.0](http://www.eclips
 
 ## Contributors
 
-* Chen Chao - initial API and implementation
+* Chen Chao (cnfree2000@hotmail.com) - initial API and implementation
 * Robert Zenz
 * Pascal Bihler
