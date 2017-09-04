@@ -8,8 +8,8 @@ Enhanced Class Decompiler integrates **JD**, **Jad**, **FernFlower**, **CFR**, *
 ## Description
 Enhanced Class Decompiler is a plug-in for the Eclipse platform. It integrates JD, Jad, FernFlower, CFR, Procyon seamlessly with Eclipse, allows you to display all the Java sources during your debugging process, even if you do not have them all, and you can debug these class files without source code directly.
 
-## Why is this plug-In "enhanced"?
-This is a ad-free fork of the Eclipse Decompiler Plugin. So it is enhanced by removing all code which might compromise your privacy or security (to the best of our knowledge).
+## Why is this plug-in "enhanced"?
+This is an ad-free fork of the Eclipse Decompiler Plugin. So we enhanced it by removing all code which might compromise your privacy or security (to the best of our knowledge).
 
 ## How to build from source?
 
