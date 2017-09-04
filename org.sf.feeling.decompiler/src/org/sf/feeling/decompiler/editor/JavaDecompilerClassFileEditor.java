@@ -98,6 +98,7 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 	private int currentSourceMode = -1;
 	private boolean selectionChange = false;
 	private ISourceReference selectedElement = null;
+	private String decompilerType = null;
 
 	public ISourceReference getSelectedElement( )
 	{
@@ -158,7 +159,7 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 			boolean opened = false;
 			IClassFile cf = ( (IClassFileEditorInput) input ).getClassFile( );
 
-			String decompilerType = type;
+			decompilerType = type;
 			String origSrc = cf.getSource( );
 			if ( origSrc == null
 					|| ( origSrc != null
@@ -420,7 +421,7 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 									String.class
 							},
 							new String[]{
-									storeInput.getName( )
+									getPartTitle(storeInput.getName( ))
 							} );
 
 					ReflectionUtils.invokeMethod( editor,
@@ -538,6 +539,22 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 		handleMarkLink( );
 	}
 
+
+	protected void setPartName(String partName) {
+		super.setPartName(getPartTitle( partName ));
+	}
+
+	private String getPartTitle( String title )
+	{
+		 if (decompilerType == null || title == null) {
+			 return title;
+		 }
+		 if (title.endsWith( "]" )) {
+			 return title;
+		 }
+		 return title + " [" + decompilerType + "]";
+	}
+	
 	public void createPartControl( Composite parent )
 	{
 		super.createPartControl( parent );
