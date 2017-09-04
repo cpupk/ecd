@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <description name="Enhanced Class Decompiler Project Update" url="http://www.cpupk.com/decompiler/update/">
+   <description name="Enhanced Class Decompiler Project Update" url="https://pbi-qfs.github.io/ecd/update">
       Enhanced Class Decompiler project update site.
    </description>
    <feature url="features/org.sf.feeling.decompiler_2.10.0.qualifier.jar" id="org.sf.feeling.decompiler" version="2.10.0.qualifier">

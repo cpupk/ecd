@@ -14,11 +14,7 @@
 					<h1 class="title">Enhanced Class Decompiler Project Update</h1>
 					<p class="bodyText">
 						<xsl:value-of select="description" />
-						<a href="http://www.cpupk.com/decompiler">Enhanced Class Decompiler</a> plugin, Copyright (c) 2017 Chen Chao.
-						Any question, please mail to
-						<a href="mailto:cnfree2000@hotmail.com">Chen Chao(cnfree2000@hotmail.com)</a>
-						. More details, please visit 
-						<a href="http://www.cpupk.com">cpupk.com</a>
+						<a href="https://pbi-qfs.github.io/ecd">Enhanced Class Decompiler</a> plug-in, Copyright (c) 2017 Chen Chao and other ECD project members.
 						<br />
 						<br />
 					</p>
