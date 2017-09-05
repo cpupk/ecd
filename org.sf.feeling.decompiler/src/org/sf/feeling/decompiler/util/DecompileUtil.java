@@ -22,6 +22,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.compiler.env.IBinaryType;
 import org.eclipse.jdt.internal.core.ClassFile;
+import org.eclipse.jdt.internal.core.NamedMember;
 import org.eclipse.jdt.internal.core.SourceMapper;
 import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.sf.feeling.decompiler.editor.DecompilerSourceMapper;
@@ -104,7 +105,7 @@ public class DecompileUtil
 					new Object[0] );
 			HashMap sourceRange = (HashMap) ReflectionUtils.getFieldValue( mapper, "sourceRanges" ); //$NON-NLS-1$
 			sourceRange.remove( type );
-			mapper.mapSource( type, contents.toCharArray( ), typeInfo );
+			DecompileUtil.mapSource( mapper, type, contents.toCharArray( ), typeInfo );
 
 			// List rootPaths = (List) ReflectionUtils.getFieldValue( mapper,
 			// "rootPaths" );
@@ -167,5 +168,19 @@ public class DecompileUtil
 			return buffer.toString( );
 		}
 		return null;
+	}
+	
+	public static void mapSource(SourceMapper sourceMapper, IType type, char[] source, IBinaryType info)
+	{
+		try {
+			sourceMapper.mapSource(type, source, info );
+		} catch (final NoSuchMethodError e) {
+			// API changed with Java 9 support (#daa227e4f5b7af888572a286c4f973b7a167ff2e)
+			ReflectionUtils.invokeMethod( sourceMapper, "mapSource", new Class[]{ //$NON-NLS-1$
+					NamedMember.class, char[].class, IBinaryType.class
+			}, new Object[]{
+					type, source, info
+			} );
+		}
 	}
 }

@@ -25,6 +25,7 @@ import org.eclipse.jdt.internal.compiler.env.IBinaryType;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.jdt.internal.core.ClassFile;
 import org.eclipse.jdt.internal.core.ExternalPackageFragmentRoot;
+import org.eclipse.jdt.internal.core.NamedMember;
 import org.eclipse.jdt.internal.core.PackageFragmentRoot;
 import org.eclipse.jdt.internal.core.SourceMapper;
 import org.eclipse.jdt.internal.ui.javaeditor.IClassFileEditorInput;
@@ -95,7 +96,7 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper
 				updateSourceRanges( type, attachedSource );
 				isAttachedSource = true;
 				mapSource( type, attachedSource, true );
-				( (PackageFragmentRoot) root ).getSourceMapper( ).mapSource( type, attachedSource, info );
+				DecompileUtil.mapSource( ( (PackageFragmentRoot) root ).getSourceMapper( ), type, attachedSource, info );
 				return attachedSource;
 			}
 		}
@@ -131,7 +132,7 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper
 						updateSourceRanges( type, attachedSource );
 						isAttachedSource = true;
 						mapSource( type, attachedSource, true );
-						( (PackageFragmentRoot) root ).getSourceMapper( ).mapSource( type, attachedSource, info );
+						DecompileUtil.mapSource( ( (PackageFragmentRoot) root ).getSourceMapper( ), type, attachedSource, info );
 						return attachedSource;
 					}
 				}
@@ -232,16 +233,18 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper
 			source.append( code );
 		}
 
+		char[] sourceAsCharArray = source.toString( ).toCharArray( );
 		if ( originalSourceMapper.containsKey( root ) )
 		{
-			if ( originalSourceMapper.get( root ).findSource( type, info ) == null )
+			SourceMapper rootSourceMapper = originalSourceMapper.get( root );
+			if ( rootSourceMapper.findSource( type, info ) == null )
 			{
-				originalSourceMapper.get( root ).mapSource( type, source.toString( ).toCharArray( ), null );
+				DecompileUtil.mapSource( rootSourceMapper, type, sourceAsCharArray, info );
 			}
 		}
 
-		updateSourceRanges( type, source.toString( ).toCharArray( ) );
-		return source.toString( ).toCharArray( );
+		updateSourceRanges( type, sourceAsCharArray );
+		return sourceAsCharArray;
 	}
 
 	private void updateSourceRanges( IType type, char[] attachedSource )

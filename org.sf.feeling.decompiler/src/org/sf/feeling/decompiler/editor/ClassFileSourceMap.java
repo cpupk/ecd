@@ -18,6 +18,7 @@ import org.eclipse.jdt.internal.compiler.env.IBinaryType;
 import org.eclipse.jdt.internal.core.BufferManager;
 import org.eclipse.jdt.internal.core.ClassFile;
 import org.eclipse.jdt.internal.core.SourceMapper;
+import org.sf.feeling.decompiler.util.DecompileUtil;
 
 public class ClassFileSourceMap
 {
@@ -60,7 +61,7 @@ public class ClassFileSourceMap
 			// buffer.addBufferChangedListener( cf );
 
 			// do the source mapping
-			mapper.mapSource( getOuterMostEnclosingType( cf ), contents, info );
+			DecompileUtil.mapSource( mapper, getOuterMostEnclosingType( cf ), contents, info );
 
 			return;
 		}
