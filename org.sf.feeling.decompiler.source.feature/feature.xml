@@ -2,7 +2,7 @@
 <feature
       id="org.sf.feeling.decompiler.source"
       label="%featureName"
-      version="2.10.0.qualifier"
+      version="3.0.0.qualifier"
       provider-name="%providerName">
 
    <description url="%aboutURL">
@@ -27,39 +27,7 @@
    </requires>
 
    <plugin
-         id="org.sf.feeling.decompiler.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.sf.feeling.decompiler.jd.source"
-         os="linux,macosx,win32"
-         arch="x86,x86_64"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.sf.feeling.decompiler.jad.source"
-         os="linux,macosx,win32"
-         arch="x86,x86_64"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.sf.feeling.decompiler.cfr.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.sf.feeling.decompiler.procyon.source"
+         id="org.sf.feeling.decompiler.source.attach"
          download-size="0"
          install-size="0"
          version="0.0.0"
