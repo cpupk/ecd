@@ -23,7 +23,7 @@
    </url>
 
    <requires>
-      <import feature="org.sf.feeling.decompiler" version="2.10.0.qualifier"/>
+      <import feature="org.sf.feeling.decompiler" version="3.0.0.qualifier"/>
    </requires>
 
    <plugin
