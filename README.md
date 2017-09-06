@@ -3,29 +3,14 @@ Enhanced Class Decompiler integrates **JD**, **Jad**, **FernFlower**, **CFR**, *
 
 <p align="center"><img src="https://pbi-qfs.github.io/ecd/doc/o_debug_class.png"></p>
 
-*Remark: Currently, there is no update site for this project available, yet.*
-
 ## Description
 Enhanced Class Decompiler is a plug-in for the Eclipse platform. It integrates JD, Jad, FernFlower, CFR, Procyon seamlessly with Eclipse, allows you to display all the Java sources during your debugging process, even if you do not have them all, and you can debug these class files without source code directly.
 
 ## Why is this plug-in "enhanced"?
 This is an ad-free fork of the Eclipse Decompiler Plugin. So we enhanced it by removing all code which might compromise your privacy or security (to the best of our knowledge).
 
-## How to build from source?
-
-If you want to test the latest features of this plugin, you have to build it from source. For this, proceed as following:
-
-1. Clone this project
-2. Install _Eclipse for RCP and RAP Developers_
-3. Import all projects into Eclipse by selecting _File_ > _Import_ > _General_ > _Existing Projects into Workspace_ > _Next_ and enter the cloned directory as "root directory".
-4. Open the _org.sf.feeling.decompiler.updatesite_ project in the Package Explorer
-5. Open the file _site.xml_ within the project
-6. Press "Build All"
-7. Copy the jar files generated in the _build/features_ and _build/plugins_ folder of the project into the correspondent folders of your normal Eclipse installation.
-
-
 ## How to install Enhanced Class Decompiler?
-**This option is currently not available, [we're working on it](https://github.com/pbi-qfs/ecd/issues/2).**
+_If you have currently the "Eclipse" Class Decompiler installed, it is recommended to [uninstall that plug-in](http://www.cpupk.com/decompiler/#how-to-uninstall-eclipse-class-decompiler-) first and remove the corresponding update site from your Eclipse installation._
   1. Launch _Eclipse_,
   2. Click on _"Help > Install New Software..."_,
   3. Click on button _"Add..."_ to add an new repository,
@@ -45,6 +30,18 @@ If you want to test the latest features of this plugin, you have to build it fro
   1. Click on _"Help > About Eclipse > Installation Details > Installation Software"_,
   2. Select _"Enhanced Class Decompiler"_,
   3. Click on _"Uninstall..."_.
+
+## How to build from source?
+
+  If you want to test the latest features of this plugin, you have to build it from source. For this, proceed as following:
+
+  1. Clone this project
+  2. Install _Eclipse for RCP and RAP Developers_
+  3. Import all projects into Eclipse by selecting _File_ > _Import_ > _General_ > _Existing Projects into Workspace_ > _Next_ and enter the cloned directory as "root directory".
+  4. Open the _org.sf.feeling.decompiler.updatesite_ project in the Package Explorer
+  5. Open the file _site.xml_ within the project
+  6. Press "Build All"
+  7. Copy the jar files generated in the _build/features_ and _build/plugins_ folder of the project into the correspondent folders of your normal Eclipse installation.
 
 ## License
 
