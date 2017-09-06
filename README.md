@@ -52,3 +52,12 @@ The plugin is licensed under the [Eclipse Public License v1.0](http://www.eclips
 * Chen Chao (cnfree2000@hotmail.com) - initial API and implementation
 * Robert Zenz
 * Pascal Bihler
+
+## Changelog
+
+* Version 3.0.0
+  * Removed adware code fragments
+  * Removed self-update feature (Eclipse handles updates fine)
+  * Removed extra-header in code (Issue [upstream#2](https://github.com/cnfree/Eclipse-Class-Decompiler/issues/28))
+  * Display information about class being decompiled in editor title (Issue #3)
+  * Made plug-in work with Java9 BETA JDT core
