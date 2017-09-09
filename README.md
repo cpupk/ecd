@@ -1,7 +1,7 @@
 # Enhanced Class Decompiler
 Enhanced Class Decompiler integrates **JD**, **Jad**, **FernFlower**, **CFR**, **Procyon** seamlessly with Eclipse and allows Java developers to **debug class files without source code directly**. It also integrates with the eclipse class editor, m2e plugin, supports **Javadoc**,  **reference search**, **library source attaching**, **byte code view** and the syntax of JDK8 **lambda** expression.
 
-<p align="center"><img src="https://pbi-qfs.github.io/ecd/doc/o_debug_class.png"></p>
+<p align="center"><img src="https://ecd-plugin.github.io/ecd/doc/o_debug_class.png"></p>
 
 ## Description
 Enhanced Class Decompiler is a plug-in for the Eclipse platform. It integrates JD, Jad, FernFlower, CFR, Procyon seamlessly with Eclipse, allows you to display all the Java sources during your debugging process, even if you do not have them all, and you can debug these class files without source code directly.
@@ -14,7 +14,7 @@ _If you have currently the "Eclipse" Class Decompiler installed, it is recommend
   1. Launch _Eclipse_,
   2. Click on _"Help > Install New Software..."_,
   3. Click on button _"Add..."_ to add an new repository,
-  4. Enter name as _"Enhanced Class Decompiler Update Site"_ and enter location as _"https://pbi-qfs.github.io/ecd/update"_, then click on button _"OK"_,
+  4. Enter name as _"Enhanced Class Decompiler Update Site"_ and enter location as _"[https://ecd-plugin.github.io/update](https://ecd-plugin.github.io/update)"_, then click on button _"OK"_,
   5. Check _"Enhanced Class Decompiler"_,
   6. Next, next, next... and restart.
 
