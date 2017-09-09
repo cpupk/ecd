@@ -21,8 +21,8 @@
    </license>
 
    <url>
-      <update label="Enhanced Class Decompiler Updates" url="https://pbi-qfs.github.io/ecd/update"/>
-      <discovery label="%updateSiteName" url="https://pbi-qfs.github.io/ecd/update"/>
+      <update label="Enhanced Class Decompiler Updates" url="https://ecd-plugin.github.io/update"/>
+      <discovery label="%updateSiteName" url="https://ecd-plugin.github.io/update"/>
    </url>
 
    <requires>
