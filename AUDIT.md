@@ -52,8 +52,11 @@ _Primary Source: http://jsoup.org/_
   * Version from http://central.maven.org/maven2/org/jsoup/jsoup/1.9.2/jsoup-1.9.2.jar
 
 ### CFR
+_Primary Source: http://www.benf.org/other/cfr/_
 
 * `./org.sf.feeling.decompiler.cfr/lib/cfr_0_122.jar`
+  * SHA-256: 65c2dfb76c4904014092663b74c2ea4a8e2f18ca75e98a1e4e064352c618360f
+  * Equal to http://www.benf.org/other/cfr/cfr_0_122.jar
 
 ### Procyon
 
