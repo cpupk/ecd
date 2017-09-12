@@ -16,10 +16,20 @@ _Primary Source: https://sourceforge.net/projects/drgarbagetools/files/eclipse/4
 
 ### Apache commons
 
+_Primary Source: https://commons.apache.org/downloads/index.html_
+
 * `./org.sf.feeling.decompiler/lib/commons-codec-1.5.jar`
+  * SHA-256: c7956fe621708e45314ebdf6a35e35c57f2ff80ba9c85dfafb1e43620af6c797
+  * Equal to http://central.maven.org/maven2/commons-codec/commons-codec/1.5/commons-codec-1.5.jar
 * `./org.sf.feeling.decompiler.source.attach/lib/commons-compress-1.3.jar`
+  * SHA-256: 56291a5427f6c0abc0b34fbf9bfafa0c21b60d503ece95c38741424d76e2aa04
+  * Equal to http://central.maven.org/maven2/org/apache/commons/commons-compress/1.3/commons-compress-1.3.jar
 * `./org.sf.feeling.decompiler.source.attach/lib/commons-io-2.2.jar`
+  * SHA-256: 675f60bd11a82d481736591fe4054c66471fa5463d45616652fd71585792ba87
+  * Equal to http://central.maven.org/maven2/commons-io/commons-io/2.2/commons-io-2.2.jar
 * `./org.sf.feeling.decompiler.source.attach/lib/commons-lang-2.6.jar`
+  * SHA-256: 50f11b09f877c294d56f24463f47d28f929cf5044f648661c0f0cfbae9a2f49c
+  * Equal to http://central.maven.org/maven2/commons-lang/commons-lang/2.6/commons-lang-2.6.jar
 
 ### Fernflower
 
