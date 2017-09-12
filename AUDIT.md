@@ -37,9 +37,12 @@ _Primary Source: https://github.com/JetBrains/intellij-community/tree/master/plu
   * SHA-256: 598321f62b394b01bfd0f2a14dc28ccca50704f64ac15a1cb18fb2613aec3763
   * Version from http://central.maven.org/maven2/org/jboss/windup/decompiler/fernflower/fernflower/2.5.0.Final/fernflower-2.5.0.Final.jar
 
-### Eclipse JSON
+### Minimal JSON
+_Primary Source: https://github.com/ralfstx/minimal-json_
 
-* `./org.sf.feeling.decompiler/lib/json.jar`
+    * `./org.sf.feeling.decompiler/lib/json.jar`
+      * SHA-256: e1d280900c78f18ae2e00c14e7410a77ba19cf084154b386532846aa6dc81721
+      * Version from http://central.maven.org/maven2/com/eclipsesource/minimal-json/minimal-json/0.9.4/minimal-json-0.9.4.jar
 
 ### JSOUP
 
