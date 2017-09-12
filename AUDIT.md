@@ -4,8 +4,15 @@
 
 ### Dr. Garbage Tools
 
+_Primary Source: https://sourceforge.net/projects/drgarbagetools/files/eclipse/4.4/stable/plugins/_ -> com.drgarbage.asm_5.0.3.201408050542.jar contains both files
+
 * `./org.sf.feeling.decompiler/lib/com.drgarbage.asm.util_5.0.3.jar`
+  * SHA-256: 06096adf6144ee613a9cc6d55325f6b1f04b03c52ca1841e9b3d7ae9dcadd2f2
+  * Equal to the file of the same name in https://downloads.sourceforge.net/project/drgarbagetools/eclipse/4.4/stable/plugins/com.drgarbage.asm_5.0.3.201408050542.jar
 * `./org.sf.feeling.decompiler/lib/com.drgarbage.asm_5.0.3.jar`
+  * SHA-256: d14546c965fea4a8fef3f7c267788d9748058957b84ae11a9fb22d5e386921d1
+  * Equal to the file of the same name in https://downloads.sourceforge.net/project/drgarbagetools/eclipse/4.4/stable/plugins/com.drgarbage.asm_5.0.3.201408050542.jar
+
 
 ### Apache commons
 
