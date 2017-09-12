@@ -34,8 +34,8 @@ _Primary Source: https://commons.apache.org/downloads/index.html_
 ### Fernflower
 _Primary Source: https://github.com/JetBrains/intellij-community/tree/master/plugins/java-decompiler/engine_
 * `./org.sf.feeling.decompiler/lib/fernflower.jar`
-  * Seems to be custom build (44674c0d0b493c659023fb92f8b4b65acd067f67) of Fernflower 2.5.0
-  * TODO: Replace with official release version
+  * SHA-256: 598321f62b394b01bfd0f2a14dc28ccca50704f64ac15a1cb18fb2613aec3763
+  * Version from http://central.maven.org/maven2/org/jboss/windup/decompiler/fernflower/fernflower/2.5.0.Final/fernflower-2.5.0.Final.jar
 
 ### Eclipse JSON
 
