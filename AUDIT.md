@@ -59,8 +59,10 @@ _Primary Source: http://www.benf.org/other/cfr/_
   * Equal to http://www.benf.org/other/cfr/cfr_0_122.jar
 
 ### Procyon
-
+_Primary Source: https://bitbucket.org/mstrobel/procyon/_
 * `./org.sf.feeling.decompiler.procyon/lib/procyon.jar`
+  * SHA-256: f85cef160cbed053527215f986a73c0ae17ade67f08f9c3f11522d9fd67fa688
+  * Stripped-down version of https://bitbucket.org/mstrobel/procyon/downloads/procyon-decompiler-0.5.30.jar with a fix in  src / main / java / com / strobel / decompiler / LineNumberFormatter.java (https://github.com/cnfree/Eclipse-Class-Decompiler/blob/master/Procyon/src/com/strobel/decompiler/LineNumberFormatter.java)
 
 ### Netbeans CVSClient
 
