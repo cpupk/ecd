@@ -32,8 +32,10 @@ _Primary Source: https://commons.apache.org/downloads/index.html_
   * Equal to http://central.maven.org/maven2/commons-lang/commons-lang/2.6/commons-lang-2.6.jar
 
 ### Fernflower
-
+_Primary Source: https://github.com/JetBrains/intellij-community/tree/master/plugins/java-decompiler/engine_
 * `./org.sf.feeling.decompiler/lib/fernflower.jar`
+  * Seems to be custom build (44674c0d0b493c659023fb92f8b4b65acd067f67) of Fernflower 2.5.0
+  * TODO: Replace with official release version
 
 ### Eclipse JSON
 
