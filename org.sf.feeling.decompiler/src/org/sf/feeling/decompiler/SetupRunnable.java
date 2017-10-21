@@ -110,13 +110,11 @@ public class SetupRunnable implements Runnable
 			{
 				if ( part instanceof JavaDecompilerClassFileEditor )
 				{
-					( (JavaDecompilerClassFileEditor) part ).notifyPropertiesChange( );
 					String code = ( (JavaDecompilerClassFileEditor) part ).getViewer( ).getDocument( ).get( );
 					if ( ClassUtil.isDebug( ) != JavaDecompilerClassFileEditor.isDebug( code ) )
 					{
 						( (JavaDecompilerClassFileEditor) part ).doSetInput( false );
 					}
-					( (JavaDecompilerClassFileEditor) part ).showSource( );
 				}
 			}
 
