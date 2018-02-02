@@ -39,6 +39,7 @@ _If you have currently the "Eclipse" Class Decompiler installed, it is recommend
   If you want to test the latest features of this plugin, you have to build it from source. For this, proceed as following:
 
   1. Clone this project
+  1. Clone https://github.com/ecd-plugin/update
   2. Install _Eclipse for RCP and RAP Developers_
   3. Import all projects into Eclipse by selecting _File_ > _Import_ > _General_ > _Existing Projects into Workspace_ > _Next_ and enter the cloned directory as "root directory".
   4. Open the _org.sf.feeling.decompiler.updatesite_ project in the Package Explorer
