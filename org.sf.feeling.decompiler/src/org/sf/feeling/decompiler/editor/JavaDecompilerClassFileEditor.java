@@ -196,7 +196,7 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 				classBuffer.setContents( markedSrc );
 				getBufferManager( ).addBuffer( classBuffer );
 
-				sourceMapper.mapSource( cf.getType( ), markedSrc, true );
+				sourceMapper.mapSourceSwitch( cf.getType( ), markedSrc, true );
 
 				ClassFileSourceMap.updateSource( getBufferManager( ), (ClassFile) cf, markedSrc );
 

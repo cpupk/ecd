@@ -9,12 +9,15 @@
 package org.sf.feeling.decompiler.editor;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Plugin;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IParent;
@@ -74,24 +77,35 @@ public abstract class DecompilerSourceMapper extends SourceMapper
 	}
 
 	/**
-	 * @see org.eclipse.jdt.internal.core.SourceMapper#mapSource(IType, char[],
-	 *      IBinaryType)
+	 * With the time this API has changed and the original method which accepted
+	 * {@link IType} as first parameter has been superseded and replaced by the
+	 * which does accept {@link NamedParameter} as first parameter.
+	 * <p>
+	 * But we do need to support both APIs here so we will try to invoke the
+	 * correct method using reflection instead of a hard coded reference.
 	 */
-	public void mapSource( IType type, char[] contents, boolean force )
+	public void mapSourceSwitch( IType type, char[] contents, boolean force )
 	{
 		if ( force )
 		{
 			sourceRanges.remove( type );
 		}
+		
 		try {
-			super.mapSource(type, contents, null );
-		} catch (final NoSuchMethodError e) {
+			Method mapSource = getClass( ).getMethod(
+					"mapSource",
+					new Class[] { IType.class, char[].class, IBinaryType.class } );
+			
+			mapSource.invoke( this, new Object[] { type, contents, null} );
+		} catch (NoSuchMethodException e) {
 			// API changed with Java 9 support (#daa227e4f5b7af888572a286c4f973b7a167ff2e)
 			ReflectionUtils.invokeMethod( this, "mapSource", new Class[]{ //$NON-NLS-1$
 					NamedMember.class, char[].class, IBinaryType.class
 			}, new Object[]{
 					type, contents, null
 			} );
+		} catch (Exception e) {
+			// Method was found but invocation failed, this shouldn't happen.
 		}
 	}
 

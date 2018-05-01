@@ -95,7 +95,7 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper
 			{
 				updateSourceRanges( type, attachedSource );
 				isAttachedSource = true;
-				mapSource( type, attachedSource, true );
+				mapSourceSwitch( type, attachedSource, true );
 				DecompileUtil.mapSource( ( (PackageFragmentRoot) root ).getSourceMapper( ), type, attachedSource, info );
 				return attachedSource;
 			}
@@ -131,7 +131,7 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper
 					{
 						updateSourceRanges( type, attachedSource );
 						isAttachedSource = true;
-						mapSource( type, attachedSource, true );
+						mapSourceSwitch( type, attachedSource, true );
 						DecompileUtil.mapSource( ( (PackageFragmentRoot) root ).getSourceMapper( ), type, attachedSource, info );
 						return attachedSource;
 					}
