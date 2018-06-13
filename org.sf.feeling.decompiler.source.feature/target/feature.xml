@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.sf.feeling.decompiler.source"
+      label="%featureName"
+      version="3.0.0.201806130753"
+      provider-name="%providerName">
+
+   <description url="%aboutURL">
+      %description
+   </description>
+
+   <copyright url="%copyrightURL">
+      %copyright
+   </copyright>
+
+   <license url="%licenseURL">
+      %license
+   </license>
+
+   <url>
+      <update label="Enhanced Class Decompiler Updates" url="https://ecd-plugin.github.io/update"/>
+      <discovery label="%updateSiteName" url="https://ecd-plugin.github.io/update"/>
+   </url>
+
+   <requires>
+      <import feature="org.sf.feeling.decompiler"/>
+   </requires>
+
+   <plugin
+         id="org.sf.feeling.decompiler.source.attach"
+         download-size="2273"
+         install-size="2971"
+         version="3.0.0.201806130753"
+         unpack="false"/>
+
+</feature>
