@@ -53,8 +53,8 @@ _If you have currently the "Eclipse" Class Decompiler installed, it is recommend
 
 ## Licenses
 
+The main plugin and the _org.sf.feeling.decompiler.jd_ project are licensed under [GPL 3](https://www.gnu.org/licenses/gpl-3.0-standalone.html), the other feature plugins are licensed under the [Eclipse Public License v1.0](http://www.eclipse.org/legal/epl-v10.html)
 
-The main plugin and most of the optional feature plugins are licensed under the [Eclipse Public License v1.0](http://www.eclipse.org/legal/epl-v10.html) (except the independent _org.sf.feeling.decompiler.jd_ project) and [GPL 3](https://www.gnu.org/licenses/gpl-3.0-standalone.html)
 Code partially based on:
   * JD-Eclipse: Copyright Emmanuel Dupuy, [GPL 3](https://www.gnu.org/licenses/gpl-3.0-standalone.html)
   * Java Source Attacher: Copyright Thai Ha, [Apache License V2.0](https://www.apache.org/licenses/LICENSE-2.0.html)
