@@ -9,6 +9,7 @@
 package org.sf.feeling.decompiler.editor;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -33,6 +34,7 @@ import org.eclipse.jdt.internal.core.ImportDeclaration;
 import org.eclipse.jdt.internal.core.ImportDeclarationElementInfo;
 import org.eclipse.jdt.internal.core.JavaElement;
 import org.eclipse.jdt.internal.core.JavaModelManager;
+import org.eclipse.jdt.internal.core.NamedMember;
 import org.eclipse.jdt.internal.core.OpenableElementInfo;
 import org.eclipse.jdt.internal.core.SourceMapper;
 import org.sf.feeling.decompiler.util.DecompilerOutputUtil;
@@ -81,13 +83,19 @@ public class ImportSourceMapper extends SourceMapper
 		this.infoStack.push( this.unitInfo );
 		this.handleStack.push( this.unit );
 	}
-
-	@Override
-	public synchronized ISourceRange mapSource( IType type, char[] contents, IBinaryType info,
-			IJavaElement elementToFind )
+	
+	/**
+	 * With the time this API has changed and the original method which accepted
+	 * {@link IType} as first parameter has been superseded and replaced by the
+	 * which does accept {@link NamedParameter} as first parameter.
+	 * <p>
+	 * But we do need to support both APIs here so we will try to invoke the
+	 * correct method using reflection instead of a hard coded reference.
+	 */
+	public ISourceRange mapSourceSwitch ( IType type, char[] contents, IBinaryType info,
+				IJavaElement elementToFind )
 	{
-		this.binaryType = (BinaryType) type;
-		this.unit = (ClassFile) binaryType.getClassFile( );
+		this.unit = (ClassFile) type.getClassFile( );
 		try
 		{
 			this.unitInfo = (OpenableElementInfo) this.unit.getElementInfo( );
@@ -97,7 +105,24 @@ public class ImportSourceMapper extends SourceMapper
 			Logger.debug( e );
 		}
 
-		return super.mapSource( type, contents, info, elementToFind );
+		try {
+			Method mapSource = getClass( ).getMethod(
+					"mapSource",
+					new Class[] { IType.class, char[].class, IBinaryType.class, IJavaElement.class } );
+			
+			return (ISourceRange) mapSource.invoke( this, new Object[] { type, contents, info, elementToFind } );
+		} catch (NoSuchMethodException e) {
+			// API changed with Java 9 support (#daa227e4f5b7af888572a286c4f973b7a167ff2e)
+			return (ISourceRange) ReflectionUtils.invokeMethod( this, "mapSource", new Class[]{ //$NON-NLS-1$
+					NamedMember.class, char[].class, IBinaryType.class, IJavaElement.class
+			}, new Object[]{
+					type, contents, info, elementToFind
+			} );
+		} catch (Exception e) {
+			// Method was found but invocation failed, this shouldn't happen.
+		}
+		
+		return null;
 	}
 
 	@Override

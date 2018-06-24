@@ -176,7 +176,7 @@ public class DecompileUtil
 			sourceMapper.mapSource(type, source, info );
 		} catch (final NoSuchMethodError e) {
 			// API changed with Java 9 support (#daa227e4f5b7af888572a286c4f973b7a167ff2e)
-			ReflectionUtils.invokeMethod( sourceMapper, "mapSource", new Class[]{ //$NON-NLS-1$
+			ReflectionUtils.invokeMethod( sourceMapper, "mapSourceSwitch", new Class[]{ //$NON-NLS-1$
 					NamedMember.class, char[].class, IBinaryType.class
 			}, new Object[]{
 					type, source, info
