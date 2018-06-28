@@ -4,9 +4,10 @@ Bundle-ClassPath: lib/commons-codec-1.5.jar,
  lib/fernflower-352.jar,
  lib/json.jar,
  lib/jsoup.jar,
- library.jar,
  lib/com.drgarbage.asm_5.0.3.jar,
  lib/com.drgarbage.asm.util_5.0.3.jar,
+ lib/com.drgarbage.bytecodevisualizer.plugin_4.4.1.201408050542.jar,
+ lib/com.drgarbage.core.plugin_4.4.1.201408050542.jar,
  .
 Bundle-Name: Enhanced Class Decompiler
 Bundle-Localization: plugin

@@ -49,6 +49,7 @@ Bundle-ClassPath: lib/commons-lang-2.6.jar,
  lib/plexus-utils-3.0.15.jar,
  lib/nexus-indexer-lucene-model-2.9.2-01.jar,
  lib/nexus-restlet1x-model-2.9.2-01.jar,
+ lib/maven-scm-provider-jgit-1.9.4.jar,
  .
 Export-Package: org.sf.feeling.decompiler.source.attach,
  org.sf.feeling.decompiler.source.attach.attacher,

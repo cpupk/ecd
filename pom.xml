@@ -44,11 +44,6 @@
                 <groupId>org.eclipse.tycho</groupId>
                 <artifactId>tycho-compiler-plugin</artifactId>
                 <version>1.0.0</version>
-                <configuration>
-                    <includes>
-                        <include>${baseDir}/org.sf.feeling.decompiler/lib/*.jar</include>
-                    </includes>
-                </configuration>
             </plugin>
             <plugin>
 				<groupId>org.eclipse.tycho</groupId>
