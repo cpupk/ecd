@@ -87,6 +87,10 @@ Used libraries:
 * Version 3.1.0
   * Updated Embedded Decompilers
     * CFR to version 0_130
+  * Verified and updated embedded decompilers
+  * Fixed that activating a tab with a decompiled source would reset the selected line location
+  * Fixed and tested compatibility with Eclipse Photon
+  * Tested compatibility with JDK11.
 
 * Version 3.0.0
   * Removed adware code fragments
