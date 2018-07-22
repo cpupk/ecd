@@ -39,6 +39,7 @@ import org.eclipse.jdt.internal.core.OpenableElementInfo;
 import org.eclipse.jdt.internal.core.SourceMapper;
 import org.sf.feeling.decompiler.util.DecompilerOutputUtil;
 import org.sf.feeling.decompiler.util.Logger;
+import org.sf.feeling.decompiler.util.SourceMapperUtil;
 import org.sf.feeling.decompiler.util.ReflectionUtils;
 
 public class ImportSourceMapper extends SourceMapper
@@ -106,18 +107,7 @@ public class ImportSourceMapper extends SourceMapper
 		}
 
 		try {
-			Method mapSource = getClass( ).getMethod(
-					"mapSource",
-					new Class[] { IType.class, char[].class, IBinaryType.class, IJavaElement.class } );
-			
-			return (ISourceRange) mapSource.invoke( this, new Object[] { type, contents, info, elementToFind } );
-		} catch (NoSuchMethodException e) {
-			// API changed with Java 9 support (#daa227e4f5b7af888572a286c4f973b7a167ff2e)
-			return (ISourceRange) ReflectionUtils.invokeMethod( this, "mapSource", new Class[]{ //$NON-NLS-1$
-					NamedMember.class, char[].class, IBinaryType.class, IJavaElement.class
-			}, new Object[]{
-					type, contents, info, elementToFind
-			} );
+			SourceMapperUtil.mapSource( this, type, contents, info );
 		} catch (Exception e) {
 			// Method was found but invocation failed, this shouldn't happen.
 		}

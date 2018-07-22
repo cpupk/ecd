@@ -62,6 +62,11 @@ public class ReflectionUtils
 			return null;
 
 		Method method = getDeclaredMethod( object, methodName, parameterTypes );
+		return invokeMethod(method, object, parameters);
+	}
+
+	public static Object invokeMethod( Method method, Object object, Object[] parameters )
+	{
 		try
 		{
 			if ( null != method )
