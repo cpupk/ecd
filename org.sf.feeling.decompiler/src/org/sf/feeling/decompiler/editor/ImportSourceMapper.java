@@ -26,7 +26,6 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.compiler.CharOperation;
 import org.eclipse.jdt.internal.compiler.env.IBinaryType;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
-import org.eclipse.jdt.internal.core.BinaryType;
 import org.eclipse.jdt.internal.core.ClassFile;
 import org.eclipse.jdt.internal.core.ImportContainer;
 import org.eclipse.jdt.internal.core.ImportContainerInfo;
@@ -34,7 +33,6 @@ import org.eclipse.jdt.internal.core.ImportDeclaration;
 import org.eclipse.jdt.internal.core.ImportDeclarationElementInfo;
 import org.eclipse.jdt.internal.core.JavaElement;
 import org.eclipse.jdt.internal.core.JavaModelManager;
-import org.eclipse.jdt.internal.core.NamedMember;
 import org.eclipse.jdt.internal.core.OpenableElementInfo;
 import org.eclipse.jdt.internal.core.SourceMapper;
 import org.sf.feeling.decompiler.util.DecompilerOutputUtil;
@@ -107,7 +105,7 @@ public class ImportSourceMapper extends SourceMapper
 		}
 
 		try {
-			SourceMapperUtil.mapSource( this, type, contents, info );
+			SourceMapperUtil.mapSource( this, type, contents, info, elementToFind );
 		} catch (Exception e) {
 			// Method was found but invocation failed, this shouldn't happen.
 		}
