@@ -84,6 +84,10 @@ Used libraries:
 
 ## Changelog
 
+* Version 3.1.1
+  * #44 Fixed that setting breakpoints might not work.
+  * #52 Fixed that hyperlinks might have oddly.
+
 * Version 3.1.0
   * Updated Embedded Decompilers
     * CFR to version 0_130
