@@ -36,6 +36,7 @@ import org.sf.feeling.decompiler.util.ClassUtil;
 import org.sf.feeling.decompiler.util.DecompileUtil;
 import org.sf.feeling.decompiler.util.DecompilerOutputUtil;
 import org.sf.feeling.decompiler.util.Logger;
+import org.sf.feeling.decompiler.util.SourceMapperUtil;
 import org.sf.feeling.decompiler.util.ReflectionUtils;
 import org.sf.feeling.decompiler.util.SortMemberUtil;
 import org.sf.feeling.decompiler.util.UIUtil;
@@ -96,7 +97,7 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper
 				updateSourceRanges( type, attachedSource );
 				isAttachedSource = true;
 				mapSourceSwitch( type, attachedSource, true );
-				DecompileUtil.mapSource( ( (PackageFragmentRoot) root ).getSourceMapper( ), type, attachedSource, info );
+				SourceMapperUtil.mapSource( ( (PackageFragmentRoot) root ).getSourceMapper( ), type, attachedSource, info );
 				return attachedSource;
 			}
 		}
@@ -132,7 +133,7 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper
 						updateSourceRanges( type, attachedSource );
 						isAttachedSource = true;
 						mapSourceSwitch( type, attachedSource, true );
-						DecompileUtil.mapSource( ( (PackageFragmentRoot) root ).getSourceMapper( ), type, attachedSource, info );
+						SourceMapperUtil.mapSource( ( (PackageFragmentRoot) root ).getSourceMapper( ), type, attachedSource, info );
 						return attachedSource;
 					}
 				}
@@ -239,7 +240,7 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper
 			SourceMapper rootSourceMapper = originalSourceMapper.get( root );
 			if ( rootSourceMapper.findSource( type, info ) == null )
 			{
-				DecompileUtil.mapSource( rootSourceMapper, type, sourceAsCharArray, info );
+				SourceMapperUtil.mapSource( rootSourceMapper, type, sourceAsCharArray, info );
 			}
 		}
 

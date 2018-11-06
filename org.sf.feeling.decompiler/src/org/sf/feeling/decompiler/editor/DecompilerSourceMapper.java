@@ -9,15 +9,12 @@
 package org.sf.feeling.decompiler.editor;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Plugin;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IParent;
@@ -29,7 +26,6 @@ import org.eclipse.jdt.core.formatter.CodeFormatter;
 import org.eclipse.jdt.internal.compiler.env.IBinaryType;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.jdt.internal.core.BinaryType;
-import org.eclipse.jdt.internal.core.NamedMember;
 import org.eclipse.jdt.internal.core.SourceMapper;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
@@ -38,7 +34,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.text.edits.TextEdit;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.util.DecompilerOutputUtil;
-import org.sf.feeling.decompiler.util.ReflectionUtils;
+import org.sf.feeling.decompiler.util.SourceMapperUtil;
 
 public abstract class DecompilerSourceMapper extends SourceMapper
 {
@@ -91,19 +87,9 @@ public abstract class DecompilerSourceMapper extends SourceMapper
 			sourceRanges.remove( type );
 		}
 		
+		
 		try {
-			Method mapSource = getClass( ).getMethod(
-					"mapSource",
-					new Class[] { IType.class, char[].class, IBinaryType.class } );
-			
-			mapSource.invoke( this, new Object[] { type, contents, null} );
-		} catch (NoSuchMethodException e) {
-			// API changed with Java 9 support (#daa227e4f5b7af888572a286c4f973b7a167ff2e)
-			ReflectionUtils.invokeMethod( this, "mapSource", new Class[]{ //$NON-NLS-1$
-					NamedMember.class, char[].class, IBinaryType.class
-			}, new Object[]{
-					type, contents, null
-			} );
+			SourceMapperUtil.mapSource( this, type, contents, null );
 		} catch (Exception e) {
 			// Method was found but invocation failed, this shouldn't happen.
 		}
