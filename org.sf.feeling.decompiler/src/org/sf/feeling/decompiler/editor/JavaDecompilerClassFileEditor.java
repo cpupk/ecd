@@ -37,6 +37,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IFindReplaceTarget;
+import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.hyperlink.HyperlinkManager;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
@@ -701,7 +702,7 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 					public void mouseUp( MouseEvent e )
 					{
 
-						int offset = text.getCaretOffset( );
+						int offset = getCaretModelOffset( text );
 						if ( offset == -1 )
 							return;
 						for ( int j = 0; j < links.length; j++ )
@@ -724,6 +725,34 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 				text.addMouseListener( mouseAdapter );
 			}
 		}
+	}
+
+	/**
+	 * Returns the absolute offset of the caret, which includes all characters
+	 * in collapsed code for the given text.
+	 *
+	 * getCaretOffset returns actual offset that user sees not including
+	 * characters collapsed code. See https://stackoverflow.com/a/42828319
+	 *
+	 * @param text
+	 *            to get caret position from
+	 * @return model (absolute) offset of caret
+	 */
+	private int getCaretModelOffset( final StyledText text )
+	{
+		int offset;
+		ISourceViewer sourceViewer = getSourceViewer( );
+		if ( sourceViewer instanceof ITextViewerExtension5 )
+		{
+			ITextViewerExtension5 extension = (ITextViewerExtension5) sourceViewer;
+			offset = extension.widgetOffset2ModelOffset( text.getCaretOffset( ) );
+		}
+		else
+		{
+			int visibleRegionOffset = sourceViewer.getVisibleRegion( ).getOffset( );
+			offset = visibleRegionOffset + text.getCaretOffset( );
+		}
+		return offset;
 	}
 
 	private void updateMatchAnnonation( )
