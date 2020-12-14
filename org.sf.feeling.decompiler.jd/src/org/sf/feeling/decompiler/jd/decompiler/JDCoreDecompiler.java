@@ -98,28 +98,28 @@ public class JDCoreDecompiler implements IDecompiler
 			JavaDecompilerPlugin.getDefault( ).displayLineNumber( displayNumber );
 		}
 
-		if ( source != null )
-		{
-			Pattern wp = Pattern.compile( "/\\*.+?\\*/", Pattern.DOTALL ); //$NON-NLS-1$
-			Matcher m = wp.matcher( source );
-			while ( m.find( ) )
-			{
-				if ( m.group( ).matches( "/\\*\\s+\\d*\\s+\\*/" ) ) //$NON-NLS-1$
-					continue;
-
-				String group = m.group( );
-				group = group.replace( "/* ", "\t" ); //$NON-NLS-1$ //$NON-NLS-2$
-				group = group.replace( " */", "" ); //$NON-NLS-1$ //$NON-NLS-2$
-				group = group.replace( " * ", "\t" ); //$NON-NLS-1$ //$NON-NLS-2$
-
-				if ( log.length( ) > 0 )
-					log += "\n"; //$NON-NLS-1$
-				log += group;
-
-				source = source.replace( m.group( ), "" ); //$NON-NLS-1$
-
-			}
-		}
+//		if ( source != null )
+//		{
+//			Pattern wp = Pattern.compile( "/\\*.+?\\*/", Pattern.DOTALL ); //$NON-NLS-1$
+//			Matcher m = wp.matcher( source );
+//			while ( m.find( ) )
+//			{
+//				if ( m.group( ).matches( "/\\*\\s+\\d*\\s+\\*/" ) ) //$NON-NLS-1$
+//					continue;
+//
+//				String group = m.group( );
+//				group = group.replace( "/* ", "\t" ); //$NON-NLS-1$ //$NON-NLS-2$
+//				group = group.replace( " */", "" ); //$NON-NLS-1$ //$NON-NLS-2$
+//				group = group.replace( " * ", "\t" ); //$NON-NLS-1$ //$NON-NLS-2$
+//
+//				if ( log.length( ) > 0 )
+//					log += "\n"; //$NON-NLS-1$
+//				log += group;
+//
+//				source = source.replace( m.group( ), "" ); //$NON-NLS-1$
+//
+//			}
+//		}
 
 		time = System.currentTimeMillis( ) - start;
 	}
