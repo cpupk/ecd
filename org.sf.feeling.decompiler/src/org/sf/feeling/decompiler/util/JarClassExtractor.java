@@ -9,10 +9,12 @@
 package org.sf.feeling.decompiler.util;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -24,51 +26,42 @@ public class JarClassExtractor
 
 	/**
 	 * extracts class files from jar/zip archive to specified path. See
-	 * <code>IDecompiler</code> documentation for the format of pareameters.
+	 * <code>IDecompiler</code> documentation for the format of parameters.
 	 */
 	public static void extract( String archivePath, String packege, String className, boolean inner, String to )
 			throws IOException
 	{
-		ZipFile archive = new ZipFile( archivePath );
-		List entries = findRelevant( archive, packege, className, inner );
-		InputStream in = null;
-		OutputStream out = null;
-		byte[] buffer = new byte[2048];
-		ZipEntry entry;
-		String outFile;
-		int lastSep, amountRead;
-
-		for ( int i = 0; i < entries.size( ); i++ )
+		try (ZipFile archive = new ZipFile( archivePath ))
 		{
-			entry = (ZipEntry) entries.get( i );
-			outFile = entry.getName( );
-			if ( ( lastSep = outFile.lastIndexOf( '/' ) ) != -1 )
-				outFile = outFile.substring( lastSep );
+			List<ZipEntry> entries = findRelevant( archive, packege, className, inner );
+			byte[] buffer = new byte[1024 * 16];
+			String outFile;
+			int lastSep, amountRead;
 
-			try
+			for ( ZipEntry entry : entries )
 			{
-				in = archive.getInputStream( entry );
-				if ( in == null )
-					throw new IOException( "Zip file entry <" //$NON-NLS-1$
-							+ entry.getName( )
-							+ "> not found" ); //$NON-NLS-1$
-				out = new FileOutputStream( to + File.separator + outFile );
+				outFile = entry.getName( );
+				if ( ( lastSep = outFile.lastIndexOf( '/' ) ) != -1 )
+					outFile = outFile.substring( lastSep );
 
-				while ( ( amountRead = in.read( buffer ) ) != -1 )
-					out.write( buffer, 0, amountRead );
-			}
-			finally
-			{
-				if ( in != null )
-					in.close( );
-				if ( out != null )
-					out.close( );
+				try (InputStream in = archive.getInputStream( entry ))
+				{
+					if ( in == null )
+						throw new IOException( "Zip file entry <" //$NON-NLS-1$
+								+ entry.getName( )
+								+ "> not found" ); //$NON-NLS-1$
+					Path outPath = Paths.get( to + File.separator + outFile );
+					try (OutputStream out = Files.newOutputStream( outPath ))
+					{
+						while ( ( amountRead = in.read( buffer ) ) != -1 )
+							out.write( buffer, 0, amountRead );
+					}
+				}
 			}
 		}
-
 	}
 
-	private static List findRelevant( ZipFile archive, String packege, String className, boolean inner )
+	private static List<ZipEntry> findRelevant( ZipFile archive, String packege, String className, boolean inner )
 	{
 		String entryName = ( packege.length( ) == 0 ) ? className
 				: packege
@@ -76,14 +69,14 @@ public class JarClassExtractor
 						+ className;
 		String innerPrefix = entryName.substring( 0, entryName.length( ) - 6 ) + "$"; //$NON-NLS-1$
 		// strip .class + $
-		Enumeration entries = archive.entries( );
+		Enumeration<? extends ZipEntry> entries = archive.entries( );
 		ZipEntry entry;
 		String name;
-		ArrayList relevant = new ArrayList( );
+		ArrayList<ZipEntry> relevant = new ArrayList( );
 
 		while ( entries.hasMoreElements( ) )
 		{
-			entry = (ZipEntry) entries.nextElement( );
+			entry = entries.nextElement( );
 			name = entry.getName( );
 			if ( name.equals( entryName ) || ( name.startsWith( innerPrefix ) && inner ) )
 				relevant.add( entry );
