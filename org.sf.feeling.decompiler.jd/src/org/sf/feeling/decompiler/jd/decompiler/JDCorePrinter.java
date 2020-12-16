@@ -18,6 +18,7 @@ public class JDCorePrinter implements Printer {
 	protected int indentationCount;
 	protected int realLineNumber = 0;
 	protected String lineNumberFormat;
+	protected int lineNumberWidth;
 
 	protected final boolean escapeUnicodeCharacters;
 	protected final boolean printLineNumbers;
@@ -54,6 +55,7 @@ public class JDCorePrinter implements Printer {
 				}
 
 				lineNumberFormat = "%" + width + "d";
+				lineNumberWidth = width;
 			}
 		}
 	}
@@ -99,7 +101,7 @@ public class JDCorePrinter implements Printer {
 	}
 
 	public void printDeclaration(int type, String internalTypeName, String name, String descriptor) {
-		printText(name); 
+		printText(name);
 	}
 
 	public void printReference(int type, String internalTypeName, String name, String descriptor,
@@ -145,9 +147,13 @@ public class JDCorePrinter implements Printer {
 			return;
 		}
 		sb.append("/* ");
-		sb.append(String.format(lineNumberFormat, ++realLineNumber));
-		sb.append(':');
-		sb.append(String.format(lineNumberFormat, lineNumber));
+		if (lineNumber > 0) {
+			sb.append(String.format(lineNumberFormat, lineNumber));
+		} else {
+			for (int i = 0; i < lineNumberWidth; i++) {
+				sb.append(' ');
+			}
+		}
 		sb.append(" */ ");
 	}
 }
