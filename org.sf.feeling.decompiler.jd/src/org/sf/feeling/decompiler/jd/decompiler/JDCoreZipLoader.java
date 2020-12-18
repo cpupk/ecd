@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (c) 2020 Chen Chao and other ECD project contributors.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+
 package org.sf.feeling.decompiler.jd.decompiler;
 
 import java.io.ByteArrayOutputStream;
@@ -15,7 +23,15 @@ import java.util.zip.ZipFile;
 import org.jd.core.v1.api.loader.Loader;
 import org.jd.core.v1.api.loader.LoaderException;
 
-public class JDCoreLoader implements Loader, Closeable {
+/**
+ * 
+ * JD-Core Loader implementation for decompiling classes directly from within a
+ * ZIP/JAR archive
+ * 
+ * @author Jan Peter Stotz
+ *
+ */
+public class JDCoreZipLoader implements Loader, Closeable {
 
 	private final ZipFile zipFile;
 
@@ -25,9 +41,9 @@ public class JDCoreLoader implements Loader, Closeable {
 	 */
 	private final Map<String, ZipEntry> entriesMap = new TreeMap<>();
 
-	public JDCoreLoader(Path basePath) throws ZipException, IOException {
+	public JDCoreZipLoader(Path zipFilePath) throws ZipException, IOException {
 		super();
-		zipFile = new ZipFile(basePath.toFile());
+		zipFile = new ZipFile(zipFilePath.toFile());
 		Enumeration<? extends ZipEntry> entries = zipFile.entries();
 		while (entries.hasMoreElements()) {
 			ZipEntry entry = entries.nextElement();

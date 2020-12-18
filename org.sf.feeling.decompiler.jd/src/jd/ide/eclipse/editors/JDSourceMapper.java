@@ -17,7 +17,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.jd.core.v1.ClassFileToJavaSourceDecompiler;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.editor.BaseDecompilerSourceMapper;
-import org.sf.feeling.decompiler.jd.decompiler.JDCoreLoader;
+import org.sf.feeling.decompiler.jd.decompiler.JDCoreZipLoader;
 import org.sf.feeling.decompiler.jd.decompiler.JDCorePrinter;
 
 /**
@@ -96,7 +96,7 @@ public abstract class JDSourceMapper extends BaseDecompilerSourceMapper {
 			classPath = classPath.substring(0, classPath.length() - 6);
 		}
 
-		try (JDCoreLoader loader = new JDCoreLoader(Paths.get(basePath))) {
+		try (JDCoreZipLoader loader = new JDCoreZipLoader(Paths.get(basePath))) {
 			JDCorePrinter printer = new JDCorePrinter(unicodeEscape, showLineNumbers);
 
 			ClassFileToJavaSourceDecompiler decompiler = new ClassFileToJavaSourceDecompiler();
