@@ -17,8 +17,8 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.jd.core.v1.ClassFileToJavaSourceDecompiler;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.editor.BaseDecompilerSourceMapper;
-import org.sf.feeling.decompiler.jd.decompiler.JDCoreZipLoader;
 import org.sf.feeling.decompiler.jd.decompiler.JDCorePrinter;
+import org.sf.feeling.decompiler.jd.decompiler.JDCoreZipLoader;
 
 /**
  * JDSourceMapper
@@ -27,44 +27,57 @@ import org.sf.feeling.decompiler.jd.decompiler.JDCorePrinter;
  * @version 0.1.5
  * @see org.eclipse.jdt.internal.core.SourceMapper
  */
-public abstract class JDSourceMapper extends BaseDecompilerSourceMapper {
+public abstract class JDSourceMapper extends BaseDecompilerSourceMapper
+{
+
 	private final static String JAVA_CLASS_SUFFIX = ".class";
 	private final static String JAVA_SOURCE_SUFFIX = ".java";
 	private final static int JAVA_SOURCE_SUFFIX_LENGTH = 5;
 
 	private File basePath;
 
-	public JDSourceMapper(File basePath, IPath sourcePath, String sourceRootPath, Map options) {
-		super(sourcePath, sourceRootPath, options);
+	public JDSourceMapper( File basePath, IPath sourcePath, String sourceRootPath, Map options )
+	{
+		super( sourcePath, sourceRootPath, options );
 		this.basePath = basePath;
 	}
 
-	public char[] findSource(String javaSourcePath) {
+	public char[] findSource( String javaSourcePath )
+	{
 		char[] source = null;
 
 		// Search source file
-		if (this.rootPaths == null) {
-			source = super.findSource(javaSourcePath);
-		} else {
-			Iterator iterator = this.rootPaths.iterator();
-			while (iterator.hasNext() && (source == null)) {
-				String sourcesRootPath = (String) iterator.next();
-				source = super.findSource(sourcesRootPath + IPath.SEPARATOR + javaSourcePath);
+		if ( this.rootPaths == null )
+		{
+			source = super.findSource( javaSourcePath );
+		}
+		else
+		{
+			Iterator iterator = this.rootPaths.iterator( );
+			while ( iterator.hasNext( ) && ( source == null ) )
+			{
+				String sourcesRootPath = (String) iterator.next( );
+				source = super.findSource( sourcesRootPath + IPath.SEPARATOR + javaSourcePath );
 			}
 		}
 
-		if ((source == null) && javaSourcePath.endsWith(JAVA_SOURCE_SUFFIX)) {
-			String classPath = javaSourcePath.substring(0, javaSourcePath.length() - JAVA_SOURCE_SUFFIX_LENGTH)
+		if ( ( source == null ) && javaSourcePath.endsWith( JAVA_SOURCE_SUFFIX ) )
+		{
+			String classPath = javaSourcePath.substring( 0, javaSourcePath.length( ) - JAVA_SOURCE_SUFFIX_LENGTH )
 					+ JAVA_CLASS_SUFFIX;
 
 			// Decompile class file
-			try {
-				String result = decompile(this.basePath.getAbsolutePath(), classPath);
-				if (result != null)
-					source = result.toCharArray();
-			} catch (Exception e) {
-				JavaDecompilerPlugin.getDefault().getLog()
-						.log(new Status(Status.ERROR, JavaDecompilerPlugin.PLUGIN_ID, 0, e.getMessage(), e));
+			try
+			{
+				String result = decompile( this.basePath.getAbsolutePath( ), classPath );
+				if ( result != null )
+					source = result.toCharArray( );
+			}
+			catch ( Exception e )
+			{
+				JavaDecompilerPlugin.getDefault( )
+						.getLog( )
+						.log( new Status( Status.ERROR, JavaDecompilerPlugin.PLUGIN_ID, 0, e.getMessage( ), e ) );
 			}
 		}
 
@@ -72,37 +85,42 @@ public abstract class JDSourceMapper extends BaseDecompilerSourceMapper {
 	}
 
 	/**
-	 * @param basePath          Path to the root of the classpath, either a path to
-	 *                          a directory or a path to a jar file.
-	 * @param internalClassName internal name of the class.
+	 * @param basePath
+	 *            Path to the root of the classpath, either a path to a
+	 *            directory or a path to a jar file.
+	 * @param internalClassName
+	 *            internal name of the class.
 	 * @return Decompiled class text.
 	 * @throws Exception
 	 */
-	public String decompile(String basePath, String classPath) throws Exception {
+	public String decompile( String basePath, String classPath ) throws Exception
+	{
 		// Load preferences
-		IPreferenceStore store = JavaDecompilerPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store = JavaDecompilerPlugin.getDefault( ).getPreferenceStore( );
 
-		boolean realignmentLineNumber = store.getBoolean(JavaDecompilerPlugin.ALIGN);
+		boolean realignmentLineNumber = store.getBoolean( JavaDecompilerPlugin.ALIGN );
 		boolean unicodeEscape = false; // currently unused :
 										// store.getBoolean(JavaDecompilerPlugin.PREF_ESCAPE_UNICODE_CHARACTERS);
-		boolean showLineNumbers = store.getBoolean(JavaDecompilerPlugin.PREF_DISPLAY_LINE_NUMBERS);
+		boolean showLineNumbers = store.getBoolean( JavaDecompilerPlugin.PREF_DISPLAY_LINE_NUMBERS );
 		// boolean showMetadata =
 		// store.getBoolean(JavaDecompilerPlugin.PREF_DISPLAY_METADATA);
 
-		Map<String, Object> configuration = new TreeMap<>();
-		configuration.put("realignLineNumbers", realignmentLineNumber);
+		Map<String, Object> configuration = new TreeMap<>( );
+		configuration.put( "realignLineNumbers", realignmentLineNumber );
 
-		if (classPath.endsWith(JAVA_CLASS_SUFFIX)) {
-			classPath = classPath.substring(0, classPath.length() - 6);
+		if ( classPath.endsWith( JAVA_CLASS_SUFFIX ) )
+		{
+			classPath = classPath.substring( 0, classPath.length( ) - 6 );
 		}
 
-		try (JDCoreZipLoader loader = new JDCoreZipLoader(Paths.get(basePath))) {
-			JDCorePrinter printer = new JDCorePrinter(unicodeEscape, showLineNumbers);
+		try (JDCoreZipLoader loader = new JDCoreZipLoader( Paths.get( basePath ) ))
+		{
+			JDCorePrinter printer = new JDCorePrinter( unicodeEscape, showLineNumbers );
 
-			ClassFileToJavaSourceDecompiler decompiler = new ClassFileToJavaSourceDecompiler();
-			decompiler.decompile(loader, printer, classPath, configuration);
-			
-			return printer.toString();
+			ClassFileToJavaSourceDecompiler decompiler = new ClassFileToJavaSourceDecompiler( );
+			decompiler.decompile( loader, printer, classPath, configuration );
+
+			return printer.toString( );
 		}
 	}
 
@@ -110,7 +128,8 @@ public abstract class JDSourceMapper extends BaseDecompilerSourceMapper {
 	 * @return version of JD-Core
 	 * @since JD-Core 1.1.3
 	 */
-	public static String getVersion() {
+	public static String getVersion( )
+	{
 		return "1.1.3";
 	}
 }

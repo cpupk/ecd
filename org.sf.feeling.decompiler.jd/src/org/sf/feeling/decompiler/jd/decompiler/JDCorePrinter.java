@@ -9,11 +9,13 @@ package org.sf.feeling.decompiler.jd.decompiler;
 
 import org.jd.core.v1.api.printer.Printer;
 
-public class JDCorePrinter implements Printer {
+public class JDCorePrinter implements Printer
+{
+
 	protected static final String TAB = "  ";
 	protected static final String NEWLINE = "\n";
 
-	protected final StringBuilder sb = new StringBuilder(4096);
+	protected final StringBuilder sb = new StringBuilder( 4096 );
 
 	protected int indentationCount;
 	protected int realLineNumber = 0;
@@ -23,33 +25,42 @@ public class JDCorePrinter implements Printer {
 	protected final boolean escapeUnicodeCharacters;
 	protected final boolean printLineNumbers;
 
-	public JDCorePrinter(boolean escapeUnicodeCharacters, boolean printLineNumbers) {
-		super();
+	public JDCorePrinter( boolean escapeUnicodeCharacters, boolean printLineNumbers )
+	{
+		super( );
 		this.escapeUnicodeCharacters = escapeUnicodeCharacters;
 		this.printLineNumbers = printLineNumbers;
 	}
 
-	public void init() {
-		sb.setLength(0);
+	public void init( )
+	{
+		sb.setLength( 0 );
 		realLineNumber = 0;
 		indentationCount = 0;
 	}
 
-	public String toString() {
-		return sb.toString();
+	public String toString( )
+	{
+		return sb.toString( );
 	}
 
 	// --- Printer --- //
-	public void start(int maxLineNumber, int majorVersion, int minorVersion) {
+	public void start( int maxLineNumber, int majorVersion, int minorVersion )
+	{
 		this.indentationCount = 0;
 
-		if (printLineNumbers) {
-			if (maxLineNumber == Printer.UNKNOWN_LINE_NUMBER) {
+		if ( printLineNumbers )
+		{
+			if ( maxLineNumber == Printer.UNKNOWN_LINE_NUMBER )
+			{
 				lineNumberFormat = "%4d";
-			} else {
+			}
+			else
+			{
 				int width = 1;
 
-				while (maxLineNumber >= 10) {
+				while ( maxLineNumber >= 10 )
+				{
 					width++;
 					maxLineNumber /= 10;
 				}
@@ -60,100 +71,128 @@ public class JDCorePrinter implements Printer {
 		}
 	}
 
-	public void end() {
+	public void end( )
+	{
 	}
 
-	public void printText(String text) {
-		if (escapeUnicodeCharacters) {
-			for (int i = 0, len = text.length(); i < len; i++) {
-				char c = text.charAt(i);
+	public void printText( String text )
+	{
+		if ( escapeUnicodeCharacters )
+		{
+			for ( int i = 0, len = text.length( ); i < len; i++ )
+			{
+				char c = text.charAt( i );
 
-				if (c < 127) {
-					sb.append(c);
-				} else {
-					int h = (c >> 12);
+				if ( c < 127 )
+				{
+					sb.append( c );
+				}
+				else
+				{
+					int h = ( c >> 12 );
 
-					sb.append("\\u");
-					sb.append((char) ((h <= 9) ? (h + '0') : (h + ('A' - 10))));
-					h = (c >> 8) & 15;
-					sb.append((char) ((h <= 9) ? (h + '0') : (h + ('A' - 10))));
-					h = (c >> 4) & 15;
-					sb.append((char) ((h <= 9) ? (h + '0') : (h + ('A' - 10))));
-					h = (c) & 15;
-					sb.append((char) ((h <= 9) ? (h + '0') : (h + ('A' - 10))));
+					sb.append( "\\u" );
+					sb.append( (char) ( ( h <= 9 ) ? ( h + '0' ) : ( h + ( 'A' - 10 ) ) ) );
+					h = ( c >> 8 ) & 15;
+					sb.append( (char) ( ( h <= 9 ) ? ( h + '0' ) : ( h + ( 'A' - 10 ) ) ) );
+					h = ( c >> 4 ) & 15;
+					sb.append( (char) ( ( h <= 9 ) ? ( h + '0' ) : ( h + ( 'A' - 10 ) ) ) );
+					h = ( c ) & 15;
+					sb.append( (char) ( ( h <= 9 ) ? ( h + '0' ) : ( h + ( 'A' - 10 ) ) ) );
 				}
 			}
-		} else {
-			sb.append(text);
+		}
+		else
+		{
+			sb.append( text );
 		}
 	}
 
-	public void printNumericConstant(String constant) {
-		sb.append(constant);
+	public void printNumericConstant( String constant )
+	{
+		sb.append( constant );
 	}
 
-	public void printStringConstant(String constant, String ownerInternalName) {
-		printText(constant);
+	public void printStringConstant( String constant, String ownerInternalName )
+	{
+		printText( constant );
 	}
 
-	public void printKeyword(String keyword) {
-		sb.append(keyword);
+	public void printKeyword( String keyword )
+	{
+		sb.append( keyword );
 	}
 
-	public void printDeclaration(int type, String internalTypeName, String name, String descriptor) {
-		printText(name);
+	public void printDeclaration( int type, String internalTypeName, String name, String descriptor )
+	{
+		printText( name );
 	}
 
-	public void printReference(int type, String internalTypeName, String name, String descriptor,
-			String ownerInternalName) {
-		printText(name);
+	public void printReference( int type, String internalTypeName, String name, String descriptor,
+			String ownerInternalName )
+	{
+		printText( name );
 	}
 
-	public void indent() {
+	public void indent( )
+	{
 		this.indentationCount++;
 	}
 
-	public void unindent() {
-		if (this.indentationCount > 0)
+	public void unindent( )
+	{
+		if ( this.indentationCount > 0 )
 			this.indentationCount--;
 	}
 
-	public void startLine(int lineNumber) {
-		printLineNumber(lineNumber);
+	public void startLine( int lineNumber )
+	{
+		printLineNumber( lineNumber );
 
-		for (int i = 0; i < indentationCount; i++)
-			sb.append(TAB);
+		for ( int i = 0; i < indentationCount; i++ )
+			sb.append( TAB );
 	}
 
-	public void endLine() {
-		sb.append(NEWLINE);
+	public void endLine( )
+	{
+		sb.append( NEWLINE );
 	}
 
-	public void extraLine(int count) {
-		while (count-- > 0) {
-			printLineNumber(0);
-			sb.append(NEWLINE);
+	public void extraLine( int count )
+	{
+		while ( count-- > 0 )
+		{
+			printLineNumber( 0 );
+			sb.append( NEWLINE );
 		}
 	}
 
-	public void startMarker(int type) {
+	public void startMarker( int type )
+	{
 	}
 
-	public void endMarker(int type) {
+	public void endMarker( int type )
+	{
 	}
 
-	protected void printLineNumber(int lineNumber) {
-		if (!printLineNumbers) {
+	protected void printLineNumber( int lineNumber )
+	{
+		if ( !printLineNumbers )
+		{
 			return;
 		}
-		sb.append("/* ");
-		if (lineNumber > 0) {
-			sb.append(String.format(lineNumberFormat, lineNumber));
-		} else {
-			for (int i = 0; i < lineNumberWidth; i++) {
-				sb.append(' ');
+		sb.append( "/* " );
+		if ( lineNumber > 0 )
+		{
+			sb.append( String.format( lineNumberFormat, lineNumber ) );
+		}
+		else
+		{
+			for ( int i = 0; i < lineNumberWidth; i++ )
+			{
+				sb.append( ' ' );
 			}
 		}
-		sb.append(" */ ");
+		sb.append( " */ " );
 	}
 }
