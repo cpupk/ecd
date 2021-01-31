@@ -630,22 +630,22 @@ public class FileUtil
 	{
 		if ( file == null || !file.exists( ) )
 			return null;
-		try
+		
+		try (ByteArrayOutputStream out = new ByteArrayOutputStream( 4096 ))
 		{
-			ByteArrayOutputStream out = new ByteArrayOutputStream( 4096 );
 			byte[] tmp = new byte[4096];
-			InputStream is = new BufferedInputStream( new FileInputStream( file ) );
-			while ( true )
+			try (InputStream is = new BufferedInputStream( new FileInputStream( file ) ))
 			{
-				int r = is.read( tmp );
-				if ( r == -1 )
-					break;
-				out.write( tmp, 0, r );
+				while ( true )
+				{
+					int r = is.read( tmp );
+					if ( r == -1 )
+						break;
+					out.write( tmp, 0, r );
+				}
+				byte[] bytes = out.toByteArray( );
+				return bytes;
 			}
-			byte[] bytes = out.toByteArray( );
-			is.close( );
-			out.close( );
-			return bytes;
 		}
 		catch ( Exception e )
 		{

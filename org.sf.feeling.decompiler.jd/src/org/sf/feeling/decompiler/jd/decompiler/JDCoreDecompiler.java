@@ -11,8 +11,6 @@ package org.sf.feeling.decompiler.jd.decompiler;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.jetbrains.java.decompiler.struct.StructClass;
 import org.jetbrains.java.decompiler.struct.lazy.LazyLoader;
@@ -20,7 +18,6 @@ import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.editor.IDecompiler;
 import org.sf.feeling.decompiler.jd.JDCoreDecompilerPlugin;
 import org.sf.feeling.decompiler.util.FileUtil;
-import org.sf.feeling.decompiler.util.JarClassExtractor;
 import org.sf.feeling.decompiler.util.UIUtil;
 
 import jd.ide.eclipse.editors.JDSourceMapper;
@@ -29,7 +26,7 @@ public class JDCoreDecompiler implements IDecompiler
 {
 
 	private String source = ""; // $NON-NLS-1$ //$NON-NLS-1$
-	private long time, start;
+	private long time;
 	private String log = ""; //$NON-NLS-1$
 
 	private JDSourceMapper mapper;
@@ -48,7 +45,7 @@ public class JDCoreDecompiler implements IDecompiler
 	@Override
 	public void decompile( String root, String classPackage, String className )
 	{
-		start = System.currentTimeMillis( );
+		long start = System.nanoTime( );
 		log = ""; //$NON-NLS-1$
 		source = ""; //$NON-NLS-1$
 		Boolean displayNumber = null;
@@ -98,63 +95,44 @@ public class JDCoreDecompiler implements IDecompiler
 			JavaDecompilerPlugin.getDefault( ).displayLineNumber( displayNumber );
 		}
 
-		if ( source != null )
-		{
-			Pattern wp = Pattern.compile( "/\\*.+?\\*/", Pattern.DOTALL ); //$NON-NLS-1$
-			Matcher m = wp.matcher( source );
-			while ( m.find( ) )
-			{
-				if ( m.group( ).matches( "/\\*\\s+\\d*\\s+\\*/" ) ) //$NON-NLS-1$
-					continue;
-
-				String group = m.group( );
-				group = group.replace( "/* ", "\t" ); //$NON-NLS-1$ //$NON-NLS-2$
-				group = group.replace( " */", "" ); //$NON-NLS-1$ //$NON-NLS-2$
-				group = group.replace( " * ", "\t" ); //$NON-NLS-1$ //$NON-NLS-2$
-
-				if ( log.length( ) > 0 )
-					log += "\n"; //$NON-NLS-1$
-				log += group;
-
-				source = source.replace( m.group( ), "" ); //$NON-NLS-1$
-
-			}
-		}
-
-		time = System.currentTimeMillis( ) - start;
+		time = ( System.nanoTime( ) - start ) / 1000000;
 	}
 
 	/**
-	 * Jad doesn't support decompilation from archives. This methods extracts
-	 * request class file from the specified archive into temp directory and
-	 * then calls <code>decompile</code>.
+	 * Our {@link JDCoreZipLoader} supports direct decompilation from within a
+	 * JAR archive
 	 * 
 	 * @see IDecompiler#decompileFromArchive(String, String, String)
 	 */
 	@Override
 	public void decompileFromArchive( String archivePath, String packege, String className )
 	{
-		start = System.currentTimeMillis( );
-		File workingDir = new File(
-				JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).getString( JavaDecompilerPlugin.TEMP_DIR )
-						+ "/" //$NON-NLS-1$
-						+ System.currentTimeMillis( ) );
+		long start = System.nanoTime( );
+		Boolean displayNumber = null;
 
 		try
 		{
-			workingDir.mkdirs( );
-			JarClassExtractor.extract( archivePath, packege, className, true, workingDir.getAbsolutePath( ) );
-			decompile( workingDir.getAbsolutePath( ), packege, className ); // $NON-NLS-1$
+			if ( UIUtil.isDebugPerspective( ) || JavaDecompilerPlugin.getDefault( ).isDebugMode( ) )
+			{
+				displayNumber = JavaDecompilerPlugin.getDefault( ).isDisplayLineNumber( );
+				JavaDecompilerPlugin.getDefault( ).displayLineNumber( Boolean.TRUE );
+			}
+
+			String decompileClassName = packege + "/" + className.replaceAll( "(?i)\\.class$", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
+			source = mapper.decompile( archivePath, decompileClassName );
 		}
 		catch ( Exception e )
 		{
 			JavaDecompilerPlugin.logError( e, e.getMessage( ) );
-			return;
 		}
-		finally
+
+		if ( displayNumber != null )
 		{
-			FileUtil.deltree( workingDir );
+			JavaDecompilerPlugin.getDefault( ).displayLineNumber( displayNumber );
 		}
+
+		time = ( System.nanoTime( ) - start ) / 1000000;
 	}
 
 	@Override
