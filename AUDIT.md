@@ -112,11 +112,7 @@ _Primary Source: http://www.javadecompilers.com/jad_
   * SHA-256: c5f43828592c7a47261b6baf89f13455423f9c528ed1b01e7148ba2475ed6126
 
 ## JD-Core
-_Primary Source: https://github.com/java-decompiler/jd-eclipse/releases_
+_Primary Source: https://github.com/java-decompiler/jd-core/releases
 
-* `./org.sf.feeling.decompiler.jd/lib/jd-common-0.7.1.jar`
-  * SHA-256: dfc8c400110b589b5347d6337aeea8d197539e9bc866789c319be6584688c41a
-* `./org.sf.feeling.decompiler.jd/lib/jd-common-ide-0.7.1.jar`
-  * SHA-256: 53a794093510ebb3c1411f1bf1acfb37616baea16ca11b1aa5cf5a0ec457856f
-* `./org.sf.feeling.decompiler.jd/lib/jd-core-0.7.1.jar`
-  * SHA-256: 4977fd2d30a42d54b197d0f80a21c623210e973dd0a781ba1dcbe2e59cf3d62a
+* `./org.sf.feeling.decompiler.jd/lib/jd-core-1.1.3.jar`
+  * SHA-256: 33F60FF75C77DC08905E767694A38F7B6AB792BD2E5831F41E2B56354BB806FB
