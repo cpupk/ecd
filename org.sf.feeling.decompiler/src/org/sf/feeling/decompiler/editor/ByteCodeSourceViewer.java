@@ -79,8 +79,7 @@ import org.sf.feeling.decompiler.util.UIUtil;
 import com.drgarbage.classfile.editors.ClassFileParser;
 import com.drgarbage.utils.ClassFileDocumentsUtils;
 
-public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor
-{
+public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor {
 
 	private JavaDecompilerClassFileEditor editor;
 
@@ -88,168 +87,147 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor
 
 	private Composite container;
 
-	public ByteCodeSourceViewer( JavaDecompilerClassFileEditor editor )
-	{
+	public ByteCodeSourceViewer(JavaDecompilerClassFileEditor editor) {
 		this.editor = editor;
 	}
 
-	public StyledText getTextWidget( )
-	{
-		return getSourceViewer( ).getTextWidget( );
+	public StyledText getTextWidget() {
+		return getSourceViewer().getTextWidget();
 	}
 
-	private IPreferenceStore createCombinedPreferenceStore( )
-	{
-		List<IPreferenceStore> stores = new ArrayList<IPreferenceStore>( 3 );
+	private IPreferenceStore createCombinedPreferenceStore() {
+		List<IPreferenceStore> stores = new ArrayList<IPreferenceStore>(3);
 
-		stores.add( JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ) );
-		stores.add( JavaPlugin.getDefault( ).getPreferenceStore( ) );
-		stores.add( EditorsUI.getPreferenceStore( ) );
+		stores.add(JavaDecompilerPlugin.getDefault().getPreferenceStore());
+		stores.add(JavaPlugin.getDefault().getPreferenceStore());
+		stores.add(EditorsUI.getPreferenceStore());
 
-		return new ChainedPreferenceStore(
-				(IPreferenceStore[]) stores.toArray( new IPreferenceStore[stores.size( )] ) );
+		return new ChainedPreferenceStore((IPreferenceStore[]) stores.toArray(new IPreferenceStore[stores.size()]));
 	}
 
-	public Composite createControl( Composite parent )
-	{
-		setSite( editor.getSite( ) );
+	public Composite createControl(Composite parent) {
+		setSite(editor.getSite());
 
-		DisassemblerDocumentProvider provider = new DisassemblerDocumentProvider( );
-		setDocumentProvider( provider );
-		setInput( editor.getEditorInput( ) );
+		DisassemblerDocumentProvider provider = new DisassemblerDocumentProvider();
+		setDocumentProvider(provider);
+		setInput(editor.getEditorInput());
 
-		container = new Composite( parent, SWT.NONE );
-		container.setLayout( new FillLayout( ) );
-		IPreferenceStore store = createCombinedPreferenceStore( );
-		setPreferenceStore( store );
+		container = new Composite(parent, SWT.NONE);
+		container.setLayout(new FillLayout());
+		IPreferenceStore store = createCombinedPreferenceStore();
+		setPreferenceStore(store);
 
 		int styles = SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION;
 
-		IVerticalRuler fVerticalRuler = createVerticalRuler( );
-		ReflectionUtils.setFieldValue( this, "fVerticalRuler", fVerticalRuler ); //$NON-NLS-1$
+		IVerticalRuler fVerticalRuler = createVerticalRuler();
+		ReflectionUtils.setFieldValue(this, "fVerticalRuler", fVerticalRuler); //$NON-NLS-1$
 
-		SourceViewer fSourceViewer = new JavaSourceViewer( container, fVerticalRuler, null, false, styles, store );
-		ReflectionUtils.setFieldValue( this, "fSourceViewer", fSourceViewer ); //$NON-NLS-1$
-		getSourceViewerDecorationSupport( fSourceViewer );
+		SourceViewer fSourceViewer = new JavaSourceViewer(container, fVerticalRuler, null, false, styles, store);
+		ReflectionUtils.setFieldValue(this, "fSourceViewer", fSourceViewer); //$NON-NLS-1$
+		getSourceViewerDecorationSupport(fSourceViewer);
 
-		createActions( );
+		createActions();
 
-		ReflectionUtils.invokeMethod( this, "initializeSourceViewer", new Class[]{ //$NON-NLS-1$
-				IEditorInput.class
-		}, new Object[]{
-				getEditorInput( )
-		} );
+		ReflectionUtils.invokeMethod(this, "initializeSourceViewer", new Class[] { //$NON-NLS-1$
+				IEditorInput.class }, new Object[] { getEditorInput() });
 
-		if ( fSourceViewerDecorationSupport != null )
-			fSourceViewerDecorationSupport.install( getPreferenceStore( ) );
+		if (fSourceViewerDecorationSupport != null)
+			fSourceViewerDecorationSupport.install(getPreferenceStore());
 
-		StyledText styledText = fSourceViewer.getTextWidget( );
-		styledText.addMouseListener( getCursorListener( ) );
-		styledText.addKeyListener( getCursorListener( ) );
+		StyledText styledText = fSourceViewer.getTextWidget();
+		styledText.addMouseListener(getCursorListener());
+		styledText.addKeyListener(getCursorListener());
 
-		ReflectionUtils.setFieldValue( this, "fEditorContextMenuId", "#TextEditorContext" ); //$NON-NLS-1$ //$NON-NLS-2$
+		ReflectionUtils.setFieldValue(this, "fEditorContextMenuId", "#TextEditorContext"); //$NON-NLS-1$ //$NON-NLS-2$
 		String id = "#TextEditorContext"; //$NON-NLS-1$
-		MenuManager manager = new MenuManager( id, id );
-		manager.setRemoveAllWhenShown( true );
-		manager.addMenuListener( getContextMenuListener( ) );
-		Menu fTextContextMenu = manager.createContextMenu( styledText );
-		styledText.setMenu( fTextContextMenu );
+		MenuManager manager = new MenuManager(id, id);
+		manager.setRemoveAllWhenShown(true);
+		manager.addMenuListener(getContextMenuListener());
+		Menu fTextContextMenu = manager.createContextMenu(styledText);
+		styledText.setMenu(fTextContextMenu);
 
-		ReflectionUtils.setFieldValue( this, "fRulerContextMenuId", "#TextRulerContext" ); //$NON-NLS-1$ //$NON-NLS-2$
+		ReflectionUtils.setFieldValue(this, "fRulerContextMenuId", "#TextRulerContext"); //$NON-NLS-1$ //$NON-NLS-2$
 		id = "#TextRulerContext"; //$NON-NLS-1$
-		manager = new MenuManager( id, id );
-		manager.setRemoveAllWhenShown( true );
-		manager.addMenuListener( getContextMenuListener( ) );
+		manager = new MenuManager(id, id);
+		manager.setRemoveAllWhenShown(true);
+		manager.addMenuListener(getContextMenuListener());
 
-		Control rulerControl = fVerticalRuler.getControl( );
-		Menu fRulerContextMenu = manager.createContextMenu( rulerControl );
-		rulerControl.setMenu( fRulerContextMenu );
-		rulerControl.addMouseListener( getRulerMouseListener( ) );
+		Control rulerControl = fVerticalRuler.getControl();
+		Menu fRulerContextMenu = manager.createContextMenu(rulerControl);
+		rulerControl.setMenu(fRulerContextMenu);
+		rulerControl.addMouseListener(getRulerMouseListener());
 
-		createOverviewRulerContextMenu( );
+		createOverviewRulerContextMenu();
 
-		JavaTextTools textTools = JavaPlugin.getDefault( ).getJavaTextTools( );
-		IColorManager colorManager = textTools.getColorManager( );
-		JavaSourceViewerConfiguration classFileConfiguration = new JavaSourceViewerConfiguration( colorManager,
-				store,
-				editor,
-				IJavaPartitions.JAVA_PARTITIONING );
-		fSourceViewer.configure( classFileConfiguration );
-		setSourceViewerConfiguration( classFileConfiguration );
-		getSourceViewerDecorationSupport( fSourceViewer ).install( getPreferenceStore( ) );
-		initializeViewerColors( fSourceViewer );
-		ReflectionUtils.invokeMethod( this, "initializeViewerFont", new Class[]{ //$NON-NLS-1$
-				ISourceViewer.class
-		}, new Object[]{
-				fSourceViewer
-		} );
+		JavaTextTools textTools = JavaPlugin.getDefault().getJavaTextTools();
+		IColorManager colorManager = textTools.getColorManager();
+		JavaSourceViewerConfiguration classFileConfiguration = new JavaSourceViewerConfiguration(colorManager, store,
+				editor, IJavaPartitions.JAVA_PARTITIONING);
+		fSourceViewer.configure(classFileConfiguration);
+		setSourceViewerConfiguration(classFileConfiguration);
+		getSourceViewerDecorationSupport(fSourceViewer).install(getPreferenceStore());
+		initializeViewerColors(fSourceViewer);
+		ReflectionUtils.invokeMethod(this, "initializeViewerFont", new Class[] { //$NON-NLS-1$
+				ISourceViewer.class }, new Object[] { fSourceViewer });
 
-		IClassFile cf = (ClassFile) ( (IClassFileEditorInput) editor.getEditorInput( ) ).getClassFile( );
+		IClassFile cf = (ClassFile) ((IClassFileEditorInput) editor.getEditorInput()).getClassFile();
 
-		byteCodeDocument = new ByteCodeDocument( this );
+		byteCodeDocument = new ByteCodeDocument(this);
 
-		JavaTextTools tools = JavaPlugin.getDefault( ).getJavaTextTools( );
-		tools.setupJavaDocumentPartitioner( byteCodeDocument, IJavaPartitions.JAVA_PARTITIONING );
+		JavaTextTools tools = JavaPlugin.getDefault().getJavaTextTools();
+		tools.setupJavaDocumentPartitioner(byteCodeDocument, IJavaPartitions.JAVA_PARTITIONING);
 
-		try
-		{
-			ClassFileParser parser = new ClassFileParser( );
-			String content = parser.parseClassFile( cf.getBytes( ) );
-			byteCodeDocument.set( ( content == null ? "" : content ) ); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		catch ( Exception e )
-		{
-			ClassFileBytesDisassembler disassembler = ToolFactory.createDefaultClassFileBytesDisassembler( );
-			try
-			{
-				String content = disassembler.disassemble( cf.getBytes( ), "\n", ClassFileBytesDisassembler.DETAILED ); //$NON-NLS-1$
-				byteCodeDocument.set( ( content == null ? "" : content ) ); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			catch ( Exception ex )
-			{
-				Logger.debug( e );
+		try {
+			ClassFileParser parser = new ClassFileParser();
+			String content = parser.parseClassFile(cf.getBytes());
+			byteCodeDocument.set((content == null ? "" : content)); //$NON-NLS-1$ //$NON-NLS-2$
+		} catch (Exception e) {
+			ClassFileBytesDisassembler disassembler = ToolFactory.createDefaultClassFileBytesDisassembler();
+			try {
+				String content = disassembler.disassemble(cf.getBytes(), "\n", ClassFileBytesDisassembler.DETAILED); //$NON-NLS-1$
+				byteCodeDocument.set((content == null ? "" : content)); //$NON-NLS-1$ //$NON-NLS-2$
+			} catch (Exception ex) {
+				Logger.debug(e);
 			}
 		}
 
-		final EditorSelectionChangedListener fEditorSelectionChangedListener = new EditorSelectionChangedListener( );
-		fEditorSelectionChangedListener.install( getSelectionProvider( ) );
+		final EditorSelectionChangedListener fEditorSelectionChangedListener = new EditorSelectionChangedListener();
+		fEditorSelectionChangedListener.install(getSelectionProvider());
 
-		fSourceViewer.setDocument( byteCodeDocument );
+		fSourceViewer.setDocument(byteCodeDocument);
 
-		provider.setDocument( byteCodeDocument );
+		provider.setDocument(byteCodeDocument);
 
-		IVerticalRuler ruler = getVerticalRuler( );
-		if ( ruler instanceof CompositeRuler )
-			updateContributedRulerColumns( (CompositeRuler) ruler );
+		IVerticalRuler ruler = getVerticalRuler();
+		if (ruler instanceof CompositeRuler)
+			updateContributedRulerColumns((CompositeRuler) ruler);
 
-		IColumnSupport columnSupport = (IColumnSupport) getAdapter( IColumnSupport.class );
+		IColumnSupport columnSupport = (IColumnSupport) getAdapter(IColumnSupport.class);
 
-		RulerColumnDescriptor lineNumberColumnDescriptor = RulerColumnRegistry.getDefault( )
-				.getColumnDescriptor( LineNumberColumn.ID );
-		if ( lineNumberColumnDescriptor != null )
-			columnSupport.setColumnVisible( lineNumberColumnDescriptor, isLineNumberRulerVisible( ) );
+		RulerColumnDescriptor lineNumberColumnDescriptor = RulerColumnRegistry.getDefault()
+				.getColumnDescriptor(LineNumberColumn.ID);
+		if (lineNumberColumnDescriptor != null)
+			columnSupport.setColumnVisible(lineNumberColumnDescriptor, isLineNumberRulerVisible());
 
 		IPropertyChangeListener fFontPropertyChangeListener = (IPropertyChangeListener) ReflectionUtils
-				.getFieldValue( this, "fFontPropertyChangeListener" ); //$NON-NLS-1$
-		JFaceResources.getFontRegistry( ).addListener( fFontPropertyChangeListener );
+				.getFieldValue(this, "fFontPropertyChangeListener"); //$NON-NLS-1$
+		JFaceResources.getFontRegistry().addListener(fFontPropertyChangeListener);
 
-		parent.addDisposeListener( new DisposeListener( ) {
+		parent.addDisposeListener(new DisposeListener() {
 
 			@Override
-			public void widgetDisposed( DisposeEvent e )
-			{
-				ByteCodeSourceViewer.this.dispose( );
+			public void widgetDisposed(DisposeEvent e) {
+				ByteCodeSourceViewer.this.dispose();
 			}
-		} );
+		});
 
 		return container;
 	}
 
-	class JdtSelectionProvider extends SelectionProvider
-	{
+	class JdtSelectionProvider extends SelectionProvider {
 
-		private List<ISelectionChangedListener> fSelectionListeners = new ArrayList<ISelectionChangedListener>( );
-		private List<ISelectionChangedListener> fPostSelectionListeners = new ArrayList<ISelectionChangedListener>( );
+		private List<ISelectionChangedListener> fSelectionListeners = new ArrayList<ISelectionChangedListener>();
+		private List<ISelectionChangedListener> fPostSelectionListeners = new ArrayList<ISelectionChangedListener>();
 		private ITextSelection fInvalidSelection;
 		private ISelection fValidSelection;
 
@@ -258,22 +236,20 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor
 		 * addSelectionChangedListener(ISelectionChangedListener)
 		 */
 		@Override
-		public void addSelectionChangedListener( ISelectionChangedListener listener )
-		{
-			super.addSelectionChangedListener( listener );
-			if ( getSourceViewer( ) != null )
-				fSelectionListeners.add( listener );
+		public void addSelectionChangedListener(ISelectionChangedListener listener) {
+			super.addSelectionChangedListener(listener);
+			if (getSourceViewer() != null)
+				fSelectionListeners.add(listener);
 		}
 
 		/*
 		 * @see org.eclipse.jface.viewers.ISelectionProvider#getSelection()
 		 */
 		@Override
-		public ISelection getSelection( )
-		{
-			if ( fInvalidSelection != null )
+		public ISelection getSelection() {
+			if (fInvalidSelection != null)
 				return fInvalidSelection;
-			return super.getSelection( );
+			return super.getSelection();
 		}
 
 		/*
@@ -281,48 +257,36 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor
 		 * removeSelectionChangedListener(ISelectionChangedListener)
 		 */
 		@Override
-		public void removeSelectionChangedListener( ISelectionChangedListener listener )
-		{
-			super.removeSelectionChangedListener( listener );
-			if ( getSourceViewer( ) != null )
-				fSelectionListeners.remove( listener );
+		public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+			super.removeSelectionChangedListener(listener);
+			if (getSourceViewer() != null)
+				fSelectionListeners.remove(listener);
 		}
 
 		/*
-		 * @see
-		 * org.eclipse.jface.viewers.ISelectionProvider#setSelection(ISelection)
+		 * @see org.eclipse.jface.viewers.ISelectionProvider#setSelection(ISelection)
 		 */
 		@Override
-		public void setSelection( ISelection selection )
-		{
-			if ( selection instanceof ITextSelection )
-			{
-				if ( fInvalidSelection != null )
-				{
+		public void setSelection(ISelection selection) {
+			if (selection instanceof ITextSelection) {
+				if (fInvalidSelection != null) {
 					fInvalidSelection = null;
 
 					ITextSelection newSelection = (ITextSelection) selection;
-					ITextSelection oldSelection = (ITextSelection) getSelection( );
+					ITextSelection oldSelection = (ITextSelection) getSelection();
 
-					if ( newSelection.getOffset( ) == oldSelection.getOffset( )
-							&& newSelection.getLength( ) == oldSelection.getLength( ) )
-					{
-						markValid( );
+					if (newSelection.getOffset() == oldSelection.getOffset()
+							&& newSelection.getLength() == oldSelection.getLength()) {
+						markValid();
+					} else {
+						super.setSelection(selection);
 					}
-					else
-					{
-						super.setSelection( selection );
-					}
+				} else {
+					super.setSelection(selection);
 				}
-				else
-				{
-					super.setSelection( selection );
-				}
-			}
-			else if ( selection instanceof IStructuredSelection
-					&& ( (IStructuredSelection) selection ).getFirstElement( ) instanceof EditorBreadcrumb )
-			{
-				markInvalid( );
+			} else if (selection instanceof IStructuredSelection
+					&& ((IStructuredSelection) selection).getFirstElement() instanceof EditorBreadcrumb) {
+				markInvalid();
 			}
 		}
 
@@ -332,12 +296,10 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor
 		 * ISelectionChangedListener)
 		 */
 		@Override
-		public void addPostSelectionChangedListener( ISelectionChangedListener listener )
-		{
-			super.addPostSelectionChangedListener( listener );
-			if ( getSourceViewer( ) != null
-					&& getSourceViewer( ).getSelectionProvider( ) instanceof IPostSelectionProvider )
-				fPostSelectionListeners.add( listener );
+		public void addPostSelectionChangedListener(ISelectionChangedListener listener) {
+			super.addPostSelectionChangedListener(listener);
+			if (getSourceViewer() != null && getSourceViewer().getSelectionProvider() instanceof IPostSelectionProvider)
+				fPostSelectionListeners.add(listener);
 		}
 
 		/*
@@ -346,176 +308,150 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor
 		 * ISelectionChangedListener)
 		 */
 		@Override
-		public void removePostSelectionChangedListener( ISelectionChangedListener listener )
-		{
-			super.removePostSelectionChangedListener( listener );
-			if ( getSourceViewer( ) != null )
-				fPostSelectionListeners.remove( listener );
+		public void removePostSelectionChangedListener(ISelectionChangedListener listener) {
+			super.removePostSelectionChangedListener(listener);
+			if (getSourceViewer() != null)
+				fPostSelectionListeners.remove(listener);
 		}
 
 		/*
 		 * @see org.eclipse.jface.text.IPostSelectionValidator#isValid()
 		 */
 		@Override
-		public boolean isValid( ISelection postSelection )
-		{
-			return fInvalidSelection == null && super.isValid( postSelection );
+		public boolean isValid(ISelection postSelection) {
+			return fInvalidSelection == null && super.isValid(postSelection);
 		}
 
 		/**
 		 * Marks this selection provider as currently being invalid. An invalid
 		 * selection is one which can not be selected in the source viewer.
 		 */
-		private void markInvalid( )
-		{
-			fValidSelection = getSelection( );
-			fInvalidSelection = new TextSelection( 0, 0 );
+		private void markInvalid() {
+			fValidSelection = getSelection();
+			fInvalidSelection = new TextSelection(0, 0);
 
-			SelectionChangedEvent event = new SelectionChangedEvent( this, fInvalidSelection );
+			SelectionChangedEvent event = new SelectionChangedEvent(this, fInvalidSelection);
 
-			for ( ISelectionChangedListener listener : fSelectionListeners )
-			{
-				listener.selectionChanged( event );
+			for (ISelectionChangedListener listener : fSelectionListeners) {
+				listener.selectionChanged(event);
 			}
 
-			for ( ISelectionChangedListener listener : fPostSelectionListeners )
-			{
-				listener.selectionChanged( event );
+			for (ISelectionChangedListener listener : fPostSelectionListeners) {
+				listener.selectionChanged(event);
 			}
 		}
 
 		/**
 		 * Marks this selection provider as being valid.
 		 */
-		private void markValid( )
-		{
+		private void markValid() {
 			fInvalidSelection = null;
 
-			SelectionChangedEvent event = new SelectionChangedEvent( this, fValidSelection );
+			SelectionChangedEvent event = new SelectionChangedEvent(this, fValidSelection);
 
-			for ( ISelectionChangedListener listener : fSelectionListeners )
-			{
-				listener.selectionChanged( event );
+			for (ISelectionChangedListener listener : fSelectionListeners) {
+				listener.selectionChanged(event);
 			}
 
-			for ( ISelectionChangedListener listener : fPostSelectionListeners )
-			{
-				listener.selectionChanged( event );
+			for (ISelectionChangedListener listener : fPostSelectionListeners) {
+				listener.selectionChanged(event);
 			}
 		}
 	}
 
-	private class EditorSelectionChangedListener extends AbstractSelectionChangedListener
-	{
+	private class EditorSelectionChangedListener extends AbstractSelectionChangedListener {
 
-		public void selectionChanged( SelectionChangedEvent event )
-		{
-			doHandleCursorPositionChanged( );
+		public void selectionChanged(SelectionChangedEvent event) {
+			doHandleCursorPositionChanged();
 		}
 
 	}
 
-	private void doHandleCursorPositionChanged( )
-	{
-		StyledText byteCodeText = getSourceViewer( ).getTextWidget( );
-		String byteCode = byteCodeText.getText( );
-		int selectedRange = byteCodeText.getSelectionRange( ).x;
-		IJavaElement element = getJavaElement( byteCode, selectedRange );
-		if ( element != null )
-		{
-			editor.setSelection( element );
+	private void doHandleCursorPositionChanged() {
+		StyledText byteCodeText = getSourceViewer().getTextWidget();
+		String byteCode = byteCodeText.getText();
+		int selectedRange = byteCodeText.getSelectionRange().x;
+		IJavaElement element = getJavaElement(byteCode, selectedRange);
+		if (element != null) {
+			editor.setSelection(element);
 		}
 	}
 
-	public IJavaElement getJavaElement( String byteCode, int index )
-	{
-		if ( byteCode.lastIndexOf( "/* Methods: */" ) != -1 ) //$NON-NLS-1$
+	public IJavaElement getJavaElement(String byteCode, int index) {
+		if (byteCode.lastIndexOf("/* Methods: */") != -1) //$NON-NLS-1$
 		{
-			int methodStartIndex = byteCode.substring( 0, byteCode.lastIndexOf( "/* Methods: */" ) ).lastIndexOf( "\n" ) //$NON-NLS-1$ //$NON-NLS-2$
+			int methodStartIndex = byteCode.substring(0, byteCode.lastIndexOf("/* Methods: */")).lastIndexOf("\n") //$NON-NLS-1$ //$NON-NLS-2$
 					+ 1;
-			int methodEndIndex = byteCode.substring( 0, byteCode.lastIndexOf( "attributes_count" ) ) //$NON-NLS-1$
-					.lastIndexOf( "\n" ); //$NON-NLS-1$
-			if ( index >= methodStartIndex && index <= methodEndIndex )
-			{
-				return getMethod( byteCode.substring( methodStartIndex, methodEndIndex ), index - methodStartIndex );
+			int methodEndIndex = byteCode.substring(0, byteCode.lastIndexOf("attributes_count")) //$NON-NLS-1$
+					.lastIndexOf("\n"); //$NON-NLS-1$
+			if (index >= methodStartIndex && index <= methodEndIndex) {
+				return getMethod(byteCode.substring(methodStartIndex, methodEndIndex), index - methodStartIndex);
 			}
 
-			if ( byteCode.lastIndexOf( "/* Fields: */" ) != -1 ) //$NON-NLS-1$
+			if (byteCode.lastIndexOf("/* Fields: */") != -1) //$NON-NLS-1$
 			{
-				int fieldStartIndex = byteCode.substring( 0, byteCode.lastIndexOf( "/* Fields: */" ) ).lastIndexOf( //$NON-NLS-1$
-						"\n" ) + 1; //$NON-NLS-1$
+				int fieldStartIndex = byteCode.substring(0, byteCode.lastIndexOf("/* Fields: */")).lastIndexOf( //$NON-NLS-1$
+						"\n") + 1; //$NON-NLS-1$
 				int fieldEndIndex = methodStartIndex - 1;
-				if ( index >= fieldStartIndex && index <= fieldEndIndex )
-				{
-					return getField( byteCode.substring( fieldStartIndex, fieldEndIndex ), index - fieldStartIndex );
+				if (index >= fieldStartIndex && index <= fieldEndIndex) {
+					return getField(byteCode.substring(fieldStartIndex, fieldEndIndex), index - fieldStartIndex);
 				}
 			}
-		}
-		else if ( byteCode.lastIndexOf( "/* Fields: */" ) != -1 ) //$NON-NLS-1$
+		} else if (byteCode.lastIndexOf("/* Fields: */") != -1) //$NON-NLS-1$
 		{
-			int fieldStartIndex = byteCode.substring( 0, byteCode.lastIndexOf( "/* Fields: */" ) ).lastIndexOf( "\n" ) //$NON-NLS-1$ //$NON-NLS-2$
+			int fieldStartIndex = byteCode.substring(0, byteCode.lastIndexOf("/* Fields: */")).lastIndexOf("\n") //$NON-NLS-1$ //$NON-NLS-2$
 					+ 1;
-			int fieldEndIndex = byteCode.substring( 0, byteCode.lastIndexOf( "attributes_count" ) ).lastIndexOf( "\n" ); //$NON-NLS-1$ //$NON-NLS-2$
-			if ( index >= fieldStartIndex && index <= fieldEndIndex )
-			{
-				return getField( byteCode.substring( fieldStartIndex, fieldEndIndex ), index - fieldStartIndex );
+			int fieldEndIndex = byteCode.substring(0, byteCode.lastIndexOf("attributes_count")).lastIndexOf("\n"); //$NON-NLS-1$ //$NON-NLS-2$
+			if (index >= fieldStartIndex && index <= fieldEndIndex) {
+				return getField(byteCode.substring(fieldStartIndex, fieldEndIndex), index - fieldStartIndex);
 			}
 		}
 
-		ClassFile cf = (ClassFile) ( (IClassFileEditorInput) getEditorInput( ) ).getClassFile( );
-		return cf.getType( );
+		ClassFile cf = (ClassFile) ((IClassFileEditorInput) getEditorInput()).getClassFile();
+		return cf.getType();
 	}
 
-	private IField getField( String text, int index )
-	{
-		Pattern pattern = Pattern.compile( "Field\\[\\d+\\].+?Field\\[\\d+\\]", Pattern.DOTALL ); //$NON-NLS-1$
-		Matcher matcher = pattern.matcher( text );
+	private IField getField(String text, int index) {
+		Pattern pattern = Pattern.compile("Field\\[\\d+\\].+?Field\\[\\d+\\]", Pattern.DOTALL); //$NON-NLS-1$
+		Matcher matcher = pattern.matcher(text);
 
-		int fieldStartIndex = text.substring( 0, index ).lastIndexOf( "\n" ) + 1; //$NON-NLS-1$
+		int fieldStartIndex = text.substring(0, index).lastIndexOf("\n") + 1; //$NON-NLS-1$
 
 		int findIndex = 0;
-		while ( matcher.find( findIndex ) )
-		{
-			int start = text.substring( 0, matcher.start( ) ).lastIndexOf( "\n" ) + 1; //$NON-NLS-1$
-			int end = text.substring( 0, matcher.end( ) ).lastIndexOf( "\n" ); //$NON-NLS-1$
-			if ( fieldStartIndex >= start && fieldStartIndex <= end )
-			{
-				String field = text.substring( start, end );
-				return getField( field );
+		while (matcher.find(findIndex)) {
+			int start = text.substring(0, matcher.start()).lastIndexOf("\n") + 1; //$NON-NLS-1$
+			int end = text.substring(0, matcher.end()).lastIndexOf("\n"); //$NON-NLS-1$
+			if (fieldStartIndex >= start && fieldStartIndex <= end) {
+				String field = text.substring(start, end);
+				return getField(field);
 			}
 			findIndex = end;
 		}
 
-		if ( text.lastIndexOf( "Field[" ) != -1 ) //$NON-NLS-1$
+		if (text.lastIndexOf("Field[") != -1) //$NON-NLS-1$
 		{
-			int start = text.substring( 0, text.lastIndexOf( "Field[" ) ).lastIndexOf( "\n" ) + 1; //$NON-NLS-1$ //$NON-NLS-2$
-			int end = text.length( );
-			if ( fieldStartIndex >= start && fieldStartIndex <= end )
-			{
-				String field = text.substring( start, end );
-				return getField( field );
+			int start = text.substring(0, text.lastIndexOf("Field[")).lastIndexOf("\n") + 1; //$NON-NLS-1$ //$NON-NLS-2$
+			int end = text.length();
+			if (fieldStartIndex >= start && fieldStartIndex <= end) {
+				String field = text.substring(start, end);
+				return getField(field);
 			}
 		}
 		return null;
 	}
 
-	private IField getField( String field )
-	{
-		ClassFile cf = (ClassFile) ( (IClassFileEditorInput) getEditorInput( ) ).getClassFile( );
-		int nameIndex = field.indexOf( "name_index" ); //$NON-NLS-1$
-		if ( nameIndex != -1 )
-		{
-			String startText = field.substring( nameIndex );
-			int firstIndex = startText.indexOf( '"' );
-			if ( firstIndex != -1 )
-			{
-				int lastIndex = startText.indexOf( '"', firstIndex + 1 );
-				if ( lastIndex != -1 )
-				{
-					String fieldName = startText.substring( firstIndex + 1, lastIndex );
-					IField f = cf.getType( ).getField( fieldName );
-					if ( f != null )
-					{
+	private IField getField(String field) {
+		ClassFile cf = (ClassFile) ((IClassFileEditorInput) getEditorInput()).getClassFile();
+		int nameIndex = field.indexOf("name_index"); //$NON-NLS-1$
+		if (nameIndex != -1) {
+			String startText = field.substring(nameIndex);
+			int firstIndex = startText.indexOf('"');
+			if (firstIndex != -1) {
+				int lastIndex = startText.indexOf('"', firstIndex + 1);
+				if (lastIndex != -1) {
+					String fieldName = startText.substring(firstIndex + 1, lastIndex);
+					IField f = cf.getType().getField(fieldName);
+					if (f != null) {
 						return f;
 					}
 				}
@@ -524,287 +460,231 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor
 		return null;
 	}
 
-	private IMethod getMethod( String text, int index )
-	{
-		Pattern pattern = Pattern.compile( "Method\\[\\d+\\].+?Method\\[\\d+\\]", Pattern.DOTALL ); //$NON-NLS-1$
-		Matcher matcher = pattern.matcher( text );
+	private IMethod getMethod(String text, int index) {
+		Pattern pattern = Pattern.compile("Method\\[\\d+\\].+?Method\\[\\d+\\]", Pattern.DOTALL); //$NON-NLS-1$
+		Matcher matcher = pattern.matcher(text);
 
-		int methodStartIndex = text.substring( 0, index ).lastIndexOf( "\n" ) + 1; //$NON-NLS-1$
+		int methodStartIndex = text.substring(0, index).lastIndexOf("\n") + 1; //$NON-NLS-1$
 
 		int findIndex = 0;
-		while ( matcher.find( findIndex ) )
-		{
-			int start = text.substring( 0, matcher.start( ) ).lastIndexOf( "\n" ) + 1; //$NON-NLS-1$
-			int end = text.substring( 0, matcher.end( ) ).lastIndexOf( "\n" ); //$NON-NLS-1$
-			if ( methodStartIndex >= start && methodStartIndex <= end )
-			{
-				String method = text.substring( start, end );
-				return getMethod( method );
+		while (matcher.find(findIndex)) {
+			int start = text.substring(0, matcher.start()).lastIndexOf("\n") + 1; //$NON-NLS-1$
+			int end = text.substring(0, matcher.end()).lastIndexOf("\n"); //$NON-NLS-1$
+			if (methodStartIndex >= start && methodStartIndex <= end) {
+				String method = text.substring(start, end);
+				return getMethod(method);
 			}
 			findIndex = end;
 		}
 
-		if ( text.lastIndexOf( "Method[" ) != -1 ) //$NON-NLS-1$
+		if (text.lastIndexOf("Method[") != -1) //$NON-NLS-1$
 		{
-			int start = text.substring( 0, text.lastIndexOf( "Method[" ) ).lastIndexOf( "\n" ) + 1; //$NON-NLS-1$ //$NON-NLS-2$
-			int end = text.length( );
-			if ( methodStartIndex >= start && methodStartIndex <= end )
-			{
-				String method = text.substring( start, end );
-				return getMethod( method );
+			int start = text.substring(0, text.lastIndexOf("Method[")).lastIndexOf("\n") + 1; //$NON-NLS-1$ //$NON-NLS-2$
+			int end = text.length();
+			if (methodStartIndex >= start && methodStartIndex <= end) {
+				String method = text.substring(start, end);
+				return getMethod(method);
 			}
 		}
 		return null;
 	}
 
-	private IMethod getMethod( String method )
-	{
-		ClassFile cf = (ClassFile) ( (IClassFileEditorInput) getEditorInput( ) ).getClassFile( );
+	private IMethod getMethod(String method) {
+		ClassFile cf = (ClassFile) ((IClassFileEditorInput) getEditorInput()).getClassFile();
 
 		String methodName = null;
 		String descriptor = null;
 
-		int nameIndex = method.indexOf( "name_index" ); //$NON-NLS-1$
-		if ( nameIndex != -1 )
-		{
+		int nameIndex = method.indexOf("name_index"); //$NON-NLS-1$
+		if (nameIndex != -1) {
 
-			String startText = method.substring( nameIndex );
-			int firstIndex = startText.indexOf( '"' );
-			if ( firstIndex != -1 )
-			{
-				int lastIndex = startText.indexOf( '"', firstIndex + 1 );
-				if ( lastIndex != -1 )
-				{
-					methodName = startText.substring( firstIndex + 1, lastIndex );
+			String startText = method.substring(nameIndex);
+			int firstIndex = startText.indexOf('"');
+			if (firstIndex != -1) {
+				int lastIndex = startText.indexOf('"', firstIndex + 1);
+				if (lastIndex != -1) {
+					methodName = startText.substring(firstIndex + 1, lastIndex);
 				}
 			}
 
 		}
 
-		if ( methodName == null )
+		if (methodName == null)
 			return null;
 
-		if ( "<init>".equals( methodName ) ) //$NON-NLS-1$
+		if ("<init>".equals(methodName)) //$NON-NLS-1$
 		{
-			methodName = cf.getTypeName( );
+			methodName = cf.getTypeName();
 		}
 
-		int descriptorIndex = method.indexOf( "descriptor_index" ); //$NON-NLS-1$
-		if ( descriptorIndex != -1 )
-		{
-			String startText = method.substring( descriptorIndex );
-			int firstIndex = startText.indexOf( '"' );
-			if ( firstIndex != -1 )
-			{
-				int lastIndex = startText.indexOf( '"', firstIndex + 1 );
-				if ( lastIndex != -1 )
-				{
-					descriptor = startText.substring( firstIndex + 1, lastIndex );
+		int descriptorIndex = method.indexOf("descriptor_index"); //$NON-NLS-1$
+		if (descriptorIndex != -1) {
+			String startText = method.substring(descriptorIndex);
+			int firstIndex = startText.indexOf('"');
+			if (firstIndex != -1) {
+				int lastIndex = startText.indexOf('"', firstIndex + 1);
+				if (lastIndex != -1) {
+					descriptor = startText.substring(firstIndex + 1, lastIndex);
 				}
 			}
 
 		}
 
-		if ( descriptor == null )
+		if (descriptor == null)
 			return null;
 
-		try
-		{
-			IMethod m = ClassFileDocumentsUtils.findMethod( cf.getType( ), methodName, descriptor );
-			if ( m != null )
-			{
+		try {
+			IMethod m = ClassFileDocumentsUtils.findMethod(cf.getType(), methodName, descriptor);
+			if (m != null) {
 				return m;
 			}
-		}
-		catch ( JavaModelException e )
-		{
-			Logger.debug( e );
+		} catch (JavaModelException e) {
+			Logger.debug(e);
 		}
 		return null;
 	}
 
-	protected void editorContextMenuAboutToShow( IMenuManager menu )
-	{
-		super.editorContextMenuAboutToShow( menu );
-		String text = (String) ReflectionUtils.invokeMethod( this, "getShowInMenuLabel" ); //$NON-NLS-1$
-		for ( int i = 0; i < menu.getItems( ).length; i++ )
-		{
-			if ( menu.getItems( )[i] instanceof MenuManager )
-			{
-				if ( ( (MenuManager) menu.getItems( )[i] ).getMenuText( ).equals( text ) )
-				{
-					menu.remove( menu.getItems( )[i] );
+	protected void editorContextMenuAboutToShow(IMenuManager menu) {
+		super.editorContextMenuAboutToShow(menu);
+		String text = (String) ReflectionUtils.invokeMethod(this, "getShowInMenuLabel"); //$NON-NLS-1$
+		for (int i = 0; i < menu.getItems().length; i++) {
+			if (menu.getItems()[i] instanceof MenuManager) {
+				if (((MenuManager) menu.getItems()[i]).getMenuText().equals(text)) {
+					menu.remove(menu.getItems()[i]);
 				}
 			}
 		}
 
-		menu.appendToGroup( ITextEditorActionConstants.GROUP_OPEN, getAction( SourceCodeAction.ID ) );
-		menu.appendToGroup( ITextEditorActionConstants.GROUP_OPEN, getAction( ByteCodeAction.ID ) );
-		menu.appendToGroup( ITextEditorActionConstants.GROUP_OPEN, getAction( DisassemblerAction.ID ) );
-		menu.addMenuListener( new IMenuListener( ) {
+		menu.appendToGroup(ITextEditorActionConstants.GROUP_OPEN, getAction(SourceCodeAction.ID));
+		menu.appendToGroup(ITextEditorActionConstants.GROUP_OPEN, getAction(ByteCodeAction.ID));
+		menu.appendToGroup(ITextEditorActionConstants.GROUP_OPEN, getAction(DisassemblerAction.ID));
+		menu.addMenuListener(new IMenuListener() {
 
 			@Override
-			public void menuAboutToShow( IMenuManager manager )
-			{
-				showMenu( manager );
+			public void menuAboutToShow(IMenuManager manager) {
+				showMenu(manager);
 			}
-		} );
+		});
 	}
 
-	private void showMenu( IMenuManager submenu )
-	{
-		for ( Iterator<IContributionItem> iter = Arrays.asList( submenu.getItems( ) ).iterator( ); iter.hasNext( ); )
-		{
-			IContributionItem item = iter.next( );
-			if ( item instanceof ActionContributionItem )
-			{
-				IAction action = ( (ActionContributionItem) item ).getAction( );
-				if ( action instanceof IUpdate )
-				{
-					( (IUpdate) action ).update( );
+	private void showMenu(IMenuManager submenu) {
+		for (Iterator<IContributionItem> iter = Arrays.asList(submenu.getItems()).iterator(); iter.hasNext();) {
+			IContributionItem item = iter.next();
+			if (item instanceof ActionContributionItem) {
+				IAction action = ((ActionContributionItem) item).getAction();
+				if (action instanceof IUpdate) {
+					((IUpdate) action).update();
 				}
 			}
 		}
 	}
 
 	@Override
-	protected void createActions( )
-	{
-		super.createActions( );
-		setAction( SourceCodeAction.ID, new SourceCodeAction( ) );
-		setAction( ByteCodeAction.ID, new ByteCodeAction( ) );
-		setAction( DisassemblerAction.ID, new DisassemblerAction( ) );
+	protected void createActions() {
+		super.createActions();
+		setAction(SourceCodeAction.ID, new SourceCodeAction());
+		setAction(ByteCodeAction.ID, new ByteCodeAction());
+		setAction(DisassemblerAction.ID, new DisassemblerAction());
 	}
 
 	@Override
-	public String[] collectContextMenuPreferencePages( )
-	{
-		return editor.collectContextMenuPreferencePages( );
+	public String[] collectContextMenuPreferencePages() {
+		return editor.collectContextMenuPreferencePages();
 	}
 
-	public boolean isEditorInputModifiable( )
-	{
+	public boolean isEditorInputModifiable() {
 		return false;
 	}
 
-	public Control getControl( )
-	{
+	public Control getControl() {
 		return container;
 	}
 
-	public void setSelectionElement( ISourceReference selectedElement )
-	{
-		setSelectionElement( selectedElement, false );
+	public void setSelectionElement(ISourceReference selectedElement) {
+		setSelectionElement(selectedElement, false);
 	}
 
-	public void setSelectionElement( ISourceReference selectedElement, boolean force )
-	{
-		final StyledText byteCodeText = getSourceViewer( ).getTextWidget( );
-		if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.BYTE_CODE_MODE
-				&& byteCodeText != null
-				&& !byteCodeText.isDisposed( ) )
-		{
-			if ( !force )
-			{
-				if ( UIUtil.requestFromDisassemblerSelection( ) )
+	public void setSelectionElement(ISourceReference selectedElement, boolean force) {
+		final StyledText byteCodeText = getSourceViewer().getTextWidget();
+		if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.BYTE_CODE_MODE
+				&& byteCodeText != null && !byteCodeText.isDisposed()) {
+			if (!force) {
+				if (UIUtil.requestFromDisassemblerSelection())
 					return;
 
-				if ( !UIUtil.requestFromLinkToSelection( ) )
+				if (!UIUtil.requestFromLinkToSelection())
 					return;
 			}
 
-			if ( selectedElement instanceof IMethod
-					|| selectedElement instanceof IField
-					|| selectedElement instanceof BinaryType )
-			{
-				try
-				{
-					IRegion element = searchElement( byteCodeText, selectedElement );
-					if ( element != null )
-					{
-						selectElement( byteCodeText, element );
+			if (selectedElement instanceof IMethod || selectedElement instanceof IField
+					|| selectedElement instanceof BinaryType) {
+				try {
+					IRegion element = searchElement(byteCodeText, selectedElement);
+					if (element != null) {
+						selectElement(byteCodeText, element);
 					}
-				}
-				catch ( Exception e )
-				{
-					Logger.debug( e );
+				} catch (Exception e) {
+					Logger.debug(e);
 				}
 			}
 		}
 	}
 
-	private IRegion searchElement( StyledText byteCodeText, ISourceReference reference ) throws CoreException
-	{
-		ClassFile cf = (ClassFile) ( (IClassFileEditorInput) getEditorInput( ) ).getClassFile( );
-		if ( reference instanceof BinaryType )
-		{
-			String byteCode = byteCodeText.getText( );
-			String className = ( (BinaryType) reference ).getElementName( );
-			Pattern pattern = Pattern.compile( "this_class.+?\\*", Pattern.DOTALL ); //$NON-NLS-1$
-			Matcher matcher = pattern.matcher( byteCode );
-			while ( matcher.find( ) )
-			{
-				String text = matcher.group( );
-				int classIndex = text.indexOf( className );
-				if ( classIndex != -1 )
-				{
-					return new Region( matcher.start( ) + classIndex, className.length( ) );
+	private IRegion searchElement(StyledText byteCodeText, ISourceReference reference) throws CoreException {
+		ClassFile cf = (ClassFile) ((IClassFileEditorInput) getEditorInput()).getClassFile();
+		if (reference instanceof BinaryType) {
+			String byteCode = byteCodeText.getText();
+			String className = ((BinaryType) reference).getElementName();
+			Pattern pattern = Pattern.compile("this_class.+?\\*", Pattern.DOTALL); //$NON-NLS-1$
+			Matcher matcher = pattern.matcher(byteCode);
+			while (matcher.find()) {
+				String text = matcher.group();
+				int classIndex = text.indexOf(className);
+				if (classIndex != -1) {
+					return new Region(matcher.start() + classIndex, className.length());
 				}
 			}
-		}
-		else if ( reference instanceof IField )
-		{
-			BinaryType jdtType = (BinaryType) ( (IField) reference ).getParent( );
-			if ( jdtType.equals( cf.getType( ) ) )
-			{
-				String byteCode = byteCodeText.getText( );
-				int index = byteCode.indexOf( "/* Fields: */" ); //$NON-NLS-1$
-				if ( index != -1 )
-				{
-					String fieldName = ( (IField) reference ).getElementName( );
+		} else if (reference instanceof IField) {
+			BinaryType jdtType = (BinaryType) ((IField) reference).getParent();
+			if (jdtType.equals(cf.getType())) {
+				String byteCode = byteCodeText.getText();
+				int index = byteCode.indexOf("/* Fields: */"); //$NON-NLS-1$
+				if (index != -1) {
+					String fieldName = ((IField) reference).getElementName();
 					String fieldByteCode = "bytes=\"" + fieldName + "\""; //$NON-NLS-1$ //$NON-NLS-2$
-					Pattern pattern = Pattern.compile( "Field\\[\\d+\\].+?attributes_count", Pattern.DOTALL ); //$NON-NLS-1$
-					Matcher matcher = pattern.matcher( byteCode );
-					while ( matcher.find( ) )
-					{
-						String text = matcher.group( );
-						int fieldIndex = text.indexOf( fieldByteCode );
-						if ( fieldIndex != -1 )
-						{
-							return new Region( matcher.start( ) + fieldIndex + "bytes=\"".length( ), //$NON-NLS-1$
-									fieldName.length( ) );
+					Pattern pattern = Pattern.compile("Field\\[\\d+\\].+?attributes_count", Pattern.DOTALL); //$NON-NLS-1$
+					Matcher matcher = pattern.matcher(byteCode);
+					while (matcher.find()) {
+						String text = matcher.group();
+						int fieldIndex = text.indexOf(fieldByteCode);
+						if (fieldIndex != -1) {
+							return new Region(matcher.start() + fieldIndex + "bytes=\"".length(), //$NON-NLS-1$
+									fieldName.length());
 						}
 					}
 				}
 			}
-		}
-		else if ( reference instanceof IMethod )
-		{
-			BinaryType jdtType = (BinaryType) ( (IMethod) reference ).getParent( );
-			if ( jdtType.equals( cf.getType( ) ) )
-			{
-				String byteCode = byteCodeText.getText( );
-				int index = byteCode.indexOf( "/* Methods: */" ); //$NON-NLS-1$
-				if ( index != -1 )
-				{
-					String methodName = ( (IMethod) reference ).getElementName( );
-					if ( ( (IMethod) reference ).isConstructor( ) )
-					{
+		} else if (reference instanceof IMethod) {
+			BinaryType jdtType = (BinaryType) ((IMethod) reference).getParent();
+			if (jdtType.equals(cf.getType())) {
+				String byteCode = byteCodeText.getText();
+				int index = byteCode.indexOf("/* Methods: */"); //$NON-NLS-1$
+				if (index != -1) {
+					String methodName = ((IMethod) reference).getElementName();
+					if (((IMethod) reference).isConstructor()) {
 						methodName = "<init>"; //$NON-NLS-1$
 					}
 					String methodByteCode = "bytes=\"" + methodName + "\""; //$NON-NLS-1$ //$NON-NLS-2$
-					String methodSignature = ( (IMethod) reference ).getSignature( );
-					Pattern pattern = Pattern.compile( "Method\\[\\d+\\].+?attributes_count", Pattern.DOTALL ); //$NON-NLS-1$
-					Matcher matcher = pattern.matcher( byteCode );
-					while ( matcher.find( ) )
-					{
-						String text = matcher.group( );
-						int methodIndex = text.indexOf( methodByteCode );
-						int methodSignatureIndex = text.indexOf( methodSignature );
-						if ( methodIndex != -1 && methodSignatureIndex != -1 )
-						{
-							return new Region( matcher.start( ) + methodIndex + "bytes=\"".length( ), //$NON-NLS-1$
-									methodName.length( ) );
+					String methodSignature = ((IMethod) reference).getSignature();
+					Pattern pattern = Pattern.compile("Method\\[\\d+\\].+?attributes_count", Pattern.DOTALL); //$NON-NLS-1$
+					Matcher matcher = pattern.matcher(byteCode);
+					while (matcher.find()) {
+						String text = matcher.group();
+						int methodIndex = text.indexOf(methodByteCode);
+						int methodSignatureIndex = text.indexOf(methodSignature);
+						if (methodIndex != -1 && methodSignatureIndex != -1) {
+							return new Region(matcher.start() + methodIndex + "bytes=\"".length(), //$NON-NLS-1$
+									methodName.length());
 						}
 					}
 				}
@@ -813,38 +693,31 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor
 		return null;
 	}
 
-	private void selectElement( StyledText byteCodeText, IRegion region )
-	{
-		if ( region != null && region.getOffset( ) != -1 )
-		{
-			byteCodeText.setSelection( region.getOffset( ), region.getOffset( ) + region.getLength( ) );
+	private void selectElement(StyledText byteCodeText, IRegion region) {
+		if (region != null && region.getOffset() != -1) {
+			byteCodeText.setSelection(region.getOffset(), region.getOffset() + region.getLength());
 		}
 	}
 
-	protected IConfigurationElement getConfigurationElement( )
-	{
-		return (IConfigurationElement) ReflectionUtils.invokeMethod( editor, "getConfigurationElement" ); //$NON-NLS-1$
+	protected IConfigurationElement getConfigurationElement() {
+		return (IConfigurationElement) ReflectionUtils.invokeMethod(editor, "getConfigurationElement"); //$NON-NLS-1$
 	}
 
 	@Override
-	public boolean isDirty( )
-	{
+	public boolean isDirty() {
 		return false;
 	}
 
-	public boolean isEditable( )
-	{
+	public boolean isEditable() {
 		return false;
 	}
 
 	@Override
-	public boolean isEditorInputReadOnly( )
-	{
+	public boolean isEditorInputReadOnly() {
 		return true;
 	}
 
-	protected void handleCursorPositionChanged( )
-	{
-		ReflectionUtils.invokeMethod( editor, "handleCursorPositionChanged" ); //$NON-NLS-1$
+	protected void handleCursorPositionChanged() {
+		ReflectionUtils.invokeMethod(editor, "handleCursorPositionChanged"); //$NON-NLS-1$
 	}
 }

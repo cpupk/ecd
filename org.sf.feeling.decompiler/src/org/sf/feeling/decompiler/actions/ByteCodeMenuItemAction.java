@@ -17,45 +17,37 @@ import org.eclipse.ui.IWorkbenchWindowPulldownDelegate;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 
-public class ByteCodeMenuItemAction implements IWorkbenchWindowPulldownDelegate, IWorkbenchWindowPulldownDelegate2
-{
+public class ByteCodeMenuItemAction implements IWorkbenchWindowPulldownDelegate, IWorkbenchWindowPulldownDelegate2 {
 
-	public ByteCodeMenuItemAction( )
-	{
-		super( );
+	public ByteCodeMenuItemAction() {
+		super();
 	}
 
 	@Override
-	public Menu getMenu( Control parent )
-	{
+	public Menu getMenu(Control parent) {
 		return null;
 	}
 
 	@Override
-	public Menu getMenu( Menu parent )
-	{
+	public Menu getMenu(Menu parent) {
 		return null;
 	}
 
 	@Override
-	public void init( IWorkbenchWindow window )
-	{
+	public void init(IWorkbenchWindow window) {
 	}
 
 	@Override
-	public void dispose( )
-	{
+	public void dispose() {
 	}
 
 	@Override
-	public void run( IAction action )
-	{
-		new ByteCodeAction( ).run( );
+	public void run(IAction action) {
+		new ByteCodeAction().run();
 	}
 
 	@Override
-	public void selectionChanged( IAction action, ISelection selection )
-	{
-		action.setChecked( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.BYTE_CODE_MODE );
+	public void selectionChanged(IAction action, ISelection selection) {
+		action.setChecked(JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.BYTE_CODE_MODE);
 	}
 }

@@ -14,30 +14,23 @@ import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.i18n.Messages;
 import org.sf.feeling.decompiler.util.UIUtil;
 
-public class DecompileWithFernFlowerAction extends Action
-{
+public class DecompileWithFernFlowerAction extends Action {
 
-	public DecompileWithFernFlowerAction( )
-	{
-		super( Messages.getString( "JavaDecompilerActionBarContributor.Action.DecompileWithFernFlower" ) ); //$NON-NLS-1$
-		this.setImageDescriptor( JavaDecompilerPlugin.getImageDescriptor( "icons/fernflower_16.png" ) ); //$NON-NLS-1$
+	public DecompileWithFernFlowerAction() {
+		super(Messages.getString("JavaDecompilerActionBarContributor.Action.DecompileWithFernFlower")); //$NON-NLS-1$
+		this.setImageDescriptor(JavaDecompilerPlugin.getImageDescriptor("icons/fernflower_16.png")); //$NON-NLS-1$
 	}
 
 	@Override
-	public void run( )
-	{
-		try
-		{
-			new DecompileWithFernFlowerHandler( ).execute( null );
-		}
-		catch ( ExecutionException e )
-		{
+	public void run() {
+		try {
+			new DecompileWithFernFlowerHandler().execute(null);
+		} catch (ExecutionException e) {
 		}
 	}
 
 	@Override
-	public boolean isEnabled( )
-	{
-		return UIUtil.getActiveEditor( ) != null || UIUtil.getActiveSelection( ) != null;
+	public boolean isEnabled() {
+		return UIUtil.getActiveEditor() != null || UIUtil.getActiveSelection() != null;
 	}
 }

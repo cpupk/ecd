@@ -16,28 +16,22 @@ import org.eclipse.ui.IEditorPart;
 import org.sf.feeling.decompiler.source.attach.utils.SourceAttachUtil;
 
 @SuppressWarnings("restriction")
-public class DownloadSourcesActionDelegate implements IEditorActionDelegate
-{
+public class DownloadSourcesActionDelegate implements IEditorActionDelegate {
 
 	@Override
-	public void setActiveEditor( IAction action, IEditorPart part )
-	{
-		if ( ( part != null ) && ( ( part.getEditorInput( ) instanceof IClassFileEditorInput ) ) )
-		{
-			if ( SourceAttachUtil.enableMavenDownload( ) )
-			{
-				new MavenSourceDownloader( ).downloadSource( part );
+	public void setActiveEditor(IAction action, IEditorPart part) {
+		if ((part != null) && ((part.getEditorInput() instanceof IClassFileEditorInput))) {
+			if (SourceAttachUtil.enableMavenDownload()) {
+				new MavenSourceDownloader().downloadSource(part);
 			}
 		}
 	}
 
 	@Override
-	public void run( IAction action )
-	{
+	public void run(IAction action) {
 	}
 
 	@Override
-	public void selectionChanged( IAction action, ISelection selection )
-	{
+	public void selectionChanged(IAction action, ISelection selection) {
 	}
 }

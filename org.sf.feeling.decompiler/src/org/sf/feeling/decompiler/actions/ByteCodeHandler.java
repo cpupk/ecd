@@ -12,13 +12,11 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 
-public class ByteCodeHandler extends AbstractHandler
-{
+public class ByteCodeHandler extends AbstractHandler {
 
 	@Override
-	public Object execute( ExecutionEvent event ) throws ExecutionException
-	{
-		new ByteCodeAction( ).run( );
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		new ByteCodeAction().run();
 		return null;
 	}
 

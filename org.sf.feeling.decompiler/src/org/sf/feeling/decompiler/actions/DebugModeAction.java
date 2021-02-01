@@ -15,39 +15,33 @@ import org.sf.feeling.decompiler.editor.JavaDecompilerClassFileEditor;
 import org.sf.feeling.decompiler.i18n.Messages;
 import org.sf.feeling.decompiler.util.UIUtil;
 
-public class DebugModeAction extends Action
-{
+public class DebugModeAction extends Action {
 
-	public DebugModeAction( )
-	{
-		super( Messages.getString( "DebugModeAction.Action.Text" ), //$NON-NLS-1$
-				AS_CHECK_BOX );
+	public DebugModeAction() {
+		super(Messages.getString("DebugModeAction.Action.Text"), //$NON-NLS-1$
+				AS_CHECK_BOX);
 	}
 
 	@Override
-	public void run( )
-	{
-		JavaDecompilerPlugin.getDefault( ).setDebugMode( !isChecked( ) );
-		new DecompileAction( ).run( );
-		final JavaDecompilerClassFileEditor editor = UIUtil.getActiveEditor( );
-		if ( editor != null )
-		{
-			editor.showSource( );
-			editor.notifyPropertiesChange( );
-			Display.getDefault( ).asyncExec( new Runnable( ) {
+	public void run() {
+		JavaDecompilerPlugin.getDefault().setDebugMode(!isChecked());
+		new DecompileAction().run();
+		final JavaDecompilerClassFileEditor editor = UIUtil.getActiveEditor();
+		if (editor != null) {
+			editor.showSource();
+			editor.notifyPropertiesChange();
+			Display.getDefault().asyncExec(new Runnable() {
 
-				public void run( )
-				{
-					editor.setFocus( );
+				public void run() {
+					editor.setFocus();
 				}
-			} );
+			});
 		}
 	}
 
 	@Override
-	public boolean isChecked( )
-	{
-		return JavaDecompilerPlugin.getDefault( ).isDebugMode( );
+	public boolean isChecked() {
+		return JavaDecompilerPlugin.getDefault().isDebugMode();
 	}
 
 }

@@ -15,36 +15,29 @@ import com.strobel.assembler.metadata.ITypeLoader;
 import com.strobel.assembler.metadata.MetadataSystem;
 import com.strobel.assembler.metadata.TypeDefinition;
 
-public final class NoRetryMetadataSystem extends MetadataSystem
-{
+public final class NoRetryMetadataSystem extends MetadataSystem {
 
-	private final Set<String> _failedTypes = new HashSet( );
+	private final Set<String> _failedTypes = new HashSet();
 
-	public NoRetryMetadataSystem( )
-	{
+	public NoRetryMetadataSystem() {
 	}
 
-	public NoRetryMetadataSystem( String classPath )
-	{
-		super( classPath );
+	public NoRetryMetadataSystem(String classPath) {
+		super(classPath);
 	}
 
-	public NoRetryMetadataSystem( ITypeLoader typeLoader )
-	{
-		super( typeLoader );
+	public NoRetryMetadataSystem(ITypeLoader typeLoader) {
+		super(typeLoader);
 	}
 
 	@Override
-	protected TypeDefinition resolveType( String descriptor, boolean mightBePrimitive )
-	{
-		if ( this._failedTypes.contains( descriptor ) )
-		{
+	protected TypeDefinition resolveType(String descriptor, boolean mightBePrimitive) {
+		if (this._failedTypes.contains(descriptor)) {
 			return null;
 		}
-		TypeDefinition result = super.resolveType( descriptor, mightBePrimitive );
-		if ( result == null )
-		{
-			this._failedTypes.add( descriptor );
+		TypeDefinition result = super.resolveType(descriptor, mightBePrimitive);
+		if (result == null) {
+			this._failedTypes.add(descriptor);
 		}
 		return result;
 	}

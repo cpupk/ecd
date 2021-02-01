@@ -13,12 +13,10 @@ import org.eclipse.core.commands.ExecutionException;
 import org.sf.feeling.decompiler.actions.BaseDecompilerHandler;
 import org.sf.feeling.decompiler.procyon.ProcyonDecompilerPlugin;
 
-public class DecompileWithProcyonHandler extends BaseDecompilerHandler
-{
+public class DecompileWithProcyonHandler extends BaseDecompilerHandler {
 
 	@Override
-	public Object execute( ExecutionEvent event ) throws ExecutionException
-	{
-		return handleDecompile( ProcyonDecompilerPlugin.decompilerType );
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		return handleDecompile(ProcyonDecompilerPlugin.decompilerType);
 	}
 }

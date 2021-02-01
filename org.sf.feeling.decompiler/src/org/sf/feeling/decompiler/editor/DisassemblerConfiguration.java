@@ -52,8 +52,7 @@ import com.drgarbage.asm.render.intf.IMethodSection;
 import com.drgarbage.bytecode.ByteCodeConstants;
 import com.drgarbage.bytecode.instructions.BranchInstruction;
 
-public class DisassemblerConfiguration extends TextSourceViewerConfiguration
-{
+public class DisassemblerConfiguration extends TextSourceViewerConfiguration {
 
 	/**
 	 * The Java source code scanner.
@@ -92,53 +91,46 @@ public class DisassemblerConfiguration extends TextSourceViewerConfiguration
 	 */
 	private ITextEditor fTextEditor;
 
-	public DisassemblerConfiguration( IColorManager colorManager, IPreferenceStore preferenceStore, ITextEditor editor,
-			String partitioning )
-	{
-		super( preferenceStore );
+	public DisassemblerConfiguration(IColorManager colorManager, IPreferenceStore preferenceStore, ITextEditor editor,
+			String partitioning) {
+		super(preferenceStore);
 		fColorManager = colorManager;
 		fTextEditor = editor;
 		fDocumentPartitioning = partitioning;
-		initializeScanners( );
+		initializeScanners();
 	}
 
-	public int[] getConfiguredTextHoverStateMasks( ISourceViewer sourceViewer, String contentType )
-	{
-		JavaEditorTextHoverDescriptor[] hoverDescs = JavaPlugin.getDefault( ).getJavaEditorTextHoverDescriptors( );
+	public int[] getConfiguredTextHoverStateMasks(ISourceViewer sourceViewer, String contentType) {
+		JavaEditorTextHoverDescriptor[] hoverDescs = JavaPlugin.getDefault().getJavaEditorTextHoverDescriptors();
 		int stateMasks[] = new int[hoverDescs.length];
 		int stateMasksLength = 0;
-		for ( int i = 0; i < hoverDescs.length; i++ )
-		{
-			if ( hoverDescs[i].isEnabled( ) )
-			{
+		for (int i = 0; i < hoverDescs.length; i++) {
+			if (hoverDescs[i].isEnabled()) {
 				int j = 0;
-				int stateMask = hoverDescs[i].getStateMask( );
-				while ( j < stateMasksLength )
-				{
-					if ( stateMasks[j] == stateMask )
+				int stateMask = hoverDescs[i].getStateMask();
+				while (j < stateMasksLength) {
+					if (stateMasks[j] == stateMask)
 						break;
 					j++;
 				}
-				if ( j == stateMasksLength )
+				if (j == stateMasksLength)
 					stateMasks[stateMasksLength++] = stateMask;
 			}
 		}
-		if ( stateMasksLength == hoverDescs.length )
+		if (stateMasksLength == hoverDescs.length)
 			return stateMasks;
 
 		int[] shortenedStateMasks = new int[stateMasksLength];
-		System.arraycopy( stateMasks, 0, shortenedStateMasks, 0, stateMasksLength );
+		System.arraycopy(stateMasks, 0, shortenedStateMasks, 0, stateMasksLength);
 		return shortenedStateMasks;
 	}
 
-	public ITextHover getTextHover( ISourceViewer sourceViewer, String contentType, int stateMask )
-	{
-		JavaEditorTextHoverDescriptor[] hoverDescs = JavaPlugin.getDefault( ).getJavaEditorTextHoverDescriptors( );
+	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType, int stateMask) {
+		JavaEditorTextHoverDescriptor[] hoverDescs = JavaPlugin.getDefault().getJavaEditorTextHoverDescriptors();
 		int i = 0;
-		while ( i < hoverDescs.length )
-		{
-			if ( hoverDescs[i].isEnabled( ) && hoverDescs[i].getStateMask( ) == stateMask )
-				return new JavaEditorTextHoverProxy( hoverDescs[i], fTextEditor );
+		while (i < hoverDescs.length) {
+			if (hoverDescs[i].isEnabled() && hoverDescs[i].getStateMask() == stateMask)
+				return new JavaEditorTextHoverProxy(hoverDescs[i], fTextEditor);
 			i++;
 		}
 
@@ -150,8 +142,7 @@ public class DisassemblerConfiguration extends TextSourceViewerConfiguration
 	 *
 	 * @return the Java source code scanner
 	 */
-	protected RuleBasedScanner getCodeScanner( )
-	{
+	protected RuleBasedScanner getCodeScanner() {
 		return fCodeScanner;
 	}
 
@@ -160,21 +151,14 @@ public class DisassemblerConfiguration extends TextSourceViewerConfiguration
 	 *
 	 * @return the color manager
 	 */
-	protected IColorManager getColorManager( )
-	{
+	protected IColorManager getColorManager() {
 		return fColorManager;
 	}
 
-	public String[] getConfiguredContentTypes( ISourceViewer sourceViewer )
-	{
-		return new String[]{
-				IDocument.DEFAULT_CONTENT_TYPE,
-				IJavaPartitions.JAVA_MULTI_LINE_COMMENT,
-				IJavaPartitions.JAVA_SINGLE_LINE_COMMENT,
-				IJavaPartitions.JAVA_STRING,
-				IJavaPartitions.JAVA_CHARACTER,
-				IJavaPartitions.JAVA_DOC
-		};
+	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
+		return new String[] { IDocument.DEFAULT_CONTENT_TYPE, IJavaPartitions.JAVA_MULTI_LINE_COMMENT,
+				IJavaPartitions.JAVA_SINGLE_LINE_COMMENT, IJavaPartitions.JAVA_STRING, IJavaPartitions.JAVA_CHARACTER,
+				IJavaPartitions.JAVA_DOC };
 	}
 
 	/*
@@ -184,32 +168,29 @@ public class DisassemblerConfiguration extends TextSourceViewerConfiguration
 	 * 
 	 * @since 3.0
 	 */
-	public String getConfiguredDocumentPartitioning( ISourceViewer sourceViewer )
-	{
-		if ( fDocumentPartitioning != null )
+	public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer) {
+		if (fDocumentPartitioning != null)
 			return fDocumentPartitioning;
-		return super.getConfiguredDocumentPartitioning( sourceViewer );
+		return super.getConfiguredDocumentPartitioning(sourceViewer);
 	}
 
-	public ITextDoubleClickStrategy getDoubleClickStrategy( ISourceViewer sourceViewer, String contentType )
-	{
+	public ITextDoubleClickStrategy getDoubleClickStrategy(ISourceViewer sourceViewer, String contentType) {
 		/*
-		 * FIX: bug#115 Nicolas F. Rouquette: Problems with the DrGarbage
-		 * plugins with the DLTK 1.0.0M4 build (Galileo)
+		 * FIX: bug#115 Nicolas F. Rouquette: Problems with the DrGarbage plugins with
+		 * the DLTK 1.0.0M4 build (Galileo)
 		 */
 		// if (IJavaPartitions.JAVA_DOC.equals(contentType))
 		// return new JavadocDoubleClickStrategy();
-		if ( IJavaPartitions.JAVA_MULTI_LINE_COMMENT.equals( contentType )
-				|| IJavaPartitions.JAVA_SINGLE_LINE_COMMENT.equals( contentType ) )
-			return new DefaultTextDoubleClickStrategy( );
+		if (IJavaPartitions.JAVA_MULTI_LINE_COMMENT.equals(contentType)
+				|| IJavaPartitions.JAVA_SINGLE_LINE_COMMENT.equals(contentType))
+			return new DefaultTextDoubleClickStrategy();
 		// else if (IJavaPartitions.JAVA_STRING.equals(contentType) ||
 		// IJavaPartitions.JAVA_CHARACTER.equals(contentType))
 		// return new
 		// JavaStringDoubleClickSelector(getConfiguredDocumentPartitioning(sourceViewer));
-		if ( fJavaDoubleClickSelector == null )
-		{
-			fJavaDoubleClickSelector = new JavaDoubleClickSelector( );
-			fJavaDoubleClickSelector.setSourceVersion( fPreferenceStore.getString( JavaCore.COMPILER_SOURCE ) );
+		if (fJavaDoubleClickSelector == null) {
+			fJavaDoubleClickSelector = new JavaDoubleClickSelector();
+			fJavaDoubleClickSelector.setSourceVersion(fPreferenceStore.getString(JavaCore.COMPILER_SOURCE));
 		}
 		return fJavaDoubleClickSelector;
 	}
@@ -220,11 +201,8 @@ public class DisassemblerConfiguration extends TextSourceViewerConfiguration
 	 * 
 	 * @since 3.1
 	 */
-	public IHyperlinkDetector[] getHyperlinkDetectors( ISourceViewer sourceViewer )
-	{
-		return new IHyperlinkDetector[]{
-				new ClassFileHyperlinkDetector( ), new URLHyperlinkDetector( )
-		};
+	public IHyperlinkDetector[] getHyperlinkDetectors(ISourceViewer sourceViewer) {
+		return new IHyperlinkDetector[] { new ClassFileHyperlinkDetector(), new URLHyperlinkDetector() };
 	}
 
 	/**
@@ -233,43 +211,41 @@ public class DisassemblerConfiguration extends TextSourceViewerConfiguration
 	 * @return the Java multi-line comment scanner
 	 * @since 2.0
 	 */
-	protected RuleBasedScanner getMultilineCommentScanner( )
-	{
+	protected RuleBasedScanner getMultilineCommentScanner() {
 		return fMultilineCommentScanner;
 	}
 
 	/*
 	 * @see SourceViewerConfiguration#getPresentationReconciler(ISourceViewer)
 	 */
-	public IPresentationReconciler getPresentationReconciler( ISourceViewer sourceViewer )
-	{
+	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 
-		PresentationReconciler reconciler = new JavaPresentationReconciler( );
-		reconciler.setDocumentPartitioning( getConfiguredDocumentPartitioning( sourceViewer ) );
+		PresentationReconciler reconciler = new JavaPresentationReconciler();
+		reconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
 
-		DefaultDamagerRepairer dr = new DefaultDamagerRepairer( getCodeScanner( ) );
-		reconciler.setDamager( dr, IDocument.DEFAULT_CONTENT_TYPE );
-		reconciler.setRepairer( dr, IDocument.DEFAULT_CONTENT_TYPE );
+		DefaultDamagerRepairer dr = new DefaultDamagerRepairer(getCodeScanner());
+		reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
+		reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
 
-		dr = new DefaultDamagerRepairer( getMultilineCommentScanner( ) );
-		reconciler.setDamager( dr, IJavaPartitions.JAVA_MULTI_LINE_COMMENT );
-		reconciler.setRepairer( dr, IJavaPartitions.JAVA_MULTI_LINE_COMMENT );
+		dr = new DefaultDamagerRepairer(getMultilineCommentScanner());
+		reconciler.setDamager(dr, IJavaPartitions.JAVA_MULTI_LINE_COMMENT);
+		reconciler.setRepairer(dr, IJavaPartitions.JAVA_MULTI_LINE_COMMENT);
 
-		dr = new DefaultDamagerRepairer( getSinglelineCommentScanner( ) );
-		reconciler.setDamager( dr, IJavaPartitions.JAVA_SINGLE_LINE_COMMENT );
-		reconciler.setRepairer( dr, IJavaPartitions.JAVA_SINGLE_LINE_COMMENT );
+		dr = new DefaultDamagerRepairer(getSinglelineCommentScanner());
+		reconciler.setDamager(dr, IJavaPartitions.JAVA_SINGLE_LINE_COMMENT);
+		reconciler.setRepairer(dr, IJavaPartitions.JAVA_SINGLE_LINE_COMMENT);
 
-		dr = new DefaultDamagerRepairer( getStringScanner( ) );
-		reconciler.setDamager( dr, IJavaPartitions.JAVA_STRING );
-		reconciler.setRepairer( dr, IJavaPartitions.JAVA_STRING );
+		dr = new DefaultDamagerRepairer(getStringScanner());
+		reconciler.setDamager(dr, IJavaPartitions.JAVA_STRING);
+		reconciler.setRepairer(dr, IJavaPartitions.JAVA_STRING);
 
-		dr = new DefaultDamagerRepairer( getStringScanner( ) );
-		reconciler.setDamager( dr, IJavaPartitions.JAVA_CHARACTER );
-		reconciler.setRepairer( dr, IJavaPartitions.JAVA_CHARACTER );
+		dr = new DefaultDamagerRepairer(getStringScanner());
+		reconciler.setDamager(dr, IJavaPartitions.JAVA_CHARACTER);
+		reconciler.setRepairer(dr, IJavaPartitions.JAVA_CHARACTER);
 
-		dr = new DefaultDamagerRepairer( getStringScanner( ) );
-		reconciler.setDamager( dr, IJavaPartitions.JAVA_DOC );
-		reconciler.setRepairer( dr, IJavaPartitions.JAVA_DOC );
+		dr = new DefaultDamagerRepairer(getStringScanner());
+		reconciler.setDamager(dr, IJavaPartitions.JAVA_DOC);
+		reconciler.setRepairer(dr, IJavaPartitions.JAVA_DOC);
 
 		return reconciler;
 	}
@@ -280,8 +256,7 @@ public class DisassemblerConfiguration extends TextSourceViewerConfiguration
 	 * @return the Java single-line comment scanner
 	 * @since 2.0
 	 */
-	protected RuleBasedScanner getSinglelineCommentScanner( )
-	{
+	protected RuleBasedScanner getSinglelineCommentScanner() {
 		return fSinglelineCommentScanner;
 	}
 
@@ -291,8 +266,7 @@ public class DisassemblerConfiguration extends TextSourceViewerConfiguration
 	 * @return the Java string scanner
 	 * @since 2.0
 	 */
-	protected RuleBasedScanner getStringScanner( )
-	{
+	protected RuleBasedScanner getStringScanner() {
 		return fStringScanner;
 	}
 
@@ -300,45 +274,38 @@ public class DisassemblerConfiguration extends TextSourceViewerConfiguration
 	 * Initializes the scanners.
 	 *
 	 */
-	private void initializeScanners( )
-	{
-		fCodeScanner = new RenderedBytecodeScanner( getColorManager( ), fPreferenceStore );
-		fMultilineCommentScanner = new JavaCommentScanner( getColorManager( ),
-				fPreferenceStore,
-				IJavaColorConstants.JAVA_MULTI_LINE_COMMENT );
-		fSinglelineCommentScanner = new JavaCommentScanner( getColorManager( ),
-				fPreferenceStore,
-				IJavaColorConstants.JAVA_SINGLE_LINE_COMMENT );
-		fStringScanner = new SingleTokenJavaScanner( getColorManager( ),
-				fPreferenceStore,
-				IJavaColorConstants.JAVA_STRING );
+	private void initializeScanners() {
+		fCodeScanner = new RenderedBytecodeScanner(getColorManager(), fPreferenceStore);
+		fMultilineCommentScanner = new JavaCommentScanner(getColorManager(), fPreferenceStore,
+				IJavaColorConstants.JAVA_MULTI_LINE_COMMENT);
+		fSinglelineCommentScanner = new JavaCommentScanner(getColorManager(), fPreferenceStore,
+				IJavaColorConstants.JAVA_SINGLE_LINE_COMMENT);
+		fStringScanner = new SingleTokenJavaScanner(getColorManager(), fPreferenceStore,
+				IJavaColorConstants.JAVA_STRING);
 	}
 
 	/**
-	 * Adapts the behavior of the contained components to the change encoded in
-	 * the given event.
+	 * Adapts the behavior of the contained components to the change encoded in the
+	 * given event.
 	 */
-	public void adaptToPreferenceChange( PropertyChangeEvent event )
-	{
-		if ( fCodeScanner.affectsBehavior( event ) )
-			fCodeScanner.adaptToPreferenceChange( event );
-		if ( fMultilineCommentScanner.affectsBehavior( event ) )
-			fMultilineCommentScanner.adaptToPreferenceChange( event );
-		if ( fSinglelineCommentScanner.affectsBehavior( event ) )
-			fSinglelineCommentScanner.adaptToPreferenceChange( event );
-		if ( fStringScanner.affectsBehavior( event ) )
-			fStringScanner.adaptToPreferenceChange( event );
+	public void adaptToPreferenceChange(PropertyChangeEvent event) {
+		if (fCodeScanner.affectsBehavior(event))
+			fCodeScanner.adaptToPreferenceChange(event);
+		if (fMultilineCommentScanner.affectsBehavior(event))
+			fMultilineCommentScanner.adaptToPreferenceChange(event);
+		if (fSinglelineCommentScanner.affectsBehavior(event))
+			fSinglelineCommentScanner.adaptToPreferenceChange(event);
+		if (fStringScanner.affectsBehavior(event))
+			fStringScanner.adaptToPreferenceChange(event);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.ui.editors.text.TextSourceViewerConfiguration#getReconciler(
+	 * @see org.eclipse.ui.editors.text.TextSourceViewerConfiguration#getReconciler(
 	 * org.eclipse.jface.text.source.ISourceViewer)
 	 */
-	public IReconciler getReconciler( ISourceViewer sourceViewer )
-	{
+	public IReconciler getReconciler(ISourceViewer sourceViewer) {
 		/* overwrite the implementation to deactivate spelling check */
 		return null;
 	}
@@ -346,73 +313,54 @@ public class DisassemblerConfiguration extends TextSourceViewerConfiguration
 	/**
 	 * HyperLink Detector for BYtecode Visualizer Documnts.
 	 */
-	class ClassFileHyperlinkDetector implements IHyperlinkDetector
-	{
+	class ClassFileHyperlinkDetector implements IHyperlinkDetector {
 
 		/*
 		 * (non-Javadoc)
 		 * 
-		 * @see
-		 * org.eclipse.jface.text.hyperlink.IHyperlinkDetector#detectHyperlinks(
-		 * org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion,
-		 * boolean)
+		 * @see org.eclipse.jface.text.hyperlink.IHyperlinkDetector#detectHyperlinks(
+		 * org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion, boolean)
 		 */
-		public IHyperlink[] detectHyperlinks( ITextViewer textViewer, IRegion region,
-				boolean canShowMultipleHyperlinks )
-		{
+		public IHyperlink[] detectHyperlinks(ITextViewer textViewer, IRegion region,
+				boolean canShowMultipleHyperlinks) {
 
-			IDocument document = fTextEditor.getDocumentProvider( ).getDocument( fTextEditor.getEditorInput( ) );
+			IDocument document = fTextEditor.getDocumentProvider().getDocument(fTextEditor.getEditorInput());
 			IRegion lineInfo = null;
 			String lineText = null;
 			int lineNumber = -1;
-			try
-			{
-				lineInfo = document.getLineInformationOfOffset( region.getOffset( ) );
-				lineText = document.get( lineInfo.getOffset( ), lineInfo.getLength( ) );
-				lineNumber = document.getLineOfOffset( region.getOffset( ) );
-			}
-			catch ( BadLocationException ex )
-			{
+			try {
+				lineInfo = document.getLineInformationOfOffset(region.getOffset());
+				lineText = document.get(lineInfo.getOffset(), lineInfo.getLength());
+				lineNumber = document.getLineOfOffset(region.getOffset());
+			} catch (BadLocationException ex) {
 				return null;
 			}
 
-			if ( lineText.contains( "goto" ) || lineText.contains( "if" ) ) //$NON-NLS-1$ //$NON-NLS-2$
+			if (lineText.contains("goto") || lineText.contains("if")) //$NON-NLS-1$ //$NON-NLS-2$
 			{
 				/*
-				 * mark a complete instruction as hyperlink "12 goto 23;" ->goto
-				 * 23
+				 * mark a complete instruction as hyperlink "12 goto 23;" ->goto 23
 				 */
-				int begin = lineText.indexOf( " ", 7 ); //$NON-NLS-1$
-				int end = lineText.indexOf( ";" ); //$NON-NLS-1$
-				if ( end < 0
-						|| begin < 0
-						|| end == begin + 1
-						|| region.getOffset( ) < lineInfo.getOffset( ) + begin + 1 )
+				int begin = lineText.indexOf(" ", 7); //$NON-NLS-1$
+				int end = lineText.indexOf(";"); //$NON-NLS-1$
+				if (end < 0 || begin < 0 || end == begin + 1 || region.getOffset() < lineInfo.getOffset() + begin + 1)
 					return null;
 
-				String linkText = lineText.substring( begin + 1, end );
+				String linkText = lineText.substring(begin + 1, end);
 
-				IRegion r2 = new Region( lineInfo.getOffset( ) + begin + 1, linkText.length( ) );
-				return new IHyperlink[]{
-						new ClassFileLocalHyperLink( r2, linkText, lineNumber )
-				};
-			}
-			else if ( lineText.contains( "/* ." ) ) //$NON-NLS-1$
+				IRegion r2 = new Region(lineInfo.getOffset() + begin + 1, linkText.length());
+				return new IHyperlink[] { new ClassFileLocalHyperLink(r2, linkText, lineNumber) };
+			} else if (lineText.contains("/* .")) //$NON-NLS-1$
 			{
-				int begin = lineText.indexOf( "/* ." ) + 2; //$NON-NLS-1$
-				int end = lineText.indexOf( "*/" ) - 1; //$NON-NLS-1$
-				if ( end < 0
-						|| begin < 0
-						|| end == begin + 1
-						|| region.getOffset( ) < lineInfo.getOffset( ) + begin + 1 )
+				int begin = lineText.indexOf("/* .") + 2; //$NON-NLS-1$
+				int end = lineText.indexOf("*/") - 1; //$NON-NLS-1$
+				if (end < 0 || begin < 0 || end == begin + 1 || region.getOffset() < lineInfo.getOffset() + begin + 1)
 					return null;
 
-				String linkText = lineText.substring( begin + 2, end );
+				String linkText = lineText.substring(begin + 2, end);
 
-				IRegion r2 = new Region( lineInfo.getOffset( ) + begin + 1, linkText.length( ) );
-				return new IHyperlink[]{
-						new ClassFileFieldLocalHyperLink( r2, linkText, lineNumber )
-				};
+				IRegion r2 = new Region(lineInfo.getOffset() + begin + 1, linkText.length());
+				return new IHyperlink[] { new ClassFileFieldLocalHyperLink(r2, linkText, lineNumber) };
 
 			}
 			// else{
@@ -438,8 +386,7 @@ public class DisassemblerConfiguration extends TextSourceViewerConfiguration
 	/**
 	 * Local Hyperlink class for bytecode visualizer document.
 	 */
-	class ClassFileLocalHyperLink implements IHyperlink
-	{
+	class ClassFileLocalHyperLink implements IHyperlink {
 
 		/**
 		 * LInk region.
@@ -463,9 +410,8 @@ public class DisassemblerConfiguration extends TextSourceViewerConfiguration
 		 * @param text
 		 * @param lineNumber
 		 */
-		public ClassFileLocalHyperLink( IRegion region, String text, int lineNumber )
-		{
-			super( );
+		public ClassFileLocalHyperLink(IRegion region, String text, int lineNumber) {
+			super();
 			this.region = region;
 			this.text = text;
 			this.lineNumber = lineNumber;
@@ -476,8 +422,7 @@ public class DisassemblerConfiguration extends TextSourceViewerConfiguration
 		 * 
 		 * @see org.eclipse.jface.text.hyperlink.IHyperlink#getHyperlinkRegion()
 		 */
-		public IRegion getHyperlinkRegion( )
-		{
+		public IRegion getHyperlinkRegion() {
 			return region;
 		}
 
@@ -486,8 +431,7 @@ public class DisassemblerConfiguration extends TextSourceViewerConfiguration
 		 * 
 		 * @see org.eclipse.jface.text.hyperlink.IHyperlink#getHyperlinkText()
 		 */
-		public String getHyperlinkText( )
-		{
+		public String getHyperlinkText() {
 			return text;
 		}
 
@@ -496,8 +440,7 @@ public class DisassemblerConfiguration extends TextSourceViewerConfiguration
 		 * 
 		 * @see org.eclipse.jface.text.hyperlink.IHyperlink#getTypeLabel()
 		 */
-		public String getTypeLabel( )
-		{
+		public String getTypeLabel() {
 			return null;
 		}
 
@@ -506,24 +449,20 @@ public class DisassemblerConfiguration extends TextSourceViewerConfiguration
 		 * 
 		 * @see org.eclipse.jface.text.hyperlink.IHyperlink#open()
 		 */
-		public void open( )
-		{
+		public void open() {
 
-			DisassemblerDocumentProvider bdp = (DisassemblerDocumentProvider) fTextEditor.getDocumentProvider( );
-			IMethodSection method = bdp.getClassFileDocument( ).findMethodSection( lineNumber );
-			List<IInstructionLine> instructions = method.getInstructionLines( );
+			DisassemblerDocumentProvider bdp = (DisassemblerDocumentProvider) fTextEditor.getDocumentProvider();
+			IMethodSection method = bdp.getClassFileDocument().findMethodSection(lineNumber);
+			List<IInstructionLine> instructions = method.getInstructionLines();
 
 			/* find selected instruction */
 			int targetOffset = ByteCodeConstants.INVALID_OFFSET;
-			for ( IInstructionLine i : instructions )
-			{
-				if ( i.getLine( ) == lineNumber )
-				{
-					if ( i.getInstruction( ) instanceof BranchInstruction )
-					{
-						BranchInstruction bi = (BranchInstruction) i.getInstruction( );
+			for (IInstructionLine i : instructions) {
+				if (i.getLine() == lineNumber) {
+					if (i.getInstruction() instanceof BranchInstruction) {
+						BranchInstruction bi = (BranchInstruction) i.getInstruction();
 
-						targetOffset = bi.getBranchOffset( ) + bi.getOffset( );
+						targetOffset = bi.getBranchOffset() + bi.getOffset();
 
 						break;
 					}
@@ -532,24 +471,18 @@ public class DisassemblerConfiguration extends TextSourceViewerConfiguration
 			}
 
 			/* find target instruction */
-			for ( IInstructionLine i : instructions )
-			{
-				if ( i.getInstruction( ).getOffset( ) == targetOffset )
-				{
-					IDocument document = fTextEditor.getDocumentProvider( )
-							.getDocument( fTextEditor.getEditorInput( ) );
+			for (IInstructionLine i : instructions) {
+				if (i.getInstruction().getOffset() == targetOffset) {
+					IDocument document = fTextEditor.getDocumentProvider().getDocument(fTextEditor.getEditorInput());
 					int destOffset, destLength;
-					try
-					{
-						destOffset = document.getLineOffset( i.getLine( ) );
-						destLength = document.getLineLength( i.getLine( ) );
-					}
-					catch ( BadLocationException e )
-					{
+					try {
+						destOffset = document.getLineOffset(i.getLine());
+						destLength = document.getLineLength(i.getLine());
+					} catch (BadLocationException e) {
 						return;
 					}
 
-					fTextEditor.selectAndReveal( destOffset, destLength - 1 );
+					fTextEditor.selectAndReveal(destOffset, destLength - 1);
 					break;
 				}
 			}
@@ -559,11 +492,10 @@ public class DisassemblerConfiguration extends TextSourceViewerConfiguration
 	}
 
 	/**
-	 * Local Hyperlink class for bytecode visualizer document. The field within
-	 * a class file document is assigned to the link.
+	 * Local Hyperlink class for bytecode visualizer document. The field within a
+	 * class file document is assigned to the link.
 	 */
-	class ClassFileFieldLocalHyperLink implements IHyperlink
-	{
+	class ClassFileFieldLocalHyperLink implements IHyperlink {
 
 		/**
 		 * LInk region.
@@ -581,9 +513,8 @@ public class DisassemblerConfiguration extends TextSourceViewerConfiguration
 		@SuppressWarnings("unused")
 		private int lineNumber;
 
-		public ClassFileFieldLocalHyperLink( IRegion region, String text, int lineNumber )
-		{
-			super( );
+		public ClassFileFieldLocalHyperLink(IRegion region, String text, int lineNumber) {
+			super();
 			this.region = region;
 			this.text = text;
 			this.lineNumber = lineNumber;
@@ -594,8 +525,7 @@ public class DisassemblerConfiguration extends TextSourceViewerConfiguration
 		 * 
 		 * @see org.eclipse.jface.text.hyperlink.IHyperlink#getHyperlinkRegion()
 		 */
-		public IRegion getHyperlinkRegion( )
-		{
+		public IRegion getHyperlinkRegion() {
 			return region;
 		}
 
@@ -604,8 +534,7 @@ public class DisassemblerConfiguration extends TextSourceViewerConfiguration
 		 * 
 		 * @see org.eclipse.jface.text.hyperlink.IHyperlink#getHyperlinkText()
 		 */
-		public String getHyperlinkText( )
-		{
+		public String getHyperlinkText() {
 			return text;
 		}
 
@@ -614,8 +543,7 @@ public class DisassemblerConfiguration extends TextSourceViewerConfiguration
 		 * 
 		 * @see org.eclipse.jface.text.hyperlink.IHyperlink#getTypeLabel()
 		 */
-		public String getTypeLabel( )
-		{
+		public String getTypeLabel() {
 			return null;
 		}
 
@@ -624,39 +552,35 @@ public class DisassemblerConfiguration extends TextSourceViewerConfiguration
 		 * 
 		 * @see org.eclipse.jface.text.hyperlink.IHyperlink#open()
 		 */
-		public void open( )
-		{
+		public void open() {
 
-			DisassemblerDocumentProvider bdp = (DisassemblerDocumentProvider) fTextEditor.getDocumentProvider( );
-			IFieldSection field = bdp.getClassFileDocument( ).findFieldSection( text );
+			DisassemblerDocumentProvider bdp = (DisassemblerDocumentProvider) fTextEditor.getDocumentProvider();
+			IFieldSection field = bdp.getClassFileDocument().findFieldSection(text);
 
-			IDocument document = fTextEditor.getDocumentProvider( ).getDocument( fTextEditor.getEditorInput( ) );
+			IDocument document = fTextEditor.getDocumentProvider().getDocument(fTextEditor.getEditorInput());
 
-			int destOffset, destLength, elementIndex, elementLength;;
+			int destOffset, destLength, elementIndex, elementLength;
+			;
 
-			try
-			{
-				destOffset = document.getLineOffset( field.getBytecodeDocumentLine( ) );
-				destLength = document.getLineLength( field.getBytecodeDocumentLine( ) );
+			try {
+				destOffset = document.getLineOffset(field.getBytecodeDocumentLine());
+				destLength = document.getLineLength(field.getBytecodeDocumentLine());
 
-				String lineString = document.get( destOffset, destLength );
-				elementIndex = lineString.indexOf( " " + text + ";" ) + 1; //$NON-NLS-1$ //$NON-NLS-2$
-				elementLength = text.length( );
+				String lineString = document.get(destOffset, destLength);
+				elementIndex = lineString.indexOf(" " + text + ";") + 1; //$NON-NLS-1$ //$NON-NLS-2$
+				elementLength = text.length();
 
-			}
-			catch ( BadLocationException e )
-			{
+			} catch (BadLocationException e) {
 				return;
 			}
 
-			fTextEditor.selectAndReveal( destOffset + elementIndex, elementLength );
+			fTextEditor.selectAndReveal(destOffset + elementIndex, elementLength);
 		}
 	}
 
-	protected Map<String, IAdaptable> getHyperlinkDetectorTargets( ISourceViewer sourceViewer )
-	{
-		Map<String, IAdaptable> targets = super.getHyperlinkDetectorTargets( sourceViewer );
-		targets.put( "org.eclipse.jdt.ui.javaCode", fTextEditor ); //$NON-NLS-1$
+	protected Map<String, IAdaptable> getHyperlinkDetectorTargets(ISourceViewer sourceViewer) {
+		Map<String, IAdaptable> targets = super.getHyperlinkDetectorTargets(sourceViewer);
+		targets.put("org.eclipse.jdt.ui.javaCode", fTextEditor); //$NON-NLS-1$
 		return targets;
 	}
 }

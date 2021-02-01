@@ -21,59 +21,51 @@ import org.eclipse.jdt.internal.core.SourceMapper;
 import org.sf.feeling.decompiler.util.DecompileUtil;
 import org.sf.feeling.decompiler.util.SourceMapperUtil;
 
-public class ClassFileSourceMap
-{
+public class ClassFileSourceMap {
 
-	private static IType getOuterMostEnclosingType( ClassFile cf )
-	{
-		IType type = cf.getType( );
-		IType enclosingType = type.getDeclaringType( );
-		while ( enclosingType != null )
-		{
+	private static IType getOuterMostEnclosingType(ClassFile cf) {
+		IType type = cf.getType();
+		IType enclosingType = type.getDeclaringType();
+		while (enclosingType != null) {
 			type = enclosingType;
-			enclosingType = type.getDeclaringType( );
+			enclosingType = type.getDeclaringType();
 		}
 		return type;
 	}
 
-	private static void mapSource( JavaDecompilerBufferManager bufferManager, ClassFile cf, SourceMapper mapper,
-			IBinaryType info, IClassFile bufferOwner, char[] markedSrc )
-	{
-		char[] contents = mapper.findSource( cf.getType( ), info );
-		if ( Arrays.equals( markedSrc, contents ) )
+	private static void mapSource(JavaDecompilerBufferManager bufferManager, ClassFile cf, SourceMapper mapper,
+			IBinaryType info, IClassFile bufferOwner, char[] markedSrc) {
+		char[] contents = mapper.findSource(cf.getType(), info);
+		if (Arrays.equals(markedSrc, contents))
 			return;
 		contents = markedSrc;
-		if ( contents != null )
-		{
+		if (contents != null) {
 			// create buffer
-			IBuffer buffer = BufferManager.createBuffer( bufferOwner );
-			if ( buffer == null )
+			IBuffer buffer = BufferManager.createBuffer(bufferOwner);
+			if (buffer == null)
 				return;
 			JavaDecompilerBufferManager bufManager = bufferManager;
-			bufManager.addBuffer( buffer );
+			bufManager.addBuffer(buffer);
 
 			// set the buffer source
-			if ( buffer.getCharacters( ) == null )
-			{
-				buffer.setContents( contents );
+			if (buffer.getCharacters() == null) {
+				buffer.setContents(contents);
 			}
 
 			// listen to buffer changes
 			// buffer.addBufferChangedListener( cf );
 
 			// do the source mapping
-			SourceMapperUtil.mapSource( mapper, getOuterMostEnclosingType( cf ), contents, info );
+			SourceMapperUtil.mapSource(mapper, getOuterMostEnclosingType(cf), contents, info);
 
 			return;
-		}
-		else
-		{
+		} else {
 			// create buffer
-			IBuffer buffer = BufferManager.createNullBuffer( bufferOwner );
-			if ( buffer == null )
+			IBuffer buffer = BufferManager.createNullBuffer(bufferOwner);
+			if (buffer == null)
 				return;
 			JavaDecompilerBufferManager bufManager = bufferManager;
-			bufManager.addBuffer( buffer );
+			bufManager.addBuffer(buffer);
 
 			// listen to buffer changes
 			// buffer.addBufferChangedListener( cf );
@@ -81,27 +73,23 @@ public class ClassFileSourceMap
 		}
 	}
 
-	public static void updateSource( JavaDecompilerBufferManager bufferManager, ClassFile cf, char[] markedSrc )
-			throws JavaModelException
-	{
-		IType type = cf.getType( );
-		if ( !type.isBinary( ) )
-		{
+	public static void updateSource(JavaDecompilerBufferManager bufferManager, ClassFile cf, char[] markedSrc)
+			throws JavaModelException {
+		IType type = cf.getType();
+		if (!type.isBinary()) {
 			return;
 		}
-		Object info = cf.getElementInfo( );
-		IType enclosingType = type.getDeclaringType( );
-		while ( enclosingType != null )
-		{
+		Object info = cf.getElementInfo();
+		IType enclosingType = type.getDeclaringType();
+		while (enclosingType != null) {
 			type = enclosingType;
-			enclosingType = type.getDeclaringType( );
+			enclosingType = type.getDeclaringType();
 		}
 		IType outerMostEnclosingType = type;
-		SourceMapper mapper = cf.getSourceMapper( );
+		SourceMapper mapper = cf.getSourceMapper();
 		IBinaryType typeInfo = info instanceof IBinaryType ? (IBinaryType) info : null;
-		if ( mapper != null )
-		{
-			mapSource( bufferManager, cf, mapper, typeInfo, outerMostEnclosingType.getClassFile( ), markedSrc );
+		if (mapper != null) {
+			mapSource(bufferManager, cf, mapper, typeInfo, outerMostEnclosingType.getClassFile(), markedSrc);
 		}
 
 	}

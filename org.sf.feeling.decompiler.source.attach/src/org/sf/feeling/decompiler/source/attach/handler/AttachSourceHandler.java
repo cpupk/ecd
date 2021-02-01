@@ -21,46 +21,37 @@ import org.sf.feeling.decompiler.source.attach.i18n.Messages;
 import org.sf.feeling.decompiler.source.attach.utils.SourceAttachUtil;
 import org.sf.feeling.decompiler.util.Logger;
 
-public class AttachSourceHandler implements IAttachSourceHandler
-{
+public class AttachSourceHandler implements IAttachSourceHandler {
 
 	@Override
-	public void execute( final IPackageFragmentRoot library, final boolean showUI )
-	{
-		if ( !showUI && SourceAttachUtil.isMavenLibrary( library ) && SourceAttachUtil.enableMavenDownload( ) )
-		{
+	public void execute(final IPackageFragmentRoot library, final boolean showUI) {
+		if (!showUI && SourceAttachUtil.isMavenLibrary(library) && SourceAttachUtil.enableMavenDownload()) {
 			return;
 		}
 
-		final List<IPackageFragmentRoot> selections = new ArrayList<IPackageFragmentRoot>( );
-		selections.add( library );
-		if ( !selections.isEmpty( ) )
-		{
-			if ( showUI )
-			{
-				final Job job = new Job( Messages.getString( "AttachSourceHandler.Job.Name" ) ) { //$NON-NLS-1$
+		final List<IPackageFragmentRoot> selections = new ArrayList<IPackageFragmentRoot>();
+		selections.add(library);
+		if (!selections.isEmpty()) {
+			if (showUI) {
+				final Job job = new Job(Messages.getString("AttachSourceHandler.Job.Name")) { //$NON-NLS-1$
 
 					@Override
-					protected IStatus run( final IProgressMonitor monitor )
-					{
-						return JavaSourceAttacherHandler.updateSourceAttachments( selections, monitor );
+					protected IStatus run(final IProgressMonitor monitor) {
+						return JavaSourceAttacherHandler.updateSourceAttachments(selections, monitor);
 					}
 				};
-				job.setPriority( 30 );
-				job.schedule( );
-			}
-			else
-			{
-				Thread thread = new Thread( ) {
+				job.setPriority(30);
+				job.schedule();
+			} else {
+				Thread thread = new Thread() {
 
 					@Override
-					public void run( )
-					{
-						JavaSourceAttacherHandler.updateSourceAttachments( selections, null );
+					public void run() {
+						JavaSourceAttacherHandler.updateSourceAttachments(selections, null);
 					}
 				};
-				thread.setDaemon( true );
-				thread.start( );
+				thread.setDaemon(true);
+				thread.start();
 
 			}
 		}
@@ -68,26 +59,17 @@ public class AttachSourceHandler implements IAttachSourceHandler
 	}
 
 	@Override
-	public boolean syncAttachSource( final IPackageFragmentRoot root )
-	{
-		try
-		{
-			boolean download = SourceAttachUtil.needDownloadSource( Arrays.asList( new IPackageFragmentRoot[]{
-					root
-			} ) );
+	public boolean syncAttachSource(final IPackageFragmentRoot root) {
+		try {
+			boolean download = SourceAttachUtil.needDownloadSource(Arrays.asList(new IPackageFragmentRoot[] { root }));
 
-			if ( download )
-			{
-				return SourceAttachUtil.refreshSourceAttachStatus( root );
-			}
-			else
-			{
+			if (download) {
+				return SourceAttachUtil.refreshSourceAttachStatus(root);
+			} else {
 				return true;
 			}
-		}
-		catch ( Exception e )
-		{
-			Logger.debug( e );
+		} catch (Exception e) {
+			Logger.debug(e);
 		}
 		return false;
 	}

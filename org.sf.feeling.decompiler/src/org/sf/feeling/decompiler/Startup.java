@@ -10,11 +10,9 @@ package org.sf.feeling.decompiler;
 
 import org.eclipse.ui.IStartup;
 
-public class Startup implements IStartup
-{
+public class Startup implements IStartup {
 
 	@Override
-	public void earlyStartup( )
-	{
+	public void earlyStartup() {
 	}
 }

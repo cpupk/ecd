@@ -10,18 +10,15 @@ package org.sf.feeling.decompiler.editor;
 
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 
-public class DecompilerType
-{
+public class DecompilerType {
 
 	public static final String FernFlower = "FernFlower";//$NON-NLS-1$
 
 	public static String[] decompilerTypes = null;
 
-	public static String[] getDecompilerTypes( )
-	{
-		if ( decompilerTypes == null )
-		{
-			decompilerTypes = JavaDecompilerPlugin.getDefault( ).getDecompilerDescriptorTypes( );
+	public static String[] getDecompilerTypes() {
+		if (decompilerTypes == null) {
+			decompilerTypes = JavaDecompilerPlugin.getDefault().getDecompilerDescriptorTypes();
 		}
 		return decompilerTypes;
 	}

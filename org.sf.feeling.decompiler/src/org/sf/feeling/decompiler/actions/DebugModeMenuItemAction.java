@@ -17,45 +17,37 @@ import org.eclipse.ui.IWorkbenchWindowPulldownDelegate;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 
-public class DebugModeMenuItemAction implements IWorkbenchWindowPulldownDelegate, IWorkbenchWindowPulldownDelegate2
-{
+public class DebugModeMenuItemAction implements IWorkbenchWindowPulldownDelegate, IWorkbenchWindowPulldownDelegate2 {
 
-	public DebugModeMenuItemAction( )
-	{
-		super( );
+	public DebugModeMenuItemAction() {
+		super();
 	}
 
 	@Override
-	public Menu getMenu( Control parent )
-	{
+	public Menu getMenu(Control parent) {
 		return null;
 	}
 
 	@Override
-	public Menu getMenu( Menu parent )
-	{
+	public Menu getMenu(Menu parent) {
 		return null;
 	}
 
 	@Override
-	public void init( IWorkbenchWindow window )
-	{
+	public void init(IWorkbenchWindow window) {
 	}
 
 	@Override
-	public void dispose( )
-	{
+	public void dispose() {
 	}
 
 	@Override
-	public void run( IAction action )
-	{
-		new DebugModeAction( ).run( );
+	public void run(IAction action) {
+		new DebugModeAction().run();
 	}
 
 	@Override
-	public void selectionChanged( IAction action, ISelection selection )
-	{
-		action.setChecked( JavaDecompilerPlugin.getDefault( ).isDebugMode( ) );
+	public void selectionChanged(IAction action, ISelection selection) {
+		action.setChecked(JavaDecompilerPlugin.getDefault().isDebugMode());
 	}
 }

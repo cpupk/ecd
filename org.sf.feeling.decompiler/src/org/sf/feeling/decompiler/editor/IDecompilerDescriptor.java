@@ -11,22 +11,21 @@ package org.sf.feeling.decompiler.editor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 
-public interface IDecompilerDescriptor
-{
+public interface IDecompilerDescriptor {
 
-	String getDecompilerType( );
+	String getDecompilerType();
 
-	String getDecompilerPreferenceLabel( );
+	String getDecompilerPreferenceLabel();
 
-	IDecompiler getDecompiler( );
+	IDecompiler getDecompiler();
 
-	BaseDecompilerSourceMapper getDecompilerSourceMapper( );
+	BaseDecompilerSourceMapper getDecompilerSourceMapper();
 
-	Action getDecompileAction( );
+	Action getDecompileAction();
 
-	boolean isEnabled( );
+	boolean isEnabled();
 
-	boolean isDefault( );
+	boolean isDefault();
 
-	ImageDescriptor getDecompilerIcon( );
+	ImageDescriptor getDecompilerIcon();
 }

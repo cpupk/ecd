@@ -14,30 +14,23 @@ import org.sf.feeling.decompiler.procyon.ProcyonDecompilerPlugin;
 import org.sf.feeling.decompiler.procyon.i18n.Messages;
 import org.sf.feeling.decompiler.util.UIUtil;
 
-public class DecompileWithProcyonAction extends Action
-{
+public class DecompileWithProcyonAction extends Action {
 
-	public DecompileWithProcyonAction( )
-	{
-		super( Messages.getString( "JavaDecompilerActionBarContributor.Action.DecompileWithProcyon" ) ); //$NON-NLS-1$
-		this.setImageDescriptor( ProcyonDecompilerPlugin.getImageDescriptor( "icons/procyon_16.png" ) ); //$NON-NLS-1$
+	public DecompileWithProcyonAction() {
+		super(Messages.getString("JavaDecompilerActionBarContributor.Action.DecompileWithProcyon")); //$NON-NLS-1$
+		this.setImageDescriptor(ProcyonDecompilerPlugin.getImageDescriptor("icons/procyon_16.png")); //$NON-NLS-1$
 	}
 
 	@Override
-	public void run( )
-	{
-		try
-		{
-			new DecompileWithProcyonHandler( ).execute( null );
-		}
-		catch ( ExecutionException e )
-		{
+	public void run() {
+		try {
+			new DecompileWithProcyonHandler().execute(null);
+		} catch (ExecutionException e) {
 		}
 	}
 
 	@Override
-	public boolean isEnabled( )
-	{
-		return UIUtil.getActiveEditor( ) != null || UIUtil.getActiveSelection( ) != null;
+	public boolean isEnabled() {
+		return UIUtil.getActiveEditor() != null || UIUtil.getActiveSelection() != null;
 	}
 }

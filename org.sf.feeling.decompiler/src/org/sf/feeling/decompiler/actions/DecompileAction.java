@@ -14,35 +14,27 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.sf.feeling.decompiler.i18n.Messages;
 import org.sf.feeling.decompiler.util.UIUtil;
 
-public class DecompileAction extends Action
-{
+public class DecompileAction extends Action {
 
-	public DecompileAction( )
-	{
-		super( Messages.getString( "JavaDecompilerActionBarContributor.Action.Decompile" ) ); //$NON-NLS-1$
+	public DecompileAction() {
+		super(Messages.getString("JavaDecompilerActionBarContributor.Action.Decompile")); //$NON-NLS-1$
 	}
 
-	public DecompileAction( ImageDescriptor actionIcon )
-	{
-		super( Messages.getString( "JavaDecompilerActionBarContributor.Action.Decompile" ), //$NON-NLS-1$
-				actionIcon );
+	public DecompileAction(ImageDescriptor actionIcon) {
+		super(Messages.getString("JavaDecompilerActionBarContributor.Action.Decompile"), //$NON-NLS-1$
+				actionIcon);
 	}
 
 	@Override
-	public void run( )
-	{
-		try
-		{
-			new DecompileHandler( ).execute( null );
-		}
-		catch ( ExecutionException e )
-		{
+	public void run() {
+		try {
+			new DecompileHandler().execute(null);
+		} catch (ExecutionException e) {
 		}
 	}
 
 	@Override
-	public boolean isEnabled( )
-	{
-		return UIUtil.getActiveEditor( ) != null || UIUtil.getActiveSelection( ) != null;
+	public boolean isEnabled() {
+		return UIUtil.getActiveEditor() != null || UIUtil.getActiveSelection() != null;
 	}
 }

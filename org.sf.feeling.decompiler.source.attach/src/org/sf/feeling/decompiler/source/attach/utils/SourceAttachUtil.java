@@ -38,429 +38,333 @@ import org.sf.feeling.decompiler.util.Logger;
 import org.sf.feeling.decompiler.util.ReflectionUtils;
 
 @SuppressWarnings("restriction")
-public class SourceAttachUtil
-{
+public class SourceAttachUtil {
 
-	public static File getBinFile( IPackageFragmentRoot root )
-	{
+	public static File getBinFile(IPackageFragmentRoot root) {
 		File binFile;
-		if ( !root.isExternal( ) )
-		{
-			binFile = root.getResource( ).getLocation( ).toFile( );
-		}
-		else
-		{
-			binFile = root.getPath( ).toFile( );
+		if (!root.isExternal()) {
+			binFile = root.getResource().getLocation().toFile();
+		} else {
+			binFile = root.getPath().toFile();
 		}
 		return binFile;
 	}
 
-	public static boolean reattchSource( final IPackageFragmentRoot pkgRoot, File sourceFile, File tempSourceFile,
-			String downloadUrl )
-	{
-		try
-		{
-			IPath sourcePath = pkgRoot.getSourceAttachmentPath( );
-			File tempfile = new File( sourcePath.toOSString( ) );
+	public static boolean reattchSource(final IPackageFragmentRoot pkgRoot, File sourceFile, File tempSourceFile,
+			String downloadUrl) {
+		try {
+			IPath sourcePath = pkgRoot.getSourceAttachmentPath();
+			File tempfile = new File(sourcePath.toOSString());
 			File tempFile;
 
-			if ( !tempfile.getAbsolutePath( ).equals( tempSourceFile.getAbsolutePath( ) ) )
-			{
+			if (!tempfile.getAbsolutePath().equals(tempSourceFile.getAbsolutePath())) {
 				tempFile = tempSourceFile;
-			}
-			else
-			{
-				String suffix = "-" + System.currentTimeMillis( ) + ".jar"; //$NON-NLS-1$ //$NON-NLS-2$
-				tempFile = new File( SourceConstants.SourceTempDir,
-						sourceFile.getName( )
-								.replaceAll( "(?i)(\\-)*(\\d)*(\\.)jar", suffix ) //$NON-NLS-1$
-								.replaceAll( "(?i)(\\-)*(\\d)*(\\.)zip", suffix ) ); //$NON-NLS-1$
+			} else {
+				String suffix = "-" + System.currentTimeMillis() + ".jar"; //$NON-NLS-1$ //$NON-NLS-2$
+				tempFile = new File(SourceConstants.SourceTempDir,
+						sourceFile.getName().replaceAll("(?i)(\\-)*(\\d)*(\\.)jar", suffix) //$NON-NLS-1$
+								.replaceAll("(?i)(\\-)*(\\d)*(\\.)zip", suffix)); //$NON-NLS-1$
 			}
 
-			if ( !tempFile.exists( ) )
-			{
-				if ( tempSourceFile.exists( ) )
-				{
-					tempSourceFile.renameTo( tempFile );
-				}
-				else
-				{
-					FileUtil.copyFile( sourceFile.getAbsolutePath( ), tempFile.getAbsolutePath( ) );
+			if (!tempFile.exists()) {
+				if (tempSourceFile.exists()) {
+					tempSourceFile.renameTo(tempFile);
+				} else {
+					FileUtil.copyFile(sourceFile.getAbsolutePath(), tempFile.getAbsolutePath());
 				}
 			}
-			JavaSourceAttacherHandler.attachSource( pkgRoot, tempFile );
-			tempFile.deleteOnExit( );
-			String sha = HashUtils.sha1Hash( SourceAttachUtil.getBinFile( pkgRoot ) );
-			SourceBindingUtil.saveSourceBindingRecord( sourceFile, sha, downloadUrl, tempFile );
+			JavaSourceAttacherHandler.attachSource(pkgRoot, tempFile);
+			tempFile.deleteOnExit();
+			String sha = HashUtils.sha1Hash(SourceAttachUtil.getBinFile(pkgRoot));
+			SourceBindingUtil.saveSourceBindingRecord(sourceFile, sha, downloadUrl, tempFile);
 			return true;
-		}
-		catch ( Exception e )
-		{
-			Logger.debug( e );
+		} catch (Exception e) {
+			Logger.debug(e);
 		}
 		return false;
 	}
 
-	public static boolean refreshSourceAttachStatus( final IPackageFragmentRoot root )
-	{
-		try
-		{
-			String sha = HashUtils.sha1Hash( getBinFile( root ) );
-			String[] files = SourceBindingUtil.getSourceFileBySha( sha );
-			if ( files != null && files[0] != null )
-			{
-				File sourceFile = new File( files[0] );
-				if ( !sourceFile.exists( ) )
-				{
+	public static boolean refreshSourceAttachStatus(final IPackageFragmentRoot root) {
+		try {
+			String sha = HashUtils.sha1Hash(getBinFile(root));
+			String[] files = SourceBindingUtil.getSourceFileBySha(sha);
+			if (files != null && files[0] != null) {
+				File sourceFile = new File(files[0]);
+				if (!sourceFile.exists()) {
 					return false;
 				}
-				File tempFile = new File( files[1] );
-				if ( files[1] != null && tempFile.exists( ) )
-				{
-					JavaSourceAttacherHandler.attachSource( root, tempFile );
-					SourceBindingUtil.saveSourceBindingRecord( sourceFile, sha, null, tempFile );
+				File tempFile = new File(files[1]);
+				if (files[1] != null && tempFile.exists()) {
+					JavaSourceAttacherHandler.attachSource(root, tempFile);
+					SourceBindingUtil.saveSourceBindingRecord(sourceFile, sha, null, tempFile);
 
-					if ( sourceFile.getName( ).startsWith( "jre_" ) ) //$NON-NLS-1$
+					if (sourceFile.getName().startsWith("jre_")) //$NON-NLS-1$
 					{
-						refreshJRELibrarySources( root );
+						refreshJRELibrarySources(root);
 					}
 
-					if ( sourceFile.getName( ).startsWith( "eclipse_" ) ) //$NON-NLS-1$
+					if (sourceFile.getName().startsWith("eclipse_")) //$NON-NLS-1$
 					{
-						List<String> packages = getEclipsePlugins( sourceFile );
-						refreshEclipseLibrarySources( root, packages );
+						List<String> packages = getEclipsePlugins(sourceFile);
+						refreshEclipseLibrarySources(root, packages);
 					}
 
 					return true;
-				}
-				else
-				{
-					String suffix = "-" + System.currentTimeMillis( ) + ".jar"; //$NON-NLS-1$ //$NON-NLS-2$
-					tempFile = new File( SourceConstants.SourceTempDir,
-							sourceFile.getName( )
-									.replaceAll( "(?i)(\\-)*(\\d)*(\\.)jar", suffix ) //$NON-NLS-1$
-									.replaceAll( "(?i)(\\-)*(\\d)*(\\.)zip", suffix ) ); //$NON-NLS-1$
-					FileUtil.copyFile( sourceFile.getAbsolutePath( ), tempFile.getAbsolutePath( ) );
-					JavaSourceAttacherHandler.attachSource( root, tempFile );
-					tempFile.deleteOnExit( );
-					SourceBindingUtil.saveSourceBindingRecord( sourceFile, sha, null, tempFile );
+				} else {
+					String suffix = "-" + System.currentTimeMillis() + ".jar"; //$NON-NLS-1$ //$NON-NLS-2$
+					tempFile = new File(SourceConstants.SourceTempDir,
+							sourceFile.getName().replaceAll("(?i)(\\-)*(\\d)*(\\.)jar", suffix) //$NON-NLS-1$
+									.replaceAll("(?i)(\\-)*(\\d)*(\\.)zip", suffix)); //$NON-NLS-1$
+					FileUtil.copyFile(sourceFile.getAbsolutePath(), tempFile.getAbsolutePath());
+					JavaSourceAttacherHandler.attachSource(root, tempFile);
+					tempFile.deleteOnExit();
+					SourceBindingUtil.saveSourceBindingRecord(sourceFile, sha, null, tempFile);
 
-					if ( sourceFile.getName( ).startsWith( "jre_" ) ) //$NON-NLS-1$
+					if (sourceFile.getName().startsWith("jre_")) //$NON-NLS-1$
 					{
-						refreshJRELibrarySources( root );
+						refreshJRELibrarySources(root);
 					}
 
-					if ( sourceFile.getName( ).startsWith( "eclipse_" ) ) //$NON-NLS-1$
+					if (sourceFile.getName().startsWith("eclipse_")) //$NON-NLS-1$
 					{
-						List<String> packages = getEclipsePlugins( sourceFile );
-						refreshEclipseLibrarySources( root, packages );
+						List<String> packages = getEclipsePlugins(sourceFile);
+						refreshEclipseLibrarySources(root, packages);
 					}
 
 					return true;
 				}
 			}
 
-		}
-		catch ( Exception e )
-		{
-			Logger.debug( e );
+		} catch (Exception e) {
+			Logger.debug(e);
 		}
 		return false;
 	}
 
-	public static List<String> getEclipsePlugins( final File file ) throws IOException
-	{
-		final Set<String> plugins = new HashSet<String>( );
-		ZipFile zf = new ZipFile( file );
-		for ( Enumeration<? extends ZipEntry> entries = zf.entries( ); entries.hasMoreElements( ); )
-		{
-			String zipEntryName = ( (ZipEntry) entries.nextElement( ) ).getName( );
-			if ( zipEntryName.endsWith( ".project" ) ) //$NON-NLS-1$
+	public static List<String> getEclipsePlugins(final File file) throws IOException {
+		final Set<String> plugins = new HashSet<String>();
+		ZipFile zf = new ZipFile(file);
+		for (Enumeration<? extends ZipEntry> entries = zf.entries(); entries.hasMoreElements();) {
+			String zipEntryName = ((ZipEntry) entries.nextElement()).getName();
+			if (zipEntryName.endsWith(".project")) //$NON-NLS-1$
 			{
-				String[] segements = zipEntryName.replace( "/.project", "" ).split( "/" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				plugins.add( segements[segements.length - 1] );
+				String[] segements = zipEntryName.replace("/.project", "").split("/"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				plugins.add(segements[segements.length - 1]);
 			}
 		}
-		zf.close( );
-		return new ArrayList<String>( plugins );
+		zf.close();
+		return new ArrayList<String>(plugins);
 	}
 
-	private static boolean refreshLibrarySources( final IPackageFragmentRoot root, String[] files )
-	{
-		try
-		{
-			String sha = HashUtils.sha1Hash( getBinFile( root ) );
-			File sourceFile = new File( files[0] );
-			if ( !sourceFile.exists( ) )
+	private static boolean refreshLibrarySources(final IPackageFragmentRoot root, String[] files) {
+		try {
+			String sha = HashUtils.sha1Hash(getBinFile(root));
+			File sourceFile = new File(files[0]);
+			if (!sourceFile.exists())
 				return false;
-			File tempFile = new File( files[1] );
-			if ( files[1] != null && tempFile.exists( ) )
-			{
-				JavaSourceAttacherHandler.attachSource( root, tempFile );
-				tempFile.deleteOnExit( );
-				SourceBindingUtil.saveSourceBindingRecord( sourceFile, sha, null, tempFile );
+			File tempFile = new File(files[1]);
+			if (files[1] != null && tempFile.exists()) {
+				JavaSourceAttacherHandler.attachSource(root, tempFile);
+				tempFile.deleteOnExit();
+				SourceBindingUtil.saveSourceBindingRecord(sourceFile, sha, null, tempFile);
+				return true;
+			} else {
+				String suffix = "-" + System.currentTimeMillis() + ".jar"; //$NON-NLS-1$ //$NON-NLS-2$
+				tempFile = new File(SourceConstants.SourceTempDir,
+						sourceFile.getName().replaceAll("(?i)(\\-)*(\\d)*(\\.)jar", suffix) //$NON-NLS-1$
+								.replaceAll("(?i)(\\-)*(\\d)*(\\.)zip", suffix)); //$NON-NLS-1$
+				FileUtil.copyFile(sourceFile.getAbsolutePath(), tempFile.getAbsolutePath());
+				JavaSourceAttacherHandler.attachSource(root, tempFile);
+				tempFile.deleteOnExit();
+				SourceBindingUtil.saveSourceBindingRecord(sourceFile, sha, null, tempFile);
 				return true;
 			}
-			else
-			{
-				String suffix = "-" + System.currentTimeMillis( ) + ".jar"; //$NON-NLS-1$ //$NON-NLS-2$
-				tempFile = new File( SourceConstants.SourceTempDir,
-						sourceFile.getName( )
-								.replaceAll( "(?i)(\\-)*(\\d)*(\\.)jar", suffix ) //$NON-NLS-1$
-								.replaceAll( "(?i)(\\-)*(\\d)*(\\.)zip", suffix ) ); //$NON-NLS-1$
-				FileUtil.copyFile( sourceFile.getAbsolutePath( ), tempFile.getAbsolutePath( ) );
-				JavaSourceAttacherHandler.attachSource( root, tempFile );
-				tempFile.deleteOnExit( );
-				SourceBindingUtil.saveSourceBindingRecord( sourceFile, sha, null, tempFile );
-				return true;
-			}
-		}
-		catch ( Exception e )
-		{
-			Logger.debug( e );
+		} catch (Exception e) {
+			Logger.debug(e);
 		}
 		return false;
 	}
 
-	private static void refreshJRELibrarySources( final IPackageFragmentRoot pkgRoot )
-	{
-		Thread thread = new Thread( ) {
+	private static void refreshJRELibrarySources(final IPackageFragmentRoot pkgRoot) {
+		Thread thread = new Thread() {
 
 			@Override
-			public void run( )
-			{
-				try
-				{
-					String sha = HashUtils.sha1Hash( getBinFile( pkgRoot ) );
-					String[] files = SourceBindingUtil.getSourceFileBySha( sha );
+			public void run() {
+				try {
+					String sha = HashUtils.sha1Hash(getBinFile(pkgRoot));
+					String[] files = SourceBindingUtil.getSourceFileBySha(sha);
 
-					IPackageFragmentRoot[] roots = pkgRoot.getJavaProject( ).getAllPackageFragmentRoots( );
-					for ( int i = 0; i < roots.length; i++ )
-					{
+					IPackageFragmentRoot[] roots = pkgRoot.getJavaProject().getAllPackageFragmentRoots();
+					for (int i = 0; i < roots.length; i++) {
 						IPackageFragmentRoot element = roots[i];
-						if ( element.equals( pkgRoot ) )
+						if (element.equals(pkgRoot))
 							continue;
-						List<String> paths = Arrays.asList( element.getPath( ).segments( ) );
-						if ( paths.contains( "jre" ) ) //$NON-NLS-1$
+						List<String> paths = Arrays.asList(element.getPath().segments());
+						if (paths.contains("jre")) //$NON-NLS-1$
 						{
-							refreshLibrarySources( element, files );
+							refreshLibrarySources(element, files);
 						}
-					} ;
-				}
-				catch ( JavaModelException e )
-				{
-					e.printStackTrace( );
+					}
+					;
+				} catch (JavaModelException e) {
+					e.printStackTrace();
 				}
 			}
 		};
-		thread.setDaemon( true );
-		thread.start( );
+		thread.setDaemon(true);
+		thread.start();
 	}
 
-	private static void refreshEclipseLibrarySources( final IPackageFragmentRoot pkgRoot, final List<String> plugins )
-	{
-		Thread thread = new Thread( ) {
+	private static void refreshEclipseLibrarySources(final IPackageFragmentRoot pkgRoot, final List<String> plugins) {
+		Thread thread = new Thread() {
 
 			@Override
-			public void run( )
-			{
-				try
-				{
-					String sha = HashUtils.sha1Hash( getBinFile( pkgRoot ) );
-					String[] files = SourceBindingUtil.getSourceFileBySha( sha );
+			public void run() {
+				try {
+					String sha = HashUtils.sha1Hash(getBinFile(pkgRoot));
+					String[] files = SourceBindingUtil.getSourceFileBySha(sha);
 
-					IPackageFragmentRoot[] roots = pkgRoot.getJavaProject( ).getAllPackageFragmentRoots( );
-					for ( int i = 0; i < roots.length; i++ )
-					{
+					IPackageFragmentRoot[] roots = pkgRoot.getJavaProject().getAllPackageFragmentRoots();
+					for (int i = 0; i < roots.length; i++) {
 						IPackageFragmentRoot element = roots[i];
-						if ( element.equals( pkgRoot ) )
+						if (element.equals(pkgRoot))
 							continue;
-						String fileName = element.getPath( ).lastSegment( );
-						if ( plugins.contains( fileName.split( "_" )[0] ) ) //$NON-NLS-1$
+						String fileName = element.getPath().lastSegment();
+						if (plugins.contains(fileName.split("_")[0])) //$NON-NLS-1$
 						{
-							refreshLibrarySources( element, files );
+							refreshLibrarySources(element, files);
 						}
-					} ;
-				}
-				catch ( JavaModelException e )
-				{
-					e.printStackTrace( );
+					}
+					;
+				} catch (JavaModelException e) {
+					e.printStackTrace();
 				}
 			}
 		};
-		thread.start( );
+		thread.start();
 	}
 
-	public static void updateSourceAttachStatus( final IPackageFragmentRoot root )
-	{
-		try
-		{
-			final IClasspathEntry entry = JavaModelUtil.getClasspathEntry( root );
+	public static void updateSourceAttachStatus(final IPackageFragmentRoot root) {
+		try {
+			final IClasspathEntry entry = JavaModelUtil.getClasspathEntry(root);
 
 			IPath containerPath = null;
-			if ( entry.getEntryKind( ) == IClasspathEntry.CPE_CONTAINER )
-			{
-				containerPath = entry.getPath( );
+			if (entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
+				containerPath = entry.getPath();
 			}
 
-			String[] changedAttributes = {
-					CPListElement.SOURCEATTACHMENT, "source_encoding" //$NON-NLS-1$
+			String[] changedAttributes = { CPListElement.SOURCEATTACHMENT, "source_encoding" //$NON-NLS-1$
 			};
-			BuildPathSupport.modifyClasspathEntry( null,
-					entry,
-					changedAttributes,
-					root.getJavaProject( ),
-					containerPath,
-					entry.getReferencingEntry( ) != null,
-					new NullProgressMonitor( ) );
+			BuildPathSupport.modifyClasspathEntry(null, entry, changedAttributes, root.getJavaProject(), containerPath,
+					entry.getReferencingEntry() != null, new NullProgressMonitor());
 
-			if ( root instanceof PackageFragmentRoot )
-			{
-				Object rootInfo = ( (PackageFragmentRoot) root ).getElementInfo( );
-				ReflectionUtils.setFieldValue( rootInfo, "sourceMapper", null ); //$NON-NLS-1$
+			if (root instanceof PackageFragmentRoot) {
+				Object rootInfo = ((PackageFragmentRoot) root).getElementInfo();
+				ReflectionUtils.setFieldValue(rootInfo, "sourceMapper", null); //$NON-NLS-1$
 			}
-		}
-		catch ( Exception e )
-		{
-			Logger.debug( e );
+		} catch (Exception e) {
+			Logger.debug(e);
 		}
 	}
 
 	@SuppressWarnings("rawtypes")
-	public static boolean isSourceCodeFor( String src, String bin )
-	{
+	public static boolean isSourceCodeFor(String src, String bin) {
 		boolean result = false;
-		try
-		{
-			List<String> binList = new ArrayList<String>( );
-			ZipFile zf = new ZipFile( bin );
-			for ( Enumeration entries = zf.entries( ); entries.hasMoreElements( ); )
-			{
-				String zipEntryName = ( (ZipEntry) entries.nextElement( ) ).getName( );
-				binList.add( zipEntryName );
+		try {
+			List<String> binList = new ArrayList<String>();
+			ZipFile zf = new ZipFile(bin);
+			for (Enumeration entries = zf.entries(); entries.hasMoreElements();) {
+				String zipEntryName = ((ZipEntry) entries.nextElement()).getName();
+				binList.add(zipEntryName);
 			}
-			zf.close( );
+			zf.close();
 
-			zf = new ZipFile( src );
-			for ( Enumeration entries = zf.entries( ); entries.hasMoreElements( ); )
-			{
-				String zipEntryName = ( (ZipEntry) entries.nextElement( ) ).getName( );
-				String fileBaseName = FilenameUtils.getBaseName( zipEntryName );
-				String fileExt = FilenameUtils.getExtension( zipEntryName );
-				if ( "java".equals( fileExt ) && fileBaseName != null ) //$NON-NLS-1$
+			zf = new ZipFile(src);
+			for (Enumeration entries = zf.entries(); entries.hasMoreElements();) {
+				String zipEntryName = ((ZipEntry) entries.nextElement()).getName();
+				String fileBaseName = FilenameUtils.getBaseName(zipEntryName);
+				String fileExt = FilenameUtils.getExtension(zipEntryName);
+				if ("java".equals(fileExt) && fileBaseName != null) //$NON-NLS-1$
 				{
-					for ( String zipEntryName2 : binList )
-					{
-						String fileBaseName2 = FilenameUtils.getBaseName( zipEntryName2 );
-						String fileExt2 = FilenameUtils.getExtension( zipEntryName2 );
-						if ( "class".equals( fileExt2 ) && fileBaseName.equals( fileBaseName2 ) ) //$NON-NLS-1$
+					for (String zipEntryName2 : binList) {
+						String fileBaseName2 = FilenameUtils.getBaseName(zipEntryName2);
+						String fileExt2 = FilenameUtils.getExtension(zipEntryName2);
+						if ("class".equals(fileExt2) && fileBaseName.equals(fileBaseName2)) //$NON-NLS-1$
 						{
 							result = true;
-							zf.close( );
+							zf.close();
 							return result;
 						}
 					}
 				}
-				binList.add( zipEntryName );
+				binList.add(zipEntryName);
 			}
-			zf.close( );
-		}
-		catch ( Exception e )
-		{
-			Logger.debug( e );
+			zf.close();
+		} catch (Exception e) {
+			Logger.debug(e);
 		}
 
 		return result;
 	}
 
-	public static boolean isMavenLibrary( IPackageFragmentRoot library )
-	{
-		try
-		{
-			IClasspathEntry entry = JavaModelUtil.getClasspathEntry( library );
-			return entry.getPath( ).toString( ).indexOf( "MAVEN2_CLASSPATH_CONTAINER" ) != -1; //$NON-NLS-1$
-		}
-		catch ( Exception e )
-		{
-			Logger.debug( e );
+	public static boolean isMavenLibrary(IPackageFragmentRoot library) {
+		try {
+			IClasspathEntry entry = JavaModelUtil.getClasspathEntry(library);
+			return entry.getPath().toString().indexOf("MAVEN2_CLASSPATH_CONTAINER") != -1; //$NON-NLS-1$
+		} catch (Exception e) {
+			Logger.debug(e);
 		}
 		return false;
 	}
 
-	public static boolean enableMavenDownload( )
-	{
-		try
-		{
-			Class<?> clazz = Class.forName( "org.eclipse.m2e.jdt.IClasspathManager" ); //$NON-NLS-1$
-			Class<?>[] parameterTypes = new Class[]{
-					IPackageFragmentRoot.class, boolean.class, boolean.class
-			};
-			if ( clazz.getMethod( "scheduleDownload", parameterTypes ) != null ) //$NON-NLS-1$
+	public static boolean enableMavenDownload() {
+		try {
+			Class<?> clazz = Class.forName("org.eclipse.m2e.jdt.IClasspathManager"); //$NON-NLS-1$
+			Class<?>[] parameterTypes = new Class[] { IPackageFragmentRoot.class, boolean.class, boolean.class };
+			if (clazz.getMethod("scheduleDownload", parameterTypes) != null) //$NON-NLS-1$
 			{
 				return true;
 			}
-		}
-		catch ( ClassNotFoundException ex )
-		{
-			Logger.debug( "Class org.eclipse.m2e.jdt.IClasspathManager not found.", null ); //$NON-NLS-1$
-		}
-		catch ( NoSuchMethodException ex )
-		{
-			Logger.debug( "Method scheduleDownload not found.", null ); //$NON-NLS-1$
-		}
-		catch ( Exception e )
-		{
-			Logger.debug( e );
+		} catch (ClassNotFoundException ex) {
+			Logger.debug("Class org.eclipse.m2e.jdt.IClasspathManager not found.", null); //$NON-NLS-1$
+		} catch (NoSuchMethodException ex) {
+			Logger.debug("Method scheduleDownload not found.", null); //$NON-NLS-1$
+		} catch (Exception e) {
+			Logger.debug(e);
 		}
 		return false;
 	}
-	
-	public static boolean needDownloadSource( List<?> selection )
-	{
+
+	public static boolean needDownloadSource(List<?> selection) {
 		IPackageFragmentRoot root = null;
-		for ( int i = 0; i < selection.size( ); i++ )
-		{
+		for (int i = 0; i < selection.size(); i++) {
 			IPackageFragmentRoot packRoot = null;
-			Object obj = selection.get( i );
-			if ( obj instanceof IPackageFragment )
-			{
+			Object obj = selection.get(i);
+			if (obj instanceof IPackageFragment) {
 				IPackageFragment packageFragment = (IPackageFragment) obj;
-				packRoot = (IPackageFragmentRoot) packageFragment.getParent( );
-			}
-			else if ( obj instanceof IClassFile )
-			{
+				packRoot = (IPackageFragmentRoot) packageFragment.getParent();
+			} else if (obj instanceof IClassFile) {
 				IClassFile classFile = (IClassFile) obj;
-				packRoot = (IPackageFragmentRoot) classFile.getParent( ).getParent( );
-			}
-			else if ( obj instanceof IPackageFragmentRoot )
-			{
+				packRoot = (IPackageFragmentRoot) classFile.getParent().getParent();
+			} else if (obj instanceof IPackageFragmentRoot) {
 				packRoot = (IPackageFragmentRoot) obj;
-			}
-			else
+			} else
 				return false;
-			if ( root == null )
-			{
+			if (root == null) {
 				root = packRoot;
-			}
-			else
-			{
-				if ( root != packRoot )
+			} else {
+				if (root != packRoot)
 					return false;
 			}
 		}
-		try
-		{
-			if ( root != null
-					&& root.getSourceAttachmentPath( ) != null
-					&& root.getSourceAttachmentPath( ).toFile( ).exists( )
-					&& !root.getPath( ).toFile( ).equals( root.getSourceAttachmentPath( ).toFile( ) ) )
-			{
+		try {
+			if (root != null && root.getSourceAttachmentPath() != null
+					&& root.getSourceAttachmentPath().toFile().exists()
+					&& !root.getPath().toFile().equals(root.getSourceAttachmentPath().toFile())) {
 				return false;
 			}
-		}
-		catch ( JavaModelException e )
-		{
-			Logger.debug( e );
+		} catch (JavaModelException e) {
+			Logger.debug(e);
 		}
 		return true;
 	}

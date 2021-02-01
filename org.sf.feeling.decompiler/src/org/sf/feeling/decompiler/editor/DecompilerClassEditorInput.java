@@ -11,27 +11,23 @@ package org.sf.feeling.decompiler.editor;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.ui.ide.FileStoreEditorInput;
 
-public class DecompilerClassEditorInput extends FileStoreEditorInput
-{
+public class DecompilerClassEditorInput extends FileStoreEditorInput {
 
 	private String toolTipText = null;
 
-	public DecompilerClassEditorInput( IFileStore fileStore )
-	{
-		super( fileStore );
+	public DecompilerClassEditorInput(IFileStore fileStore) {
+		super(fileStore);
 	}
 
 	@Override
-	public String getToolTipText( )
-	{
-		if ( toolTipText != null )
+	public String getToolTipText() {
+		if (toolTipText != null)
 			return toolTipText;
 		else
-			return super.getToolTipText( );
+			return super.getToolTipText();
 	}
 
-	public void setToolTipText( String toolTipText )
-	{
+	public void setToolTipText(String toolTipText) {
 		this.toolTipText = toolTipText;
 	}
 

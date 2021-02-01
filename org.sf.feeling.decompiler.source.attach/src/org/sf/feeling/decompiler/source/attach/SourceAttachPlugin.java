@@ -18,8 +18,7 @@ import org.sf.feeling.decompiler.source.attach.utils.SourceConstants;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class SourceAttachPlugin extends AbstractUIPlugin
-{
+public class SourceAttachPlugin extends AbstractUIPlugin {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.sf.feeling.decompiler.source.attach"; //$NON-NLS-1$
@@ -30,8 +29,7 @@ public class SourceAttachPlugin extends AbstractUIPlugin
 	/**
 	 * The constructor
 	 */
-	public SourceAttachPlugin( )
-	{
+	public SourceAttachPlugin() {
 	}
 
 	/*
@@ -41,25 +39,20 @@ public class SourceAttachPlugin extends AbstractUIPlugin
 	 * BundleContext)
 	 */
 	@Override
-	public void start( BundleContext context ) throws Exception
-	{
-		super.start( context );
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
 		plugin = this;
-		SourceBindingUtil.checkSourceBindingConfig( );
-		flagTempFileDeleteOnExit( );
+		SourceBindingUtil.checkSourceBindingConfig();
+		flagTempFileDeleteOnExit();
 	}
 
-	private void flagTempFileDeleteOnExit( )
-	{
+	private void flagTempFileDeleteOnExit() {
 		File dir = SourceConstants.SourceTempDir;
-		if ( dir.exists( ) )
-		{
-			File[] children = dir.listFiles( );
-			if ( children != null )
-			{
-				for ( int i = 0; i < children.length; i++ )
-				{
-					children[i].deleteOnExit( );
+		if (dir.exists()) {
+			File[] children = dir.listFiles();
+			if (children != null) {
+				for (int i = 0; i < children.length; i++) {
+					children[i].deleteOnExit();
 				}
 			}
 		}
@@ -72,10 +65,9 @@ public class SourceAttachPlugin extends AbstractUIPlugin
 	 * BundleContext)
 	 */
 	@Override
-	public void stop( BundleContext context ) throws Exception
-	{
+	public void stop(BundleContext context) throws Exception {
 		plugin = null;
-		super.stop( context );
+		super.stop(context);
 	}
 
 	/**
@@ -83,8 +75,7 @@ public class SourceAttachPlugin extends AbstractUIPlugin
 	 *
 	 * @return the shared instance
 	 */
-	public static SourceAttachPlugin getDefault( )
-	{
+	public static SourceAttachPlugin getDefault() {
 		return plugin;
 	}
 

@@ -33,102 +33,86 @@ import com.drgarbage.javasrc.JavaLexicalConstants;
 /**
  * A Java code scanner.
  */
-public final class RenderedBytecodeScanner extends AbstractJavaScanner implements JavaLexicalConstants, JavaKeywords
-{
+public final class RenderedBytecodeScanner extends AbstractJavaScanner implements JavaLexicalConstants, JavaKeywords {
 
-	private static class WhitespaceDetector implements IWhitespaceDetector
-	{
+	private static class WhitespaceDetector implements IWhitespaceDetector {
 
 		/*
 		 * (non-Javadoc)
 		 * 
-		 * @see
-		 * org.eclipse.jface.text.rules.IWhitespaceDetector#isWhitespace(char)
+		 * @see org.eclipse.jface.text.rules.IWhitespaceDetector#isWhitespace(char)
 		 */
-		public boolean isWhitespace( char c )
-		{
-			return Character.isWhitespace( c );
+		public boolean isWhitespace(char c) {
+			return Character.isWhitespace(c);
 		}
 
 	}
 
-	private static class WordDetector implements IWordDetector
-	{
+	private static class WordDetector implements IWordDetector {
 
 		/*
 		 * @see IWordDetector#isWordStart
 		 */
-		public boolean isWordStart( char c )
-		{
-			return Character.isJavaIdentifierStart( c );
+		public boolean isWordStart(char c) {
+			return Character.isJavaIdentifierStart(c);
 		}
 
 		/*
 		 * @see IWordDetector#isWordPart
 		 */
-		public boolean isWordPart( char c )
-		{
-			return Character.isJavaIdentifierPart( c );
+		public boolean isWordPart(char c) {
+			return Character.isJavaIdentifierPart(c);
 		}
 	}
 
-	private static class SimpleRule extends WordRule
-	{
+	private static class SimpleRule extends WordRule {
 
 		private IToken token;
-		private StringBuffer fBuffer = new StringBuffer( );
+		private StringBuffer fBuffer = new StringBuffer();
 
-		public SimpleRule( IWordDetector detector, IToken token )
-		{
-			super( detector );
+		public SimpleRule(IWordDetector detector, IToken token) {
+			super(detector);
 			this.token = token;
 		}
 
 		@Override
-		public IToken evaluate( ICharacterScanner scanner )
-		{
-			int c = scanner.read( );
-			if ( fDetector.isWordStart( (char) c ) )
-			{
-				if ( fColumn == UNDEFINED || ( fColumn == scanner.getColumn( ) - 1 ) )
-				{
+		public IToken evaluate(ICharacterScanner scanner) {
+			int c = scanner.read();
+			if (fDetector.isWordStart((char) c)) {
+				if (fColumn == UNDEFINED || (fColumn == scanner.getColumn() - 1)) {
 
-					fBuffer.setLength( 0 );
-					do
-					{
-						fBuffer.append( (char) c );
-						c = scanner.read( );
-					} while ( c != ICharacterScanner.EOF && fDetector.isWordPart( (char) c ) );
-					scanner.unread( );
+					fBuffer.setLength(0);
+					do {
+						fBuffer.append((char) c);
+						c = scanner.read();
+					} while (c != ICharacterScanner.EOF && fDetector.isWordPart((char) c));
+					scanner.unread();
 
 					return token;
 
 				}
 			}
 
-			scanner.unread( );
+			scanner.unread();
 			return Token.UNDEFINED;
 		}
 
 	}
 
-	private static class NumberWordDetector implements IWordDetector
-	{
+	private static class NumberWordDetector implements IWordDetector {
 
 		/*
 		 * @see IWordDetector#isWordStart
 		 */
-		public boolean isWordStart( char c )
-		{
-			return Character.isDigit( c );
+		public boolean isWordStart(char c) {
+			return Character.isDigit(c);
 		}
 
 		/*
 		 * @see IWordDetector#isWordPart
 		 */
-		public boolean isWordPart( char c )
-		{
-			return Character.isDigit( c ) || c == JavaLexicalConstants.DOT;
+		public boolean isWordPart(char c) {
+			return Character.isDigit(c) || c == JavaLexicalConstants.DOT;
 		}
 	}
 
@@ -137,214 +121,130 @@ public final class RenderedBytecodeScanner extends AbstractJavaScanner implement
 	 *
 	 * @since 3.0
 	 */
-	private class OperatorRule implements IRule
-	{
+	private class OperatorRule implements IRule {
 
 		/** Java operators */
-		private final char[] JAVA_OPERATORS = {
-				SEMICOLON,
-				LEFT_PARENTHESIS,
-				RIGHT_PARENTHESIS,
-				LEFT_BRACE,
-				RIGHT_BRACE,
-				DOT,
-				EQUALS,
-				SLASH,
-				BACKSLASH,
-				PLUS,
-				MINUS,
-				ASTERISK,
-				LEFT_SQUARE_BRACKET,
-				RIGHT_SQUARE_BRACKET,
-				LT,
-				GT,
-				COLON,
-				QUESTION_MARK,
-				EXCLAMATION_MARK,
-				COMMA,
-				PIPE,
-				AMPERSAND,
-				CARET,
-				PERCENT,
-				TILDE
-		};
+		private final char[] JAVA_OPERATORS = { SEMICOLON, LEFT_PARENTHESIS, RIGHT_PARENTHESIS, LEFT_BRACE, RIGHT_BRACE,
+				DOT, EQUALS, SLASH, BACKSLASH, PLUS, MINUS, ASTERISK, LEFT_SQUARE_BRACKET, RIGHT_SQUARE_BRACKET, LT, GT,
+				COLON, QUESTION_MARK, EXCLAMATION_MARK, COMMA, PIPE, AMPERSAND, CARET, PERCENT, TILDE };
 		/** Token to return for this rule */
 		private final IToken fToken;
 
 		/**
 		 * Creates a new operator rule.
 		 *
-		 * @param token
-		 *            Token to use for this rule
+		 * @param token Token to use for this rule
 		 */
-		public OperatorRule( IToken token )
-		{
+		public OperatorRule(IToken token) {
 			fToken = token;
 		}
 
 		/**
 		 * Is this character an operator character?
 		 *
-		 * @param character
-		 *            Character to determine whether it is an operator character
+		 * @param character Character to determine whether it is an operator character
 		 * @return <code>true</code> iff the character is an operator,
 		 *         <code>false</code> otherwise.
 		 */
-		public boolean isOperator( char character )
-		{
-			for ( int index = 0; index < JAVA_OPERATORS.length; index++ )
-			{
-				if ( JAVA_OPERATORS[index] == character )
+		public boolean isOperator(char character) {
+			for (int index = 0; index < JAVA_OPERATORS.length; index++) {
+				if (JAVA_OPERATORS[index] == character)
 					return true;
 			}
 			return false;
 		}
 
 		/*
-		 * @see
-		 * org.eclipse.jface.text.rules.IRule#evaluate(org.eclipse.jface.text.
+		 * @see org.eclipse.jface.text.rules.IRule#evaluate(org.eclipse.jface.text.
 		 * rules.ICharacterScanner)
 		 */
-		public IToken evaluate( ICharacterScanner scanner )
-		{
+		public IToken evaluate(ICharacterScanner scanner) {
 
-			int character = scanner.read( );
-			if ( isOperator( (char) character ) )
-			{
-				do
-				{
-					character = scanner.read( );
-				} while ( isOperator( (char) character ) );
-				scanner.unread( );
+			int character = scanner.read();
+			if (isOperator((char) character)) {
+				do {
+					character = scanner.read();
+				} while (isOperator((char) character));
+				scanner.unread();
 				return fToken;
-			}
-			else
-			{
-				scanner.unread( );
+			} else {
+				scanner.unread();
 				return Token.UNDEFINED;
 			}
 		}
 	}
 
-	private static final String[] RENDERED_BYTECODE_KEYWORDS = {
-			ABSTRACT,
-			CATCH,
-			CLASS,
-			CONST,
-			DEFAULT,
-			EXTENDS,
-			FINAL,
-			FINALLY,
-			IMPLEMENTS,
-			IMPORT,
-			INTERFACE,
-			NATIVE,
-			PACKAGE,
-			PRIVATE,
-			PROTECTED,
-			PUBLIC,
-			STATIC,
-			SUPER,
-			SYNCHRONIZED,
-			THIS,
-			THROWS,
-			TRANSIENT,
-			TRY,
-			VOLATILE,
-			ENUM,
-			VOID,
-			BOOLEAN,
-			CHAR,
-			BYTE,
-			SHORT,
-			STRICTFP,
-			INT,
-			LONG,
-			FLOAT,
-			DOUBLE,
-			FALSE,
-			NULL,
-			TRUE
-	};
+	private static final String[] RENDERED_BYTECODE_KEYWORDS = { ABSTRACT, CATCH, CLASS, CONST, DEFAULT, EXTENDS, FINAL,
+			FINALLY, IMPLEMENTS, IMPORT, INTERFACE, NATIVE, PACKAGE, PRIVATE, PROTECTED, PUBLIC, STATIC, SUPER,
+			SYNCHRONIZED, THIS, THROWS, TRANSIENT, TRY, VOLATILE, ENUM, VOID, BOOLEAN, CHAR, BYTE, SHORT, STRICTFP, INT,
+			LONG, FLOAT, DOUBLE, FALSE, NULL, TRUE };
 
-	private static String[] tokenProperties = {
-			IJavaColorConstants.JAVA_KEYWORD,
-			IJavaColorConstants.JAVA_STRING,
-			IJavaColorConstants.JAVA_DEFAULT,
-			IJavaColorConstants.JAVA_OPERATOR,
-			JavaDecompilerPlugin.BYTECODE_MNEMONIC
-	};
+	private static String[] tokenProperties = { IJavaColorConstants.JAVA_KEYWORD, IJavaColorConstants.JAVA_STRING,
+			IJavaColorConstants.JAVA_DEFAULT, IJavaColorConstants.JAVA_OPERATOR,
+			JavaDecompilerPlugin.BYTECODE_MNEMONIC };
 
 	/**
 	 * Creates a Java code scanner
 	 *
-	 * @param manager
-	 *            the color manager
-	 * @param store
-	 *            the preference store
+	 * @param manager the color manager
+	 * @param store   the preference store
 	 */
-	public RenderedBytecodeScanner( IColorManager manager, IPreferenceStore store )
-	{
-		super( manager, store );
-		initialize( );
+	public RenderedBytecodeScanner(IColorManager manager, IPreferenceStore store) {
+		super(manager, store);
+		initialize();
 	}
 
 	/*
 	 * @see AbstractJavaScanner#getTokenProperties()
 	 */
-	protected String[] getTokenProperties( )
-	{
+	protected String[] getTokenProperties() {
 		return tokenProperties;
 	}
 
 	/*
 	 * @see AbstractJavaScanner#createRules()
 	 */
-	protected List createRules( )
-	{
+	protected List createRules() {
 
-		List<IRule> rules = new ArrayList<IRule>( );
+		List<IRule> rules = new ArrayList<IRule>();
 
 		/* character constants */
-		Token token = getToken( IJavaColorConstants.JAVA_STRING );
-		rules.add( new SingleLineRule( "'", "'", token, '\\' ) ); //$NON-NLS-1$ //$NON-NLS-2$
+		Token token = getToken(IJavaColorConstants.JAVA_STRING);
+		rules.add(new SingleLineRule("'", "'", token, '\\')); //$NON-NLS-1$ //$NON-NLS-2$
 
 		/* whitespace */
-		rules.add( new WhitespaceRule( new WhitespaceDetector( ) ) );
+		rules.add(new WhitespaceRule(new WhitespaceDetector()));
 
 		/* operators and brackets */
-		token = getToken( IJavaColorConstants.JAVA_OPERATOR );
-		rules.add( new OperatorRule( token ) );
+		token = getToken(IJavaColorConstants.JAVA_OPERATOR);
+		rules.add(new OperatorRule(token));
 
 		/* keywords */
-		WordRule wordRule = new WordRule( new WordDetector( ) );
-		token = getToken( IJavaColorConstants.JAVA_KEYWORD );
-		for ( int i = 0; i < RENDERED_BYTECODE_KEYWORDS.length; i++ )
-		{
-			wordRule.addWord( RENDERED_BYTECODE_KEYWORDS[i], token );
+		WordRule wordRule = new WordRule(new WordDetector());
+		token = getToken(IJavaColorConstants.JAVA_KEYWORD);
+		for (int i = 0; i < RENDERED_BYTECODE_KEYWORDS.length; i++) {
+			wordRule.addWord(RENDERED_BYTECODE_KEYWORDS[i], token);
 		}
 
-		token = getToken( JavaDecompilerPlugin.BYTECODE_MNEMONIC );
-		for ( int i = 0; i < ByteCodeConstants.OPCODE_MNEMONICS.length; i++ )
-		{
+		token = getToken(JavaDecompilerPlugin.BYTECODE_MNEMONIC);
+		for (int i = 0; i < ByteCodeConstants.OPCODE_MNEMONICS.length; i++) {
 			String word = ByteCodeConstants.OPCODE_MNEMONICS[i];
-			if ( word != null )
-			{
-				wordRule.addWord( word, token );
+			if (word != null) {
+				wordRule.addWord(word, token);
 			}
 		}
 
-		rules.add( wordRule );
+		rules.add(wordRule);
 
 		/* identifiers */
-		token = getToken( IJavaColorConstants.JAVA_DEFAULT );
-		rules.add( new SimpleRule( new WordDetector( ), token ) );
+		token = getToken(IJavaColorConstants.JAVA_DEFAULT);
+		rules.add(new SimpleRule(new WordDetector(), token));
 
 		/* numbers */
-		token = getToken( IJavaColorConstants.JAVA_STRING );
-		rules.add( new SimpleRule( new NumberWordDetector( ), token ) );
+		token = getToken(IJavaColorConstants.JAVA_STRING);
+		rules.add(new SimpleRule(new NumberWordDetector(), token));
 
-		setDefaultReturnToken( getToken( IJavaColorConstants.JAVA_DEFAULT ) );
+		setDefaultReturnToken(getToken(IJavaColorConstants.JAVA_DEFAULT));
 		return rules;
 	}
 

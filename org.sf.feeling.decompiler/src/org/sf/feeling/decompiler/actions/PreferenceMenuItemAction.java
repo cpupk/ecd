@@ -16,47 +16,39 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
 
-public class PreferenceMenuItemAction implements IWorkbenchWindowPulldownDelegate, IWorkbenchWindowPulldownDelegate2
-{
+public class PreferenceMenuItemAction implements IWorkbenchWindowPulldownDelegate, IWorkbenchWindowPulldownDelegate2 {
 
-	public PreferenceMenuItemAction( )
-	{
-		super( );
+	public PreferenceMenuItemAction() {
+		super();
 	}
 
 	@Override
-	public Menu getMenu( Control parent )
-	{
+	public Menu getMenu(Control parent) {
 		return null;
 	}
 
 	@Override
-	public Menu getMenu( Menu parent )
-	{
+	public Menu getMenu(Menu parent) {
 		return null;
 	}
 
 	@Override
-	public void init( IWorkbenchWindow window )
-	{
+	public void init(IWorkbenchWindow window) {
 
 	}
 
 	@Override
-	public void dispose( )
-	{
+	public void dispose() {
 	}
 
 	@Override
-	public void run( IAction action )
-	{
-		new DecompilerPeferenceAction( ).run( );
+	public void run(IAction action) {
+		new DecompilerPeferenceAction().run();
 
 	}
 
 	@Override
-	public void selectionChanged( IAction action, ISelection selection )
-	{
+	public void selectionChanged(IAction action, ISelection selection) {
 
 	}
 }

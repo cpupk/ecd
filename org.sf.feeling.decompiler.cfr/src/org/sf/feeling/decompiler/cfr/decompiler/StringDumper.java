@@ -10,45 +10,36 @@ import org.benf.cfr.reader.util.getopt.Options;
 import org.benf.cfr.reader.util.output.IllegalIdentifierDump;
 import org.benf.cfr.reader.util.output.StreamDumper;
 
-public class StringDumper extends StreamDumper
-{
+public class StringDumper extends StreamDumper {
 
-	private StringWriter sw = new StringWriter( );
+	private StringWriter sw = new StringWriter();
 
-	public StringDumper( TypeUsageInformation typeUsageInformation, Options options,
-			IllegalIdentifierDump illegalIdentifierDump )
-	{
-		super( typeUsageInformation, options, illegalIdentifierDump );
+	public StringDumper(TypeUsageInformation typeUsageInformation, Options options,
+			IllegalIdentifierDump illegalIdentifierDump) {
+		super(typeUsageInformation, options, illegalIdentifierDump);
 	}
 
 	@Override
-	public void addSummaryError( Method paramMethod, String paramString )
-	{
+	public void addSummaryError(Method paramMethod, String paramString) {
 
 	}
 
 	@Override
-	public void close( )
-	{
-		try
-		{
-			sw.close( );
-		}
-		catch ( IOException e )
-		{
-			throw new RuntimeException( e );
+	public void close() {
+		try {
+			sw.close();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		}
 	}
 
 	@Override
-	protected void write( String source )
-	{
-		sw.write( source );
+	protected void write(String source) {
+		sw.write(source);
 	}
 
 	@Override
-	public String toString( )
-	{
-		return sw.toString( );
+	public String toString() {
+		return sw.toString();
 	}
 }

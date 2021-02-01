@@ -22,8 +22,7 @@ import org.sf.feeling.decompiler.util.UIUtil;
 
 import jd.ide.eclipse.editors.JDSourceMapper;
 
-public class JDCoreDecompiler implements IDecompiler
-{
+public class JDCoreDecompiler implements IDecompiler {
 
 	private String source = ""; // $NON-NLS-1$ //$NON-NLS-1$
 	private long time;
@@ -31,8 +30,7 @@ public class JDCoreDecompiler implements IDecompiler
 
 	private JDSourceMapper mapper;
 
-	public JDCoreDecompiler( JDSourceMapper mapper )
-	{
+	public JDCoreDecompiler(JDSourceMapper mapper) {
 		this.mapper = mapper;
 	}
 
@@ -43,107 +41,89 @@ public class JDCoreDecompiler implements IDecompiler
 	 * @see IDecompiler#decompile(String, String, String)
 	 */
 	@Override
-	public void decompile( String root, String classPackage, String className )
-	{
-		long start = System.nanoTime( );
+	public void decompile(String root, String classPackage, String className) {
+		long start = System.nanoTime();
 		log = ""; //$NON-NLS-1$
 		source = ""; //$NON-NLS-1$
 		Boolean displayNumber = null;
 
-		File workingDir = new File( root ); // $NON-NLS-1$
+		File workingDir = new File(root); // $NON-NLS-1$
 
-		File zipFile = new File( System.getProperty( "java.io.tmpdir" ), //$NON-NLS-1$
-				className.replaceAll( "(?i)\\.class", System.currentTimeMillis( ) + ".jar" ) ); //$NON-NLS-1$ //$NON-NLS-2$
-		String zipFileName = zipFile.getAbsolutePath( );
+		File zipFile = new File(System.getProperty("java.io.tmpdir"), //$NON-NLS-1$
+				className.replaceAll("(?i)\\.class", System.currentTimeMillis() + ".jar")); //$NON-NLS-1$ //$NON-NLS-2$
+		String zipFileName = zipFile.getAbsolutePath();
 
-		try
-		{
-			if ( classPackage.length( ) == 0 )
-			{
-				StructClass structClass = new StructClass( FileUtil.getBytes( new File( root, className ) ),
-						true,
-						new LazyLoader( null ) );
-				structClass.releaseResources( );
-				classPackage = structClass.qualifiedName.replace( "/" //$NON-NLS-1$
-						+ className.replaceAll( "(?i)\\.class", "" ), "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		try {
+			if (classPackage.length() == 0) {
+				StructClass structClass = new StructClass(FileUtil.getBytes(new File(root, className)), true,
+						new LazyLoader(null));
+				structClass.releaseResources();
+				classPackage = structClass.qualifiedName.replace("/" //$NON-NLS-1$
+						+ className.replaceAll("(?i)\\.class", ""), ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 
-			FileUtil.zipDir( workingDir, classPackage, zipFileName );
+			FileUtil.zipDir(workingDir, classPackage, zipFileName);
 
-			if ( UIUtil.isDebugPerspective( ) || JavaDecompilerPlugin.getDefault( ).isDebugMode( ) )
-			{
-				displayNumber = JavaDecompilerPlugin.getDefault( ).isDisplayLineNumber( );
-				JavaDecompilerPlugin.getDefault( ).displayLineNumber( Boolean.TRUE );
+			if (UIUtil.isDebugPerspective() || JavaDecompilerPlugin.getDefault().isDebugMode()) {
+				displayNumber = JavaDecompilerPlugin.getDefault().isDisplayLineNumber();
+				JavaDecompilerPlugin.getDefault().displayLineNumber(Boolean.TRUE);
 			}
 
-			source = mapper.decompile( zipFileName,
-					( classPackage.length( ) > 0 ? ( classPackage + "/" ) : "" ) //$NON-NLS-1$ //$NON-NLS-2$
-							+ className );
+			source = mapper.decompile(zipFileName, (classPackage.length() > 0 ? (classPackage + "/") : "") //$NON-NLS-1$ //$NON-NLS-2$
+					+ className);
 
-			if ( !zipFile.delete( ) )
-			{
-				zipFile.deleteOnExit( );
+			if (!zipFile.delete()) {
+				zipFile.deleteOnExit();
 			}
-		}
-		catch ( Exception e )
-		{
-			JavaDecompilerPlugin.logError( e, e.getMessage( ) );
+		} catch (Exception e) {
+			JavaDecompilerPlugin.logError(e, e.getMessage());
 		}
 
-		if ( displayNumber != null )
-		{
-			JavaDecompilerPlugin.getDefault( ).displayLineNumber( displayNumber );
+		if (displayNumber != null) {
+			JavaDecompilerPlugin.getDefault().displayLineNumber(displayNumber);
 		}
 
-		time = ( System.nanoTime( ) - start ) / 1000000;
+		time = (System.nanoTime() - start) / 1000000;
 	}
 
 	/**
-	 * Our {@link JDCoreZipLoader} supports direct decompilation from within a
-	 * JAR archive
+	 * Our {@link JDCoreZipLoader} supports direct decompilation from within a JAR
+	 * archive
 	 * 
 	 * @see IDecompiler#decompileFromArchive(String, String, String)
 	 */
 	@Override
-	public void decompileFromArchive( String archivePath, String packege, String className )
-	{
-		long start = System.nanoTime( );
+	public void decompileFromArchive(String archivePath, String packege, String className) {
+		long start = System.nanoTime();
 		Boolean displayNumber = null;
 
-		try
-		{
-			if ( UIUtil.isDebugPerspective( ) || JavaDecompilerPlugin.getDefault( ).isDebugMode( ) )
-			{
-				displayNumber = JavaDecompilerPlugin.getDefault( ).isDisplayLineNumber( );
-				JavaDecompilerPlugin.getDefault( ).displayLineNumber( Boolean.TRUE );
+		try {
+			if (UIUtil.isDebugPerspective() || JavaDecompilerPlugin.getDefault().isDebugMode()) {
+				displayNumber = JavaDecompilerPlugin.getDefault().isDisplayLineNumber();
+				JavaDecompilerPlugin.getDefault().displayLineNumber(Boolean.TRUE);
 			}
 
-			String decompileClassName = packege + "/" + className.replaceAll( "(?i)\\.class$", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			String decompileClassName = packege + "/" + className.replaceAll("(?i)\\.class$", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-			source = mapper.decompile( archivePath, decompileClassName );
-		}
-		catch ( Exception e )
-		{
-			JavaDecompilerPlugin.logError( e, e.getMessage( ) );
+			source = mapper.decompile(archivePath, decompileClassName);
+		} catch (Exception e) {
+			JavaDecompilerPlugin.logError(e, e.getMessage());
 		}
 
-		if ( displayNumber != null )
-		{
-			JavaDecompilerPlugin.getDefault( ).displayLineNumber( displayNumber );
+		if (displayNumber != null) {
+			JavaDecompilerPlugin.getDefault().displayLineNumber(displayNumber);
 		}
 
-		time = ( System.nanoTime( ) - start ) / 1000000;
+		time = (System.nanoTime() - start) / 1000000;
 	}
 
 	@Override
-	public long getDecompilationTime( )
-	{
+	public long getDecompilationTime() {
 		return time;
 	}
 
 	@Override
-	public List getExceptions( )
-	{
+	public List getExceptions() {
 		return Collections.EMPTY_LIST;
 	}
 
@@ -151,8 +131,7 @@ public class JDCoreDecompiler implements IDecompiler
 	 * @see IDecompiler#getLog()
 	 */
 	@Override
-	public String getLog( )
-	{
+	public String getLog() {
 		return log;
 	}
 
@@ -160,38 +139,32 @@ public class JDCoreDecompiler implements IDecompiler
 	 * @see IDecompiler#getSource()
 	 */
 	@Override
-	public String getSource( )
-	{
+	public String getSource() {
 		return source;
 	}
 
 	@Override
-	public String getDecompilerType( )
-	{
+	public String getDecompilerType() {
 		return JDCoreDecompilerPlugin.decompilerType;
 	}
 
 	@Override
-	public String removeComment( String source )
-	{
+	public String removeComment(String source) {
 		return source;
 	}
 
 	@Override
-	public boolean supportLevel( int level )
-	{
+	public boolean supportLevel(int level) {
 		return true;
 	}
 
 	@Override
-	public boolean supportDebugLevel( int level )
-	{
+	public boolean supportDebugLevel(int level) {
 		return true;
 	}
 
 	@Override
-	public boolean supportDebug( )
-	{
+	public boolean supportDebug() {
 		return true;
 	}
 }

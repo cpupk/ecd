@@ -10,8 +10,7 @@ import org.sf.feeling.decompiler.editor.BaseDecompilerSourceMapper;
 import org.sf.feeling.decompiler.editor.IDecompiler;
 import org.sf.feeling.decompiler.editor.IDecompilerDescriptor;
 
-public class CfrDecompilerDescriptor implements IDecompilerDescriptor
-{
+public class CfrDecompilerDescriptor implements IDecompilerDescriptor {
 
 	private CfrDecompiler decompiler = null;
 
@@ -20,61 +19,51 @@ public class CfrDecompilerDescriptor implements IDecompilerDescriptor
 	private Action decompileAction = null;
 
 	@Override
-	public String getDecompilerType( )
-	{
+	public String getDecompilerType() {
 		return CfrDecompilerPlugin.decompilerType;
 	}
 
 	@Override
-	public String getDecompilerPreferenceLabel( )
-	{
-		return Messages.getString( "CfrDecompilerDescriptor.PreferenceLabel" ); //$NON-NLS-1$
+	public String getDecompilerPreferenceLabel() {
+		return Messages.getString("CfrDecompilerDescriptor.PreferenceLabel"); //$NON-NLS-1$
 	}
 
 	@Override
-	public IDecompiler getDecompiler( )
-	{
-		if ( decompiler == null )
-			decompiler = new CfrDecompiler( );
+	public IDecompiler getDecompiler() {
+		if (decompiler == null)
+			decompiler = new CfrDecompiler();
 		return decompiler;
 	}
 
 	@Override
-	public BaseDecompilerSourceMapper getDecompilerSourceMapper( )
-	{
-		if ( sourceMapper == null )
-		{
-			sourceMapper = new CfrSourceMapper( );
+	public BaseDecompilerSourceMapper getDecompilerSourceMapper() {
+		if (sourceMapper == null) {
+			sourceMapper = new CfrSourceMapper();
 		}
 		return sourceMapper;
 	}
 
 	@Override
-	public Action getDecompileAction( )
-	{
-		if ( decompileAction == null )
-		{
-			decompileAction = new DecompileWithCfrAction( );
+	public Action getDecompileAction() {
+		if (decompileAction == null) {
+			decompileAction = new DecompileWithCfrAction();
 		}
 		return decompileAction;
 	}
 
 	@Override
-	public boolean isEnabled( )
-	{
-		return !( System.getProperty( "java.version" ).compareTo( "1.6" ) < 0 ); //$NON-NLS-1$ //$NON-NLS-2$
+	public boolean isEnabled() {
+		return !(System.getProperty("java.version").compareTo("1.6") < 0); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override
-	public boolean isDefault( )
-	{
+	public boolean isDefault() {
 		return false;
 	}
 
 	@Override
-	public ImageDescriptor getDecompilerIcon( )
-	{
-		return CfrDecompilerPlugin.getImageDescriptor( "icons/cfr_16.gif" ); //$NON-NLS-1$ ;
+	public ImageDescriptor getDecompilerIcon() {
+		return CfrDecompilerPlugin.getImageDescriptor("icons/cfr_16.gif"); //$NON-NLS-1$ ;
 	}
 
 }

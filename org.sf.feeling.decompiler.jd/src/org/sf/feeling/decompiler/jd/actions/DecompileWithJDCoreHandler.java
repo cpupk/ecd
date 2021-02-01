@@ -13,13 +13,11 @@ import org.eclipse.core.commands.ExecutionException;
 import org.sf.feeling.decompiler.actions.BaseDecompilerHandler;
 import org.sf.feeling.decompiler.jd.JDCoreDecompilerPlugin;
 
-public class DecompileWithJDCoreHandler extends BaseDecompilerHandler
-{
+public class DecompileWithJDCoreHandler extends BaseDecompilerHandler {
 
 	@Override
-	public Object execute( ExecutionEvent event ) throws ExecutionException
-	{
-		return handleDecompile( JDCoreDecompilerPlugin.decompilerType );
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		return handleDecompile(JDCoreDecompilerPlugin.decompilerType);
 	}
 
 }

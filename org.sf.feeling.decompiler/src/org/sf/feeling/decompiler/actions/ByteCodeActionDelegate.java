@@ -16,31 +16,25 @@ import org.eclipse.ui.actions.ActionDelegate;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.editor.JavaDecompilerClassFileEditor;
 
-public class ByteCodeActionDelegate extends ActionDelegate implements IEditorActionDelegate
-{
+public class ByteCodeActionDelegate extends ActionDelegate implements IEditorActionDelegate {
 
 	JavaDecompilerClassFileEditor editor;
 
 	@Override
-	public void setActiveEditor( IAction action, IEditorPart targetEditor )
-	{
-		if ( targetEditor instanceof JavaDecompilerClassFileEditor )
-		{
+	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
+		if (targetEditor instanceof JavaDecompilerClassFileEditor) {
 			editor = (JavaDecompilerClassFileEditor) targetEditor;
-			action.setChecked(
-					JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.BYTE_CODE_MODE );
+			action.setChecked(JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.BYTE_CODE_MODE);
 		}
 	}
 
 	@Override
-	public void run( IAction action )
-	{
-		new ByteCodeAction( ).run( );
+	public void run(IAction action) {
+		new ByteCodeAction().run();
 	}
 
 	@Override
-	public void selectionChanged( IAction action, ISelection selection )
-	{
-		action.setChecked( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.BYTE_CODE_MODE );
+	public void selectionChanged(IAction action, ISelection selection) {
+		action.setChecked(JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.BYTE_CODE_MODE);
 	}
 }

@@ -12,13 +12,11 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 
-public class DebugModeHandler extends AbstractHandler
-{
+public class DebugModeHandler extends AbstractHandler {
 
 	@Override
-	public Object execute( ExecutionEvent event ) throws ExecutionException
-	{
-		new DebugModeAction( ).run( );
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		new DebugModeAction().run();
 		return null;
 	}
 

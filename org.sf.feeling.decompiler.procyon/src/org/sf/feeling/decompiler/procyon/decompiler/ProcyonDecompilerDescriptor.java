@@ -10,8 +10,7 @@ import org.sf.feeling.decompiler.procyon.ProcyonDecompilerPlugin;
 import org.sf.feeling.decompiler.procyon.actions.DecompileWithProcyonAction;
 import org.sf.feeling.decompiler.procyon.i18n.Messages;
 
-public class ProcyonDecompilerDescriptor implements IDecompilerDescriptor
-{
+public class ProcyonDecompilerDescriptor implements IDecompilerDescriptor {
 
 	private ProcyonDecompiler decompiler = null;
 
@@ -20,60 +19,50 @@ public class ProcyonDecompilerDescriptor implements IDecompilerDescriptor
 	private Action decompileAction = null;
 
 	@Override
-	public String getDecompilerType( )
-	{
+	public String getDecompilerType() {
 		return ProcyonDecompilerPlugin.decompilerType;
 	}
 
 	@Override
-	public String getDecompilerPreferenceLabel( )
-	{
-		return Messages.getString( "ProcyonDecompilerDescriptor.PreferenceLabel" ); //$NON-NLS-1$
+	public String getDecompilerPreferenceLabel() {
+		return Messages.getString("ProcyonDecompilerDescriptor.PreferenceLabel"); //$NON-NLS-1$
 	}
 
 	@Override
-	public IDecompiler getDecompiler( )
-	{
-		if ( decompiler == null )
-			decompiler = new ProcyonDecompiler( );
+	public IDecompiler getDecompiler() {
+		if (decompiler == null)
+			decompiler = new ProcyonDecompiler();
 		return decompiler;
 	}
 
 	@Override
-	public BaseDecompilerSourceMapper getDecompilerSourceMapper( )
-	{
-		if ( sourceMapper == null )
-		{
-			sourceMapper = new ProcyonSourceMapper( );
+	public BaseDecompilerSourceMapper getDecompilerSourceMapper() {
+		if (sourceMapper == null) {
+			sourceMapper = new ProcyonSourceMapper();
 		}
 		return sourceMapper;
 	}
 
 	@Override
-	public Action getDecompileAction( )
-	{
-		if ( decompileAction == null )
-		{
-			decompileAction = new DecompileWithProcyonAction( );
+	public Action getDecompileAction() {
+		if (decompileAction == null) {
+			decompileAction = new DecompileWithProcyonAction();
 		}
 		return decompileAction;
 	}
 
 	@Override
-	public boolean isEnabled( )
-	{
-		return !( System.getProperty( "java.version" ).compareTo( "1.7" ) < 0 ); //$NON-NLS-1$ //$NON-NLS-2$
+	public boolean isEnabled() {
+		return !(System.getProperty("java.version").compareTo("1.7") < 0); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override
-	public boolean isDefault( )
-	{
+	public boolean isDefault() {
 		return false;
 	}
 
 	@Override
-	public ImageDescriptor getDecompilerIcon( )
-	{
-		return ProcyonDecompilerPlugin.getImageDescriptor( "icons/procyon_16.png" ); //$NON-NLS-1$ ;
+	public ImageDescriptor getDecompilerIcon() {
+		return ProcyonDecompilerPlugin.getImageDescriptor("icons/procyon_16.png"); //$NON-NLS-1$ ;
 	}
 }

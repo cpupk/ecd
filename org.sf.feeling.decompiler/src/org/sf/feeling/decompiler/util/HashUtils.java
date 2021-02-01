@@ -16,46 +16,32 @@ import java.io.InputStream;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 
-public class HashUtils
-{
+public class HashUtils {
 
-	public static byte[] md5Digest( File file )
-	{
-		String md5 = md5Hash( file );
-		if ( md5 != null )
-		{
-			return md5.getBytes( );
+	public static byte[] md5Digest(File file) {
+		String md5 = md5Hash(file);
+		if (md5 != null) {
+			return md5.getBytes();
 		}
 		return null;
 	}
 
-	public static String md5Hash( File file )
-	{
+	public static String md5Hash(File file) {
 
-		if ( file != null )
-		{
+		if (file != null) {
 			InputStream fis = null;
-			try
-			{
-				fis = new FileInputStream( file );
-				String result = new String( Hex.encodeHex( DigestUtils.md5( fis ) ) );
+			try {
+				fis = new FileInputStream(file);
+				String result = new String(Hex.encodeHex(DigestUtils.md5(fis)));
 				return result;
-			}
-			catch ( IOException e )
-			{
-				Logger.debug( e );
-			}
-			finally
-			{
-				if ( fis != null )
-				{
-					try
-					{
-						fis.close( );
-					}
-					catch ( IOException e )
-					{
-						Logger.debug( e );
+			} catch (IOException e) {
+				Logger.debug(e);
+			} finally {
+				if (fis != null) {
+					try {
+						fis.close();
+					} catch (IOException e) {
+						Logger.debug(e);
 					}
 				}
 			}
@@ -63,33 +49,22 @@ public class HashUtils
 		return null;
 	}
 
-	public static String sha1Hash( File file )
-	{
+	public static String sha1Hash(File file) {
 
-		if ( file != null )
-		{
+		if (file != null) {
 			InputStream fis = null;
-			try
-			{
-				fis = new FileInputStream( file );
-				String result = new String( Hex.encodeHex( DigestUtils.sha( fis ) ) );
+			try {
+				fis = new FileInputStream(file);
+				String result = new String(Hex.encodeHex(DigestUtils.sha(fis)));
 				return result;
-			}
-			catch ( IOException e )
-			{
-				Logger.debug( e );
-			}
-			finally
-			{
-				if ( fis != null )
-				{
-					try
-					{
-						fis.close( );
-					}
-					catch ( IOException e )
-					{
-						Logger.debug( e );
+			} catch (IOException e) {
+				Logger.debug(e);
+			} finally {
+				if (fis != null) {
+					try {
+						fis.close();
+					} catch (IOException e) {
+						Logger.debug(e);
 					}
 				}
 			}
@@ -97,38 +72,32 @@ public class HashUtils
 		return null;
 	}
 
-	public static String sha1Hash( String string )
-	{
-		if ( string == null )
+	public static String sha1Hash(String string) {
+		if (string == null)
 			return null;
-		byte[] content = string.getBytes( );
-		if ( content != null )
-		{
-			String result = new String( Hex.encodeHex( DigestUtils.sha( content ) ) );
+		byte[] content = string.getBytes();
+		if (content != null) {
+			String result = new String(Hex.encodeHex(DigestUtils.sha(content)));
 			return result;
 		}
 		return null;
 	}
 
-	public static String md5Hash( String string )
-	{
-		if ( string == null )
+	public static String md5Hash(String string) {
+		if (string == null)
 			return null;
-		byte[] content = string.getBytes( );
-		if ( content != null )
-		{
-			String result = new String( Hex.encodeHex( DigestUtils.md5( content ) ) );
+		byte[] content = string.getBytes();
+		if (content != null) {
+			String result = new String(Hex.encodeHex(DigestUtils.md5(content)));
 			return result;
 		}
 		return null;
 	}
 
-	public static byte[] sha1Digest( File file )
-	{
-		String md5 = sha1Hash( file );
-		if ( md5 != null )
-		{
-			return md5.getBytes( );
+	public static byte[] sha1Digest(File file) {
+		String md5 = sha1Hash(file);
+		if (md5 != null) {
+			return md5.getBytes();
 		}
 		return null;
 	}

@@ -29,107 +29,84 @@ import org.sf.feeling.decompiler.source.attach.utils.SourceAttachUtil;
 import org.sf.feeling.decompiler.util.Logger;
 
 @SuppressWarnings("restriction")
-public class MavenSourceDownloader
-{
+public class MavenSourceDownloader {
 
 	private IPackageFragmentRoot root = null;
-	private static Set<String> librarys = new ConcurrentSkipListSet<String>( );
+	private static Set<String> librarys = new ConcurrentSkipListSet<String>();
 
-	public void downloadSource( IEditorPart part )
-	{
+	public void downloadSource(IEditorPart part) {
 		root = null;
-		try
-		{
-			IClasspathManager buildpathManager = MavenJdtPlugin.getDefault( ).getBuildpathManager( );
-			IClassFileEditorInput input = (IClassFileEditorInput) part.getEditorInput( );
-			IJavaElement element = input.getClassFile( );
-			while ( element.getParent( ) != null )
-			{
-				element = element.getParent( );
-				if ( ( element instanceof IPackageFragmentRoot ) )
-				{
+		try {
+			IClasspathManager buildpathManager = MavenJdtPlugin.getDefault().getBuildpathManager();
+			IClassFileEditorInput input = (IClassFileEditorInput) part.getEditorInput();
+			IJavaElement element = input.getClassFile();
+			while (element.getParent() != null) {
+				element = element.getParent();
+				if ((element instanceof IPackageFragmentRoot)) {
 					root = (IPackageFragmentRoot) element;
-					if ( root.getPath( ) == null || root.getPath( ).toOSString( ) == null )
+					if (root.getPath() == null || root.getPath().toOSString() == null)
 						continue;
-					if ( librarys.contains( root.getPath( ).toOSString( ) ) )
-					{
+					if (librarys.contains(root.getPath().toOSString())) {
 						continue;
+					} else {
+						librarys.add(root.getPath().toOSString());
 					}
-					else
-					{
-						librarys.add( root.getPath( ).toOSString( ) );
-					}
-					if ( !SourceAttachUtil.isMavenLibrary( root ) )
-					{
+					if (!SourceAttachUtil.isMavenLibrary(root)) {
 						continue;
 					}
-					final IPath sourcePath = root.getSourceAttachmentPath( );
-					if ( sourcePath != null && sourcePath.toOSString( ) != null )
-					{
-						File tempfile = new File( sourcePath.toOSString( ) );
-						if ( tempfile.exists( ) && tempfile.isFile( ) )
-						{
+					final IPath sourcePath = root.getSourceAttachmentPath();
+					if (sourcePath != null && sourcePath.toOSString() != null) {
+						File tempfile = new File(sourcePath.toOSString());
+						if (tempfile.exists() && tempfile.isFile()) {
 							break;
 						}
 					}
-					buildpathManager.scheduleDownload( root, true, false );
+					buildpathManager.scheduleDownload(root, true, false);
 
-					Thread thread = new Thread( ) {
+					Thread thread = new Thread() {
 
 						@Override
-						public void run( )
-						{
-							if ( root instanceof PackageFragmentRoot )
-							{
-								long time = System.currentTimeMillis( );
+						public void run() {
+							if (root instanceof PackageFragmentRoot) {
+								long time = System.currentTimeMillis();
 								PackageFragmentRoot fRoot = (PackageFragmentRoot) root;
-								while ( true )
-								{
-									if ( System.currentTimeMillis( ) - time > 60 * 1000 )
-									{
-										new AttachSourceHandler( ).execute( root, true );
+								while (true) {
+									if (System.currentTimeMillis() - time > 60 * 1000) {
+										new AttachSourceHandler().execute(root, true);
 										break;
 									}
-									try
-									{
-										if ( fRoot.getSourceAttachmentPath( ) != null
-												&& fRoot.getSourceAttachmentPath( ).toFile( ).exists( ) )
-										{
-											SourceAttachUtil.updateSourceAttachStatus( fRoot );
+									try {
+										if (fRoot.getSourceAttachmentPath() != null
+												&& fRoot.getSourceAttachmentPath().toFile().exists()) {
+											SourceAttachUtil.updateSourceAttachStatus(fRoot);
 											break;
 										}
-									}
-									catch ( JavaModelException e )
-									{
-										Logger.debug( e );
+									} catch (JavaModelException e) {
+										Logger.debug(e);
 										break;
 									}
 								}
 							}
 						}
 					};
-					thread.setDaemon( true );
-					thread.start( );
+					thread.setDaemon(true);
+					thread.start();
 				}
 			}
-		}
-		catch ( JavaModelException e )
-		{
-			Logger.debug( e );
-			if ( root != null )
-			{
-				final List<IPackageFragmentRoot> selections = new ArrayList<IPackageFragmentRoot>( );
-				selections.add( root );
-				Thread thread = new Thread( ) {
+		} catch (JavaModelException e) {
+			Logger.debug(e);
+			if (root != null) {
+				final List<IPackageFragmentRoot> selections = new ArrayList<IPackageFragmentRoot>();
+				selections.add(root);
+				Thread thread = new Thread() {
 
 					@Override
-					public void run( )
-					{
-						JavaSourceAttacherHandler.updateSourceAttachments( selections, null );
+					public void run() {
+						JavaSourceAttacherHandler.updateSourceAttachments(selections, null);
 					}
 				};
-				thread.setDaemon( true );
-				thread.start( );
+				thread.setDaemon(true);
+				thread.start();
 			}
 		}
 	}

@@ -18,35 +18,27 @@ import org.sf.feeling.decompiler.actions.OpenClassWithContributionFactory.OpenCl
 import org.sf.feeling.decompiler.editor.JavaDecompilerClassFileEditor;
 import org.sf.feeling.decompiler.util.UIUtil;
 
-public class BaseDecompilerHandler extends DecompileHandler
-{
+public class BaseDecompilerHandler extends DecompileHandler {
 
-	protected Object handleDecompile( String decompilerType )
-	{
-		final List classes = UIUtil.getActiveSelection( );
-		if ( classes != null && !classes.isEmpty( ) )
-		{
-			IEditorRegistry registry = PlatformUI.getWorkbench( ).getEditorRegistry( );
-			IEditorDescriptor editorDescriptor = registry.findEditor( JavaDecompilerPlugin.EDITOR_ID );
-			if ( editorDescriptor == null )
-			{
-				JavaDecompilerClassFileEditor editor = UIUtil.getActiveEditor( );
-				if ( editor != null )
-				{
-					if ( editor != null )
-						editor.doSetInput( decompilerType, true );
+	protected Object handleDecompile(String decompilerType) {
+		final List classes = UIUtil.getActiveSelection();
+		if (classes != null && !classes.isEmpty()) {
+			IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
+			IEditorDescriptor editorDescriptor = registry.findEditor(JavaDecompilerPlugin.EDITOR_ID);
+			if (editorDescriptor == null) {
+				JavaDecompilerClassFileEditor editor = UIUtil.getActiveEditor();
+				if (editor != null) {
+					if (editor != null)
+						editor.doSetInput(decompilerType, true);
 				}
+			} else {
+				new OpenClassesAction(editorDescriptor, classes, decompilerType).run();
 			}
-			else
-				new OpenClassesAction( editorDescriptor, classes, decompilerType ).run( );
-		}
-		else
-		{
-			JavaDecompilerClassFileEditor editor = UIUtil.getActiveEditor( );
-			if ( editor != null )
-			{
-				if ( editor != null )
-					editor.doSetInput( decompilerType, true );
+		} else {
+			JavaDecompilerClassFileEditor editor = UIUtil.getActiveEditor();
+			if (editor != null) {
+				if (editor != null)
+					editor.doSetInput(decompilerType, true);
 			}
 		}
 		return null;

@@ -10,11 +10,10 @@ package org.sf.feeling.decompiler.source.attach;
 
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 
-public interface IAttachSourceHandler
-{
+public interface IAttachSourceHandler {
 
-	public void execute( IPackageFragmentRoot library, boolean showUI );
+	public void execute(IPackageFragmentRoot library, boolean showUI);
 
-	public boolean syncAttachSource( IPackageFragmentRoot root );
+	public boolean syncAttachSource(IPackageFragmentRoot root);
 
 }

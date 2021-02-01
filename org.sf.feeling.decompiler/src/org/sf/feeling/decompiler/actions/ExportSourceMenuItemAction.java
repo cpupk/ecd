@@ -19,64 +19,51 @@ import org.eclipse.ui.IWorkbenchWindowPulldownDelegate;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
 import org.sf.feeling.decompiler.util.UIUtil;
 
-public class ExportSourceMenuItemAction implements IWorkbenchWindowPulldownDelegate, IWorkbenchWindowPulldownDelegate2
-{
+public class ExportSourceMenuItemAction implements IWorkbenchWindowPulldownDelegate, IWorkbenchWindowPulldownDelegate2 {
 
-	public ExportSourceMenuItemAction( )
-	{
-		super( );
+	public ExportSourceMenuItemAction() {
+		super();
 	}
 
 	@Override
-	public Menu getMenu( Control parent )
-	{
+	public Menu getMenu(Control parent) {
 		return null;
 	}
 
 	@Override
-	public Menu getMenu( Menu parent )
-	{
+	public Menu getMenu(Menu parent) {
 		return null;
 	}
 
 	@Override
-	public void init( IWorkbenchWindow window )
-	{
+	public void init(IWorkbenchWindow window) {
 
 	}
 
 	@Override
-	public void dispose( )
-	{
+	public void dispose() {
 	}
 
 	@Override
-	public void run( IAction action )
-	{
-		if ( UIUtil.getActiveEditor( ) != null )
-		{
-			new ExportEditorSourceAction( ).run( );;
-		}
-		else
-		{
-			List list = UIUtil.getExportSelections( );
-			if ( list != null )
-			{
-				new ExportSourceAction( list ).run( );
+	public void run(IAction action) {
+		if (UIUtil.getActiveEditor() != null) {
+			new ExportEditorSourceAction().run();
+			;
+		} else {
+			List list = UIUtil.getExportSelections();
+			if (list != null) {
+				new ExportSourceAction(list).run();
 			}
 		}
 	}
 
 	@Override
-	public void selectionChanged( IAction action, ISelection selection )
-	{
-		action.setEnabled( isEnable( ) );
+	public void selectionChanged(IAction action, ISelection selection) {
+		action.setEnabled(isEnable());
 	}
 
-	private boolean isEnable( )
-	{
-		return UIUtil.getActiveEditor( ) != null
-				|| UIUtil.getActiveSelection( ) != null
-				|| UIUtil.getExportSelections( ) != null;
+	private boolean isEnable() {
+		return UIUtil.getActiveEditor() != null || UIUtil.getActiveSelection() != null
+				|| UIUtil.getExportSelections() != null;
 	}
 }

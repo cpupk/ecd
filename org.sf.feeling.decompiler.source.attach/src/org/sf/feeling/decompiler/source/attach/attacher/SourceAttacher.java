@@ -12,8 +12,7 @@ import java.io.File;
 
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 
-public interface SourceAttacher
-{
+public interface SourceAttacher {
 
-	public boolean attachSource( IPackageFragmentRoot paramIPackageFragmentRoot, File paramString ) throws Exception;
+	public boolean attachSource(IPackageFragmentRoot paramIPackageFragmentRoot, File paramString) throws Exception;
 }

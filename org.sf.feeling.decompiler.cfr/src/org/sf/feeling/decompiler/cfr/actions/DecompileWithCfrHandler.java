@@ -13,12 +13,10 @@ import org.eclipse.core.commands.ExecutionException;
 import org.sf.feeling.decompiler.actions.BaseDecompilerHandler;
 import org.sf.feeling.decompiler.cfr.CfrDecompilerPlugin;
 
-public class DecompileWithCfrHandler extends BaseDecompilerHandler
-{
+public class DecompileWithCfrHandler extends BaseDecompilerHandler {
 
 	@Override
-	public Object execute( ExecutionEvent event ) throws ExecutionException
-	{
-		return handleDecompile( CfrDecompilerPlugin.decompilerType );
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		return handleDecompile(CfrDecompilerPlugin.decompilerType);
 	}
 }

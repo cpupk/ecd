@@ -14,30 +14,23 @@ import org.sf.feeling.decompiler.jad.JadDecompilerPlugin;
 import org.sf.feeling.decompiler.jad.i18n.Messages;
 import org.sf.feeling.decompiler.util.UIUtil;
 
-public class DecompileWithJadAction extends Action
-{
+public class DecompileWithJadAction extends Action {
 
-	public DecompileWithJadAction( )
-	{
-		super( Messages.getString( "JavaDecompilerActionBarContributor.Action.DecompileWithJad" ) ); //$NON-NLS-1$
-		this.setImageDescriptor( JadDecompilerPlugin.getImageDescriptor( "icons/jad_16.gif" ) ); //$NON-NLS-1$
+	public DecompileWithJadAction() {
+		super(Messages.getString("JavaDecompilerActionBarContributor.Action.DecompileWithJad")); //$NON-NLS-1$
+		this.setImageDescriptor(JadDecompilerPlugin.getImageDescriptor("icons/jad_16.gif")); //$NON-NLS-1$
 	}
 
 	@Override
-	public void run( )
-	{
-		try
-		{
-			new DecompileWithJadHandler( ).execute( null );
-		}
-		catch ( ExecutionException e )
-		{
+	public void run() {
+		try {
+			new DecompileWithJadHandler().execute(null);
+		} catch (ExecutionException e) {
 		}
 	}
 
 	@Override
-	public boolean isEnabled( )
-	{
-		return UIUtil.getActiveEditor( ) != null || UIUtil.getActiveSelection( ) != null;
+	public boolean isEnabled() {
+		return UIUtil.getActiveEditor() != null || UIUtil.getActiveSelection() != null;
 	}
 }

@@ -14,30 +14,23 @@ import org.sf.feeling.decompiler.cfr.CfrDecompilerPlugin;
 import org.sf.feeling.decompiler.cfr.i18n.Messages;
 import org.sf.feeling.decompiler.util.UIUtil;
 
-public class DecompileWithCfrAction extends Action
-{
+public class DecompileWithCfrAction extends Action {
 
-	public DecompileWithCfrAction( )
-	{
-		super( Messages.getString( "JavaDecompilerActionBarContributor.Action.DecompileWithCfr" ) ); //$NON-NLS-1$
-		this.setImageDescriptor( CfrDecompilerPlugin.getImageDescriptor( "icons/cfr_16.gif" ) ); //$NON-NLS-1$
+	public DecompileWithCfrAction() {
+		super(Messages.getString("JavaDecompilerActionBarContributor.Action.DecompileWithCfr")); //$NON-NLS-1$
+		this.setImageDescriptor(CfrDecompilerPlugin.getImageDescriptor("icons/cfr_16.gif")); //$NON-NLS-1$
 	}
 
 	@Override
-	public void run( )
-	{
-		try
-		{
-			new DecompileWithCfrHandler( ).execute( null );
-		}
-		catch ( ExecutionException e )
-		{
+	public void run() {
+		try {
+			new DecompileWithCfrHandler().execute(null);
+		} catch (ExecutionException e) {
 		}
 	}
 
 	@Override
-	public boolean isEnabled( )
-	{
-		return UIUtil.getActiveEditor( ) != null || UIUtil.getActiveSelection( ) != null;
+	public boolean isEnabled() {
+		return UIUtil.getActiveEditor() != null || UIUtil.getActiveSelection() != null;
 	}
 }

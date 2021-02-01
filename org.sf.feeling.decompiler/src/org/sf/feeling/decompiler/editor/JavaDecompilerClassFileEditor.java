@@ -88,8 +88,7 @@ import org.sf.feeling.decompiler.util.Logger;
 import org.sf.feeling.decompiler.util.ReflectionUtils;
 import org.sf.feeling.decompiler.util.UIUtil;
 
-public class JavaDecompilerClassFileEditor extends ClassFileEditor
-{
+public class JavaDecompilerClassFileEditor extends ClassFileEditor {
 
 	public static final String ID = "org.sf.feeling.decompiler.ClassFileEditor"; //$NON-NLS-1$
 
@@ -101,105 +100,82 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 	private ISourceReference selectedElement = null;
 	private String decompilerType = null;
 
-	public ISourceReference getSelectedElement( )
-	{
+	public ISourceReference getSelectedElement() {
 		return selectedElement;
 	}
 
 	private DisassemblerSourceViewer fDisassemblerSourceViewer;
 	private ByteCodeSourceViewer fByteCodeSourceViewer;
 
-	public JavaDecompilerClassFileEditor( )
-	{
-		super( );
+	public JavaDecompilerClassFileEditor() {
+		super();
 	}
 
 	@Override
-	public ISelectionProvider getSelectionProvider( )
-	{
-		if ( UIUtil.requestFromCopyOperation( ) )
-		{
-			if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.DISASSEMBLER_MODE
-					&& fDisassemblerSourceViewer != null )
-			{
-				return fDisassemblerSourceViewer.getSelectionProvider( );
-			}
-			else if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.BYTE_CODE_MODE
-					&& fByteCodeSourceViewer != null )
-			{
-				return fByteCodeSourceViewer.getSelectionProvider( );
+	public ISelectionProvider getSelectionProvider() {
+		if (UIUtil.requestFromCopyOperation()) {
+			if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.DISASSEMBLER_MODE
+					&& fDisassemblerSourceViewer != null) {
+				return fDisassemblerSourceViewer.getSelectionProvider();
+			} else if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.BYTE_CODE_MODE
+					&& fByteCodeSourceViewer != null) {
+				return fByteCodeSourceViewer.getSelectionProvider();
 			}
 		}
-		return super.getSelectionProvider( );
+		return super.getSelectionProvider();
 	}
 
-	private boolean doOpenBuffer( IEditorInput input, boolean force ) throws JavaModelException
-	{
-		IPreferenceStore prefs = JavaDecompilerPlugin.getDefault( ).getPreferenceStore( );
-		String decompilerType = prefs.getString( JavaDecompilerPlugin.DECOMPILER_TYPE );
-		return doOpenBuffer( input, decompilerType, force );
+	private boolean doOpenBuffer(IEditorInput input, boolean force) throws JavaModelException {
+		IPreferenceStore prefs = JavaDecompilerPlugin.getDefault().getPreferenceStore();
+		String decompilerType = prefs.getString(JavaDecompilerPlugin.DECOMPILER_TYPE);
+		return doOpenBuffer(input, decompilerType, force);
 	}
 
-	private boolean doOpenBuffer( IEditorInput input, String type, boolean force ) throws JavaModelException
-	{
-		IPreferenceStore prefs = JavaDecompilerPlugin.getDefault( ).getPreferenceStore( );
-		boolean reuseBuf = prefs.getBoolean( JavaDecompilerPlugin.REUSE_BUFFER );
-		boolean always = prefs.getBoolean( JavaDecompilerPlugin.IGNORE_EXISTING );
-		return doOpenBuffer( input, type, force, reuseBuf, always );
+	private boolean doOpenBuffer(IEditorInput input, String type, boolean force) throws JavaModelException {
+		IPreferenceStore prefs = JavaDecompilerPlugin.getDefault().getPreferenceStore();
+		boolean reuseBuf = prefs.getBoolean(JavaDecompilerPlugin.REUSE_BUFFER);
+		boolean always = prefs.getBoolean(JavaDecompilerPlugin.IGNORE_EXISTING);
+		return doOpenBuffer(input, type, force, reuseBuf, always);
 	}
 
-	private boolean doOpenBuffer( IEditorInput input, String type, boolean force, boolean reuseBuf, boolean always )
-			throws JavaModelException
-	{
-		if ( UIUtil.isDebugPerspective( ) || JavaDecompilerPlugin.getDefault( ).isDebugMode( ) )
+	private boolean doOpenBuffer(IEditorInput input, String type, boolean force, boolean reuseBuf, boolean always)
+			throws JavaModelException {
+		if (UIUtil.isDebugPerspective() || JavaDecompilerPlugin.getDefault().isDebugMode())
 			reuseBuf = false;
 
-		if ( input instanceof IClassFileEditorInput )
-		{
+		if (input instanceof IClassFileEditorInput) {
 
 			boolean opened = false;
-			IClassFile cf = ( (IClassFileEditorInput) input ).getClassFile( );
+			IClassFile cf = ((IClassFileEditorInput) input).getClassFile();
 
 			decompilerType = type;
-			String origSrc = cf.getSource( );
-			if ( origSrc == null
-					|| ( origSrc != null
-							&& always )
-					|| ( origSrc != null && !always && !reuseBuf )
-					|| debugOptionChange( origSrc )
-					|| force )
-			{
-				DecompilerSourceMapper sourceMapper = SourceMapperFactory.getSourceMapper( decompilerType );
-				char[] src = sourceMapper == null ? null : sourceMapper.findSource( cf.getType( ) );
-				if ( src == null )
-				{
-					if ( DecompilerType.FernFlower.equals( decompilerType ) )
-					{
-						src = SourceMapperFactory.getSourceMapper( DecompilerType.FernFlower )
-								.findSource( cf.getType( ) );
-					}
-					else
-					{
-						IDecompilerDescriptor decompilerDescriptor = JavaDecompilerPlugin.getDefault( )
-								.getDecompilerDescriptor( decompilerType );
-						if ( decompilerDescriptor != null )
-						{
-							src = decompilerDescriptor.getDecompilerSourceMapper( ).findSource( cf.getType( ) );
+			String origSrc = cf.getSource();
+			if (origSrc == null || (origSrc != null && always) || (origSrc != null && !always && !reuseBuf)
+					|| debugOptionChange(origSrc) || force) {
+				DecompilerSourceMapper sourceMapper = SourceMapperFactory.getSourceMapper(decompilerType);
+				char[] src = sourceMapper == null ? null : sourceMapper.findSource(cf.getType());
+				if (src == null) {
+					if (DecompilerType.FernFlower.equals(decompilerType)) {
+						src = SourceMapperFactory.getSourceMapper(DecompilerType.FernFlower).findSource(cf.getType());
+					} else {
+						IDecompilerDescriptor decompilerDescriptor = JavaDecompilerPlugin.getDefault()
+								.getDecompilerDescriptor(decompilerType);
+						if (decompilerDescriptor != null) {
+							src = decompilerDescriptor.getDecompilerSourceMapper().findSource(cf.getType());
 						}
 					}
 				}
-				if ( src == null )
-				{
+				if (src == null) {
 					return false;
 				}
 				char[] markedSrc = src;
-				classBuffer = BufferManager.createBuffer( cf );
-				classBuffer.setContents( markedSrc );
-				getBufferManager( ).addBuffer( classBuffer );
+				classBuffer = BufferManager.createBuffer(cf);
+				classBuffer.setContents(markedSrc);
+				getBufferManager().addBuffer(classBuffer);
 
-				sourceMapper.mapSourceSwitch( cf.getType( ), markedSrc, true );
+				sourceMapper.mapSourceSwitch(cf.getType(), markedSrc, true);
 
-				ClassFileSourceMap.updateSource( getBufferManager( ), (ClassFile) cf, markedSrc );
+				ClassFileSourceMap.updateSource(getBufferManager(), (ClassFile) cf, markedSrc);
 
 				opened = true;
 			}
@@ -209,512 +185,392 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 		return false;
 	}
 
-	public void clearSelection( )
-	{
-		if ( getSourceViewer( ) != null
-				&& getSourceViewer( ).getTextWidget( ) != null
-				&& !getSourceViewer( ).getTextWidget( ).isDisposed( ) )
-		{
-			getSourceViewer( ).getTextWidget( ).setSelectionRange( 0, 0 );
+	public void clearSelection() {
+		if (getSourceViewer() != null && getSourceViewer().getTextWidget() != null
+				&& !getSourceViewer().getTextWidget().isDisposed()) {
+			getSourceViewer().getTextWidget().setSelectionRange(0, 0);
 		}
 	}
 
 	@Override
-	public boolean isDirty( )
-	{
+	public boolean isDirty() {
 		return false;
 	}
 
 	@Override
-	protected void selectionChanged( )
-	{
+	protected void selectionChanged() {
 		selectionChange = true;
-		super.selectionChanged( );
+		super.selectionChanged();
 		selectionChange = false;
 	}
 
-	protected void setSelection( ISourceReference reference, boolean moveCursor )
-	{
-		super.setSelection( reference, moveCursor );
+	protected void setSelection(ISourceReference reference, boolean moveCursor) {
+		super.setSelection(reference, moveCursor);
 
 		this.selectedElement = reference;
 
-		if ( fByteCodeSourceViewer != null )
-		{
-			fByteCodeSourceViewer.setSelectionElement( reference );
+		if (fByteCodeSourceViewer != null) {
+			fByteCodeSourceViewer.setSelectionElement(reference);
 		}
 
-		if ( fDisassemblerSourceViewer != null )
-		{
-			fDisassemblerSourceViewer.setSelectionElement( reference );
+		if (fDisassemblerSourceViewer != null) {
+			fDisassemblerSourceViewer.setSelectionElement(reference);
 		}
 	}
 
 	@Override
-	public void setHighlightRange( int offset, int length, boolean moveCursor )
-	{
-		super.setHighlightRange( offset, length, moveCursor );
+	public void setHighlightRange(int offset, int length, boolean moveCursor) {
+		super.setHighlightRange(offset, length, moveCursor);
 
-		if ( selectionChange )
+		if (selectionChange)
 			return;
 
-		IClassFileEditorInput classFileEditorInput = (IClassFileEditorInput) getEditorInput( );
-		final IClassFile file = classFileEditorInput.getClassFile( );
+		IClassFileEditorInput classFileEditorInput = (IClassFileEditorInput) getEditorInput();
+		final IClassFile file = classFileEditorInput.getClassFile();
 
-		Display.getDefault( ).asyncExec( new Runnable( ) {
+		Display.getDefault().asyncExec(new Runnable() {
 
 			@Override
-			public void run( )
-			{
-				try
-				{
-					DecompileUtil.updateBuffer( file, file.getBuffer( ).getContents( ) );
-				}
-				catch ( JavaModelException e )
-				{
-					Logger.debug( e );
+			public void run() {
+				try {
+					DecompileUtil.updateBuffer(file, file.getBuffer().getContents());
+				} catch (JavaModelException e) {
+					Logger.debug(e);
 				}
 			}
-		} );
+		});
 
-		final StyledText widget = getSourceViewer( ).getTextWidget( );
-		widget.getDisplay( ).asyncExec( new Runnable( ) {
+		final StyledText widget = getSourceViewer().getTextWidget();
+		widget.getDisplay().asyncExec(new Runnable() {
 
 			@Override
-			public void run( )
-			{
-				if ( !widget.isDisposed( ) )
-				{
-					if ( widget.getVerticalBar( ) != null )
-					{
-						int selection = widget.getVerticalBar( ).getSelection( );
+			public void run() {
+				if (!widget.isDisposed()) {
+					if (widget.getVerticalBar() != null) {
+						int selection = widget.getVerticalBar().getSelection();
 
-						if ( selection > 0
-								&& selection < widget.getBounds( ).height / 2
-								&& widget.getLocationAtOffset( widget.getSelection( ).x ).y
-										+ selection
-										+ widget.getLineHeight( ) * 2 < widget.getBounds( ).height )
-						{
-							ReflectionUtils.invokeMethod( widget, "scrollVertical", new Class[]{ //$NON-NLS-1$
-									int.class, boolean.class
-							}, new Object[]{
-									-selection, true
-							} );
+						if (selection > 0 && selection < widget.getBounds().height / 2
+								&& widget.getLocationAtOffset(widget.getSelection().x).y + selection
+										+ widget.getLineHeight() * 2 < widget.getBounds().height) {
+							ReflectionUtils.invokeMethod(widget, "scrollVertical", new Class[] { //$NON-NLS-1$
+									int.class, boolean.class }, new Object[] { -selection, true });
 						}
 					}
 				}
 			};
-		} );
+		});
 	}
 
-	public static boolean debugOptionChange( String source )
-	{
-		return isDebug( source ) != ClassUtil.isDebug( );
+	public static boolean debugOptionChange(String source) {
+		return isDebug(source) != ClassUtil.isDebug();
 	}
 
-	public static boolean isDebug( String source )
-	{
-		if ( source == null )
+	public static boolean isDebug(String source) {
+		if (source == null)
 			return false;
-		Pattern pattern = Pattern.compile( "/\\*\\s*\\d+\\s*\\*/" ); //$NON-NLS-1$
-		Matcher matcher = pattern.matcher( source );
-		return matcher.find( ) || source.indexOf( DecompilerOutputUtil.NO_LINE_NUMBER ) != -1;
+		Pattern pattern = Pattern.compile("/\\*\\s*\\d+\\s*\\*/"); //$NON-NLS-1$
+		Matcher matcher = pattern.matcher(source);
+		return matcher.find() || source.indexOf(DecompilerOutputUtil.NO_LINE_NUMBER) != -1;
 	}
 
-	public IBuffer getClassBuffer( )
-	{
+	public IBuffer getClassBuffer() {
 		return classBuffer;
 	}
 
 	/**
 	 * Sets edditor input only if buffer was actually opened.
 	 * 
-	 * @param force
-	 *            if <code>true</code> initialize no matter what
+	 * @param force if <code>true</code> initialize no matter what
 	 */
-	public void doSetInput( boolean force )
-	{
-		IEditorInput input = getEditorInput( );
-		try
-		{
-			if ( doOpenBuffer( input, force ) )
-			{
-				super.doSetInput( input );
+	public void doSetInput(boolean force) {
+		IEditorInput input = getEditorInput();
+		try {
+			if (doOpenBuffer(input, force)) {
+				super.doSetInput(input);
 			}
-		}
-		catch ( Exception e )
-		{
-			JavaDecompilerPlugin.logError( e, "" ); //$NON-NLS-1$
+		} catch (Exception e) {
+			JavaDecompilerPlugin.logError(e, ""); //$NON-NLS-1$
 		}
 
-		handleMarkLink( );
+		handleMarkLink();
 	}
 
-	public void doSetInput( String type, boolean force )
-	{
-		IEditorInput input = getEditorInput( );
-		try
-		{
-			if ( doOpenBuffer( input, type, force ) )
-			{
-				super.doSetInput( input );
+	public void doSetInput(String type, boolean force) {
+		IEditorInput input = getEditorInput();
+		try {
+			if (doOpenBuffer(input, type, force)) {
+				super.doSetInput(input);
 			}
-		}
-		catch ( Exception e )
-		{
-			JavaDecompilerPlugin.logError( e, "" ); //$NON-NLS-1$
+		} catch (Exception e) {
+			JavaDecompilerPlugin.logError(e, ""); //$NON-NLS-1$
 		}
 
-		handleMarkLink( );
+		handleMarkLink();
 	}
 
 	@Override
-	protected void doSetInput( IEditorInput input ) throws CoreException
-	{
-		if ( input instanceof IFileEditorInput )
-		{
-			String filePath = UIUtil.getPathLocation( ( (IFileEditorInput) input ).getStorage( ).getFullPath( ) );
-			if ( filePath == null || !new File( filePath ).exists( ) )
-			{
-				super.doSetInput( input );
+	protected void doSetInput(IEditorInput input) throws CoreException {
+		if (input instanceof IFileEditorInput) {
+			String filePath = UIUtil.getPathLocation(((IFileEditorInput) input).getStorage().getFullPath());
+			if (filePath == null || !new File(filePath).exists()) {
+				super.doSetInput(input);
+			} else {
+				doSetInput(new DecompilerClassEditorInput(EFS.getLocalFileSystem().getStore(new Path(filePath))));
 			}
-			else
-			{
-				doSetInput(
-						new DecompilerClassEditorInput( EFS.getLocalFileSystem( ).getStore( new Path( filePath ) ) ) );
-			}
-		}
-		else if ( input instanceof FileStoreEditorInput )
-		{
+		} else if (input instanceof FileStoreEditorInput) {
 
 			FileStoreEditorInput storeInput = (FileStoreEditorInput) input;
-			IPreferenceStore prefs = JavaDecompilerPlugin.getDefault( ).getPreferenceStore( );
-			String decompilerType = prefs.getString( JavaDecompilerPlugin.DECOMPILER_TYPE );
-			String source = DecompileUtil.decompiler( storeInput, decompilerType );
+			IPreferenceStore prefs = JavaDecompilerPlugin.getDefault().getPreferenceStore();
+			String decompilerType = prefs.getString(JavaDecompilerPlugin.DECOMPILER_TYPE);
+			String source = DecompileUtil.decompiler(storeInput, decompilerType);
 
-			if ( source != null )
-			{
-				String packageName = DecompileUtil.getPackageName( source );
-				String classFullName = packageName == null ? storeInput.getName( )
-						: packageName
-								+ "." //$NON-NLS-1$
-								+ storeInput.getName( ).replaceAll( "(?i)\\.class", //$NON-NLS-1$
-										"" ); //$NON-NLS-1$
+			if (source != null) {
+				String packageName = DecompileUtil.getPackageName(source);
+				String classFullName = packageName == null ? storeInput.getName()
+						: packageName + "." //$NON-NLS-1$
+								+ storeInput.getName().replaceAll("(?i)\\.class", //$NON-NLS-1$
+										""); //$NON-NLS-1$
 
-				File file = new File( System.getProperty( "java.io.tmpdir" ), //$NON-NLS-1$
-						storeInput.getName( ).replaceAll( "(?i)\\.class", //$NON-NLS-1$
-								System.currentTimeMillis( ) + ".java" ) ); //$NON-NLS-1$
-				FileUtil.writeToFile( file, source, ResourcesPlugin.getEncoding( ) );
-				file.deleteOnExit( );
+				File file = new File(System.getProperty("java.io.tmpdir"), //$NON-NLS-1$
+						storeInput.getName().replaceAll("(?i)\\.class", //$NON-NLS-1$
+								System.currentTimeMillis() + ".java")); //$NON-NLS-1$
+				FileUtil.writeToFile(file, source, ResourcesPlugin.getEncoding());
+				file.deleteOnExit();
 
 				DecompilerClassEditorInput editorInput = new DecompilerClassEditorInput(
-						EFS.getLocalFileSystem( ).getStore( new Path( file.getAbsolutePath( ) ) ) );
-				editorInput.setToolTipText( classFullName );
+						EFS.getLocalFileSystem().getStore(new Path(file.getAbsolutePath())));
+				editorInput.setToolTipText(classFullName);
 
-				IEditorPart editor = PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( ).getActivePage( ).openEditor(
-						editorInput,
-						"org.eclipse.jdt.ui.CompilationUnitEditor" ); //$NON-NLS-1$
-				try
-				{
-					ReflectionUtils.invokeMethod( editor,
-							"setPartName", //$NON-NLS-1$
-							new Class[]{
-									String.class
-							},
-							new String[]{
-									getPartTitle(storeInput.getName( ))
-							} );
+				IEditorPart editor = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+						.openEditor(editorInput, "org.eclipse.jdt.ui.CompilationUnitEditor"); //$NON-NLS-1$
+				try {
+					ReflectionUtils.invokeMethod(editor, "setPartName", //$NON-NLS-1$
+							new Class[] { String.class }, new String[] { getPartTitle(storeInput.getName()) });
 
-					ReflectionUtils.invokeMethod( editor,
-							"setTitleImage", //$NON-NLS-1$
-							new Class[]{
-									Image.class
-							},
-							new Object[]{
-									JavaDecompilerPlugin.getImageDescriptor( "icons/decompiler.png" ) //$NON-NLS-1$
-											.createImage( )
-							} );
+					ReflectionUtils.invokeMethod(editor, "setTitleImage", //$NON-NLS-1$
+							new Class[] { Image.class },
+							new Object[] { JavaDecompilerPlugin.getImageDescriptor("icons/decompiler.png") //$NON-NLS-1$
+									.createImage() });
 
-					ReflectionUtils.setFieldValue( editor,
-							"fIsEditingDerivedFileAllowed", //$NON-NLS-1$
-							Boolean.valueOf( false ) );
-				}
-				catch ( Exception e )
-				{
-					JavaDecompilerPlugin.logError( e, "" ); //$NON-NLS-1$
+					ReflectionUtils.setFieldValue(editor, "fIsEditingDerivedFileAllowed", //$NON-NLS-1$
+							Boolean.valueOf(false));
+				} catch (Exception e) {
+					JavaDecompilerPlugin.logError(e, ""); //$NON-NLS-1$
 				}
 			}
-			Display.getDefault( ).asyncExec( new Runnable( ) {
+			Display.getDefault().asyncExec(new Runnable() {
 
 				@Override
-				public void run( )
-				{
-					JavaDecompilerClassFileEditor.this.getEditorSite( )
-							.getPage( )
-							.closeEditor( JavaDecompilerClassFileEditor.this, false );
+				public void run() {
+					JavaDecompilerClassFileEditor.this.getEditorSite().getPage()
+							.closeEditor(JavaDecompilerClassFileEditor.this, false);
 				}
-			} );
+			});
 
-			throw new CoreException( new Status( 8,
-					JavaDecompilerPlugin.PLUGIN_ID,
-					1,
-					"", //$NON-NLS-1$
-					null ) );
-		}
-		else
-		{
-			if ( input instanceof InternalClassFileEditorInput )
-			{
+			throw new CoreException(new Status(8, JavaDecompilerPlugin.PLUGIN_ID, 1, "", //$NON-NLS-1$
+					null));
+		} else {
+			if (input instanceof InternalClassFileEditorInput) {
 				InternalClassFileEditorInput classInput = (InternalClassFileEditorInput) input;
 
-				if ( classInput.getClassFile( ).getParent( ) instanceof PackageFragment )
-				{
-					doOpenBuffer( input, false );
-				}
-				else
-				{
-					IPath relativePath = classInput.getClassFile( ).getParent( ).getPath( );
-					String location = UIUtil.getPathLocation( relativePath );
-					if ( !( FileUtil.isZipFile( location ) || FileUtil.isZipFile( relativePath.toOSString( ) ) ) )
-					{
-						String filePath = UIUtil.getPathLocation( classInput.getClassFile( ).getPath( ) );
-						if ( filePath != null )
-						{
+				if (classInput.getClassFile().getParent() instanceof PackageFragment) {
+					doOpenBuffer(input, false);
+				} else {
+					IPath relativePath = classInput.getClassFile().getParent().getPath();
+					String location = UIUtil.getPathLocation(relativePath);
+					if (!(FileUtil.isZipFile(location) || FileUtil.isZipFile(relativePath.toOSString()))) {
+						String filePath = UIUtil.getPathLocation(classInput.getClassFile().getPath());
+						if (filePath != null) {
 							DecompilerClassEditorInput editorInput = new DecompilerClassEditorInput(
-									EFS.getLocalFileSystem( ).getStore( new Path( filePath ) ) );
-							doSetInput( editorInput );
-						}
-						else
-						{
-							doSetInput( new DecompilerClassEditorInput(
-									EFS.getLocalFileSystem( ).getStore( classInput.getClassFile( ).getPath( ) ) ) );
+									EFS.getLocalFileSystem().getStore(new Path(filePath)));
+							doSetInput(editorInput);
+						} else {
+							doSetInput(new DecompilerClassEditorInput(
+									EFS.getLocalFileSystem().getStore(classInput.getClassFile().getPath())));
 						}
 						return;
 					}
 				}
 			}
-			try
-			{
-				doOpenBuffer( input, false );
-			}
-			catch ( JavaModelException e )
-			{
+			try {
+				doOpenBuffer(input, false);
+			} catch (JavaModelException e) {
 				IClassFileEditorInput classFileEditorInput = (IClassFileEditorInput) input;
-				IClassFile file = classFileEditorInput.getClassFile( );
+				IClassFile file = classFileEditorInput.getClassFile();
 
-				if ( file.getSourceRange( ) == null && file.getBytes( ) != null )
-				{
-					if ( ClassUtil.isClassFile( file.getBytes( ) ) )
-					{
-						File classFile = new File(
-								JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).getString(
-										JavaDecompilerPlugin.TEMP_DIR ),
-								file.getElementName( ) );
-						try
-						{
-							FileOutputStream fos = new FileOutputStream( classFile );
-							fos.write( file.getBytes( ) );
-							fos.close( );
+				if (file.getSourceRange() == null && file.getBytes() != null) {
+					if (ClassUtil.isClassFile(file.getBytes())) {
+						File classFile = new File(JavaDecompilerPlugin.getDefault().getPreferenceStore()
+								.getString(JavaDecompilerPlugin.TEMP_DIR), file.getElementName());
+						try {
+							FileOutputStream fos = new FileOutputStream(classFile);
+							fos.write(file.getBytes());
+							fos.close();
 
-							doSetInput( new DecompilerClassEditorInput(
-									EFS.getLocalFileSystem( ).getStore( new Path( classFile.getAbsolutePath( ) ) ) ) );
-							classFile.delete( );
+							doSetInput(new DecompilerClassEditorInput(
+									EFS.getLocalFileSystem().getStore(new Path(classFile.getAbsolutePath()))));
+							classFile.delete();
 							return;
-						}
-						catch ( IOException e1 )
-						{
-							JavaDecompilerPlugin.logError( e, "" ); //$NON-NLS-1$
-						}
-						finally
-						{
-							if ( classFile != null && classFile.exists( ) )
-								classFile.delete( );
+						} catch (IOException e1) {
+							JavaDecompilerPlugin.logError(e, ""); //$NON-NLS-1$
+						} finally {
+							if (classFile != null && classFile.exists())
+								classFile.delete();
 						}
 					}
 				}
 			}
 
-			super.doSetInput( input );
+			super.doSetInput(input);
 		}
 
-		handleMarkLink( );
+		handleMarkLink();
 	}
-
 
 	protected void setPartName(String partName) {
-		super.setPartName(getPartTitle( partName ));
+		super.setPartName(getPartTitle(partName));
 	}
 
-	private String getPartTitle( String title )
-	{
-		 if (decompilerType == null || title == null) {
-			 return title;
-		 }
-		 if (title.endsWith( "]" )) {
-			 return title;
-		 }
-		 return title + " [" + decompilerType + "]";
-	}
-	
-	public void createPartControl( Composite parent )
-	{
-		super.createPartControl( parent );
-		showSource( );
+	private String getPartTitle(String title) {
+		if (decompilerType == null || title == null) {
+			return title;
+		}
+		if (title.endsWith("]")) {
+			return title;
+		}
+		return title + " [" + decompilerType + "]";
 	}
 
-	private void handleMarkLink( )
-	{
-		final int index = this.getDocumentProvider( ).getDocument( getEditorInput( ) ).get( ).indexOf( "://" ); //$NON-NLS-1$
-		if ( index != -1 )
-		{
-			Display.getDefault( ).asyncExec( new Runnable( ) {
+	public void createPartControl(Composite parent) {
+		super.createPartControl(parent);
+		showSource();
+	}
+
+	private void handleMarkLink() {
+		final int index = this.getDocumentProvider().getDocument(getEditorInput()).get().indexOf("://"); //$NON-NLS-1$
+		if (index != -1) {
+			Display.getDefault().asyncExec(new Runnable() {
 
 				@Override
-				public void run( )
-				{
-					updateMatchAnnonation( );
-					handleMarkLink( index );
+				public void run() {
+					updateMatchAnnonation();
+					handleMarkLink(index);
 				}
-			} );
+			});
 		}
 	}
 
-	protected JavaDecompilerBufferManager getBufferManager( )
-	{
+	protected JavaDecompilerBufferManager getBufferManager() {
 		JavaDecompilerBufferManager manager;
-		BufferManager defManager = BufferManager.getDefaultBufferManager( );
-		if ( defManager instanceof JavaDecompilerBufferManager )
+		BufferManager defManager = BufferManager.getDefaultBufferManager();
+		if (defManager instanceof JavaDecompilerBufferManager)
 			manager = (JavaDecompilerBufferManager) defManager;
 		else
-			manager = new JavaDecompilerBufferManager( defManager );
+			manager = new JavaDecompilerBufferManager(defManager);
 		return manager;
 	}
 
-	public void notifyPropertiesChange( )
-	{
-		ReflectionUtils.invokeMethod( this.getViewer( ),
-				"fireSelectionChanged", //$NON-NLS-1$
-				new Class[]{
-						SelectionChangedEvent.class
-				},
-				new Object[]{
-						new SelectionChangedEvent( (ISelectionProvider) this.getViewer( ), new StructuredSelection( ) )
-				} );
+	public void notifyPropertiesChange() {
+		ReflectionUtils.invokeMethod(this.getViewer(), "fireSelectionChanged", //$NON-NLS-1$
+				new Class[] { SelectionChangedEvent.class }, new Object[] {
+						new SelectionChangedEvent((ISelectionProvider) this.getViewer(), new StructuredSelection()) });
 	}
 
-	private void handleMarkLink( final int index )
-	{
-		ISourceViewer sourceViewer = getSourceViewer( );
-		if ( sourceViewer == null )
+	private void handleMarkLink(final int index) {
+		ISourceViewer sourceViewer = getSourceViewer();
+		if (sourceViewer == null)
 			return;
 
-		final StyledText text = sourceViewer.getTextWidget( );
-		if ( text.isDisposed( ) )
-		{
+		final StyledText text = sourceViewer.getTextWidget();
+		if (text.isDisposed()) {
 			return;
 		}
 
-		IHyperlinkDetector[] descriptors = getSourceViewerConfiguration( ).getHyperlinkDetectors( sourceViewer );
-		for ( int i = 0; i < descriptors.length; i++ )
-		{
-			final IHyperlink[] links = descriptors[i].detectHyperlinks( sourceViewer, new Region( index, 0 ), true );
+		IHyperlinkDetector[] descriptors = getSourceViewerConfiguration().getHyperlinkDetectors(sourceViewer);
+		for (int i = 0; i < descriptors.length; i++) {
+			final IHyperlink[] links = descriptors[i].detectHyperlinks(sourceViewer, new Region(index, 0), true);
 
-			if ( links != null && links.length > 0 && links[0] instanceof URLHyperlink )
-			{
+			if (links != null && links.length > 0 && links[0] instanceof URLHyperlink) {
 				final IHyperlinkPresenter fHyperlinkPresenter = (IHyperlinkPresenter) ReflectionUtils
-						.getFieldValue( sourceViewer, "fHyperlinkPresenter" ); //$NON-NLS-1$
+						.getFieldValue(sourceViewer, "fHyperlinkPresenter"); //$NON-NLS-1$
 
 				final HyperlinkManager fHyperlinkManager = (HyperlinkManager) ReflectionUtils
-						.getFieldValue( sourceViewer, "fHyperlinkManager" ); //$NON-NLS-1$
+						.getFieldValue(sourceViewer, "fHyperlinkManager"); //$NON-NLS-1$
 
-				if ( fHyperlinkPresenter == null || fHyperlinkManager == null )
+				if (fHyperlinkPresenter == null || fHyperlinkManager == null)
 					continue;
 
-				fHyperlinkPresenter.showHyperlinks( links );
+				fHyperlinkPresenter.showHyperlinks(links);
 
 				final boolean[] flags = new boolean[1];
 
-				if ( !text.isDisposed( ) && paintListener != null )
-				{
-					text.removePaintListener( paintListener );
+				if (!text.isDisposed() && paintListener != null) {
+					text.removePaintListener(paintListener);
 				}
 
-				paintListener = new PaintListener( ) {
+				paintListener = new PaintListener() {
 
-					private Boolean isActive( final HyperlinkManager fHyperlinkManager )
-					{
-						return (Boolean) ReflectionUtils.getFieldValue( fHyperlinkManager, "fActive" );//$NON-NLS-1$
+					private Boolean isActive(final HyperlinkManager fHyperlinkManager) {
+						return (Boolean) ReflectionUtils.getFieldValue(fHyperlinkManager, "fActive");//$NON-NLS-1$
 					}
 
-					private void addPaintListener( final StyledText text )
-					{
-						Display.getDefault( ).asyncExec( new Runnable( ) {
+					private void addPaintListener(final StyledText text) {
+						Display.getDefault().asyncExec(new Runnable() {
 
 							@Override
-							public void run( )
-							{
-								if ( !text.isDisposed( ) && paintListener != null )
-								{
-									text.removePaintListener( paintListener );
-									text.addPaintListener( paintListener );
+							public void run() {
+								if (!text.isDisposed() && paintListener != null) {
+									text.removePaintListener(paintListener);
+									text.addPaintListener(paintListener);
 								}
 							}
-						} );
+						});
 					}
 
 					@Override
-					public void paintControl( PaintEvent e )
-					{
-						if ( flags[0] )
-						{
+					public void paintControl(PaintEvent e) {
+						if (flags[0]) {
 							return;
 						}
 
 						flags[0] = true;
 
-						Display.getDefault( ).asyncExec( new Runnable( ) {
+						Display.getDefault().asyncExec(new Runnable() {
 
 							@Override
-							public void run( )
-							{
-								boolean fActive = isActive( fHyperlinkManager );
-								if ( !fActive && !text.isDisposed( ) )
-								{
-									text.removePaintListener( paintListener );
-									updateMatchAnnonation( );
-									addPaintListener( text );
+							public void run() {
+								boolean fActive = isActive(fHyperlinkManager);
+								if (!fActive && !text.isDisposed()) {
+									text.removePaintListener(paintListener);
+									updateMatchAnnonation();
+									addPaintListener(text);
 								}
 								flags[0] = false;
 							}
-						} );
+						});
 					}
 				};
 
-				text.addPaintListener( paintListener );
+				text.addPaintListener(paintListener);
 
-				if ( mouseAdapter != null )
-				{
-					text.removeMouseListener( mouseAdapter );
+				if (mouseAdapter != null) {
+					text.removeMouseListener(mouseAdapter);
 				}
-				mouseAdapter = new MouseAdapter( ) {
+				mouseAdapter = new MouseAdapter() {
 
 					@Override
-					public void mouseUp( MouseEvent e )
-					{
+					public void mouseUp(MouseEvent e) {
 
-						int offset = getCaretModelOffset( text );
-						if ( offset == -1 )
+						int offset = getCaretModelOffset(text);
+						if (offset == -1)
 							return;
-						for ( int j = 0; j < links.length; j++ )
-						{
-							int linkOffset = links[j].getHyperlinkRegion( ).getOffset( );
-							int linkLength = links[j].getHyperlinkRegion( ).getLength( );
-							if ( offset >= linkOffset && offset < linkOffset + linkLength )
-							{
-								if ( links[j] instanceof URLHyperlink )
-								{
-									String url = ( (URLHyperlink) links[j] ).getURLString( );
-									UIUtil.openBrowser( url );
+						for (int j = 0; j < links.length; j++) {
+							int linkOffset = links[j].getHyperlinkRegion().getOffset();
+							int linkLength = links[j].getHyperlinkRegion().getLength();
+							if (offset >= linkOffset && offset < linkOffset + linkLength) {
+								if (links[j] instanceof URLHyperlink) {
+									String url = ((URLHyperlink) links[j]).getURLString();
+									UIUtil.openBrowser(url);
 								}
 								return;
 							}
@@ -722,464 +578,348 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor
 
 					}
 				};
-				text.addMouseListener( mouseAdapter );
+				text.addMouseListener(mouseAdapter);
 			}
 		}
 	}
 
 	/**
-	 * Returns the absolute offset of the caret, which includes all characters
-	 * in collapsed code for the given text.
+	 * Returns the absolute offset of the caret, which includes all characters in
+	 * collapsed code for the given text.
 	 *
-	 * getCaretOffset returns actual offset that user sees not including
-	 * characters collapsed code. See https://stackoverflow.com/a/42828319
+	 * getCaretOffset returns actual offset that user sees not including characters
+	 * collapsed code. See https://stackoverflow.com/a/42828319
 	 *
-	 * @param text
-	 *            to get caret position from
+	 * @param text to get caret position from
 	 * @return model (absolute) offset of caret
 	 */
-	private int getCaretModelOffset( final StyledText text )
-	{
+	private int getCaretModelOffset(final StyledText text) {
 		int offset;
-		ISourceViewer sourceViewer = getSourceViewer( );
-		if ( sourceViewer instanceof ITextViewerExtension5 )
-		{
+		ISourceViewer sourceViewer = getSourceViewer();
+		if (sourceViewer instanceof ITextViewerExtension5) {
 			ITextViewerExtension5 extension = (ITextViewerExtension5) sourceViewer;
-			offset = extension.widgetOffset2ModelOffset( text.getCaretOffset( ) );
-		}
-		else
-		{
-			int visibleRegionOffset = sourceViewer.getVisibleRegion( ).getOffset( );
-			offset = visibleRegionOffset + text.getCaretOffset( );
+			offset = extension.widgetOffset2ModelOffset(text.getCaretOffset());
+		} else {
+			int visibleRegionOffset = sourceViewer.getVisibleRegion().getOffset();
+			offset = visibleRegionOffset + text.getCaretOffset();
 		}
 		return offset;
 	}
 
-	private void updateMatchAnnonation( )
-	{
-		WindowAnnotationManager mgr = (WindowAnnotationManager) ReflectionUtils.invokeMethod( AnnotationManagers.class,
+	private void updateMatchAnnonation() {
+		WindowAnnotationManager mgr = (WindowAnnotationManager) ReflectionUtils.invokeMethod(AnnotationManagers.class,
 				"getWindowAnnotationManager", //$NON-NLS-1$
-				new Class[]{
-						IWorkbenchWindow.class
-				},
-				new Object[]{
-						PlatformUI.getWorkbench( ).getActiveWorkbenchWindow( )
-				} );
-		if ( mgr == null )
+				new Class[] { IWorkbenchWindow.class },
+				new Object[] { PlatformUI.getWorkbench().getActiveWorkbenchWindow() });
+		if (mgr == null)
 			return;
 		Map<IEditorPart, EditorAnnotationManager> fAnnotationManagers = (Map<IEditorPart, EditorAnnotationManager>) ReflectionUtils
-				.getFieldValue( mgr, "fAnnotationManagers" ); //$NON-NLS-1$
-		if ( fAnnotationManagers == null )
+				.getFieldValue(mgr, "fAnnotationManagers"); //$NON-NLS-1$
+		if (fAnnotationManagers == null)
 			return;
-		EditorAnnotationManager amgr = fAnnotationManagers.get( JavaDecompilerClassFileEditor.this );
-		if ( amgr == null )
+		EditorAnnotationManager amgr = fAnnotationManagers.get(JavaDecompilerClassFileEditor.this);
+		if (amgr == null)
 			return;
-		ReflectionUtils.invokeMethod( amgr,
-				"removeAllAnnotations", //$NON-NLS-1$
-				new Class[0],
-				new Object[0] );
+		ReflectionUtils.invokeMethod(amgr, "removeAllAnnotations", //$NON-NLS-1$
+				new Class[0], new Object[0]);
 	}
 
 	@Override
-	public String[] collectContextMenuPreferencePages( )
-	{
-		String[] inheritedPages = super.collectContextMenuPreferencePages( );
+	public String[] collectContextMenuPreferencePages() {
+		String[] inheritedPages = super.collectContextMenuPreferencePages();
 		int length = 1;
 		String[] result = new String[inheritedPages.length + length];
-		if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.SOURCE_MODE )
-		{
+		if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.SOURCE_MODE) {
 			result[0] = "org.sf.feeling.decompiler.Main"; //$NON-NLS-1$
-		}
-		else if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.DISASSEMBLER_MODE )
-		{
+		} else if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.DISASSEMBLER_MODE) {
 			result[0] = "org.sf.feeling.decompiler.Disassembler"; //$NON-NLS-1$
-		}
-		else if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.BYTE_CODE_MODE )
-		{
+		} else if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.BYTE_CODE_MODE) {
 			result[0] = "org.eclipse.ui.preferencePages.ColorsAndFonts"; //$NON-NLS-1$
 		}
-		System.arraycopy( inheritedPages, 0, result, length, inheritedPages.length );
+		System.arraycopy(inheritedPages, 0, result, length, inheritedPages.length);
 		return result;
 	}
 
 	@Override
-	protected void createActions( )
-	{
-		super.createActions( );
+	protected void createActions() {
+		super.createActions();
 
-		setAction( ITextEditorActionConstants.COPY, null );
+		setAction(ITextEditorActionConstants.COPY, null);
 
 		final String BUNDLE_FOR_CONSTRUCTED_KEYS = "org.eclipse.ui.texteditor.ConstructedEditorMessages";//$NON-NLS-1$
-		ResourceBundle fgBundleForConstructedKeys = ResourceBundle.getBundle( BUNDLE_FOR_CONSTRUCTED_KEYS );
-		final IAction copyAction = new Action( fgBundleForConstructedKeys.getString( "Editor.Copy.label" ) ) { //$NON-NLS-1$
+		ResourceBundle fgBundleForConstructedKeys = ResourceBundle.getBundle(BUNDLE_FOR_CONSTRUCTED_KEYS);
+		final IAction copyAction = new Action(fgBundleForConstructedKeys.getString("Editor.Copy.label")) { //$NON-NLS-1$
 
 			@Override
-			public void run( )
-			{
-				if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.SOURCE_MODE )
-				{
-					( (SourceViewer) JavaDecompilerClassFileEditor.this.getSourceViewer( ) ).getTextWidget( ).copy( );
-				}
-				else if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.DISASSEMBLER_MODE
-						&& fDisassemblerSourceViewer != null
-						&& fDisassemblerSourceViewer.getTextWidget( ) != null )
-				{
-					JavaDecompilerClassFileEditor.this.fDisassemblerSourceViewer.getTextWidget( ).copy( );
-				}
-				else if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.BYTE_CODE_MODE
-						&& fByteCodeSourceViewer != null
-						&& fByteCodeSourceViewer.getTextWidget( ) != null )
-				{
-					JavaDecompilerClassFileEditor.this.fByteCodeSourceViewer.getTextWidget( ).copy( );
+			public void run() {
+				if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.SOURCE_MODE) {
+					((SourceViewer) JavaDecompilerClassFileEditor.this.getSourceViewer()).getTextWidget().copy();
+				} else if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.DISASSEMBLER_MODE
+						&& fDisassemblerSourceViewer != null && fDisassemblerSourceViewer.getTextWidget() != null) {
+					JavaDecompilerClassFileEditor.this.fDisassemblerSourceViewer.getTextWidget().copy();
+				} else if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.BYTE_CODE_MODE
+						&& fByteCodeSourceViewer != null && fByteCodeSourceViewer.getTextWidget() != null) {
+					JavaDecompilerClassFileEditor.this.fByteCodeSourceViewer.getTextWidget().copy();
 				}
 			}
 		};
-		copyAction.setActionDefinitionId( IWorkbenchCommandConstants.EDIT_COPY );
-		setAction( ITextEditorActionConstants.COPY, copyAction );
+		copyAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_COPY);
+		setAction(ITextEditorActionConstants.COPY, copyAction);
 
-		setAction( ITextEditorActionConstants.SELECT_ALL, null );
-		final IAction selectAllAction = new Action( fgBundleForConstructedKeys.getString( "Editor.SelectAll.label" ) ) { //$NON-NLS-1$
+		setAction(ITextEditorActionConstants.SELECT_ALL, null);
+		final IAction selectAllAction = new Action(fgBundleForConstructedKeys.getString("Editor.SelectAll.label")) { //$NON-NLS-1$
 
 			@Override
-			public void run( )
-			{
-				if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.SOURCE_MODE )
-				{
-					( (SourceViewer) JavaDecompilerClassFileEditor.this.getSourceViewer( ) ).getTextWidget( )
-							.selectAll( );
-				}
-				else if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.DISASSEMBLER_MODE
-						&& fDisassemblerSourceViewer != null
-						&& fDisassemblerSourceViewer.getTextWidget( ) != null )
-				{
-					JavaDecompilerClassFileEditor.this.fDisassemblerSourceViewer.getTextWidget( ).selectAll( );
-				}
-				else if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.BYTE_CODE_MODE
-						&& fByteCodeSourceViewer != null
-						&& fByteCodeSourceViewer.getTextWidget( ) != null )
-				{
-					JavaDecompilerClassFileEditor.this.fByteCodeSourceViewer.getTextWidget( ).selectAll( );
+			public void run() {
+				if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.SOURCE_MODE) {
+					((SourceViewer) JavaDecompilerClassFileEditor.this.getSourceViewer()).getTextWidget().selectAll();
+				} else if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.DISASSEMBLER_MODE
+						&& fDisassemblerSourceViewer != null && fDisassemblerSourceViewer.getTextWidget() != null) {
+					JavaDecompilerClassFileEditor.this.fDisassemblerSourceViewer.getTextWidget().selectAll();
+				} else if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.BYTE_CODE_MODE
+						&& fByteCodeSourceViewer != null && fByteCodeSourceViewer.getTextWidget() != null) {
+					JavaDecompilerClassFileEditor.this.fByteCodeSourceViewer.getTextWidget().selectAll();
 				}
 			}
 		};
-		selectAllAction.setActionDefinitionId( IWorkbenchCommandConstants.EDIT_SELECT_ALL );
-		setAction( ITextEditorActionConstants.SELECT_ALL, copyAction );
+		selectAllAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_SELECT_ALL);
+		setAction(ITextEditorActionConstants.SELECT_ALL, copyAction);
 
-		setAction( ITextEditorActionConstants.FIND, null );
-		FindReplaceAction findAction = new FindReplaceAction( fgBundleForConstructedKeys,
-				"Editor.FindReplace.", //$NON-NLS-1$
-				this ) {
+		setAction(ITextEditorActionConstants.FIND, null);
+		FindReplaceAction findAction = new FindReplaceAction(fgBundleForConstructedKeys, "Editor.FindReplace.", //$NON-NLS-1$
+				this) {
 
-			public void run( )
-			{
-				if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.SOURCE_MODE )
-				{
-					ReflectionUtils.setFieldValue( this,
-							"fTarget", //$NON-NLS-1$
+			public void run() {
+				if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.SOURCE_MODE) {
+					ReflectionUtils.setFieldValue(this, "fTarget", //$NON-NLS-1$
 							(IFindReplaceTarget) JavaDecompilerClassFileEditor.this
-									.getAdapter( IFindReplaceTarget.class ) );
+									.getAdapter(IFindReplaceTarget.class));
 
-				}
-				else if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.DISASSEMBLER_MODE
-						&& fDisassemblerSourceViewer != null )
-				{
-					ReflectionUtils.setFieldValue( this,
-							"fTarget", //$NON-NLS-1$
-							(IFindReplaceTarget) fDisassemblerSourceViewer.getAdapter( IFindReplaceTarget.class ) );
-				}
-				else if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.BYTE_CODE_MODE
-						&& fByteCodeSourceViewer != null )
-				{
-					ReflectionUtils.setFieldValue( this,
-							"fTarget", //$NON-NLS-1$
-							(IFindReplaceTarget) fByteCodeSourceViewer.getAdapter( IFindReplaceTarget.class ) );
+				} else if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.DISASSEMBLER_MODE
+						&& fDisassemblerSourceViewer != null) {
+					ReflectionUtils.setFieldValue(this, "fTarget", //$NON-NLS-1$
+							(IFindReplaceTarget) fDisassemblerSourceViewer.getAdapter(IFindReplaceTarget.class));
+				} else if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.BYTE_CODE_MODE
+						&& fByteCodeSourceViewer != null) {
+					ReflectionUtils.setFieldValue(this, "fTarget", //$NON-NLS-1$
+							(IFindReplaceTarget) fByteCodeSourceViewer.getAdapter(IFindReplaceTarget.class));
 				}
 
-				super.run( );
+				super.run();
 			}
 		};
-		findAction.setHelpContextId( IAbstractTextEditorHelpContextIds.FIND_ACTION );
-		findAction.setActionDefinitionId( IWorkbenchCommandConstants.EDIT_FIND_AND_REPLACE );
-		setAction( ITextEditorActionConstants.FIND, findAction );
+		findAction.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_ACTION);
+		findAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_FIND_AND_REPLACE);
+		setAction(ITextEditorActionConstants.FIND, findAction);
 
-		setAction( ITextEditorActionConstants.FIND_NEXT, null );
-		FindNextAction findNextAction = new FindNextAction( fgBundleForConstructedKeys,
-				"Editor.FindNext.", //$NON-NLS-1$
-				this,
-				true ) {
+		setAction(ITextEditorActionConstants.FIND_NEXT, null);
+		FindNextAction findNextAction = new FindNextAction(fgBundleForConstructedKeys, "Editor.FindNext.", //$NON-NLS-1$
+				this, true) {
 
-			public void run( )
-			{
-				if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.SOURCE_MODE )
-				{
-					ReflectionUtils.setFieldValue( this,
-							"fTarget", //$NON-NLS-1$
+			public void run() {
+				if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.SOURCE_MODE) {
+					ReflectionUtils.setFieldValue(this, "fTarget", //$NON-NLS-1$
 							(IFindReplaceTarget) JavaDecompilerClassFileEditor.this
-									.getAdapter( IFindReplaceTarget.class ) );
+									.getAdapter(IFindReplaceTarget.class));
 
-				}
-				else if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.DISASSEMBLER_MODE
-						&& fDisassemblerSourceViewer != null )
-				{
-					ReflectionUtils.setFieldValue( this,
-							"fTarget", //$NON-NLS-1$
-							(IFindReplaceTarget) fDisassemblerSourceViewer.getAdapter( IFindReplaceTarget.class ) );
-				}
-				else if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.BYTE_CODE_MODE
-						&& fByteCodeSourceViewer != null )
-				{
-					ReflectionUtils.setFieldValue( this,
-							"fTarget", //$NON-NLS-1$
-							(IFindReplaceTarget) fByteCodeSourceViewer.getAdapter( IFindReplaceTarget.class ) );
+				} else if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.DISASSEMBLER_MODE
+						&& fDisassemblerSourceViewer != null) {
+					ReflectionUtils.setFieldValue(this, "fTarget", //$NON-NLS-1$
+							(IFindReplaceTarget) fDisassemblerSourceViewer.getAdapter(IFindReplaceTarget.class));
+				} else if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.BYTE_CODE_MODE
+						&& fByteCodeSourceViewer != null) {
+					ReflectionUtils.setFieldValue(this, "fTarget", //$NON-NLS-1$
+							(IFindReplaceTarget) fByteCodeSourceViewer.getAdapter(IFindReplaceTarget.class));
 				}
 
-				super.run( );
+				super.run();
 			}
 		};
-		findNextAction.setHelpContextId( IAbstractTextEditorHelpContextIds.FIND_NEXT_ACTION );
-		findNextAction.setActionDefinitionId( IWorkbenchActionDefinitionIds.FIND_NEXT );
-		setAction( ITextEditorActionConstants.FIND_NEXT, findNextAction );
+		findNextAction.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_NEXT_ACTION);
+		findNextAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_NEXT);
+		setAction(ITextEditorActionConstants.FIND_NEXT, findNextAction);
 
-		setAction( ITextEditorActionConstants.FIND_PREVIOUS, null );
-		FindNextAction findPreviousAction = new FindNextAction( fgBundleForConstructedKeys,
-				"Editor.FindPrevious.", //$NON-NLS-1$
-				this,
-				false ) {
+		setAction(ITextEditorActionConstants.FIND_PREVIOUS, null);
+		FindNextAction findPreviousAction = new FindNextAction(fgBundleForConstructedKeys, "Editor.FindPrevious.", //$NON-NLS-1$
+				this, false) {
 
-			public void run( )
-			{
-				if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.SOURCE_MODE )
-				{
-					ReflectionUtils.setFieldValue( this,
-							"fTarget", //$NON-NLS-1$
+			public void run() {
+				if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.SOURCE_MODE) {
+					ReflectionUtils.setFieldValue(this, "fTarget", //$NON-NLS-1$
 							(IFindReplaceTarget) JavaDecompilerClassFileEditor.this
-									.getAdapter( IFindReplaceTarget.class ) );
+									.getAdapter(IFindReplaceTarget.class));
 
-				}
-				else if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.DISASSEMBLER_MODE
-						&& fDisassemblerSourceViewer != null )
-				{
-					ReflectionUtils.setFieldValue( this,
-							"fTarget", //$NON-NLS-1$
-							(IFindReplaceTarget) fDisassemblerSourceViewer.getAdapter( IFindReplaceTarget.class ) );
-				}
-				else if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.BYTE_CODE_MODE
-						&& fByteCodeSourceViewer != null )
-				{
-					ReflectionUtils.setFieldValue( this,
-							"fTarget", //$NON-NLS-1$
-							(IFindReplaceTarget) fByteCodeSourceViewer.getAdapter( IFindReplaceTarget.class ) );
+				} else if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.DISASSEMBLER_MODE
+						&& fDisassemblerSourceViewer != null) {
+					ReflectionUtils.setFieldValue(this, "fTarget", //$NON-NLS-1$
+							(IFindReplaceTarget) fDisassemblerSourceViewer.getAdapter(IFindReplaceTarget.class));
+				} else if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.BYTE_CODE_MODE
+						&& fByteCodeSourceViewer != null) {
+					ReflectionUtils.setFieldValue(this, "fTarget", //$NON-NLS-1$
+							(IFindReplaceTarget) fByteCodeSourceViewer.getAdapter(IFindReplaceTarget.class));
 				}
 
-				super.run( );
+				super.run();
 			}
 		};
-		findPreviousAction.setHelpContextId( IAbstractTextEditorHelpContextIds.FIND_PREVIOUS_ACTION );
-		findPreviousAction.setActionDefinitionId( IWorkbenchActionDefinitionIds.FIND_PREVIOUS );
-		setAction( ITextEditorActionConstants.FIND_PREVIOUS, findPreviousAction );
+		findPreviousAction.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_PREVIOUS_ACTION);
+		findPreviousAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_PREVIOUS);
+		setAction(ITextEditorActionConstants.FIND_PREVIOUS, findPreviousAction);
 
-		setAction( ITextEditorActionConstants.FIND_INCREMENTAL, null );
-		IncrementalFindAction incrementalFindAction = new IncrementalFindAction( fgBundleForConstructedKeys,
+		setAction(ITextEditorActionConstants.FIND_INCREMENTAL, null);
+		IncrementalFindAction incrementalFindAction = new IncrementalFindAction(fgBundleForConstructedKeys,
 				"Editor.FindIncremental.", //$NON-NLS-1$
-				this,
-				true ) {
+				this, true) {
 
-			public void run( )
-			{
-				try
-				{
-					Class clazz = Class.forName( "org.eclipse.ui.texteditor.IncrementalFindTarget" ); //$NON-NLS-1$
-					if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.SOURCE_MODE )
-					{
-						ReflectionUtils.setFieldValue( this,
-								"fTarget", //$NON-NLS-1$
-								JavaDecompilerClassFileEditor.this.getAdapter( clazz ) );
+			public void run() {
+				try {
+					Class clazz = Class.forName("org.eclipse.ui.texteditor.IncrementalFindTarget"); //$NON-NLS-1$
+					if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.SOURCE_MODE) {
+						ReflectionUtils.setFieldValue(this, "fTarget", //$NON-NLS-1$
+								JavaDecompilerClassFileEditor.this.getAdapter(clazz));
 
+					} else if (JavaDecompilerPlugin.getDefault()
+							.getSourceMode() == JavaDecompilerPlugin.DISASSEMBLER_MODE
+							&& fDisassemblerSourceViewer != null) {
+						ReflectionUtils.setFieldValue(this, "fTarget", fDisassemblerSourceViewer.getAdapter(clazz)); //$NON-NLS-1$
+					} else if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.BYTE_CODE_MODE
+							&& fByteCodeSourceViewer != null) {
+						ReflectionUtils.setFieldValue(this, "fTarget", fByteCodeSourceViewer.getAdapter(clazz)); //$NON-NLS-1$
 					}
-					else if ( JavaDecompilerPlugin.getDefault( )
-							.getSourceMode( ) == JavaDecompilerPlugin.DISASSEMBLER_MODE
-							&& fDisassemblerSourceViewer != null )
-					{
-						ReflectionUtils.setFieldValue( this, "fTarget", fDisassemblerSourceViewer.getAdapter( clazz ) ); //$NON-NLS-1$
-					}
-					else if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.BYTE_CODE_MODE
-							&& fByteCodeSourceViewer != null )
-					{
-						ReflectionUtils.setFieldValue( this, "fTarget", fByteCodeSourceViewer.getAdapter( clazz ) ); //$NON-NLS-1$
-					}
-				}
-				catch ( ClassNotFoundException e )
-				{
-					Logger.debug( e );
+				} catch (ClassNotFoundException e) {
+					Logger.debug(e);
 				}
 
-				super.run( );
+				super.run();
 			}
 		};
-		incrementalFindAction.setHelpContextId( IAbstractTextEditorHelpContextIds.FIND_INCREMENTAL_ACTION );
-		incrementalFindAction.setActionDefinitionId( IWorkbenchActionDefinitionIds.FIND_INCREMENTAL );
-		setAction( ITextEditorActionConstants.FIND_INCREMENTAL, incrementalFindAction );
+		incrementalFindAction.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_INCREMENTAL_ACTION);
+		incrementalFindAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_INCREMENTAL);
+		setAction(ITextEditorActionConstants.FIND_INCREMENTAL, incrementalFindAction);
 
-		setAction( ITextEditorActionConstants.FIND_INCREMENTAL_REVERSE, null );
-		IncrementalFindAction incrementalFindReverseAction = new IncrementalFindAction( fgBundleForConstructedKeys,
+		setAction(ITextEditorActionConstants.FIND_INCREMENTAL_REVERSE, null);
+		IncrementalFindAction incrementalFindReverseAction = new IncrementalFindAction(fgBundleForConstructedKeys,
 				"Editor.FindIncrementalReverse.", //$NON-NLS-1$
-				this,
-				false ) {
+				this, false) {
 
-			public void run( )
-			{
-				try
-				{
-					Class clazz = Class.forName( "org.eclipse.ui.texteditor.IncrementalFindTarget" ); //$NON-NLS-1$
-					if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.SOURCE_MODE )
-					{
-						ReflectionUtils.setFieldValue( this,
-								"fTarget", //$NON-NLS-1$
-								JavaDecompilerClassFileEditor.this.getAdapter( clazz ) );
+			public void run() {
+				try {
+					Class clazz = Class.forName("org.eclipse.ui.texteditor.IncrementalFindTarget"); //$NON-NLS-1$
+					if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.SOURCE_MODE) {
+						ReflectionUtils.setFieldValue(this, "fTarget", //$NON-NLS-1$
+								JavaDecompilerClassFileEditor.this.getAdapter(clazz));
 
+					} else if (JavaDecompilerPlugin.getDefault()
+							.getSourceMode() == JavaDecompilerPlugin.DISASSEMBLER_MODE
+							&& fDisassemblerSourceViewer != null) {
+						ReflectionUtils.setFieldValue(this, "fTarget", fDisassemblerSourceViewer.getAdapter(clazz)); //$NON-NLS-1$
+					} else if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.BYTE_CODE_MODE
+							&& fByteCodeSourceViewer != null) {
+						ReflectionUtils.setFieldValue(this, "fTarget", fByteCodeSourceViewer.getAdapter(clazz)); //$NON-NLS-1$
 					}
-					else if ( JavaDecompilerPlugin.getDefault( )
-							.getSourceMode( ) == JavaDecompilerPlugin.DISASSEMBLER_MODE
-							&& fDisassemblerSourceViewer != null )
-					{
-						ReflectionUtils.setFieldValue( this, "fTarget", fDisassemblerSourceViewer.getAdapter( clazz ) ); //$NON-NLS-1$
-					}
-					else if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.BYTE_CODE_MODE
-							&& fByteCodeSourceViewer != null )
-					{
-						ReflectionUtils.setFieldValue( this, "fTarget", fByteCodeSourceViewer.getAdapter( clazz ) ); //$NON-NLS-1$
-					}
-				}
-				catch ( ClassNotFoundException e )
-				{
-					Logger.debug( e );
+				} catch (ClassNotFoundException e) {
+					Logger.debug(e);
 				}
 
-				super.run( );
+				super.run();
 			}
 		};
 		incrementalFindReverseAction
-				.setHelpContextId( IAbstractTextEditorHelpContextIds.FIND_INCREMENTAL_REVERSE_ACTION );
-		incrementalFindReverseAction.setActionDefinitionId( IWorkbenchActionDefinitionIds.FIND_INCREMENTAL_REVERSE );
-		setAction( ITextEditorActionConstants.FIND_INCREMENTAL_REVERSE, incrementalFindAction );
+				.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_INCREMENTAL_REVERSE_ACTION);
+		incrementalFindReverseAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_INCREMENTAL_REVERSE);
+		setAction(ITextEditorActionConstants.FIND_INCREMENTAL_REVERSE, incrementalFindAction);
 
-		setAction( ITextEditorActionConstants.GOTO_LINE, null );
-		GotoLineAction gotoAction = new GotoLineAction( fgBundleForConstructedKeys, "Editor.GotoLine.", this ) { //$NON-NLS-1$
+		setAction(ITextEditorActionConstants.GOTO_LINE, null);
+		GotoLineAction gotoAction = new GotoLineAction(fgBundleForConstructedKeys, "Editor.GotoLine.", this) { //$NON-NLS-1$
 
-			protected ITextEditor getTextEditor( )
-			{
-				if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.DISASSEMBLER_MODE )
-				{
+			protected ITextEditor getTextEditor() {
+				if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.DISASSEMBLER_MODE) {
 					return fDisassemblerSourceViewer;
-				}
-				else if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.BYTE_CODE_MODE )
-				{
+				} else if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.BYTE_CODE_MODE) {
 					return fByteCodeSourceViewer;
 				}
 				return JavaDecompilerClassFileEditor.this;
 			};
 		};
-		gotoAction.setHelpContextId( IAbstractTextEditorHelpContextIds.GOTO_LINE_ACTION );
-		gotoAction.setActionDefinitionId( ITextEditorActionDefinitionIds.LINE_GOTO );
-		setAction( ITextEditorActionConstants.GOTO_LINE, gotoAction );
+		gotoAction.setHelpContextId(IAbstractTextEditorHelpContextIds.GOTO_LINE_ACTION);
+		gotoAction.setActionDefinitionId(ITextEditorActionDefinitionIds.LINE_GOTO);
+		setAction(ITextEditorActionConstants.GOTO_LINE, gotoAction);
 
-		ReflectionUtils.setFieldValue( this, "fSourceCopyAction", copyAction ); //$NON-NLS-1$
-		ReflectionUtils.setFieldValue( this, "fSelectAllAction", selectAllAction ); //$NON-NLS-1$
+		ReflectionUtils.setFieldValue(this, "fSourceCopyAction", copyAction); //$NON-NLS-1$
+		ReflectionUtils.setFieldValue(this, "fSelectAllAction", selectAllAction); //$NON-NLS-1$
 
-		final ActionGroup group = new DecompileActionGroup( this, ITextEditorActionConstants.GROUP_SAVE, true );
-		CompositeActionGroup fContextMenuGroup = (CompositeActionGroup) ReflectionUtils.getFieldValue( this,
-				"fContextMenuGroup" ); //$NON-NLS-1$
-		fContextMenuGroup.addGroup( group );
+		final ActionGroup group = new DecompileActionGroup(this, ITextEditorActionConstants.GROUP_SAVE, true);
+		CompositeActionGroup fContextMenuGroup = (CompositeActionGroup) ReflectionUtils.getFieldValue(this,
+				"fContextMenuGroup"); //$NON-NLS-1$
+		fContextMenuGroup.addGroup(group);
 	}
 
-	public void showSource( )
-	{
-		if ( getEditorInput( ) instanceof IClassFileEditorInput )
-		{
-			showSource( (IClassFileEditorInput) getEditorInput( ) );
+	public void showSource() {
+		if (getEditorInput() instanceof IClassFileEditorInput) {
+			showSource((IClassFileEditorInput) getEditorInput());
 		}
 	}
 
-	protected void showSource( IClassFileEditorInput classFileEditorInput )
-	{
-		if ( currentSourceMode == JavaDecompilerPlugin.getDefault( ).getSourceMode( ) )
+	protected void showSource(IClassFileEditorInput classFileEditorInput) {
+		if (currentSourceMode == JavaDecompilerPlugin.getDefault().getSourceMode())
 			return;
 
-		try
-		{
-			StackLayout fStackLayout = (StackLayout) ReflectionUtils.getFieldValue( this, "fStackLayout" ); //$NON-NLS-1$
-			Composite fParent = (Composite) ReflectionUtils.getFieldValue( this, "fParent" ); //$NON-NLS-1$
-			Composite fViewerComposite = (Composite) ReflectionUtils.getFieldValue( this, "fViewerComposite" ); //$NON-NLS-1$
-			if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.SOURCE_MODE )
-			{
-				if ( fStackLayout != null && fViewerComposite != null && fParent != null )
-				{
+		try {
+			StackLayout fStackLayout = (StackLayout) ReflectionUtils.getFieldValue(this, "fStackLayout"); //$NON-NLS-1$
+			Composite fParent = (Composite) ReflectionUtils.getFieldValue(this, "fParent"); //$NON-NLS-1$
+			Composite fViewerComposite = (Composite) ReflectionUtils.getFieldValue(this, "fViewerComposite"); //$NON-NLS-1$
+			if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.SOURCE_MODE) {
+				if (fStackLayout != null && fViewerComposite != null && fParent != null) {
 					fStackLayout.topControl = fViewerComposite;
-					fParent.layout( );
+					fParent.layout();
 				}
-			}
-			else if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.DISASSEMBLER_MODE )
-			{
-				if ( fStackLayout != null && fParent != null )
-				{
-					if ( fDisassemblerSourceViewer == null )
-					{
-						fDisassemblerSourceViewer = new DisassemblerSourceViewer( this );
-						fDisassemblerSourceViewer.createControl( fParent );
+			} else if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.DISASSEMBLER_MODE) {
+				if (fStackLayout != null && fParent != null) {
+					if (fDisassemblerSourceViewer == null) {
+						fDisassemblerSourceViewer = new DisassemblerSourceViewer(this);
+						fDisassemblerSourceViewer.createControl(fParent);
 					}
-					fDisassemblerSourceViewer.getTextWidget( ).setSelection( 0, 0 );
-					fDisassemblerSourceViewer.setSelectionElement( selectedElement );
-					fStackLayout.topControl = fDisassemblerSourceViewer.getControl( );
-					fParent.layout( );
+					fDisassemblerSourceViewer.getTextWidget().setSelection(0, 0);
+					fDisassemblerSourceViewer.setSelectionElement(selectedElement);
+					fStackLayout.topControl = fDisassemblerSourceViewer.getControl();
+					fParent.layout();
 				}
-			}
-			else if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.BYTE_CODE_MODE )
-			{
-				if ( fStackLayout != null && fParent != null )
-				{
-					if ( fByteCodeSourceViewer == null )
-					{
-						fByteCodeSourceViewer = new ByteCodeSourceViewer( this );
-						fByteCodeSourceViewer.createControl( fParent );
+			} else if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.BYTE_CODE_MODE) {
+				if (fStackLayout != null && fParent != null) {
+					if (fByteCodeSourceViewer == null) {
+						fByteCodeSourceViewer = new ByteCodeSourceViewer(this);
+						fByteCodeSourceViewer.createControl(fParent);
 					}
-					fByteCodeSourceViewer.getTextWidget( ).setSelection( 0, 0 );
-					fByteCodeSourceViewer.setSelectionElement( selectedElement );
-					fStackLayout.topControl = fByteCodeSourceViewer.getControl( );
-					fParent.layout( );
+					fByteCodeSourceViewer.getTextWidget().setSelection(0, 0);
+					fByteCodeSourceViewer.setSelectionElement(selectedElement);
+					fStackLayout.topControl = fByteCodeSourceViewer.getControl();
+					fParent.layout();
 				}
 			}
+		} catch (Exception e) {
+			Logger.debug(e);
 		}
-		catch ( Exception e )
-		{
-			Logger.debug( e );
-		}
-		currentSourceMode = JavaDecompilerPlugin.getDefault( ).getSourceMode( );
+		currentSourceMode = JavaDecompilerPlugin.getDefault().getSourceMode();
 	}
 
-	protected String getCursorPosition( )
-	{
-		if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.DISASSEMBLER_MODE )
-		{
-			if ( fDisassemblerSourceViewer != null && fDisassemblerSourceViewer.getTextWidget( ) != null )
-			{
-				int line = fDisassemblerSourceViewer.getTextWidget( )
-						.getLineAtOffset( fDisassemblerSourceViewer.getTextWidget( ).getCaretOffset( ) );
-				int column = fDisassemblerSourceViewer.getTextWidget( ).getCaretOffset( )
-						- fDisassemblerSourceViewer.getTextWidget( ).getOffsetAtLine( line );
-				return ( line + 1 ) + " : " + ( column + 1 ); //$NON-NLS-1$
+	protected String getCursorPosition() {
+		if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.DISASSEMBLER_MODE) {
+			if (fDisassemblerSourceViewer != null && fDisassemblerSourceViewer.getTextWidget() != null) {
+				int line = fDisassemblerSourceViewer.getTextWidget()
+						.getLineAtOffset(fDisassemblerSourceViewer.getTextWidget().getCaretOffset());
+				int column = fDisassemblerSourceViewer.getTextWidget().getCaretOffset()
+						- fDisassemblerSourceViewer.getTextWidget().getOffsetAtLine(line);
+				return (line + 1) + " : " + (column + 1); //$NON-NLS-1$
+			}
+		} else if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.BYTE_CODE_MODE) {
+			if (fByteCodeSourceViewer != null && fByteCodeSourceViewer.getTextWidget().getSelection() != null) {
+				int line = fByteCodeSourceViewer.getTextWidget()
+						.getLineAtOffset(fByteCodeSourceViewer.getTextWidget().getCaretOffset());
+				int column = fByteCodeSourceViewer.getTextWidget().getCaretOffset()
+						- fByteCodeSourceViewer.getTextWidget().getOffsetAtLine(line);
+				return (line + 1) + " : " + (column + 1); //$NON-NLS-1$
 			}
 		}
-		else if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.BYTE_CODE_MODE )
-		{
-			if ( fByteCodeSourceViewer != null && fByteCodeSourceViewer.getTextWidget( ).getSelection( ) != null )
-			{
-				int line = fByteCodeSourceViewer.getTextWidget( )
-						.getLineAtOffset( fByteCodeSourceViewer.getTextWidget( ).getCaretOffset( ) );
-				int column = fByteCodeSourceViewer.getTextWidget( ).getCaretOffset( )
-						- fByteCodeSourceViewer.getTextWidget( ).getOffsetAtLine( line );
-				return ( line + 1 ) + " : " + ( column + 1 ); //$NON-NLS-1$
-			}
-		}
-		return super.getCursorPosition( );
+		return super.getCursorPosition();
 	}
 }

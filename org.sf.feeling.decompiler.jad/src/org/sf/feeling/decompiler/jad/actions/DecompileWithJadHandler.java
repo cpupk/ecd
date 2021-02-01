@@ -13,13 +13,11 @@ import org.eclipse.core.commands.ExecutionException;
 import org.sf.feeling.decompiler.actions.BaseDecompilerHandler;
 import org.sf.feeling.decompiler.jad.JadDecompilerPlugin;
 
-public class DecompileWithJadHandler extends BaseDecompilerHandler
-{
+public class DecompileWithJadHandler extends BaseDecompilerHandler {
 
 	@Override
-	public Object execute( ExecutionEvent event ) throws ExecutionException
-	{
-		return handleDecompile( JadDecompilerPlugin.decompilerType );
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		return handleDecompile(JadDecompilerPlugin.decompilerType);
 	}
 
 }
