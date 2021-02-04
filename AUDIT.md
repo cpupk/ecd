@@ -18,18 +18,9 @@ _Primary Source: https://sourceforge.net/projects/drgarbagetools/files/eclipse/4
 
 _Primary Source: https://commons.apache.org/downloads/index.html_
 
-* `./org.sf.feeling.decompiler/lib/commons-codec-1.5.jar`
-  * SHA-256: c7956fe621708e45314ebdf6a35e35c57f2ff80ba9c85dfafb1e43620af6c797
-  * Equal to http://central.maven.org/maven2/commons-codec/commons-codec/1.5/commons-codec-1.5.jar
 * `./org.sf.feeling.decompiler.source.attach/lib/commons-compress-1.3.jar`
   * SHA-256: 56291a5427f6c0abc0b34fbf9bfafa0c21b60d503ece95c38741424d76e2aa04
   * Equal to http://central.maven.org/maven2/org/apache/commons/commons-compress/1.3/commons-compress-1.3.jar
-* `./org.sf.feeling.decompiler.source.attach/lib/commons-io-2.2.jar`
-  * SHA-256: 675f60bd11a82d481736591fe4054c66471fa5463d45616652fd71585792ba87
-  * Equal to http://central.maven.org/maven2/commons-io/commons-io/2.2/commons-io-2.2.jar
-* `./org.sf.feeling.decompiler.source.attach/lib/commons-lang-2.6.jar`
-  * SHA-256: 50f11b09f877c294d56f24463f47d28f929cf5044f648661c0f0cfbae9a2f49c
-  * Equal to http://central.maven.org/maven2/commons-lang/commons-lang/2.6/commons-lang-2.6.jar
 
 ### Fernflower
 _Primary Source: https://github.com/JetBrains/intellij-community/tree/master/plugins/java-decompiler/engine_
@@ -41,9 +32,9 @@ _Build Source: https://github.com/MinecraftForge/FernFlower with builds at http:
 ### Minimal JSON
 _Primary Source: https://github.com/ralfstx/minimal-json_
 
-    * `./org.sf.feeling.decompiler/lib/json.jar`
-      * SHA-256: e1d280900c78f18ae2e00c14e7410a77ba19cf084154b386532846aa6dc81721
-      * Version from http://central.maven.org/maven2/com/eclipsesource/minimal-json/minimal-json/0.9.4/minimal-json-0.9.4.jar
+* `./org.sf.feeling.decompiler/lib/json.jar`
+  * SHA-256: e1d280900c78f18ae2e00c14e7410a77ba19cf084154b386532846aa6dc81721
+  * Version from http://central.maven.org/maven2/com/eclipsesource/minimal-json/minimal-json/0.9.4/minimal-json-0.9.4.jar
 
 ### JSOUP
 _Primary Source: http://jsoup.org/_
@@ -94,12 +85,16 @@ _Primary Source: https://maven.apache.org/scm/_
 
 ### Nexus
 
-* `./org.sf.feeling.decompiler.source.attach/lib/nexus-indexer-lucene-model-2.9.2-01.jar`
+https://repo1.maven.org/maven2/org/sonatype/nexus/plugins/nexus-indexer-lucene-model/2.14.20-02/nexus-indexer-lucene-model-2.14.20-02.jar
+* `./org.sf.feeling.decompiler.source.attach/lib/nexus-indexer-lucene-model-2.14.20-02.jar`
+  * SHA-256: 74465BC0D1BBECEF4173522CFBAA3D07E4F5EEC6CF16E2E25268182D1350CB7A
+  * https://repo1.maven.org/maven2/org/sonatype/nexus/plugins/nexus-indexer-lucene-model/2.14.20-02/nexus-indexer-lucene-model-2.14.20-02.jar
 * `./org.sf.feeling.decompiler.source.attach/lib/nexus-restlet1x-model-2.9.2-01.jar`
 
 ### Plexus Utils
 Primary Source: _https://github.com/codehaus-plexus/plexus-utils_
 * `./org.sf.feeling.decompiler.source.attach/lib/plexus-utils-3.0.15.jar`
+  * SHA-256: D0BE76C5CE910134A7E07FD2AA48D9B677800AB0E95873F314B445C6F177C973
 
 ### JAD
 _Primary Source: http://www.javadecompilers.com/jad_
@@ -112,7 +107,24 @@ _Primary Source: http://www.javadecompilers.com/jad_
   * SHA-256: c5f43828592c7a47261b6baf89f13455423f9c528ed1b01e7148ba2475ed6126
 
 ## JD-Core
-_Primary Source: https://github.com/java-decompiler/jd-core/releases
+_Primary Source: https://github.com/java-decompiler/jd-core/releases_
 
 * `./org.sf.feeling.decompiler.jd/lib/jd-core-1.1.3.jar`
   * SHA-256: 33F60FF75C77DC08905E767694A38F7B6AB792BD2E5831F41E2B56354BB806FB
+
+## JAXB
+_Primary Source: https://repo1.maven.org/maven2/_
+
+* `org.sf.feeling.decompiler.source.attach/lib/activation-1.1.1.jar`
+  * SHA-256: ae475120e9fcd99b4b00b38329bd61cdc5eb754eee03fe66c01f50e137724f99
+  * https://repo1.maven.org/maven2/javax/activation/activation/1.1.1/activation-1.1.1.jar
+* `org.sf.feeling.decompiler.source.attach/lib/jaxb-api-2.3.1.jar`
+  * SHA-256: 88b955a0df57880a26a74708bc34f74dcaf8ebf4e78843a28b50eae945732b06
+  * https://repo1.maven.org/maven2/javax/xml/bind/jaxb-api/2.3.1/jaxb-api-2.3.1.jar
+* `org.sf.feeling.decompiler.source.attach/lib/jaxb-impl-2.3.3.jar`
+  * SHA-256: e5178d0c7948247f75a13c689bf36f4d5d4910a121f712aa3b20ae94377069d8
+  * https://repo1.maven.org/maven2/com/sun/xml/bind/jaxb-impl/2.3.3/jaxb-impl-2.3.3.jar
+* `org.sf.feeling.decompiler.source.attach/lib/jaxb-runtime-2.3.3.jar`
+  * SHA-256: 3fcbf9247b08303ecaef2b8b91b47e220b6eced843e02837a5379d011c2c623d
+  * https://repo1.maven.org/maven2/org/glassfish/jaxb/jaxb-runtime/2.3.3/jaxb-runtime-2.3.3.jar
+

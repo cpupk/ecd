@@ -1,7 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ActivationPolicy: lazy
-Bundle-ClassPath: lib/commons-codec-1.5.jar,
- lib/fernflower-352.jar,
+Bundle-ClassPath: lib/fernflower-352.jar,
  lib/json.jar,
  lib/jsoup.jar,
  lib/com.drgarbage.asm_5.0.3.jar,
@@ -32,7 +31,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.search,
  org.eclipse.core.filesystem,
  org.eclipse.equinox.p2.metadata;resolution:=optional,
- org.eclipse.help.base
+ org.eclipse.help.base,
+ org.apache.commons.codec
 Bundle-Vendor: ECD Project Team
 Bundle-Version: 3.1.1.qualifier
 Bundle-ManifestVersion: 2
