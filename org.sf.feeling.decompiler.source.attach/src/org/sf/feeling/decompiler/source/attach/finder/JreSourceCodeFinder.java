@@ -128,31 +128,30 @@ public class JreSourceCodeFinder extends AbstractSourceCodeFinder {
 	protected String[] findMetaInfoFromFile(String binFile) throws Exception {
 		String[] result = null;
 
-		ZipInputStream in = new ZipInputStream(new FileInputStream(binFile));
-		byte[] data = new byte[2048];
-		String zipEntryName;
-		do {
-			ZipEntry entry = in.getNextEntry();
-			if (entry == null) {
-				break;
+		try (ZipInputStream in = new ZipInputStream(new FileInputStream(binFile))) {
+			byte[] data = new byte[2048];
+			String zipEntryName;
+			do {
+				ZipEntry entry = in.getNextEntry();
+				if (entry == null) {
+					break;
+				}
+
+				zipEntryName = entry.getName();
+			} while (!zipEntryName.equals("META-INF/MANIFEST.MF")); //$NON-NLS-1$
+			ByteArrayOutputStream os = new ByteArrayOutputStream();
+			for (;;) {
+				int read = in.read(data);
+				if (read < 0)
+					break;
+				os.write(data, 0, read);
 			}
-
-			zipEntryName = entry.getName();
-		} while (!zipEntryName.equals("META-INF/MANIFEST.MF")); //$NON-NLS-1$
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		for (;;) {
-			int read = in.read(data);
-			if (read < 0)
-				break;
-			os.write(data, 0, read);
+			Properties props = new Properties();
+			props.load(new ByteArrayInputStream(os.toByteArray()));
+			String title = props.getProperty("Implementation-Title"); //$NON-NLS-1$
+			String version = props.getProperty("Implementation-Version"); //$NON-NLS-1$
+			result = new String[] { title, version };
 		}
-		Properties props = new Properties();
-		props.load(new ByteArrayInputStream(os.toByteArray()));
-		String title = props.getProperty("Implementation-Title"); //$NON-NLS-1$
-		String version = props.getProperty("Implementation-Version"); //$NON-NLS-1$
-		result = new String[] { title, version };
-
-		in.close();
 		return result;
 	}
 

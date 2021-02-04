@@ -139,8 +139,8 @@ public class CfrDecompiler implements IDecompiler {
 	}
 
 	@Override
-	public List getExceptions() {
-		return Collections.EMPTY_LIST;
+	public List<Exception> getExceptions() {
+		return Collections.emptyList();
 	}
 
 	/**

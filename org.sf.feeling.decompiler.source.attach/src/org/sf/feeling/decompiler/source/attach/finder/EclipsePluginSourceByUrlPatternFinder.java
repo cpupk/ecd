@@ -25,14 +25,19 @@ import javax.swing.text.html.HTMLEditorKit;
 
 import org.sf.feeling.decompiler.source.attach.utils.SourceAttachUtil;
 import org.sf.feeling.decompiler.source.attach.utils.SourceBindingUtil;
+import org.sf.feeling.decompiler.source.attach.utils.SourceConstants;
 import org.sf.feeling.decompiler.source.attach.utils.UrlDownloader;
 import org.sf.feeling.decompiler.util.Logger;
 
+/**
+ * Expects a file name like
+ * <code>org.eclipse.ant.core_3.5.100.v20180512-1141.jar</code>
+ */
 public class EclipsePluginSourceByUrlPatternFinder extends AbstractSourceCodeFinder implements SourceCodeFinder {
 
-	// http://www.mmnt.ru/int/get?st={0}
-	// http://www.searchftps.com/indexer/search.aspx?__LASTFOCUS=&__EVENTTARGET=ctl00%24MainContent%24SearchButton&__EVENTARGUMENT=&ctl00%24MainContent%24SearchKeywordTextBox={0}&ctl00%24MainContent%24SearchTypeDropDownList=And&ctl00%24MainContent%24SearchOrderDropDownList=DateDesc&ctl00%24MainContent%24SearchFilterDropDownList=NoFilter
-	private String urlPattern;
+	// https://www.mmnt.ru/int/get?st={0}
+	// https://www.searchftps.com/indexer/search.aspx?__LASTFOCUS=&__EVENTTARGET=ctl00%24MainContent%24SearchButton&__EVENTARGUMENT=&ctl00%24MainContent%24SearchKeywordTextBox={0}&ctl00%24MainContent%24SearchTypeDropDownList=And&ctl00%24MainContent%24SearchOrderDropDownList=DateDesc&ctl00%24MainContent%24SearchFilterDropDownList=NoFilter
+	private final String urlPattern;
 
 	public EclipsePluginSourceByUrlPatternFinder(String urlPattern) {
 		this.urlPattern = urlPattern;
@@ -63,6 +68,9 @@ public class EclipsePluginSourceByUrlPatternFinder extends AbstractSourceCodeFin
 		} catch (Throwable e) {
 			Logger.debug(e);
 		}
+		if (fileResult == null) {
+			return;
+		}
 
 		if (fileResult instanceof SourceFileResult) {
 			results.add((SourceFileResult) fileResult);
@@ -74,6 +82,8 @@ public class EclipsePluginSourceByUrlPatternFinder extends AbstractSourceCodeFin
 				Logger.debug(toString() + " FOUND: " + object, null); //$NON-NLS-1$
 				results.add(object);
 			}
+		} else {
+			throw new RuntimeException("Unexpected result: " + fileResult);
 		}
 
 	}
@@ -121,15 +131,15 @@ public class EclipsePluginSourceByUrlPatternFinder extends AbstractSourceCodeFin
 	}
 
 	private List<String> searchFileLinksByName(String fileName) throws Exception {
-		List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
 		URL baseUrl = new URL(this.urlPattern.replace("{0}", URLEncoder.encode(fileName, "UTF-8"))); //$NON-NLS-1$ //$NON-NLS-2$
 		String html = getHtmlFromUrl(baseUrl, fileName);
 
-		List<String> links = new ArrayList<String>();
+		List<String> links = new ArrayList<>();
 
 		EditorKit kit = new HTMLEditorKit();
 		HTMLDocument doc = (HTMLDocument) kit.createDefaultDocument();
-		doc.putProperty("IgnoreCharsetDirective", new Boolean(true)); //$NON-NLS-1$
+		doc.putProperty("IgnoreCharsetDirective", true); //$NON-NLS-1$
 		Reader reader = new StringReader(html);
 		kit.read(reader, doc, 0);
 
@@ -161,17 +171,13 @@ public class EclipsePluginSourceByUrlPatternFinder extends AbstractSourceCodeFin
 	}
 
 	public static void main(String[] args) {
-		EclipsePluginSourceByUrlPatternFinder finder = new EclipsePluginSourceByUrlPatternFinder(
-				"http://www.mmnt.ru/int/get?st={0}"); //$NON-NLS-1$
-		List<SourceFileResult> results = new ArrayList<SourceFileResult>();
-		// finder.find(
-		// "C:\\Users\\Feeling\\.m2\\repository\\ant\\ant\\1.6.5\\ant-1.6.5.jar",
-		// results );
-		// System.out.println( results.get( 0 ).getSource( ) );
-
-		finder = new EclipsePluginSourceByUrlPatternFinder("http://www.filewatcher.com/_/?q={0}"); //$NON-NLS-1$
-		results = new ArrayList<SourceFileResult>();
-		finder.find("C:\\Users\\Feeling\\.m2\\repository\\ant\\ant\\1.6.5\\ant-1.6.5.jar", results); //$NON-NLS-1$
-		System.out.println(results.get(0).getSource());
+		EclipsePluginSourceByUrlPatternFinder finder;
+		List<SourceFileResult> results = new ArrayList<>();
+		finder = new EclipsePluginSourceByUrlPatternFinder("https://www.mmnt.ru/int/get?st={0}"); //$NON-NLS-1$
+		// finder = new
+		// EclipsePluginSourceByUrlPatternFinder("https://www.filewatcher.com/_/?q={0}");
+		// //$NON-NLS-1$
+		finder.find(new File(SourceConstants.USER_M2_REPO_DIR, "ant/ant/1.6.5/ant-1.6.5.jar"), results); //$NON-NLS-1$
+		System.out.println(results);
 	}
 }

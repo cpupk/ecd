@@ -35,11 +35,12 @@ public abstract class JDSourceMapper extends BaseDecompilerSourceMapper {
 
 	private File basePath;
 
-	public JDSourceMapper(File basePath, IPath sourcePath, String sourceRootPath, Map options) {
+	public JDSourceMapper(File basePath, IPath sourcePath, String sourceRootPath, Map<String, String> options) {
 		super(sourcePath, sourceRootPath, options);
 		this.basePath = basePath;
 	}
 
+	@Override
 	public char[] findSource(String javaSourcePath) {
 		char[] source = null;
 
@@ -47,9 +48,9 @@ public abstract class JDSourceMapper extends BaseDecompilerSourceMapper {
 		if (this.rootPaths == null) {
 			source = super.findSource(javaSourcePath);
 		} else {
-			Iterator iterator = this.rootPaths.iterator();
+			Iterator<String> iterator = this.rootPaths.iterator();
 			while (iterator.hasNext() && (source == null)) {
-				String sourcesRootPath = (String) iterator.next();
+				String sourcesRootPath = iterator.next();
 				source = super.findSource(sourcesRootPath + IPath.SEPARATOR + javaSourcePath);
 			}
 		}

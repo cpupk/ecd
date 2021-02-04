@@ -12,7 +12,7 @@ import java.util.List;
 
 public abstract interface SourceCodeFinder {
 
-	public abstract void find(String paramString, List<SourceFileResult> paramList);
+	public abstract void find(String paramString, List<SourceFileResult> resultList);
 
 	public abstract void cancel();
 

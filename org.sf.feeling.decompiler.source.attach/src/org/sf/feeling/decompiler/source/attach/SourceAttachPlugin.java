@@ -47,7 +47,7 @@ public class SourceAttachPlugin extends AbstractUIPlugin {
 	}
 
 	private void flagTempFileDeleteOnExit() {
-		File dir = SourceConstants.SourceTempDir;
+		File dir = SourceConstants.getSourceTempDir();
 		if (dir.exists()) {
 			File[] children = dir.listFiles();
 			if (children != null) {

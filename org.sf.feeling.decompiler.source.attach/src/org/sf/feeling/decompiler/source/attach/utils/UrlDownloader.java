@@ -18,7 +18,7 @@ import java.net.URLConnection;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.scm.ScmBranch;
 import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.ScmRevision;
@@ -50,6 +50,8 @@ import org.sf.feeling.decompiler.util.Logger;
 
 public class UrlDownloader {
 
+	private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 5.1) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.63 Safari/535.7"; //$NON-NLS-1$
+
 	public String download(final String url) throws Exception {
 		String result;
 		if (StringUtils.startsWith(url, "scm:")) //$NON-NLS-1$
@@ -68,10 +70,10 @@ public class UrlDownloader {
 		{
 			url = url.replace("cvs:pserver:", "cvs:pserver:anonymous:@"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+		String urlMD5 = HashUtils.md5Hash(url);
 		final File tmpDir = new File(System.getProperty("java.io.tmpdir")); //$NON-NLS-1$
-		final File checkoutDirectory = new File(tmpDir,
-				SourceConstants.TEMP_SOURCE_PREFIX + "_" + HashUtils.md5Hash(url)); //$NON-NLS-1$
-		final File file = new File(tmpDir, SourceConstants.TEMP_SOURCE_PREFIX + "_" + HashUtils.md5Hash(url) + ".zip"); //$NON-NLS-1$ //$NON-NLS-2$
+		final File checkoutDirectory = new File(tmpDir, SourceConstants.TEMP_SOURCE_PREFIX + "_" + urlMD5); //$NON-NLS-1$
+		final File file = new File(tmpDir, SourceConstants.TEMP_SOURCE_PREFIX + "_" + urlMD5 + ".zip"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (!file.exists()) {
 			if (!checkoutDirectory.exists() || checkoutDirectory.list().length == 0
 					|| (checkoutDirectory.list().length == 1 && checkoutDirectory.list()[0].startsWith("."))) //$NON-NLS-1$
@@ -210,25 +212,19 @@ public class UrlDownloader {
 
 	private String downloadFromUrl(final String url) throws IOException {
 		final File file = File.createTempFile(SourceConstants.TEMP_SOURCE_PREFIX, ".tmp"); //$NON-NLS-1$
-		InputStream is = null;
-		OutputStream os = null;
 		try {
 			final URLConnection conn = new URL(url).openConnection();
 			conn.setConnectTimeout(5000);
 			conn.setReadTimeout(5000);
-			is = this.openConnectionCheckRedirects(conn);
-			os = FileUtils.openOutputStream(file);
-			IOUtils.copy(is, os);
+			try (InputStream is = this.openConnectionCheckRedirects(conn)) {
+				try (OutputStream os = FileUtils.openOutputStream(file)) {
+					IOUtils.copy(is, os);
+				}
+			}
 		} catch (Exception ex) {
-			IOUtils.closeQuietly(os);
 			file.delete();
 			return file.getAbsolutePath();
-		} finally {
-			IOUtils.closeQuietly(os);
-			IOUtils.closeQuietly(is);
 		}
-		IOUtils.closeQuietly(os);
-		IOUtils.closeQuietly(is);
 		final String result = file.getAbsolutePath();
 		return result;
 	}
@@ -241,7 +237,7 @@ public class UrlDownloader {
 			if (c instanceof HttpURLConnection) {
 				((HttpURLConnection) c).setInstanceFollowRedirects(false);
 				c.setRequestProperty("User-Agent", //$NON-NLS-1$
-						"Mozilla/5.0 (Windows NT 5.1) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.63 Safari/535.7"); //$NON-NLS-1$
+						USER_AGENT);
 			}
 			in = c.getInputStream();
 			redir = false;

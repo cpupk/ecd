@@ -12,7 +12,6 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -88,7 +87,7 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 	private static JavaDecompilerPlugin plugin;
 
 	private IPreferenceStore preferenceStore;
-	private TreeMap<String, IDecompilerDescriptor> decompilerDescriptorMap = new TreeMap<String, IDecompilerDescriptor>();
+	private TreeMap<String, IDecompilerDescriptor> decompilerDescriptorMap = new TreeMap<>();
 
 	private boolean isDebugMode = false;
 
@@ -309,8 +308,7 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 		Collection<IDecompilerDescriptor> descriptors = JavaDecompilerPlugin.getDefault().getDecompilerDescriptorMap()
 				.values();
 		if (descriptors != null) {
-			for (Iterator iterator = descriptors.iterator(); iterator.hasNext();) {
-				IDecompilerDescriptor iDecompilerDescriptor = (IDecompilerDescriptor) iterator.next();
+			for (IDecompilerDescriptor iDecompilerDescriptor : descriptors) {
 				if (iDecompilerDescriptor.isDefault()) {
 					return iDecompilerDescriptor.getDecompilerType();
 				}

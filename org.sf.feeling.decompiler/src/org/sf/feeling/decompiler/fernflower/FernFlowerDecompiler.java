@@ -163,8 +163,8 @@ public class FernFlowerDecompiler implements IDecompiler {
 	}
 
 	@Override
-	public List getExceptions() {
-		return Collections.EMPTY_LIST;
+	public List<Exception> getExceptions() {
+		return Collections.emptyList();
 	}
 
 	/**

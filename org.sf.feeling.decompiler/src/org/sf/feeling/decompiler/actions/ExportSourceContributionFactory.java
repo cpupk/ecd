@@ -95,10 +95,10 @@ public class ExportSourceContributionFactory extends ExtensionContributionFactor
 		return true;
 	}
 
-	private List getSelectedElements(ISelectionService selService, Class eleClass) {
+	private List<Object> getSelectedElements(ISelectionService selService, Class eleClass) {
 
-		Iterator selections = getSelections(selService);
-		List elements = new ArrayList();
+		Iterator<?> selections = getSelections(selService);
+		List<Object> elements = new ArrayList<>();
 
 		while ((selections != null) && selections.hasNext()) {
 			Object select = selections.next();
@@ -110,7 +110,7 @@ public class ExportSourceContributionFactory extends ExtensionContributionFactor
 		return elements;
 	}
 
-	private Iterator getSelections(ISelectionService selService) {
+	private Iterator<Object> getSelections(ISelectionService selService) {
 		ISelection selection = selService.getSelection();
 
 		if (selection != null) {

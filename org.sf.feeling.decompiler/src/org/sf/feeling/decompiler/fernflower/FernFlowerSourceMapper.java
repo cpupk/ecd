@@ -24,7 +24,7 @@ public class FernFlowerSourceMapper extends BaseDecompilerSourceMapper {
 	}
 
 	@Override
-	protected void printDecompileReport(StringBuffer source, String fileLocation, Collection exceptions,
+	protected void printDecompileReport(StringBuffer source, String fileLocation, Collection<Exception> exceptions,
 			long decompilationTime) {
 		String location = "\tDecompiled from: " //$NON-NLS-1$
 				+ fileLocation;
@@ -42,7 +42,7 @@ public class FernFlowerSourceMapper extends BaseDecompilerSourceMapper {
 		source.append("\n*/"); //$NON-NLS-1$
 	}
 
-	protected void logExceptions(Collection exceptions, StringBuffer buffer) {
+	protected void logExceptions(Collection<Exception> exceptions, StringBuffer buffer) {
 		if (!exceptions.isEmpty()) {
 			buffer.append("\n\tCaught exceptions:"); //$NON-NLS-1$
 			if (exceptions == null || exceptions.size() == 0)
@@ -51,9 +51,9 @@ public class FernFlowerSourceMapper extends BaseDecompilerSourceMapper {
 			StringWriter stackTraces = new StringWriter();
 			PrintWriter stackTracesP = new PrintWriter(stackTraces);
 
-			Iterator i = exceptions.iterator();
+			Iterator<Exception> i = exceptions.iterator();
 			while (i.hasNext()) {
-				((Exception) i.next()).printStackTrace(stackTracesP);
+				i.next().printStackTrace(stackTracesP);
 				stackTracesP.println(""); //$NON-NLS-1$
 			}
 

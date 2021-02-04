@@ -15,6 +15,7 @@ import java.util.List;
 import org.apache.commons.io.FilenameUtils;
 import org.sf.feeling.decompiler.source.attach.utils.SourceAttachUtil;
 import org.sf.feeling.decompiler.source.attach.utils.SourceBindingUtil;
+import org.sf.feeling.decompiler.source.attach.utils.SourceConstants;
 import org.sf.feeling.decompiler.source.attach.utils.UrlDownloader;
 import org.sf.feeling.decompiler.util.HashUtils;
 import org.sf.feeling.decompiler.util.Logger;
@@ -58,8 +59,8 @@ public class GrepCodeSourceCodeFinder extends AbstractSourceCodeFinder {
 
 	public static void main(String[] args) {
 		GrepCodeSourceCodeFinder finder = new GrepCodeSourceCodeFinder();
-		List<SourceFileResult> results = new ArrayList<SourceFileResult>();
-		finder.find("C:\\Users\\Feeling\\.m2\\repository\\ant\\ant\\1.6.5\\ant-1.6.5.jar", results); //$NON-NLS-1$
+		List<SourceFileResult> results = new ArrayList<>();
+		finder.find(new File(SourceConstants.USER_M2_REPO_DIR, "ant/ant/1.6.5/ant-1.6.5.jar"), results); //$NON-NLS-1$
 		System.out.println(results.get(0).getSource());
 	}
 }

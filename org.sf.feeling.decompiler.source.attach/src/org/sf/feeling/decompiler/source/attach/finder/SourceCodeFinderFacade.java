@@ -23,21 +23,22 @@ public class SourceCodeFinderFacade implements SourceCodeFinder {
 			new MavenRepoSourceCodeFinder(), new NexusSourceCodeFinder("https://repository.jboss.org/nexus/index.html"), //$NON-NLS-1$
 			new NexusSourceCodeFinder("https://oss.sonatype.org/index.html"), //$NON-NLS-1$
 			new ArtifactorySourceCodeFinder("https://repo.grails.org/grails/webapp/home.html"), //$NON-NLS-1$
-			new EclipsePluginSourceByUrlPatternFinder("http://www.filewatcher.com/_/?q={0}"), //$NON-NLS-1$
-			new GrepCodeSourceCodeFinder(), new SourceAttacherServiceSourceCodeFinder(),
+			new EclipsePluginSourceByUrlPatternFinder("https://www.filewatcher.com/_/?q={0}"), //$NON-NLS-1$
+			// new GrepCodeSourceCodeFinder(), //
+			new SourceAttacherServiceSourceCodeFinder(),
 
 			new NexusSourceCodeFinder("https://repository.apache.org/index.html"), //$NON-NLS-1$
 			new NexusSourceCodeFinder("https://repository.ow2.org/nexus/index.html"), //$NON-NLS-1$
 			new NexusSourceCodeFinder("https://maven.java.net/index.html"), //$NON-NLS-1$
 			new NexusSourceCodeFinder("https://maven.nuxeo.org/nexus/index.html"), //$NON-NLS-1$
 			new NexusSourceCodeFinder("https://maven.alfresco.com/nexus/index.html"), //$NON-NLS-1$
-			new NexusSourceCodeFinder("http://nexus.xwiki.org/nexus/index.html"), //$NON-NLS-1$
+			new NexusSourceCodeFinder("https://nexus.xwiki.org/nexus/index.html"), //$NON-NLS-1$
 
 			new ArtifactorySourceCodeFinder("https://repository.cloudera.com/artifactory/webapp/home.html"), //$NON-NLS-1$
 			new ArtifactorySourceCodeFinder("https://repo.spring.io/webapp/home.html"), //$NON-NLS-1$
 
 			new EclipsePluginSourceByFTPSearchv3Finder(),
-			new EclipsePluginSourceByUrlPatternFinder("http://www.mmnt.ru/int/get?st={0}"), //$NON-NLS-1$
+			new EclipsePluginSourceByUrlPatternFinder("https://www.mmnt.ru/int/get?st={0}"), //$NON-NLS-1$
 
 			new EclipseSourceReferencesSourceCodeFinder(), new JreSourceCodeFinder() };
 
@@ -48,43 +49,45 @@ public class SourceCodeFinderFacade implements SourceCodeFinder {
 
 			new NexusSourceCodeFinder("https://oss.sonatype.org/index.html"), //$NON-NLS-1$
 			new ArtifactorySourceCodeFinder("https://repo.grails.org/grails/webapp/home.html"), //$NON-NLS-1$
-			new EclipsePluginSourceByUrlPatternFinder("http://www.filewatcher.com/_/?q={0}"), //$NON-NLS-1$
-			new GrepCodeSourceCodeFinder(), new SourceAttacherServiceSourceCodeFinder(),
+			new EclipsePluginSourceByUrlPatternFinder("https://www.filewatcher.com/_/?q={0}"), //$NON-NLS-1$
+			// new GrepCodeSourceCodeFinder(),
+			new SourceAttacherServiceSourceCodeFinder(),
 
 			new NexusSourceCodeFinder("https://repository.apache.org/index.html"), //$NON-NLS-1$
 			new NexusSourceCodeFinder("https://repository.ow2.org/nexus/index.html"), //$NON-NLS-1$
 			new NexusSourceCodeFinder("https://maven.java.net/index.html"), //$NON-NLS-1$
 			new NexusSourceCodeFinder("https://maven.nuxeo.org/nexus/index.html"), //$NON-NLS-1$
 			new NexusSourceCodeFinder("https://maven.alfresco.com/nexus/index.html"), //$NON-NLS-1$
-			new NexusSourceCodeFinder("http://nexus.xwiki.org/nexus/index.html"), //$NON-NLS-1$
+			new NexusSourceCodeFinder("https://nexus.xwiki.org/nexus/index.html"), //$NON-NLS-1$
 
 			new ArtifactorySourceCodeFinder("https://repository.cloudera.com/artifactory/webapp/home.html"), //$NON-NLS-1$
 			new ArtifactorySourceCodeFinder("https://repo.spring.io/webapp/home.html"), //$NON-NLS-1$
 
 			new EclipsePluginSourceByFTPSearchv3Finder(),
-			new EclipsePluginSourceByUrlPatternFinder("http://www.mmnt.ru/int/get?st={0}"), //$NON-NLS-1$
+			new EclipsePluginSourceByUrlPatternFinder("https://www.mmnt.ru/int/get?st={0}"), //$NON-NLS-1$
 
 			new EclipseSourceReferencesSourceCodeFinder() };
 
 	private SourceCodeFinder[] eclipseFinders = {
 
 			new EclipsePluginSourceByFTPSearchv3Finder(),
-			new EclipsePluginSourceByUrlPatternFinder("http://www.mmnt.ru/int/get?st={0}"), //$NON-NLS-1$
+			new EclipsePluginSourceByUrlPatternFinder("https://www.mmnt.ru/int/get?st={0}"), //$NON-NLS-1$
 
 			new MavenRepoSourceCodeFinder(), new NexusSourceCodeFinder("https://repository.jboss.org/nexus/index.html"), //$NON-NLS-1$
 			new EclipseSourceReferencesSourceCodeFinder(),
 
 			new NexusSourceCodeFinder("https://oss.sonatype.org/index.html"), //$NON-NLS-1$
 			new ArtifactorySourceCodeFinder("https://repo.grails.org/grails/webapp/home.html"), //$NON-NLS-1$
-			new EclipsePluginSourceByUrlPatternFinder("http://www.filewatcher.com/_/?q={0}"), //$NON-NLS-1$
-			new GrepCodeSourceCodeFinder(), new SourceAttacherServiceSourceCodeFinder(),
+			new EclipsePluginSourceByUrlPatternFinder("https://www.filewatcher.com/_/?q={0}"), //$NON-NLS-1$
+			// new GrepCodeSourceCodeFinder(),
+			new SourceAttacherServiceSourceCodeFinder(),
 
 			new NexusSourceCodeFinder("https://repository.apache.org/index.html"), //$NON-NLS-1$
 			new NexusSourceCodeFinder("https://repository.ow2.org/nexus/index.html"), //$NON-NLS-1$
 			new NexusSourceCodeFinder("https://maven.java.net/index.html"), //$NON-NLS-1$
 			new NexusSourceCodeFinder("https://maven.nuxeo.org/nexus/index.html"), //$NON-NLS-1$
 			new NexusSourceCodeFinder("https://maven.alfresco.com/nexus/index.html"), //$NON-NLS-1$
-			new NexusSourceCodeFinder("http://nexus.xwiki.org/nexus/index.html"), //$NON-NLS-1$
+			new NexusSourceCodeFinder("https://nexus.xwiki.org/nexus/index.html"), //$NON-NLS-1$
 
 			new ArtifactorySourceCodeFinder("https://repository.cloudera.com/artifactory/webapp/home.html"), //$NON-NLS-1$
 			new ArtifactorySourceCodeFinder("https://repo.spring.io/webapp/home.html"), //$NON-NLS-1$
@@ -118,7 +121,7 @@ public class SourceCodeFinderFacade implements SourceCodeFinder {
 		}
 
 		for (int i = 0; i < searchFinders.length && !this.canceled; i++) {
-			List<SourceFileResult> results2 = new ArrayList<SourceFileResult>();
+			List<SourceFileResult> results2 = new ArrayList<>();
 			SourceCodeFinder finder = searchFinders[i];
 			Logger.debug(finder + " " + binFile, null); //$NON-NLS-1$
 
@@ -139,15 +142,18 @@ public class SourceCodeFinderFacade implements SourceCodeFinder {
 		}
 	}
 
-	public static void main(String[] args) {
-		SourceCodeFinderFacade finder = new SourceCodeFinderFacade();
-		List<SourceFileResult> results = new ArrayList<SourceFileResult>();
-		finder.find("C:\\develop\\runtime-EclipseApplication\\Test\\lib\\groovy-all-1.7.6.jar", results); //$NON-NLS-1$
-		System.out.println(results.get(0).getSource());
-	}
-
 	@Override
 	public String getDownloadUrl() {
 		return null;
 	}
+
+	public static void main(String[] args) {
+		SourceCodeFinderFacade finder = new SourceCodeFinderFacade();
+		List<SourceFileResult> results = new ArrayList<>();
+		finder.find("C:\\Temp\\groovy-all-1.7.6.jar", results); //$NON-NLS-1$
+		for (SourceFileResult r : results) {
+			System.out.println(r);
+		}
+	}
+
 }

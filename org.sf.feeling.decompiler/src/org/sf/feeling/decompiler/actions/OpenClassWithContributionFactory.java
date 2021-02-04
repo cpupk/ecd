@@ -140,14 +140,14 @@ public class OpenClassWithContributionFactory extends ExtensionContributionFacto
 				IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
 
 				// Get the current selections and return if nothing is selected
-				Iterator selections = getSelections(selService);
+				Iterator<Object> selections = getSelections(selService);
 				if (selections == null)
 					return new IContributionItem[0];
 
-				final List classes = getSelectedElements(selService, IClassFile.class);
+				final List<Object> classes = getSelectedElements(selService, IClassFile.class);
 
 				// List of menu items
-				List list = new ArrayList();
+				List<ActionContributionItem> list = new ArrayList<>();
 
 				if (classes.size() == 1) {
 					IEditorDescriptor editor = registry.findEditor(JavaDecompilerPlugin.EDITOR_ID);

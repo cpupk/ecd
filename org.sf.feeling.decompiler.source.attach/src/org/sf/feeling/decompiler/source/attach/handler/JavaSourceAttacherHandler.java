@@ -218,8 +218,8 @@ public class JavaSourceAttacherHandler extends AbstractHandler {
 						SourceConstants.SourceAttacherDir.mkdirs();
 					}
 
-					if (!SourceConstants.SourceTempDir.exists()) {
-						SourceConstants.SourceTempDir.mkdirs();
+					if (!SourceConstants.getSourceTempDir().exists()) {
+						SourceConstants.getSourceTempDir().mkdirs();
 					}
 
 					File sourceTempFile;
@@ -231,7 +231,7 @@ public class JavaSourceAttacherHandler extends AbstractHandler {
 							FileUtils.copyFile(tempFile, sourceFile);
 						}
 
-						sourceTempFile = new File(SourceConstants.SourceTempDir, suggestedSourceFileName);
+						sourceTempFile = new File(SourceConstants.getSourceTempDir(), suggestedSourceFileName);
 						if (!sourceTempFile.exists()) {
 							FileUtils.copyFile(tempFile, sourceTempFile);
 						}

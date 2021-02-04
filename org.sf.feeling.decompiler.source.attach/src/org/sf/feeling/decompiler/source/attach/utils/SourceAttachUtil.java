@@ -61,7 +61,7 @@ public class SourceAttachUtil {
 				tempFile = tempSourceFile;
 			} else {
 				String suffix = "-" + System.currentTimeMillis() + ".jar"; //$NON-NLS-1$ //$NON-NLS-2$
-				tempFile = new File(SourceConstants.SourceTempDir,
+				tempFile = new File(SourceConstants.getSourceTempDir(),
 						sourceFile.getName().replaceAll("(?i)(\\-)*(\\d)*(\\.)jar", suffix) //$NON-NLS-1$
 								.replaceAll("(?i)(\\-)*(\\d)*(\\.)zip", suffix)); //$NON-NLS-1$
 			}
@@ -112,7 +112,7 @@ public class SourceAttachUtil {
 					return true;
 				} else {
 					String suffix = "-" + System.currentTimeMillis() + ".jar"; //$NON-NLS-1$ //$NON-NLS-2$
-					tempFile = new File(SourceConstants.SourceTempDir,
+					tempFile = new File(SourceConstants.getSourceTempDir(),
 							sourceFile.getName().replaceAll("(?i)(\\-)*(\\d)*(\\.)jar", suffix) //$NON-NLS-1$
 									.replaceAll("(?i)(\\-)*(\\d)*(\\.)zip", suffix)); //$NON-NLS-1$
 					FileUtil.copyFile(sourceFile.getAbsolutePath(), tempFile.getAbsolutePath());
@@ -142,18 +142,17 @@ public class SourceAttachUtil {
 	}
 
 	public static List<String> getEclipsePlugins(final File file) throws IOException {
-		final Set<String> plugins = new HashSet<String>();
-		ZipFile zf = new ZipFile(file);
-		for (Enumeration<? extends ZipEntry> entries = zf.entries(); entries.hasMoreElements();) {
-			String zipEntryName = ((ZipEntry) entries.nextElement()).getName();
-			if (zipEntryName.endsWith(".project")) //$NON-NLS-1$
-			{
-				String[] segements = zipEntryName.replace("/.project", "").split("/"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				plugins.add(segements[segements.length - 1]);
+		final Set<String> plugins = new HashSet<>();
+		try (ZipFile zf = new ZipFile(file)) {
+			for (Enumeration<? extends ZipEntry> entries = zf.entries(); entries.hasMoreElements();) {
+				String zipEntryName = ((ZipEntry) entries.nextElement()).getName();
+				if (zipEntryName.endsWith(".project")) {//$NON-NLS-1$
+					String[] segements = zipEntryName.replace("/.project", "").split("/"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					plugins.add(segements[segements.length - 1]);
+				}
 			}
 		}
-		zf.close();
-		return new ArrayList<String>(plugins);
+		return new ArrayList<>(plugins);
 	}
 
 	private static boolean refreshLibrarySources(final IPackageFragmentRoot root, String[] files) {
@@ -170,7 +169,7 @@ public class SourceAttachUtil {
 				return true;
 			} else {
 				String suffix = "-" + System.currentTimeMillis() + ".jar"; //$NON-NLS-1$ //$NON-NLS-2$
-				tempFile = new File(SourceConstants.SourceTempDir,
+				tempFile = new File(SourceConstants.getSourceTempDir(),
 						sourceFile.getName().replaceAll("(?i)(\\-)*(\\d)*(\\.)jar", suffix) //$NON-NLS-1$
 								.replaceAll("(?i)(\\-)*(\\d)*(\\.)zip", suffix)); //$NON-NLS-1$
 				FileUtil.copyFile(sourceFile.getAbsolutePath(), tempFile.getAbsolutePath());
@@ -271,35 +270,34 @@ public class SourceAttachUtil {
 	public static boolean isSourceCodeFor(String src, String bin) {
 		boolean result = false;
 		try {
-			List<String> binList = new ArrayList<String>();
-			ZipFile zf = new ZipFile(bin);
-			for (Enumeration entries = zf.entries(); entries.hasMoreElements();) {
-				String zipEntryName = ((ZipEntry) entries.nextElement()).getName();
-				binList.add(zipEntryName);
+			List<String> binList = new ArrayList<>();
+			try (ZipFile zf = new ZipFile(bin)) {
+				for (Enumeration entries = zf.entries(); entries.hasMoreElements();) {
+					String zipEntryName = ((ZipEntry) entries.nextElement()).getName();
+					binList.add(zipEntryName);
+				}
 			}
-			zf.close();
 
-			zf = new ZipFile(src);
-			for (Enumeration entries = zf.entries(); entries.hasMoreElements();) {
-				String zipEntryName = ((ZipEntry) entries.nextElement()).getName();
-				String fileBaseName = FilenameUtils.getBaseName(zipEntryName);
-				String fileExt = FilenameUtils.getExtension(zipEntryName);
-				if ("java".equals(fileExt) && fileBaseName != null) //$NON-NLS-1$
-				{
-					for (String zipEntryName2 : binList) {
-						String fileBaseName2 = FilenameUtils.getBaseName(zipEntryName2);
-						String fileExt2 = FilenameUtils.getExtension(zipEntryName2);
-						if ("class".equals(fileExt2) && fileBaseName.equals(fileBaseName2)) //$NON-NLS-1$
-						{
-							result = true;
-							zf.close();
-							return result;
+			try (ZipFile zf = new ZipFile(src)) {
+				for (Enumeration entries = zf.entries(); entries.hasMoreElements();) {
+					String zipEntryName = ((ZipEntry) entries.nextElement()).getName();
+					String fileBaseName = FilenameUtils.getBaseName(zipEntryName);
+					String fileExt = FilenameUtils.getExtension(zipEntryName);
+					if ("java".equals(fileExt) && fileBaseName != null) //$NON-NLS-1$
+					{
+						for (String zipEntryName2 : binList) {
+							String fileBaseName2 = FilenameUtils.getBaseName(zipEntryName2);
+							String fileExt2 = FilenameUtils.getExtension(zipEntryName2);
+							if ("class".equals(fileExt2) && fileBaseName.equals(fileBaseName2)) //$NON-NLS-1$
+							{
+								result = true;
+								return result;
+							}
 						}
 					}
+					binList.add(zipEntryName);
 				}
-				binList.add(zipEntryName);
 			}
-			zf.close();
 		} catch (Exception e) {
 			Logger.debug(e);
 		}

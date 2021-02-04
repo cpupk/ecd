@@ -17,7 +17,7 @@ import com.strobel.assembler.metadata.TypeDefinition;
 
 public final class NoRetryMetadataSystem extends MetadataSystem {
 
-	private final Set<String> _failedTypes = new HashSet();
+	private final Set<String> _failedTypes = new HashSet<>();
 
 	public NoRetryMetadataSystem() {
 	}

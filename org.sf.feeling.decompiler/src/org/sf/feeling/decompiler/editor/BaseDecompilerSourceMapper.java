@@ -25,7 +25,6 @@ import org.eclipse.jdt.internal.compiler.env.IBinaryType;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.jdt.internal.core.ClassFile;
 import org.eclipse.jdt.internal.core.ExternalPackageFragmentRoot;
-import org.eclipse.jdt.internal.core.NamedMember;
 import org.eclipse.jdt.internal.core.PackageFragmentRoot;
 import org.eclipse.jdt.internal.core.SourceMapper;
 import org.eclipse.jdt.internal.ui.javaeditor.IClassFileEditorInput;
@@ -36,9 +35,9 @@ import org.sf.feeling.decompiler.util.ClassUtil;
 import org.sf.feeling.decompiler.util.DecompileUtil;
 import org.sf.feeling.decompiler.util.DecompilerOutputUtil;
 import org.sf.feeling.decompiler.util.Logger;
-import org.sf.feeling.decompiler.util.SourceMapperUtil;
 import org.sf.feeling.decompiler.util.ReflectionUtils;
 import org.sf.feeling.decompiler.util.SortMemberUtil;
+import org.sf.feeling.decompiler.util.SourceMapperUtil;
 import org.sf.feeling.decompiler.util.UIUtil;
 
 public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper {
@@ -47,7 +46,7 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper 
 	private IDecompiler usedDecompiler;
 	private String classLocation;
 
-	private static Map<String, String> options = new HashMap<String, String>();
+	private static Map<String, String> options = new HashMap<>();
 	static {
 		CompilerOptions option = new CompilerOptions();
 		options = option.getMap();
@@ -60,7 +59,7 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper 
 		this(sourcePath, rootPath, options);
 	}
 
-	public BaseDecompilerSourceMapper(IPath sourcePath, String rootPath, Map options) {
+	public BaseDecompilerSourceMapper(IPath sourcePath, String rootPath, Map<String, String> options) {
 		super(sourcePath, rootPath, options);
 	}
 
@@ -69,7 +68,7 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper 
 		IPreferenceStore prefs = JavaDecompilerPlugin.getDefault().getPreferenceStore();
 		boolean always = prefs.getBoolean(JavaDecompilerPlugin.IGNORE_EXISTING);
 
-		Collection exceptions = new LinkedList();
+		Collection<Exception> exceptions = new LinkedList<>();
 		IPackageFragment pkgFrag = type.getPackageFragment();
 		IPackageFragmentRoot root = (IPackageFragmentRoot) pkgFrag.getParent();
 
@@ -233,8 +232,8 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper 
 		return false;
 	}
 
-	private IDecompiler decompile(IDecompiler decompiler, IType type, Collection exceptions, IPackageFragmentRoot root,
-			String className) {
+	private IDecompiler decompile(IDecompiler decompiler, IType type, Collection<Exception> exceptions,
+			IPackageFragmentRoot root, String className) {
 		IDecompiler result = decompiler;
 
 		String pkg = type.getPackageFragment().getElementName().replace('.', '/');
@@ -343,7 +342,7 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper 
 			source.append(formatSource(code));
 
 			if (showReport) {
-				Collection exceptions = new LinkedList();
+				Collection<Exception> exceptions = new LinkedList<>();
 				exceptions.addAll(currentDecompiler.getExceptions());
 				printDecompileReport(source, file.getAbsolutePath(), exceptions,
 						currentDecompiler.getDecompilationTime());
@@ -355,6 +354,6 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper 
 		return source.toString();
 	}
 
-	protected abstract void printDecompileReport(StringBuffer source, String location, Collection exceptions,
+	protected abstract void printDecompileReport(StringBuffer source, String location, Collection<Exception> exceptions,
 			long decompilationTime);
 }

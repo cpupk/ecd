@@ -106,11 +106,11 @@ public class JadDecompiler implements IDecompiler {
 
 	private String source = "/* ERROR? */"; //$NON-NLS-1$
 	private StringBuffer log;
-	private List excList = new ArrayList();
+	private List<Exception> excList = new ArrayList<>();
 	private long time, start;
 
 	private String[] buildCmdLine(String classFileName) {
-		ArrayList cmdLine = new ArrayList();
+		ArrayList<String> cmdLine = new ArrayList<>();
 		IPreferenceStore settings = JavaDecompilerPlugin.getDefault().getPreferenceStore();
 
 		// command and special options
@@ -161,11 +161,11 @@ public class JadDecompiler implements IDecompiler {
 
 		cmdLine.add(classFileName);
 		// debugCmdLine(cmdLine);
-		return (String[]) cmdLine.toArray(new String[cmdLine.size()]);
+		return cmdLine.toArray(new String[cmdLine.size()]);
 
 	}
 
-	void debugCmdLine(List segments) {
+	void debugCmdLine(List<String> segments) {
 		StringBuffer cmdline = new StringBuffer();
 		for (int i = 0; i < segments.size(); i++)
 			cmdline.append(segments.get(i)).append(" "); //$NON-NLS-1$
@@ -264,7 +264,7 @@ public class JadDecompiler implements IDecompiler {
 	}
 
 	@Override
-	public List getExceptions() {
+	public List<Exception> getExceptions() {
 		return excList;
 	}
 

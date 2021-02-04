@@ -50,35 +50,12 @@ public class HashUtils {
 	}
 
 	public static String sha1Hash(File file) {
-
 		if (file != null) {
-			InputStream fis = null;
-			try {
-				fis = new FileInputStream(file);
-				String result = new String(Hex.encodeHex(DigestUtils.sha(fis)));
-				return result;
+			try (InputStream fis = new FileInputStream(file)) {
+				return new String(Hex.encodeHex(DigestUtils.sha1(fis)));
 			} catch (IOException e) {
 				Logger.debug(e);
-			} finally {
-				if (fis != null) {
-					try {
-						fis.close();
-					} catch (IOException e) {
-						Logger.debug(e);
-					}
-				}
 			}
-		}
-		return null;
-	}
-
-	public static String sha1Hash(String string) {
-		if (string == null)
-			return null;
-		byte[] content = string.getBytes();
-		if (content != null) {
-			String result = new String(Hex.encodeHex(DigestUtils.sha(content)));
-			return result;
 		}
 		return null;
 	}

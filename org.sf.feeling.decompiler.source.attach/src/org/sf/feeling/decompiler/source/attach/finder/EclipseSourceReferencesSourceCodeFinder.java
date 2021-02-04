@@ -28,31 +28,30 @@ public class EclipseSourceReferencesSourceCodeFinder extends AbstractSourceCodeF
 	private String findMetaInfoFromFile(String binFile) throws Exception {
 		String result = null;
 
-		ZipInputStream in = new ZipInputStream(new java.io.FileInputStream(binFile));
-		byte[] data = new byte[2048];
-		String zipEntryName;
-		do {
-			ZipEntry entry = in.getNextEntry();
-			if (entry == null) {
-				break;
+		try (ZipInputStream in = new ZipInputStream(new java.io.FileInputStream(binFile))) {
+			byte[] data = new byte[2048];
+			String zipEntryName;
+			do {
+				ZipEntry entry = in.getNextEntry();
+				if (entry == null) {
+					break;
+				}
+
+				zipEntryName = entry.getName();
+			} while (!zipEntryName.equals("META-INF/MANIFEST.MF")); //$NON-NLS-1$
+			ByteArrayOutputStream os = new ByteArrayOutputStream();
+			for (;;) {
+				int read = in.read(data);
+				if (read < 0)
+					break;
+				os.write(data, 0, read);
 			}
 
-			zipEntryName = entry.getName();
-		} while (!zipEntryName.equals("META-INF/MANIFEST.MF")); //$NON-NLS-1$
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		for (;;) {
-			int read = in.read(data);
-			if (read < 0)
-				break;
-			os.write(data, 0, read);
+			Manifest manifest = new Manifest(new java.io.ByteArrayInputStream(os.toByteArray()));
+			Attributes attr = manifest.getMainAttributes();
+			String ESR = attr.getValue("Eclipse-SourceReferences"); //$NON-NLS-1$
+			result = ESR;
 		}
-
-		Manifest manifest = new Manifest(new java.io.ByteArrayInputStream(os.toByteArray()));
-		Attributes attr = manifest.getMainAttributes();
-		String ESR = attr.getValue("Eclipse-SourceReferences"); //$NON-NLS-1$
-		result = ESR;
-
-		in.close();
 		return result;
 	}
 

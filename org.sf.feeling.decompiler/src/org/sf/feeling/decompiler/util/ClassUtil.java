@@ -154,8 +154,8 @@ public class ClassUtil {
 		Collection<IDecompilerDescriptor> descriptors = JavaDecompilerPlugin.getDefault().getDecompilerDescriptorMap()
 				.values();
 		if (descriptors != null) {
-			for (Iterator iterator = descriptors.iterator(); iterator.hasNext();) {
-				IDecompilerDescriptor iDecompilerDescriptor = (IDecompilerDescriptor) iterator.next();
+			for (Iterator<IDecompilerDescriptor> iterator = descriptors.iterator(); iterator.hasNext();) {
+				IDecompilerDescriptor iDecompilerDescriptor = iterator.next();
 				if (iDecompilerDescriptor.isDefault()) {
 					IDecompiler decompiler = iDecompilerDescriptor.getDecompiler();
 					if (debug) {

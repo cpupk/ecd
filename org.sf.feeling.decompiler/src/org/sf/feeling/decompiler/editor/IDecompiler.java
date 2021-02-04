@@ -51,7 +51,7 @@ public interface IDecompiler {
 	 * @return non-<code>null</code> value which is a list containing
 	 *         <code>java.lang.Exception</code>'s
 	 */
-	public List getExceptions();
+	public List<Exception> getExceptions();
 
 	/**
 	 * @return decompilation log specific to physical decompiler

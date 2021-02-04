@@ -9,7 +9,6 @@
 package org.sf.feeling.decompiler.editor;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -37,12 +36,12 @@ import org.eclipse.jdt.internal.core.OpenableElementInfo;
 import org.eclipse.jdt.internal.core.SourceMapper;
 import org.sf.feeling.decompiler.util.DecompilerOutputUtil;
 import org.sf.feeling.decompiler.util.Logger;
-import org.sf.feeling.decompiler.util.SourceMapperUtil;
 import org.sf.feeling.decompiler.util.ReflectionUtils;
+import org.sf.feeling.decompiler.util.SourceMapperUtil;
 
 public class ImportSourceMapper extends SourceMapper {
 
-	private static Map<String, String> options = new HashMap<String, String>();
+	private static Map<String, String> options = new HashMap<>();
 	static {
 		CompilerOptions option = new CompilerOptions();
 		options = option.getMap();
@@ -60,7 +59,7 @@ public class ImportSourceMapper extends SourceMapper {
 	}
 
 	protected Stack infoStack;
-	protected HashMap children;
+	protected HashMap<Object, List> children;
 	protected Stack handleStack;
 	protected ClassFile unit;
 	protected OpenableElementInfo unitInfo;
@@ -72,7 +71,7 @@ public class ImportSourceMapper extends SourceMapper {
 	@Override
 	public void enterCompilationUnit() {
 		this.infoStack = new Stack();
-		this.children = new HashMap();
+		this.children = new HashMap<>();
 		this.handleStack = new Stack();
 		this.infoStack.push(this.unitInfo);
 		this.handleStack.push(this.unit);
@@ -133,7 +132,7 @@ public class ImportSourceMapper extends SourceMapper {
 	}
 
 	private IJavaElement[] getChildren(Object info) {
-		ArrayList childrenList = (ArrayList) this.children.get(info);
+		List childrenList = this.children.get(info);
 		if (childrenList != null) {
 			return (IJavaElement[]) childrenList.toArray(new IJavaElement[childrenList.size()]);
 		}
@@ -145,9 +144,9 @@ public class ImportSourceMapper extends SourceMapper {
 	}
 
 	private void addToChildren(Object parentInfo, JavaElement handle) {
-		ArrayList childrenList = (ArrayList) this.children.get(parentInfo);
+		List childrenList = this.children.get(parentInfo);
 		if (childrenList == null)
-			this.children.put(parentInfo, childrenList = new ArrayList());
+			this.children.put(parentInfo, childrenList = new ArrayList<>());
 		childrenList.add(handle);
 	}
 

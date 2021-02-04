@@ -35,7 +35,9 @@ import com.strobel.assembler.metadata.TypeReference;
 import com.strobel.decompiler.DecompilationOptions;
 import com.strobel.decompiler.DecompilerSettings;
 import com.strobel.decompiler.LineNumberFormatter;
+import com.strobel.decompiler.LineNumberFormatter.LineNumberOption;
 import com.strobel.decompiler.PlainTextOutput;
+import com.strobel.decompiler.languages.LineNumberPosition;
 import com.strobel.decompiler.languages.TypeDecompilationResults;
 
 public class ProcyonDecompiler implements IDecompiler {
@@ -108,10 +110,10 @@ public class ProcyonDecompiler implements IDecompiler {
 
 			writer = null;
 
-			List lineNumberPositions = results.getLineNumberPositions();
+			List<LineNumberPosition> lineNumberPositions = results.getLineNumberPositions();
 
 			if (includeLineNumbers || stretchLines) {
-				EnumSet lineNumberOptions = EnumSet.noneOf(LineNumberFormatter.LineNumberOption.class);
+				EnumSet<LineNumberOption> lineNumberOptions = EnumSet.noneOf(LineNumberOption.class);
 
 				if (includeLineNumbers) {
 					lineNumberOptions.add(LineNumberFormatter.LineNumberOption.LEADING_COMMENTS);
@@ -193,8 +195,8 @@ public class ProcyonDecompiler implements IDecompiler {
 	}
 
 	@Override
-	public List getExceptions() {
-		return Collections.EMPTY_LIST;
+	public List<Exception> getExceptions() {
+		return Collections.emptyList();
 	}
 
 	/**

@@ -42,7 +42,7 @@ public class DecompilerAdapterInvocationHandler implements InvocationHandler {
 					Object a = java.lang.reflect.Array.newInstance(returnType.getComponentType(), allResult.size());
 					return allResult.toArray((Object[]) a);
 				} else if (returnType == Collection.class) {
-					Collection allResult = new ArrayList();
+					Collection<?> allResult = new ArrayList<>();
 					for (Iterator iter = adapters.iterator(); iter.hasNext();) {
 						Object result = method.invoke(iter.next(), args);
 						allResult.addAll((Collection) result);

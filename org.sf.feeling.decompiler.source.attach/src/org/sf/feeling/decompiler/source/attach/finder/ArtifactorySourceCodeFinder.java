@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -126,7 +127,7 @@ public class ArtifactorySourceCodeFinder extends AbstractSourceCodeFinder implem
 				{
 					String uri = gav2.getArtifactLink();
 					File file = new File(new UrlDownloader().download(uri));
-					String json = FileUtils.readFileToString(file);
+					String json = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
 					JsonObject resp = Json.parse(json).asObject();
 					results.put(gav, resp.getString("downloadUri", "")); //$NON-NLS-1$ //$NON-NLS-2$
 				}
@@ -143,7 +144,7 @@ public class ArtifactorySourceCodeFinder extends AbstractSourceCodeFinder implem
 		// GET
 		// /api/search/gavc?g=org.acme&a=artifact*&v=1.0&c=sources&repos=libs-release-local
 
-		Set<GAV> results = new HashSet<GAV>();
+		Set<GAV> results = new HashSet<>();
 		String apiUrl = getArtifactApiUrl();
 
 		String url;
@@ -158,9 +159,10 @@ public class ArtifactorySourceCodeFinder extends AbstractSourceCodeFinder implem
 		connection.setReadTimeout(5000);
 		connection.connect();
 		try {
-			InputStream is = connection.getInputStream();
-			String json = IOUtils.toString(is);
-			IOUtils.closeQuietly(is);
+			String json;
+			try (InputStream is = connection.getInputStream()) {
+				json = IOUtils.toString(is, StandardCharsets.UTF_8);
+			}
 
 			JsonObject resp = Json.parse(json).asObject();
 			for (JsonValue elem : resp.get("results").asArray()) //$NON-NLS-1$

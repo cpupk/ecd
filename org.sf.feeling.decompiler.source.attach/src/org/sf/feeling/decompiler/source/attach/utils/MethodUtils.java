@@ -15,7 +15,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
 public class MethodUtils {
 
 	// --------------------------------------------------------- Private Methods
@@ -66,7 +65,7 @@ public class MethodUtils {
 	 * via different classloaders will generate non-equal MethodDescriptor objects
 	 * and hence end up with different entries in the map.
 	 */
-	private static final HashMap cache = new HashMap();
+	private static final HashMap<MethodDescriptor, Reference> cache = new HashMap<>();
 
 	/**
 	 * Set whether methods should be cached for greater performance or not, default
@@ -1150,7 +1149,7 @@ public class MethodUtils {
 	 */
 	private static Method getCachedMethod(MethodDescriptor md) {
 		if (CACHE_METHODS) {
-			Reference methodRef = (Reference) cache.get(md);
+			Reference methodRef = cache.get(md);
 			if (methodRef != null) {
 				return (Method) methodRef.get();
 			}

@@ -29,13 +29,16 @@ import org.sf.feeling.decompiler.source.attach.utils.UrlDownloader;
 import org.sf.feeling.decompiler.util.HashUtils;
 import org.sf.feeling.decompiler.util.Logger;
 import org.sonatype.nexus.rest.model.NexusArtifact;
+import org.sonatype.nexus.rest.model.NexusNGArtifact;
+import org.sonatype.nexus.rest.model.NexusNGArtifactHit;
+import org.sonatype.nexus.rest.model.NexusNGArtifactLink;
 import org.sonatype.nexus.rest.model.SearchNGResponse;
 import org.sonatype.nexus.rest.model.SearchResponse;
 
 public class NexusSourceCodeFinder extends AbstractSourceCodeFinder implements SourceCodeFinder {
 
+	private final String serviceUrl;
 	private boolean canceled = false;
-	private String serviceUrl;
 
 	public NexusSourceCodeFinder(String serviceUrl) {
 		this.serviceUrl = serviceUrl;
@@ -53,7 +56,7 @@ public class NexusSourceCodeFinder extends AbstractSourceCodeFinder implements S
 
 	@Override
 	public void find(String binFile, List<SourceFileResult> results) {
-		Collection<GAV> gavs = new HashSet<GAV>();
+		Collection<GAV> gavs = new HashSet<>();
 		try {
 			String sha1 = HashUtils.sha1Hash(new File(binFile));
 			gavs.addAll(findArtifactsUsingNexus(null, null, null, null, sha1, false));
@@ -75,7 +78,7 @@ public class NexusSourceCodeFinder extends AbstractSourceCodeFinder implements S
 		if (canceled)
 			return;
 
-		Map<GAV, String> sourcesUrls = new HashMap<GAV, String>();
+		Map<GAV, String> sourcesUrls = new HashMap<>();
 		try {
 			sourcesUrls.putAll(findSourcesUsingNexus(gavs));
 		} catch (Throwable e) {
@@ -129,23 +132,41 @@ public class NexusSourceCodeFinder extends AbstractSourceCodeFinder implements S
 		return results;
 	}
 
+	/**
+	 * *
+	 * 
+	 * @param g       group id to perform a maven search against (can be combined
+	 *                with a, v, p & c params as well).
+	 * @param a       artifact id to perform a maven search against (can be combined
+	 *                with g, v, p & c params as well).
+	 * @param v       version to perform a maven search against (can be combined
+	 *                with g, a, p & c params as well).
+	 * @param c       classifier to perform a maven search against (can be combined
+	 *                with g, a, v & p params as well).
+	 * @param sha1    provide this param for a checksum search (g, a, v, p, c, cn
+	 *                params will be ignored).
+	 * @param getLink
+	 * @return
+	 * @throws Exception
+	 * @see https://repository.sonatype.org/nexus-indexer-lucene-plugin/default/docs/path__data_index.html
+	 * @see https://repository.sonatype.org/nexus-indexer-lucene-plugin/default/docs/path__lucene_search.html
+	 */
 	private Set<GAV> findArtifactsUsingNexus(String g, String a, String v, String c, String sha1, boolean getLink)
 			throws Exception {
 		// http://repository.sonatype.org/service/local/lucene/search?sha1=686ef3410bcf4ab8ce7fd0b899e832aaba5facf7
 		// http://repository.sonatype.org/service/local/data_index?sha1=686ef3410bcf4ab8ce7fd0b899e832aaba5facf7
-		Set<GAV> results = new HashSet<GAV>();
+		Set<GAV> results = new HashSet<>();
 		String nexusUrl = getNexusContextUrl();
 
-		String[] endpoints = new String[] { nexusUrl
-				+ "service/local/data_index"/*
-											 * //$NON-NLS-1$ //$NON-NLS-1$ , nexusUrl + "service/local/lucene/search"
-											 */
+		String[] endpoints = new String[] { //
+				nexusUrl + "service/local/data_index", //$NON-NLS-1$
+				// nexusUrl + "service/local/lucene/search" //$NON-NLS-1$
 		};
 		for (String endpoint : endpoints) {
 			if (canceled)
 				return results;
 			String urlStr = endpoint;
-			LinkedHashMap<String, String> params = new LinkedHashMap<String, String>();
+			LinkedHashMap<String, String> params = new LinkedHashMap<>();
 			if (g != null) {
 				params.put("g", g); //$NON-NLS-1$
 			}
@@ -178,27 +199,53 @@ public class NexusSourceCodeFinder extends AbstractSourceCodeFinder implements S
 			Unmarshaller unmarshaller = context.createUnmarshaller();
 			URLConnection connection = new URL(urlStr).openConnection();
 			connection.setConnectTimeout(5000);
-			connection.setReadTimeout(5000);
+			connection.setReadTimeout(10000);
 			connection.connect();
 			try {
 				Object resp = unmarshaller.unmarshal(connection.getInputStream());
-				if (resp instanceof SearchResponse) {
+				if (resp instanceof SearchNGResponse) {
+					SearchNGResponse srsp = (SearchNGResponse) resp;
+					for (NexusNGArtifact ar : srsp.getData()) {
+						if (getLink) {
+							for (NexusNGArtifactHit hit : ar.getArtifactHits()) {
+								for (NexusNGArtifactLink link : hit.getArtifactLinks()) {
+									GAV gav = new GAV();
+									gav.setG(ar.getGroupId());
+									gav.setA(ar.getArtifactId());
+									gav.setV(ar.getVersion());
+									// TODO: generate link from NexusNGArtifactLink
+									// gav.setArtifactLink(link.??);
+								}
+							}
+						} else {
+							GAV gav = new GAV();
+							gav.setG(ar.getGroupId());
+							gav.setA(ar.getArtifactId());
+							gav.setV(ar.getVersion());
+							results.add(gav);
+							Logger.info("GAV result: " + gav);
+						}
+					}
+				} else if (resp instanceof SearchResponse) {
 					SearchResponse srsp = (SearchResponse) resp;
 					for (NexusArtifact ar : srsp.getData()) {
 						GAV gav = new GAV();
 						gav.setG(ar.getGroupId());
 						gav.setA(ar.getArtifactId());
 						gav.setV(ar.getVersion());
-						if (getLink)
+						if (getLink) {
 							gav.setArtifactLink(ar.getArtifactLink());
+						}
 						results.add(gav);
+						Logger.info("GAV result: " + gav);
 					}
 				}
 			} catch (Throwable e) {
-				Logger.debug(e);
+				Logger.error("Failed to query source code artuifact", e);
 			}
 		}
 		return results;
+
 	}
 
 	private String getNexusContextUrl() {

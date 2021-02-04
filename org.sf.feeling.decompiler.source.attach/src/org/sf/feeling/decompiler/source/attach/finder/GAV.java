@@ -8,8 +8,8 @@
 
 package org.sf.feeling.decompiler.source.attach.finder;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 public class GAV {
 
@@ -58,6 +58,11 @@ public class GAV {
 	@Override
 	public int hashCode() {
 		return HashCodeBuilder.reflectionHashCode(this);
+	}
+
+	@Override
+	public String toString() {
+		return "GAV [g=" + g + ", a=" + a + ", v=" + v + ", artifactLink=" + artifactLink + "]";
 	}
 
 }
