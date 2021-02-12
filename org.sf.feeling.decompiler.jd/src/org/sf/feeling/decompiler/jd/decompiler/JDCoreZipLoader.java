@@ -44,41 +44,41 @@ public class JDCoreZipLoader implements Loader, Closeable {
 
 	public JDCoreZipLoader(Path zipFilePath, EntriesCache entriesCache) throws ZipException, IOException {
 		super();
-		if (entriesCache == null) {
-			entriesCache = new EntriesCache(zipFilePath);
-		}
-		this.entriesCache = entriesCache;
-		if (!entriesCache.zipFilePath.equals(zipFilePath)) {
+		if (entriesCache != null && !entriesCache.zipFilePath.equals(zipFilePath)) {
 			throw new IllegalArgumentException("entriesCache is for the wrong zipFilePath");
 		}
 		zipFile = new ZipFile(zipFilePath.toFile());
-		Enumeration<? extends ZipEntry> entries = zipFile.entries();
-		while (entries.hasMoreElements()) {
-			ZipEntry entry = entries.nextElement();
-			String name = entry.getName();
 
-			if (name.startsWith("/")) {
-				name = name.substring(1);
-			}
-			if (name.endsWith(".class")) {
-				try {
-					// Extract class name from class file
-					ClassReader cr = new ClassReader(zipFile.getInputStream(entry));
-					String className = cr.getClassName();
+		if (entriesCache == null) {
+			entriesCache = new EntriesCache(zipFilePath);
+			Enumeration<? extends ZipEntry> entries = zipFile.entries();
+			while (entries.hasMoreElements()) {
+				ZipEntry entry = entries.nextElement();
+				String name = entry.getName();
 
-					if (className != null && !className.isEmpty()) {
-						String oldEntry = entriesCache.entriesMap.put(className, entry.getName());
-						if (oldEntry != null) {
-							Logger.info("Duplicate class " + className + " found in JAR " + zipFilePath + ": "
-									+ entry.getName() + "/" + oldEntry);
+				if (name.startsWith("/")) {
+					name = name.substring(1);
+				}
+				if (name.endsWith(".class")) {
+					try {
+						// Extract class name from class file
+						ClassReader cr = new ClassReader(zipFile.getInputStream(entry));
+						String className = cr.getClassName();
+
+						if (className != null && !className.isEmpty()) {
+							String oldEntry = entriesCache.entriesMap.put(className, entry.getName());
+							if (oldEntry != null) {
+								Logger.info("Duplicate class " + className + " found in JAR " + zipFilePath + ": "
+										+ entry.getName() + "/" + oldEntry);
+							}
 						}
+					} catch (Exception e) {
+						Logger.error("Failed to read entry " + name + ": " + e.toString());
 					}
-				} catch (Exception e) {
-					Logger.error("Failed to read entry " + name + ": " + e.toString());
 				}
 			}
-
 		}
+		this.entriesCache = entriesCache;
 	}
 
 	@Override
