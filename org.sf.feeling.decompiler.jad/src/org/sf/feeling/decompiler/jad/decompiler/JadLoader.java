@@ -15,6 +15,7 @@ import java.io.InputStream;
 
 import org.eclipse.core.runtime.Platform;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
+import org.sf.feeling.decompiler.util.IOUtils;
 
 public final class JadLoader {
 
@@ -24,7 +25,8 @@ public final class JadLoader {
 
 		if (Platform.OS_WIN32.equalsIgnoreCase(Platform.getOS())) {
 			jadFileName = "jad" + System.currentTimeMillis() + ".exe"; //$NON-NLS-1$ //$NON-NLS-2$
-			jadFilePath = "/native/jad/win32/jad.exe"; //$NON-NLS-1$
+			// Jad_exe instead of Jad.exe to avoid GitHub page nag message
+			jadFilePath = "/native/jad/win32/jad_exe"; //$NON-NLS-1$
 		} else if (Platform.OS_LINUX.equalsIgnoreCase(Platform.getOS())) {
 			jadFileName = "jad" + System.currentTimeMillis(); //$NON-NLS-1$
 			jadFilePath = "/native/jad/linux/jad"; //$NON-NLS-1$
@@ -35,13 +37,11 @@ public final class JadLoader {
 			throw new Error("Can't obtain jad executable file."); //$NON-NLS-1$
 		}
 
-		InputStream is = JadLoader.class.getResourceAsStream(jadFilePath); // $NON-NLS-1$
-		if (is == null) {
-			throw new Error("Can't obtain jad executable file."); //$NON-NLS-1$
-		}
+		try (InputStream is = JadLoader.class.getResourceAsStream(jadFilePath)) { // $NON-NLS-1$
+			if (is == null) {
+				throw new Error("Can't obtain jad executable file."); //$NON-NLS-1$
+			}
 
-		FileOutputStream fos = null;
-		try {
 			File tempDir = new File(
 					JavaDecompilerPlugin.getDefault().getPreferenceStore().getString(JavaDecompilerPlugin.TEMP_DIR));
 			if (!tempDir.exists()) {
@@ -50,14 +50,9 @@ public final class JadLoader {
 			File jad = new File(tempDir, jadFileName);
 			jad.createNewFile();
 			jad.deleteOnExit();
-			fos = new FileOutputStream(jad);
-			int count;
-			byte[] buf = new byte[1024];
-			while ((count = is.read(buf, 0, buf.length)) > 0) {
-				fos.write(buf, 0, count);
+			try (FileOutputStream fos = new FileOutputStream(jad)) {
+				IOUtils.copy(is, fos);
 			}
-			fos.close();
-			fos = null;
 
 			try {
 				if (Platform.OS_LINUX.equalsIgnoreCase(Platform.getOS())) {
@@ -68,7 +63,7 @@ public final class JadLoader {
 							+ jad.getAbsolutePath()).waitFor();
 				}
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				throw new RuntimeException(e);
 			}
 
 			// jad.setExecutable( true );
@@ -76,17 +71,6 @@ public final class JadLoader {
 		} catch (IOException e) {
 			throw new Error("Failed to create temporary file for jad.exe: " //$NON-NLS-1$
 					+ e);
-		} finally {
-			try {
-				is.close();
-			} catch (IOException e) {
-			}
-			if (fos != null) {
-				try {
-					fos.close();
-				} catch (IOException e) {
-				}
-			}
 		}
 	}
 }

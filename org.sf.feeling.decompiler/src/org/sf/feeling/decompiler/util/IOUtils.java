@@ -128,7 +128,7 @@ public class IOUtils {
 	 * {@link #copyLarge(InputStream, OutputStream)} and
 	 * {@link #copyLarge(Reader, Writer)}
 	 */
-	private static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
+	private static final int DEFAULT_BUFFER_SIZE = 1024 * 16;
 
 	/**
 	 * The default buffer size to use for the skip() methods.
