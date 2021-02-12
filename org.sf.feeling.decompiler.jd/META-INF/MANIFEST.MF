@@ -26,5 +26,5 @@ Bundle-ActivationPolicy: lazy
 Bundle-Vendor: ECD Project Team
 Export-Package: org.sf.feeling.decompiler.jd.actions,
  org.sf.feeling.decompiler.jd.decompiler
-Bundle-ClassPath: lib/jd-core-1.1.3.jar,
- .
+Bundle-ClassPath: .,
+ lib/jd-core-1.1.3.jar

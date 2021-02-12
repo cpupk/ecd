@@ -161,6 +161,8 @@ public class DisassemblerDocumentProvider extends FileDocumentProvider {
 			ClassFileOutlineElement outlineElement = new ClassFileOutlineElement();
 			ClassFileDocument doc = new ClassFileDocument(outlineElement);
 			outlineElement.setClassFileDocument(doc);
+			// Known problem: The used library supports only up to Java 8 (class file
+			// version 52)
 			ClassReader cr = new ClassReader(in, doc);
 			cr.accept(doc, 0);
 

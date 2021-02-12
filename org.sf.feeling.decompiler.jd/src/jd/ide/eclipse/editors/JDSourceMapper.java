@@ -6,6 +6,7 @@
 package jd.ide.eclipse.editors;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.Map;
@@ -19,6 +20,7 @@ import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.editor.BaseDecompilerSourceMapper;
 import org.sf.feeling.decompiler.jd.decompiler.JDCorePrinter;
 import org.sf.feeling.decompiler.jd.decompiler.JDCoreZipLoader;
+import org.sf.feeling.decompiler.jd.decompiler.JDCoreZipLoader.EntriesCache;
 
 /**
  * JDSourceMapper
@@ -32,6 +34,8 @@ public abstract class JDSourceMapper extends BaseDecompilerSourceMapper {
 	private final static String JAVA_CLASS_SUFFIX = ".class";
 	private final static String JAVA_SOURCE_SUFFIX = ".java";
 	private final static int JAVA_SOURCE_SUFFIX_LENGTH = 5;
+
+	private static EntriesCache entriesCache = null;
 
 	private File basePath;
 
@@ -98,11 +102,24 @@ public abstract class JDSourceMapper extends BaseDecompilerSourceMapper {
 			classPath = classPath.substring(0, classPath.length() - 6);
 		}
 
-		try (JDCoreZipLoader loader = new JDCoreZipLoader(Paths.get(basePath))) {
+		Path jarPath = Paths.get(basePath);
+
+		EntriesCache cache = null;
+		if (entriesCache != null && entriesCache.isForTheSameFile(jarPath)) {
+			// The saved cache is for the same file and the file has not changed
+			// => we can just re-use it
+			cache = entriesCache;
+		}
+
+		try (JDCoreZipLoader loader = new JDCoreZipLoader(jarPath, cache)) {
 			JDCorePrinter printer = new JDCorePrinter(unicodeEscape, showLineNumbers);
 
 			ClassFileToJavaSourceDecompiler decompiler = new ClassFileToJavaSourceDecompiler();
 			decompiler.decompile(loader, printer, classPath, configuration);
+
+			// Save the cache so we don't have to re-load the class names
+			// in case we decompile another class from the same JAR file
+			entriesCache = loader.getEntriesCache();
 
 			return printer.toString();
 		}

@@ -7,6 +7,7 @@ Bundle-ClassPath: lib/fernflower-352.jar,
  lib/com.drgarbage.asm.util_5.0.3.jar,
  lib/com.drgarbage.bytecodevisualizer.plugin_4.4.1.201408050542.jar,
  lib/com.drgarbage.core.plugin_4.4.1.201408050542.jar,
+ lib/asm-9.1.jar,
  .
 Bundle-Name: Enhanced Class Decompiler
 Bundle-Localization: plugin
@@ -51,6 +52,7 @@ Export-Package: com.eclipsesource.json,
  org.jsoup.parser,
  org.jsoup.safety,
  org.jsoup.select,
+ org.objectweb.asm,
  org.sf.feeling.decompiler,
  org.sf.feeling.decompiler.actions,
  org.sf.feeling.decompiler.editor,

@@ -31,19 +31,28 @@
 	</modules>
 
 	<build>
+     <pluginManagement>
+     <plugins>
+       <plugin>
+         <groupId>org.eclipse.tycho</groupId>
+         <artifactId>tycho-p2-director-plugin</artifactId>
+         <version>2.2.0</version>
+       </plugin>
+     </plugins>
+   </pluginManagement>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.7.0</version>
+				<version>3.8.1</version>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 			<plugin>
                 <groupId>org.eclipse.tycho</groupId>
                 <artifactId>tycho-compiler-plugin</artifactId>
-                <version>1.0.0</version>
+                <version>2.2.0</version>
             </plugin>
             <plugin>
 				<groupId>org.eclipse.tycho</groupId>
@@ -103,9 +112,9 @@
 
 	<repositories>
 		<repository>
-			<id>eclipse-juno</id>
+			<id>eclipse-oxygen</id>
 			<layout>p2</layout>
-			<url>http://download.eclipse.org/releases/juno</url>
+			<url>http://download.eclipse.org/releases/oxygen</url>
 		</repository>
 	</repositories>
 

@@ -13,6 +13,13 @@ _Primary Source: https://sourceforge.net/projects/drgarbagetools/files/eclipse/4
   * SHA-256: d14546c965fea4a8fef3f7c267788d9748058957b84ae11a9fb22d5e386921d1
   * Equal to the file of the same name in https://downloads.sourceforge.net/project/drgarbagetools/eclipse/4.4/stable/plugins/com.drgarbage.asm_5.0.3.201408050542.jar
 
+### ASM - org.ow2.asm
+
+_Primary Source: https://mvnrepository.com/artifact/org.ow2.asm/asm_ 
+
+* `./org.sf.feeling.decompiler/lib/asm-9.1.jar`
+  * SHA-256: cda4de455fab48ff0bcb7c48b4639447d4de859a7afc30a094a986f0936beba2
+  * https://repo1.maven.org/maven2/org/ow2/asm/asm/9.1/asm-9.1.jar
 
 ### Apache commons
 

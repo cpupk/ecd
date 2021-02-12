@@ -12,7 +12,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.FileTime;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.TreeMap;
@@ -22,6 +24,9 @@ import java.util.zip.ZipFile;
 
 import org.jd.core.v1.api.loader.Loader;
 import org.jd.core.v1.api.loader.LoaderException;
+import org.objectweb.asm.ClassReader;
+import org.sf.feeling.decompiler.util.IOUtils;
+import org.sf.feeling.decompiler.util.Logger;
 
 /**
  * 
@@ -35,48 +40,70 @@ public class JDCoreZipLoader implements Loader, Closeable {
 
 	private final ZipFile zipFile;
 
-	/**
-	 * Lookup table for all extracted class files: maps class name without .class
-	 * extension to it's ZipEntry
-	 */
-	private final Map<String, ZipEntry> entriesMap = new TreeMap<>();
+	private final EntriesCache entriesCache;
 
-	public JDCoreZipLoader(Path zipFilePath) throws ZipException, IOException {
+	public JDCoreZipLoader(Path zipFilePath, EntriesCache entriesCache) throws ZipException, IOException {
 		super();
+		if (entriesCache == null) {
+			entriesCache = new EntriesCache(zipFilePath);
+		}
+		this.entriesCache = entriesCache;
+		if (!entriesCache.zipFilePath.equals(zipFilePath)) {
+			throw new IllegalArgumentException("entriesCache is for the wrong zipFilePath");
+		}
 		zipFile = new ZipFile(zipFilePath.toFile());
 		Enumeration<? extends ZipEntry> entries = zipFile.entries();
 		while (entries.hasMoreElements()) {
 			ZipEntry entry = entries.nextElement();
 			String name = entry.getName();
+
 			if (name.startsWith("/")) {
 				name = name.substring(1);
 			}
 			if (name.endsWith(".class")) {
-				name = name.substring(0, name.length() - 6);
+				try {
+					// Extract class name from class file
+					ClassReader cr = new ClassReader(zipFile.getInputStream(entry));
+					String className = cr.getClassName();
+
+					if (className != null && !className.isEmpty()) {
+						String oldEntry = entriesCache.entriesMap.put(className, entry.getName());
+						if (oldEntry != null) {
+							Logger.info("Duplicate class " + className + " found in JAR " + zipFilePath + ": "
+									+ entry.getName() + "/" + oldEntry);
+						}
+					}
+				} catch (Exception e) {
+					Logger.error("Failed to read entry " + name + ": " + e.toString());
+				}
 			}
-			entriesMap.put(name, entry);
+
 		}
 	}
 
 	@Override
 	public boolean canLoad(String internalName) {
-		boolean result = entriesMap.containsKey(internalName);
+		boolean result = entriesCache.entriesMap.containsKey(internalName);
 		return result;
 	}
 
 	@Override
 	public byte[] load(String internalName) throws LoaderException {
-		ZipEntry entry = entriesMap.get(internalName);
-		if (entry == null) {
-			return null;
+		String entryName = entriesCache.entriesMap.get(internalName);
+		if (entryName == null) {
+			Logger.error("Class not found: " + internalName);
+			return new byte[0];
 		}
-		byte[] buffer = new byte[8 * 1024];
-		try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+		ZipEntry entry = zipFile.getEntry(entryName);
+		if (entry == null) {
+			// Should never happen
+			Logger.error("Entry - missing for class file: " + entryName);
+			return new byte[0];
+		}
+		int initialSize = entry.getSize() > 0 ? (int) entry.getSize() : 4096;
+		try (ByteArrayOutputStream out = new ByteArrayOutputStream(initialSize)) {
 			try (InputStream in = zipFile.getInputStream(entry)) {
-				int read;
-				while ((read = in.read(buffer)) >= 0) {
-					out.write(buffer, 0, read);
-				}
+				IOUtils.copy(in, out, 8 * 1024);
 				return out.toByteArray();
 			}
 		} catch (IOException e) {
@@ -84,9 +111,67 @@ public class JDCoreZipLoader implements Loader, Closeable {
 		}
 	}
 
+	public EntriesCache getEntriesCache() {
+		return entriesCache;
+	}
+
 	@Override
 	public void close() throws IOException {
 		zipFile.close();
 	}
 
+	public static class EntriesCache {
+		private final Path zipFilePath;
+		private final FileTime zipFileLastModified;
+
+		/**
+		 * maps class name to file name in the JAR file
+		 */
+		private final Map<String, String> entriesMap = new TreeMap<>();
+
+		public EntriesCache(Path zipFilePath) throws IOException {
+			super();
+			this.zipFilePath = zipFilePath;
+			this.zipFileLastModified = Files.getLastModifiedTime(zipFilePath);
+		}
+
+		public Path getZipFilePath() {
+			return zipFilePath;
+		}
+
+		public boolean isForTheSameFile(Path fileToTest) throws IOException {
+			boolean equal = zipFilePath.equals(fileToTest);
+			if (equal) {
+				FileTime lastMod = Files.getLastModifiedTime(fileToTest);
+				return (zipFileLastModified.equals(lastMod));
+			}
+			return false;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((zipFilePath == null) ? 0 : zipFilePath.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			EntriesCache other = (EntriesCache) obj;
+			if (zipFilePath == null) {
+				if (other.zipFilePath != null)
+					return false;
+			} else if (!zipFilePath.equals(other.zipFilePath))
+				return false;
+			return true;
+		}
+
+	}
 }
