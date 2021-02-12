@@ -126,7 +126,7 @@ public class ArtifactorySourceCodeFinder extends AbstractSourceCodeFinder implem
 				{
 					String uri = gav2.getArtifactLink();
 					File file = new File(new UrlDownloader().download(uri));
-					String json = FileUtils.readFileToString(file, "UTF_8");
+					String json = FileUtils.readFileToString(file, "UTF-8");
 					JsonObject resp = Json.parse(json).asObject();
 					results.put(gav, resp.getString("downloadUri", "")); //$NON-NLS-1$ //$NON-NLS-2$
 				}
@@ -160,7 +160,7 @@ public class ArtifactorySourceCodeFinder extends AbstractSourceCodeFinder implem
 		try {
 			String json;
 			try (InputStream is = connection.getInputStream()) {
-				json = IOUtils.toString(is, "UTF_8");
+				json = IOUtils.toString(is, "UTF-8");
 			}
 
 			JsonObject resp = Json.parse(json).asObject();
