@@ -9,11 +9,8 @@
 package org.sf.feeling.decompiler.jd.decompiler;
 
 import java.io.File;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 
 import org.eclipse.core.runtime.Path;
 
@@ -41,27 +38,8 @@ public class JDCoreSourceMapper extends JDSourceMapper {
 						.replaceAll("\n\\s*", "\n\t")); //$NON-NLS-1$ //$NON-NLS-2$
 		exceptions.addAll(origionalDecompiler.getExceptions());
 		logExceptions(exceptions, source);
+		source.append("\n\tDecompiled with JD-Core " + JDCoreSourceMapper.getVersion()); //$NON-NLS-1$
 		source.append("\n*/"); //$NON-NLS-1$
 	}
 
-	protected void logExceptions(Collection<Exception> exceptions, StringBuffer buffer) {
-		if (!exceptions.isEmpty()) {
-			buffer.append("\n\tCaught exceptions:"); //$NON-NLS-1$
-			if (exceptions == null || exceptions.isEmpty())
-				return; // nothing to do
-			buffer.append("\n"); //$NON-NLS-1$
-			StringWriter stackTraces = new StringWriter();
-			PrintWriter stackTracesP = new PrintWriter(stackTraces);
-
-			Iterator<Exception> i = exceptions.iterator();
-			while (i.hasNext()) {
-				i.next().printStackTrace(stackTracesP);
-				stackTracesP.println(""); //$NON-NLS-1$
-			}
-
-			stackTracesP.flush();
-			stackTracesP.close();
-			buffer.append(stackTraces.toString());
-		}
-	}
 }

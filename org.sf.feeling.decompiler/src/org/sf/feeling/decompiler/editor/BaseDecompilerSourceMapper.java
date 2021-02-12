@@ -10,8 +10,11 @@ package org.sf.feeling.decompiler.editor;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 
@@ -352,6 +355,27 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper 
 		}
 
 		return source.toString();
+	}
+
+	protected void logExceptions(Collection<Exception> exceptions, StringBuffer buffer) {
+		if (!exceptions.isEmpty()) {
+			buffer.append("\n\tCaught exceptions:"); //$NON-NLS-1$
+			if (exceptions == null || exceptions.isEmpty())
+				return; // nothing to do
+			buffer.append("\n"); //$NON-NLS-1$
+			StringWriter stackTraces = new StringWriter();
+			PrintWriter stackTracesP = new PrintWriter(stackTraces);
+
+			Iterator<Exception> i = exceptions.iterator();
+			while (i.hasNext()) {
+				i.next().printStackTrace(stackTracesP);
+				stackTracesP.println(""); //$NON-NLS-1$
+			}
+
+			stackTracesP.flush();
+			stackTracesP.close();
+			buffer.append(stackTraces.toString());
+		}
 	}
 
 	protected abstract void printDecompileReport(StringBuffer source, String location, Collection<Exception> exceptions,

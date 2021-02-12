@@ -8,10 +8,7 @@
 
 package org.sf.feeling.decompiler.procyon.decompiler;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.Collection;
-import java.util.Iterator;
 
 import org.eclipse.core.runtime.Path;
 import org.sf.feeling.decompiler.editor.BaseDecompilerSourceMapper;
@@ -45,24 +42,4 @@ public class ProcyonSourceMapper extends BaseDecompilerSourceMapper {
 		source.append("\n*/"); //$NON-NLS-1$
 	}
 
-	protected void logExceptions(Collection<Exception> exceptions, StringBuffer buffer) {
-		if (!exceptions.isEmpty()) {
-			buffer.append("\n\tCaught exceptions:"); //$NON-NLS-1$
-			if (exceptions == null || exceptions.size() == 0)
-				return; // nothing to do
-			buffer.append("\n"); //$NON-NLS-1$
-			StringWriter stackTraces = new StringWriter();
-			PrintWriter stackTracesP = new PrintWriter(stackTraces);
-
-			Iterator<Exception> i = exceptions.iterator();
-			while (i.hasNext()) {
-				i.next().printStackTrace(stackTracesP);
-				stackTracesP.println(""); //$NON-NLS-1$
-			}
-
-			stackTracesP.flush();
-			stackTracesP.close();
-			buffer.append(stackTraces.toString());
-		}
-	}
 }
