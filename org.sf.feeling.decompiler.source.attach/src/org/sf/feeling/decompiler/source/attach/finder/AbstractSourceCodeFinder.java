@@ -67,7 +67,7 @@ public abstract class AbstractSourceCodeFinder implements SourceCodeFinder {
 					bytes = IOUtils.toByteArray(conIs);
 				}
 				try (InputStream is = new GZIPInputStream(new ByteArrayInputStream(bytes))) {
-					return IOUtils.toString(is, StandardCharsets.UTF_8);
+					return IOUtils.toString(is, "UTF-8");
 				}
 			} catch (Exception e) {
 				if (bytes != null) {
