@@ -11,9 +11,9 @@ This is an ad-free fork of the Eclipse Decompiler Plugin. So we enhanced it by r
 
 ## How to install Enhanced Class Decompiler?
 
-Drag and Drop installation: [![Drag to your running Eclipse workspace.](https://marketplace.eclipse.org/sites/all/themes/solstice/public/images/marketplace/btn-install.png)](http://marketplace.eclipse.org/marketplace-client-intro?mpc_install=3644319 "Drag to your running Eclipse workspace.")
+Drag and Drop installation: [![Drag to your running Eclipse workspace.](https://marketplace.eclipse.org/sites/all/themes/solstice/public/images/marketplace/btn-install.png)](https://marketplace.eclipse.org/marketplace-client-intro?mpc_install=3644319 "Drag to your running Eclipse workspace.")
 
-_If you have currently the "Eclipse" Class Decompiler installed, it is recommended to [uninstall that plug-in](http://www.cpupk.com/decompiler/#how-to-uninstall-eclipse-class-decompiler-) first and remove the corresponding update site from your Eclipse installation._
+_If you have currently the "Eclipse" Class Decompiler installed, it is recommended to uninstall that plug-in first and remove the corresponding update site from your Eclipse installation._
   1. Launch _Eclipse_,
   2. Click on _"Help > Install New Software..."_,
   3. Click on button _"Add..."_ to add an new repository,
@@ -53,7 +53,7 @@ _If you have currently the "Eclipse" Class Decompiler installed, it is recommend
 
 ## Licenses
 
-The main plugin and the _org.sf.feeling.decompiler.jd_ project are licensed under [GPL 3](https://www.gnu.org/licenses/gpl-3.0-standalone.html), the other feature plugins are licensed under the [Eclipse Public License v1.0](http://www.eclipse.org/legal/epl-v10.html)
+The main plugin and the _org.sf.feeling.decompiler.jd_ project are licensed under [GPL 3](https://www.gnu.org/licenses/gpl-3.0-standalone.html), the other feature plugins are licensed under the [Eclipse Public License v1.0](https://www.eclipse.org/legal/epl-v10.html)
 
 Code partially based on:
   * JD-Eclipse: Copyright Emmanuel Dupuy, [GPL 3](https://www.gnu.org/licenses/gpl-3.0-standalone.html)
@@ -67,10 +67,10 @@ Used libraries:
   * JSOUP: Copyright (c) 2009 - 2018 Jonathan Hedley, [MIT License](https://opensource.org/licenses/MIT)
   * CFR: Copyright Leee Benfield, [MIT License](https://opensource.org/licenses/MIT)
   * Procyon: Copyright Mike Strobel, [Apache License V2.0](https://www.apache.org/licenses/LICENSE-2.0.html)
-  * Netbeans CVSClient: Copyright (c) NetBeans Community, [Eclipse Public License v1.0](http://www.eclipse.org/legal/epl-v10.html) and [Apache License V2.0](https://www.apache.org/licenses/LICENSE-2.0.html)
+  * Netbeans CVSClient: Copyright (c) NetBeans Community, [Eclipse Public License v1.0](https://www.eclipse.org/legal/epl-v10.html) and [Apache License V2.0](https://www.apache.org/licenses/LICENSE-2.0.html)
   * Maven SCM: Copyright (c) Apache Software Foundation, [Apache License V2.0](https://www.apache.org/licenses/LICENSE-2.0.html)
   * Nexus Indexer: [Apache License V2.0](https://www.apache.org/licenses/LICENSE-2.0.html)
-  * Nexus Restlet1x Model: [Eclipse Public License v1.0](http://www.eclipse.org/legal/epl-v10.html)
+  * Nexus Restlet1x Model: [Eclipse Public License v1.0](https://www.eclipse.org/legal/epl-v10.html)
   * Plexus Utils: Copyright The Codehaus Foundation, [Apache License V2.0](https://www.apache.org/licenses/LICENSE-2.0.html)
   * JAD: Copyright 1997-2001 Pavel Kouznetsov, Free for non-commercial use
   * JD-Core: Copyright Emmanuel Dupuy, [GPL 3](https://www.gnu.org/licenses/gpl-3.0-standalone.html)
@@ -81,8 +81,13 @@ Used libraries:
 * Robert Zenz
 * Pascal Bihler
 * Nick Lombard
+* Jan Peter Stotz
 
 ## Changelog
+
+* Version 3.2.0
+  * Updated Embedded Decompilers
+    * JD-Core to version 1.1.3 (JDK 12 support)
 
 * Version 3.1.1
   * #44 Fixed that setting breakpoints might not work.
