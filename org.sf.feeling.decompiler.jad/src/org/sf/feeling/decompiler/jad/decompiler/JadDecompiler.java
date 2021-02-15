@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.time.StopWatch;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.editor.IDecompiler;
@@ -107,7 +108,7 @@ public class JadDecompiler implements IDecompiler {
 	private String source = "/* ERROR? */"; //$NON-NLS-1$
 	private StringBuffer log;
 	private List<Exception> excList = new ArrayList<>();
-	private long time, start;
+	private long time;
 
 	private String[] buildCmdLine(String classFileName) {
 		ArrayList<String> cmdLine = new ArrayList<>();
@@ -189,8 +190,10 @@ public class JadDecompiler implements IDecompiler {
 		// errorsP.println("\n\n\n/***** DECOMPILE LOG *****\n");
 		int status = 0;
 
+		StopWatch stopWatch = new StopWatch();
+		stopWatch.start();
 		try {
-			start = System.currentTimeMillis();
+
 			errorsP.println("\tJad reported messages/errors:"); //$NON-NLS-1$
 			Process p = Runtime.getRuntime().exec(buildCmdLine(className), new String[] {}, workingDir);
 			StreamRedirectThread outRedirect = new StreamRedirectThread("output_reader", //$NON-NLS-1$
@@ -221,7 +224,7 @@ public class JadDecompiler implements IDecompiler {
 			} catch (Exception e) {
 				excList.add(e); // will never get here...
 			}
-			time = System.currentTimeMillis() - start;
+			time = stopWatch.getTime();
 		}
 
 		source = UnicodeUtil.decode(bos.toString());
@@ -240,7 +243,8 @@ public class JadDecompiler implements IDecompiler {
 	 */
 	@Override
 	public void decompileFromArchive(String archivePath, String packege, String className) {
-		start = System.currentTimeMillis();
+		StopWatch stopWatch = new StopWatch();
+		stopWatch.start();
 		File workingDir = new File(
 				JavaDecompilerPlugin.getDefault().getPreferenceStore().getString(JavaDecompilerPlugin.TEMP_DIR) + "/" //$NON-NLS-1$
 						+ System.currentTimeMillis());
@@ -249,6 +253,7 @@ public class JadDecompiler implements IDecompiler {
 			workingDir.mkdirs();
 			JarClassExtractor.extract(archivePath, packege, className, true, workingDir.getAbsolutePath());
 			decompile(workingDir.getAbsolutePath(), "", className); //$NON-NLS-1$
+			time = stopWatch.getTime();
 		} catch (Exception e) {
 			excList.add(e);
 			// logExceptions();

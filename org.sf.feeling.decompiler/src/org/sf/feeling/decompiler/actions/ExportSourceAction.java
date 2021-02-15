@@ -286,12 +286,13 @@ public class ExportSourceAction extends Action {
 			int exportStep = 80000 / pkgs.length;
 			monitor.setTaskName(Messages.getString("ExportSourceAction.Task.ExportSource")); //$NON-NLS-1$
 			monitor.subTask(""); //$NON-NLS-1$
-			ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(projectFile)));
-			zos.setLevel(Deflater.BEST_SPEED);
-			FileUtil.recursiveZip(monitor, zos, workingDir, "", //$NON-NLS-1$
-					null, exportStep);
-			monitor.subTask(""); //$NON-NLS-1$
-			zos.close();
+			try (ZipOutputStream zos = new ZipOutputStream(
+					new BufferedOutputStream(new FileOutputStream(projectFile)))) {
+				zos.setLevel(Deflater.BEST_SPEED);
+				FileUtil.recursiveZip(monitor, zos, workingDir, "", //$NON-NLS-1$
+						null, exportStep);
+				monitor.subTask(""); //$NON-NLS-1$
+			}
 
 			int total = exportStep * pkgs.length;
 			if (total < 80000) {

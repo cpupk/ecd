@@ -3,7 +3,6 @@ package org.sf.feeling.decompiler.jd.decompiler;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.sf.feeling.decompiler.editor.BaseDecompilerSourceMapper;
 import org.sf.feeling.decompiler.editor.IDecompiler;
 import org.sf.feeling.decompiler.editor.IDecompilerDescriptor;
 import org.sf.feeling.decompiler.jd.JDCoreDecompilerPlugin;
@@ -16,7 +15,7 @@ public class JDCoreDecompilerDescriptor implements IDecompilerDescriptor {
 
 	private JDCoreDecompiler decompiler = null;
 
-	private BaseDecompilerSourceMapper sourceMapper = null;
+	private JDSourceMapper sourceMapper = null;
 
 	private Action decompileAction = null;
 
@@ -33,12 +32,12 @@ public class JDCoreDecompilerDescriptor implements IDecompilerDescriptor {
 	@Override
 	public IDecompiler getDecompiler() {
 		if (decompiler == null)
-			decompiler = new JDCoreDecompiler((JDSourceMapper) getDecompilerSourceMapper());
+			decompiler = new JDCoreDecompiler(getDecompilerSourceMapper());
 		return decompiler;
 	}
 
 	@Override
-	public BaseDecompilerSourceMapper getDecompilerSourceMapper() {
+	public JDSourceMapper getDecompilerSourceMapper() {
 		if (sourceMapper == null) {
 			sourceMapper = new JDCoreSourceMapper();
 		}

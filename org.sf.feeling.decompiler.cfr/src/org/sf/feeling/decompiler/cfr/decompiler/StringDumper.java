@@ -1,6 +1,7 @@
 
 package org.sf.feeling.decompiler.cfr.decompiler;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.StringWriter;
 
@@ -10,7 +11,7 @@ import org.benf.cfr.reader.util.getopt.Options;
 import org.benf.cfr.reader.util.output.IllegalIdentifierDump;
 import org.benf.cfr.reader.util.output.StreamDumper;
 
-public class StringDumper extends StreamDumper {
+public class StringDumper extends StreamDumper implements Closeable {
 
 	private StringWriter sw = new StringWriter();
 

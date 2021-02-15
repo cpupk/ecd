@@ -403,9 +403,9 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor {
 						File classFile = new File(JavaDecompilerPlugin.getDefault().getPreferenceStore()
 								.getString(JavaDecompilerPlugin.TEMP_DIR), file.getElementName());
 						try {
-							FileOutputStream fos = new FileOutputStream(classFile);
-							fos.write(file.getBytes());
-							fos.close();
+							try (FileOutputStream fos = new FileOutputStream(classFile)) {
+								fos.write(file.getBytes());
+							}
 
 							doSetInput(new DecompilerClassEditorInput(
 									EFS.getLocalFileSystem().getStore(new Path(classFile.getAbsolutePath()))));

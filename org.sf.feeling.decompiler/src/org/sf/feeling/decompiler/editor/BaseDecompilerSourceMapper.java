@@ -364,16 +364,15 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper 
 				return; // nothing to do
 			buffer.append("\n"); //$NON-NLS-1$
 			StringWriter stackTraces = new StringWriter();
-			PrintWriter stackTracesP = new PrintWriter(stackTraces);
+			try (PrintWriter stackTracesP = new PrintWriter(stackTraces)) {
 
-			Iterator<Exception> i = exceptions.iterator();
-			while (i.hasNext()) {
-				i.next().printStackTrace(stackTracesP);
-				stackTracesP.println(""); //$NON-NLS-1$
+				Iterator<Exception> i = exceptions.iterator();
+				while (i.hasNext()) {
+					i.next().printStackTrace(stackTracesP);
+					stackTracesP.println(""); //$NON-NLS-1$
+				}
+				stackTracesP.flush();
 			}
-
-			stackTracesP.flush();
-			stackTracesP.close();
 			buffer.append(stackTraces.toString());
 		}
 	}

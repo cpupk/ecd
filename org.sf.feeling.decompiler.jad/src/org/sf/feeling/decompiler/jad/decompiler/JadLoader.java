@@ -37,21 +37,23 @@ public final class JadLoader {
 			throw new Error("Can't obtain jad executable file."); //$NON-NLS-1$
 		}
 
-		try (InputStream is = JadLoader.class.getResourceAsStream(jadFilePath)) { // $NON-NLS-1$
-			if (is == null) {
-				throw new Error("Can't obtain jad executable file."); //$NON-NLS-1$
-			}
-
+		try {
 			File tempDir = new File(
 					JavaDecompilerPlugin.getDefault().getPreferenceStore().getString(JavaDecompilerPlugin.TEMP_DIR));
-			if (!tempDir.exists()) {
-				tempDir.mkdirs();
-			}
 			File jad = new File(tempDir, jadFileName);
-			jad.createNewFile();
-			jad.deleteOnExit();
-			try (FileOutputStream fos = new FileOutputStream(jad)) {
-				IOUtils.copy(is, fos);
+
+			try (InputStream is = JadLoader.class.getResourceAsStream(jadFilePath)) { // $NON-NLS-1$
+				if (is == null) {
+					throw new Error("Can't obtain jad executable file."); //$NON-NLS-1$
+				}
+				if (!tempDir.exists()) {
+					tempDir.mkdirs();
+				}
+				jad.createNewFile();
+				jad.deleteOnExit();
+				try (FileOutputStream fos = new FileOutputStream(jad)) {
+					IOUtils.copy(is, fos);
+				}
 			}
 
 			try {

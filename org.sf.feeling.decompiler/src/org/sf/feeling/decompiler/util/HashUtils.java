@@ -27,23 +27,12 @@ public class HashUtils {
 	}
 
 	public static String md5Hash(File file) {
-
 		if (file != null) {
-			InputStream fis = null;
-			try {
-				fis = new FileInputStream(file);
+			try (InputStream fis = new FileInputStream(file)) {
 				String result = new String(Hex.encodeHex(DigestUtils.md5(fis)));
 				return result;
 			} catch (IOException e) {
 				Logger.debug(e);
-			} finally {
-				if (fis != null) {
-					try {
-						fis.close();
-					} catch (IOException e) {
-						Logger.debug(e);
-					}
-				}
 			}
 		}
 		return null;

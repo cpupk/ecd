@@ -12,11 +12,9 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
-import java.util.Iterator;
 
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.editor.IDecompiler;
@@ -26,20 +24,10 @@ import org.sf.feeling.decompiler.fernflower.FernFlowerDecompiler;
 public class ClassUtil {
 
 	public static IDecompiler checkAvailableDecompiler(IDecompiler decompiler, File file) {
-		FileInputStream fis = null;
-		try {
-			fis = new FileInputStream(file);
+		try (FileInputStream fis = new FileInputStream(file)) {
 			return checkAvailableDecompiler(decompiler, fis);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} finally {
-			if (fis != null) {
-				try {
-					fis.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
+		} catch (IOException e) {
+			Logger.error(e);
 		}
 		return decompiler;
 	}
@@ -83,36 +71,8 @@ public class ClassUtil {
 				|| JavaDecompilerPlugin.getDefault().isDebugMode();
 	}
 
-	public static boolean greatLevel6(File file) {
-		DataInputStream data = null;
-		try {
-			data = new DataInputStream(new FileInputStream(file));
-			if (0xCAFEBABE != data.readInt()) {
-				return false;
-			}
-			data.readUnsignedShort();
-			int major = data.readUnsignedShort();
-			data.close();
-			data = null;
-			return major >= 51;
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (data != null) {
-				try {
-					data.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		return false;
-	}
-
 	public static int getLevel(InputStream is) {
-		DataInputStream data = null;
-		try {
-			data = new DataInputStream(is);
+		try (DataInputStream data = new DataInputStream(is)) {
 			if (0xCAFEBABE != data.readInt()) {
 				return -1;
 			}
@@ -120,16 +80,13 @@ public class ClassUtil {
 			int major = data.readUnsignedShort();
 			return major - 44;
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logger.error("Failed to get Class file version", e);
 		}
 		return -1;
 	}
 
 	public static boolean isClassFile(byte[] bytes) {
-		ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-		DataInputStream data = null;
-		try {
-			data = new DataInputStream(bis);
+		try (DataInputStream data = new DataInputStream(new ByteArrayInputStream(bytes))) {
 			if (0xCAFEBABE != data.readInt()) {
 				return false;
 			}
@@ -137,15 +94,7 @@ public class ClassUtil {
 			data.readUnsignedShort();
 			return true;
 		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (data != null) {
-				try {
-					data.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
+			Logger.error("Class file test failed", e);
 		}
 		return false;
 	}
@@ -154,8 +103,7 @@ public class ClassUtil {
 		Collection<IDecompilerDescriptor> descriptors = JavaDecompilerPlugin.getDefault().getDecompilerDescriptorMap()
 				.values();
 		if (descriptors != null) {
-			for (Iterator<IDecompilerDescriptor> iterator = descriptors.iterator(); iterator.hasNext();) {
-				IDecompilerDescriptor iDecompilerDescriptor = iterator.next();
+			for (IDecompilerDescriptor iDecompilerDescriptor : descriptors) {
 				if (iDecompilerDescriptor.isDefault()) {
 					IDecompiler decompiler = iDecompilerDescriptor.getDecompiler();
 					if (debug) {

@@ -78,11 +78,11 @@ public class CfrDecompiler implements IDecompiler {
 			TypeUsageCollector collectingDumper = new TypeUsageCollector(c);
 			c.collectTypeUsages(collectingDumper);
 
-			StringDumper dumper = new StringDumper(collectingDumper.getTypeUsageInformation(), namedOptions,
-					illegalIdentifierDump);
-			c.dump(dumper);
-
-			source = UnicodeUtil.decode(dumper.toString().trim());
+			try (StringDumper dumper = new StringDumper(collectingDumper.getTypeUsageInformation(), namedOptions,
+					illegalIdentifierDump)) {
+				c.dump(dumper);
+				source = UnicodeUtil.decode(dumper.toString().trim());
+			}
 
 			Pattern wp = Pattern.compile("/\\*.+?\\*/", Pattern.DOTALL); //$NON-NLS-1$
 			Matcher m = wp.matcher(source);
@@ -99,7 +99,7 @@ public class CfrDecompiler implements IDecompiler {
 
 				source = source.replace(m.group(), "").trim(); //$NON-NLS-1$
 			}
-			dumper.close();
+
 		} catch (Exception e) {
 			JavaDecompilerPlugin.logError(e, e.getMessage());
 		}

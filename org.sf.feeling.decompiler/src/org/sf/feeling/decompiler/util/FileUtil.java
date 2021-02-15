@@ -44,9 +44,9 @@ public class FileUtil {
 			if (encoding == null || encoding.trim().length() == 0) {
 				encoding = "UTF-8"; //$NON-NLS-1$
 			}
-			PrintWriter out = new PrintWriter(new OutputStreamWriter(new FileOutputStream(file), encoding));
-			out.print(string);
-			out.close();
+			try (PrintWriter out = new PrintWriter(new OutputStreamWriter(new FileOutputStream(file), encoding))) {
+				out.print(string);
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -54,7 +54,6 @@ public class FileUtil {
 
 	public static void writeToBinarayFile(File file, InputStream source, boolean close) {
 		BufferedInputStream bis = null;
-		BufferedOutputStream fouts = null;
 		try {
 			bis = new BufferedInputStream(source);
 			if (!file.exists()) {
@@ -63,25 +62,20 @@ public class FileUtil {
 				}
 				file.createNewFile();
 			}
-			fouts = new BufferedOutputStream(new FileOutputStream(file));
-			byte b[] = new byte[1024];
-			int i = 0;
-			while ((i = bis.read(b)) != -1) {
-				fouts.write(b, 0, i);
+			try (BufferedOutputStream fouts = new BufferedOutputStream(new FileOutputStream(file))) {
+
+				byte b[] = new byte[IOUtils.DEFAULT_BUFFER_SIZE];
+				int i = 0;
+				while ((i = bis.read(b)) != -1) {
+					fouts.write(b, 0, i);
+				}
+				fouts.flush();
 			}
-			fouts.flush();
-			fouts.close();
 			if (close)
 				bis.close();
 		} catch (IOException e) {
 			Logger.getLogger(FileUtil.class.getName()).log(Level.WARNING, "Write binaray file failed.", //$NON-NLS-1$
 					e);
-			try {
-				if (fouts != null)
-					fouts.close();
-			} catch (IOException f) {
-				Logger.getLogger(FileUtil.class.getName()).log(Level.WARNING, "Close output stream failed.", f); //$NON-NLS-1$
-			}
 			if (close) {
 				try {
 					if (bis != null)
@@ -95,21 +89,11 @@ public class FileUtil {
 	}
 
 	public static boolean copyFile(String src, String des) {
-		FileInputStream fis = null;
-		try {
-			fis = new FileInputStream(src);
+		try (FileInputStream fis = new FileInputStream(src)) {
 			writeToBinarayFile(new File(des), fis, false);
-			fis.close();
 		} catch (Exception e) {
 			Logger.getLogger(FileUtil.class.getName()).log(Level.WARNING, "Copy file failed.", //$NON-NLS-1$
 					e);
-			try {
-				fis.close();
-				return true;
-			} catch (IOException f) {
-				Logger.getLogger(FileUtil.class.getName()).log(Level.WARNING, "Close input stream failed.", f); //$NON-NLS-1$
-			}
-
 		}
 		return false;
 	}
@@ -410,8 +394,9 @@ public class FileUtil {
 		if (path == null)
 			return false;
 		try {
-			new ZipFile(path).close();
-			return true;
+			try (ZipFile zipFile = new ZipFile(path)) {
+				return true;
+			}
 		} catch (IOException e) {
 			return false;
 		}
@@ -420,10 +405,9 @@ public class FileUtil {
 	public static String getContent(File file) {
 		if (file == null || !file.exists())
 			return null;
-		try {
-			ByteArrayOutputStream out = new ByteArrayOutputStream(4096);
+		try (InputStream is = new BufferedInputStream(new FileInputStream(file));
+				ByteArrayOutputStream out = new ByteArrayOutputStream(4096)) {
 			byte[] tmp = new byte[4096];
-			InputStream is = new BufferedInputStream(new FileInputStream(file));
 			while (true) {
 				int r = is.read(tmp);
 				if (r == -1)
@@ -431,8 +415,6 @@ public class FileUtil {
 				out.write(tmp, 0, r);
 			}
 			byte[] bytes = out.toByteArray();
-			is.close();
-			out.close();
 			String content = new String(bytes);
 			return content.trim();
 		} catch (Exception e) {
@@ -444,10 +426,9 @@ public class FileUtil {
 	public static String getContent(File file, String enconding) {
 		if (file == null || !file.exists())
 			return null;
-		try {
-			ByteArrayOutputStream out = new ByteArrayOutputStream(4096);
+		try (InputStream is = new BufferedInputStream(new FileInputStream(file));
+				ByteArrayOutputStream out = new ByteArrayOutputStream(4096)) {
 			byte[] tmp = new byte[4096];
-			InputStream is = new BufferedInputStream(new FileInputStream(file));
 			while (true) {
 				int r = is.read(tmp);
 				if (r == -1)
@@ -455,8 +436,6 @@ public class FileUtil {
 				out.write(tmp, 0, r);
 			}
 			byte[] bytes = out.toByteArray();
-			is.close();
-			out.close();
 			String content = new String(bytes, enconding);
 			return content.trim();
 		} catch (Exception e) {
@@ -468,18 +447,16 @@ public class FileUtil {
 	public static String getContent(InputStream is) {
 		if (is == null)
 			return null;
-		try {
-			ByteArrayOutputStream out = new ByteArrayOutputStream(4096);
+
+		try (InputStream in = is; ByteArrayOutputStream out = new ByteArrayOutputStream(4096)) {
 			byte[] tmp = new byte[4096];
 			while (true) {
-				int r = is.read(tmp);
+				int r = in.read(tmp);
 				if (r == -1)
 					break;
 				out.write(tmp, 0, r);
 			}
 			byte[] bytes = out.toByteArray();
-			is.close();
-			out.close();
 			String content = new String(bytes);
 			return content.trim();
 		} catch (Exception e) {
@@ -514,9 +491,9 @@ public class FileUtil {
 		try {
 			if (!file.getParentFile().exists())
 				file.getParentFile().mkdirs();
-			PrintWriter out = new PrintWriter(new OutputStreamWriter(new FileOutputStream(file), encoding));
-			out.print(string);
-			out.close();
+			try (PrintWriter out = new PrintWriter(new OutputStreamWriter(new FileOutputStream(file), encoding))) {
+				out.print(string);
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

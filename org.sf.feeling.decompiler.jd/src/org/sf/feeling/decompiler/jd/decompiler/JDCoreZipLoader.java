@@ -17,7 +17,9 @@ import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
 import java.util.Enumeration;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -41,6 +43,8 @@ public class JDCoreZipLoader implements Loader, Closeable {
 	private final ZipFile zipFile;
 
 	private final EntriesCache entriesCache;
+
+	private final Set<String> loadedEntries = new TreeSet<>();
 
 	public JDCoreZipLoader(Path zipFilePath, EntriesCache entriesCache) throws ZipException, IOException {
 		super();
@@ -104,11 +108,16 @@ public class JDCoreZipLoader implements Loader, Closeable {
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream(initialSize)) {
 			try (InputStream in = zipFile.getInputStream(entry)) {
 				IOUtils.copy(in, out, 8 * 1024);
+				loadedEntries.add(internalName);
 				return out.toByteArray();
 			}
 		} catch (IOException e) {
 			throw new LoaderException(e);
 		}
+	}
+
+	public Set<String> getLoadedEntries() {
+		return loadedEntries;
 	}
 
 	public EntriesCache getEntriesCache() {

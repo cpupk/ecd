@@ -71,9 +71,9 @@ public class SortMemberUtil {
 				locationFile.getParentFile().mkdirs();
 			}
 
-			PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(locationFile, false)));
-			writer.println(code);
-			writer.close();
+			try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(locationFile, false)))) {
+				writer.println(code);
+			}
 
 			javaFile.refreshLocal(0, null);
 
@@ -148,15 +148,14 @@ public class SortMemberUtil {
 		IJavaProject javaProject = JavaCore.create(project);
 
 		try {
-			List entries = new ArrayList();
+			List<IClasspathEntry> entries = new ArrayList<>();
 			IVMInstall vmInstall = JavaRuntime.getDefaultVMInstall();
 			LibraryLocation[] locations = JavaRuntime.getLibraryLocations(vmInstall);
-			for (int i = 0; i < locations.length; i++) {
-				LibraryLocation element = locations[i];
+			for (LibraryLocation element : locations) {
 				entries.add(JavaCore.newLibraryEntry(element.getSystemLibraryPath(), null, null));
 			}
 			// add libs to project class path
-			javaProject.setRawClasspath((IClasspathEntry[]) entries.toArray(new IClasspathEntry[entries.size()]), null);
+			javaProject.setRawClasspath(entries.toArray(new IClasspathEntry[entries.size()]), null);
 
 			IFolder sourceFolder = project.getFolder("src"); //$NON-NLS-1$
 			sourceFolder.create(false, true, null);

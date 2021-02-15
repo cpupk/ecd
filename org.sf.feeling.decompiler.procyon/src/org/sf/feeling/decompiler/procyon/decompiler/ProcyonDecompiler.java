@@ -20,12 +20,14 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.time.StopWatch;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.editor.IDecompiler;
 import org.sf.feeling.decompiler.procyon.ProcyonDecompilerPlugin;
 import org.sf.feeling.decompiler.util.ClassUtil;
 import org.sf.feeling.decompiler.util.FileUtil;
 import org.sf.feeling.decompiler.util.JarClassExtractor;
+import org.sf.feeling.decompiler.util.Logger;
 import org.sf.feeling.decompiler.util.UnicodeUtil;
 
 import com.strobel.assembler.metadata.DeobfuscationUtilities;
@@ -43,7 +45,7 @@ import com.strobel.decompiler.languages.TypeDecompilationResults;
 public class ProcyonDecompiler implements IDecompiler {
 
 	private String source = ""; // $NON-NLS-1$ //$NON-NLS-1$
-	private long time, start;
+	private long time;
 	private String log = ""; //$NON-NLS-1$
 
 	/**
@@ -54,7 +56,8 @@ public class ProcyonDecompiler implements IDecompiler {
 	 */
 	@Override
 	public void decompile(String root, String packege, String className) {
-		start = System.currentTimeMillis();
+		StopWatch stopWatch = new StopWatch();
+		stopWatch.start();
 		log = ""; //$NON-NLS-1$
 		source = ""; //$NON-NLS-1$
 		File workingDir = new File(root + "/" + packege); //$NON-NLS-1$
@@ -94,21 +97,17 @@ public class ProcyonDecompiler implements IDecompiler {
 		String property = "java.io.tmpdir"; //$NON-NLS-1$
 		String tempDir = System.getProperty(property);
 		File classFile = new File(tempDir, System.currentTimeMillis() + className);
-		Writer writer = null;
 		try {
-			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(classFile)));
+			TypeDecompilationResults results;
+			try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(classFile)))) {
 
-			PlainTextOutput output = new PlainTextOutput(writer);
+				PlainTextOutput output = new PlainTextOutput(writer);
 
-			output.setUnicodeOutputEnabled(decompilationOptions.getSettings().isUnicodeOutputEnabled());
+				output.setUnicodeOutputEnabled(decompilationOptions.getSettings().isUnicodeOutputEnabled());
 
-			TypeDecompilationResults results = decompilationOptions.getSettings().getLanguage()
-					.decompileType(resolvedType, output, decompilationOptions);
-
-			writer.flush();
-			writer.close();
-
-			writer = null;
+				results = decompilationOptions.getSettings().getLanguage().decompileType(resolvedType, output,
+						decompilationOptions);
+			}
 
 			List<LineNumberPosition> lineNumberPositions = results.getLineNumberPositions();
 
@@ -129,15 +128,7 @@ public class ProcyonDecompiler implements IDecompiler {
 				lineFormatter.reformatFile();
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (writer != null) {
-				try {
-					writer.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
+			Logger.error(e);
 		}
 
 		source = UnicodeUtil.decode(FileUtil.getContent(classFile));
@@ -160,7 +151,7 @@ public class ProcyonDecompiler implements IDecompiler {
 			source = source.replace(m.group(), ""); //$NON-NLS-1$
 		}
 
-		time = System.currentTimeMillis() - start;
+		time = stopWatch.getTime();
 	}
 
 	/**
@@ -172,7 +163,8 @@ public class ProcyonDecompiler implements IDecompiler {
 	 */
 	@Override
 	public void decompileFromArchive(String archivePath, String packege, String className) {
-		start = System.currentTimeMillis();
+		StopWatch stopWatch = new StopWatch();
+		stopWatch.start();
 		File workingDir = new File(
 				JavaDecompilerPlugin.getDefault().getPreferenceStore().getString(JavaDecompilerPlugin.TEMP_DIR) + "/" //$NON-NLS-1$
 						+ System.currentTimeMillis());
@@ -181,6 +173,7 @@ public class ProcyonDecompiler implements IDecompiler {
 			workingDir.mkdirs();
 			JarClassExtractor.extract(archivePath, packege, className, true, workingDir.getAbsolutePath());
 			decompile(workingDir.getAbsolutePath(), "", className); //$NON-NLS-1$
+			time = stopWatch.getTime();
 		} catch (Exception e) {
 			JavaDecompilerPlugin.logError(e, e.getMessage());
 			return;

@@ -12,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.internal.base.BaseHelpSystem;
@@ -169,9 +170,8 @@ public class HelpUtils {
 		if (styleSheetURL == null) {
 			return ""; //$NON-NLS-1$
 		}
-		BufferedReader reader = null;
-		try {
-			reader = new BufferedReader(new InputStreamReader(styleSheetURL.openStream(), "UTF-8")); //$NON-NLS-1$
+		try (BufferedReader reader = new BufferedReader(
+				new InputStreamReader(styleSheetURL.openStream(), StandardCharsets.UTF_8))) {
 			StringBuilder sb = new StringBuilder(1500);
 			String line;
 			while ((line = reader.readLine()) != null) {
@@ -181,14 +181,6 @@ public class HelpUtils {
 			return sb.toString();
 		} catch (IOException ex) {
 			return ""; //$NON-NLS-1$
-		} finally {
-			try {
-				if (reader != null) {
-					reader.close();
-				}
-			} catch (IOException e) {
-				Logger.debug(e);
-			}
 		}
 	}
 
@@ -198,23 +190,14 @@ public class HelpUtils {
 		if (helpResource == null) {
 			return sb;
 		}
-		BufferedReader in = null;
-		try {
-			in = new BufferedReader(new InputStreamReader(helpResource.openStream(), "UTF-8")); //$NON-NLS-1$
+		try (BufferedReader in = new BufferedReader(
+				new InputStreamReader(helpResource.openStream(), StandardCharsets.UTF_8))) {
 			String line;
 			while ((line = in.readLine()) != null) {
 				sb.append(line);
 			}
 		} catch (IOException e) {
 			return sb;
-		} finally {
-			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException e) {
-					Logger.debug(e);
-				}
-			}
 		}
 		int styleEnd = sb.indexOf("</style>"); //$NON-NLS-1$
 		if (styleEnd > 0) {
