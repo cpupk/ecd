@@ -16,7 +16,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/maven-scm-provider-cvsexe-1.9.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/maven-scm-provider-cvsjava-1.9.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/maven-scm-provider-git-commons-1.9.4.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/maven-scm-provider-gitexe-1.9.4.jar" sourcepath="C:/Users/JP/AppData/Local/Temp/.org.sf.feeling.decompiler1612369028106/source/maven-scm-provider-gitexe-1.9.4-sources-1612369035704.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/maven-scm-provider-gitexe-1.9.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/maven-scm-provider-hg-1.9.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/maven-scm-provider-integrity-1.9.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/maven-scm-provider-jazz-1.9.4.jar"/>
@@ -29,9 +29,9 @@
 	<classpathentry exported="true" kind="lib" path="lib/maven-scm-provider-tfs-1.9.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/maven-scm-provider-vss-1.9.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/plexus-utils-3.0.15.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/nexus-indexer-lucene-model-2.14.20-02.jar" sourcepath="C:/Users/JP/AppData/Local/Temp/.org.sf.feeling.decompiler1612428383440/source/nexus-indexer-lucene-model-2.14.20-02-sources-1612429763123.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/nexus-indexer-lucene-model-2.14.20-02.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/nexus-restlet1x-model-2.9.2-01.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/maven-scm-provider-jgit-1.9.4.jar" sourcepath="C:/Users/JP/AppData/Local/Temp/.org.sf.feeling.decompiler1612284849477/source/maven-scm-provider-jgit-1.9.4-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/maven-scm-provider-jgit-1.9.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jaxb-api-2.3.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jaxb-impl-2.3.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jaxb-runtime-2.3.3.jar"/>
