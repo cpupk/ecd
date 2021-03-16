@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.nio.charset.Charset;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
@@ -403,31 +404,20 @@ public class FileUtil {
 	}
 
 	public static String getContent(File file) {
-		if (file == null || !file.exists())
-			return null;
-		try (InputStream is = new BufferedInputStream(new FileInputStream(file));
-				ByteArrayOutputStream out = new ByteArrayOutputStream(4096)) {
-			byte[] tmp = new byte[4096];
-			while (true) {
-				int r = is.read(tmp);
-				if (r == -1)
-					break;
-				out.write(tmp, 0, r);
-			}
-			byte[] bytes = out.toByteArray();
-			String content = new String(bytes);
-			return content.trim();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
+		return getContent(file, Charset.defaultCharset().name());
 	}
 
 	public static String getContent(File file, String enconding) {
-		if (file == null || !file.exists())
+		if (file == null || !file.exists()) {
 			return null;
+		}
+		long fileLenLong = file.length();
+		if (fileLenLong > Integer.MAX_VALUE) {
+			throw new RuntimeException("File too large: " + file);
+		}
+		int fileLen = (int) fileLenLong;
 		try (InputStream is = new BufferedInputStream(new FileInputStream(file));
-				ByteArrayOutputStream out = new ByteArrayOutputStream(4096)) {
+				ByteArrayOutputStream out = new ByteArrayOutputStream(fileLen)) {
 			byte[] tmp = new byte[4096];
 			while (true) {
 				int r = is.read(tmp);

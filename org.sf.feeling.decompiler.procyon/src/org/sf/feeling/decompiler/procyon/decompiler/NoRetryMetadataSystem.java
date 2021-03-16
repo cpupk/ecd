@@ -22,10 +22,6 @@ public final class NoRetryMetadataSystem extends MetadataSystem {
 	public NoRetryMetadataSystem() {
 	}
 
-	public NoRetryMetadataSystem(String classPath) {
-		super(classPath);
-	}
-
 	public NoRetryMetadataSystem(ITypeLoader typeLoader) {
 		super(typeLoader);
 	}

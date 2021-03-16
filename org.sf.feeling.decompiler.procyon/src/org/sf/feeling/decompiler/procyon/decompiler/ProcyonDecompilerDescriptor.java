@@ -53,7 +53,7 @@ public class ProcyonDecompilerDescriptor implements IDecompilerDescriptor {
 
 	@Override
 	public boolean isEnabled() {
-		return !(System.getProperty("java.version").compareTo("1.7") < 0); //$NON-NLS-1$ //$NON-NLS-2$
+		return true;
 	}
 
 	@Override

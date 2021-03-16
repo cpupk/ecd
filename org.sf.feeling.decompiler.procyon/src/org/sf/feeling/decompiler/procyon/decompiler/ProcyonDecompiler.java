@@ -24,6 +24,7 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.editor.IDecompiler;
 import org.sf.feeling.decompiler.procyon.ProcyonDecompilerPlugin;
+import org.sf.feeling.decompiler.procyon.decompiler.LineNumberFormatter.LineNumberOption;
 import org.sf.feeling.decompiler.util.ClassUtil;
 import org.sf.feeling.decompiler.util.FileUtil;
 import org.sf.feeling.decompiler.util.JarClassExtractor;
@@ -36,9 +37,8 @@ import com.strobel.assembler.metadata.TypeDefinition;
 import com.strobel.assembler.metadata.TypeReference;
 import com.strobel.decompiler.DecompilationOptions;
 import com.strobel.decompiler.DecompilerSettings;
-import com.strobel.decompiler.LineNumberFormatter;
-import com.strobel.decompiler.LineNumberFormatter.LineNumberOption;
 import com.strobel.decompiler.PlainTextOutput;
+import com.strobel.decompiler.languages.Language;
 import com.strobel.decompiler.languages.LineNumberPosition;
 import com.strobel.decompiler.languages.TypeDecompilationResults;
 
@@ -49,9 +49,6 @@ public class ProcyonDecompiler implements IDecompiler {
 	private String log = ""; //$NON-NLS-1$
 
 	/**
-	 * Performs a <code>Runtime.exec()</code> on jad executable with selected
-	 * options.
-	 * 
 	 * @see IDecompiler#decompile(String, String, String)
 	 */
 	@Override
@@ -105,8 +102,10 @@ public class ProcyonDecompiler implements IDecompiler {
 
 				output.setUnicodeOutputEnabled(decompilationOptions.getSettings().isUnicodeOutputEnabled());
 
-				results = decompilationOptions.getSettings().getLanguage().decompileType(resolvedType, output,
-						decompilationOptions);
+				Language lang = decompilationOptions.getSettings().getLanguage();
+
+				// perform the actual decompilation
+				results = lang.decompileType(resolvedType, output, decompilationOptions);
 			}
 
 			List<LineNumberPosition> lineNumberPositions = results.getLineNumberPositions();
@@ -125,13 +124,16 @@ public class ProcyonDecompiler implements IDecompiler {
 				LineNumberFormatter lineFormatter = new LineNumberFormatter(classFile, lineNumberPositions,
 						lineNumberOptions);
 
-				lineFormatter.reformatFile();
+				source = lineFormatter.reformatFile();
+			} else {
+				source = FileUtil.getContent(classFile);
 			}
+
 		} catch (IOException e) {
 			Logger.error(e);
 		}
 
-		source = UnicodeUtil.decode(FileUtil.getContent(classFile));
+		source = UnicodeUtil.decode(source);
 
 		classFile.delete();
 
