@@ -58,10 +58,15 @@ _Primary Source: http://www.benf.org/other/cfr/_
   * Equal to http://www.benf.org/other/cfr/cfr_0_130.jar
 
 ### Procyon
-_Primary Source: https://bitbucket.org/mstrobel/procyon/_
-* `./org.sf.feeling.decompiler.procyon/lib/procyon.jar`
-  * SHA-256: 64d469659852e53eb78394553a6b2e104a2a65625117130c640d4f798525426a
-  * `gradle fatJar` build of https://bitbucket.org/mstrobel/procyon/commits/12cbbdd9dc6fde6b5155de3e3aebde8ce3f85df4?at=develop
+_Primary Source: https://repo1.maven.org/maven2/org/bitbucket/mstrobel/_
+
+* `./org.sf.feeling.decompiler.procyon/lib/procyon-core-0.5.36.jar`
+  * SHA-256: 5123b7db09bea2176fd9ec09e3cab05c728e4f3151fc47dabb0b5d7c8e964896
+  * Version from https://repo1.maven.org/maven2/org/bitbucket/mstrobel/procyon-core/0.5.36/procyon-core-0.5.36.jar
+
+* `./org.sf.feeling.decompiler.procyon/lib/procyon-compilertools-0.5.36.jar`
+  * SHA-256: 9f737863b5b577746d7594b45187870bf8184ddb3657ac71817ddc950cf6bff5
+  * Version from https://repo1.maven.org/maven2/org/bitbucket/mstrobel/procyon-compilertools/0.5.36/procyon-compilertools-0.5.36.jar
 
 ### Netbeans CVSClient
 _Primary Source: https://versioncontrol.netbeans.org/javacvs/library/_
