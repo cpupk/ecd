@@ -65,9 +65,17 @@ public abstract class JDSourceMapper extends BaseDecompilerSourceMapper {
 
 			// Decompile class file
 			try {
-				String result = decompile(this.basePath.getAbsolutePath(), classPath);
-				if (result != null)
-					source = result.toCharArray();
+				File decompilePath = this.basePath.getAbsoluteFile();
+				if (decompilePath.isFile()) {
+					String result = decompile(decompilePath.toString(), classPath);
+					if (result != null) {
+						source = result.toCharArray();
+					}
+				} else {
+					JavaDecompilerPlugin.getDefault().getLog()
+							.log(new Status(Status.ERROR, JavaDecompilerPlugin.PLUGIN_ID, 0,
+									"Unable to decompile: " + decompilePath + " is not a valid file.", null));
+				}
 			} catch (Exception e) {
 				JavaDecompilerPlugin.getDefault().getLog()
 						.log(new Status(Status.ERROR, JavaDecompilerPlugin.PLUGIN_ID, 0, e.getMessage(), e));

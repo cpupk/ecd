@@ -2,45 +2,18 @@
 package org.sf.feeling.decompiler.cfr.decompiler;
 
 import java.io.Closeable;
-import java.io.IOException;
-import java.io.StringWriter;
 
-import org.benf.cfr.reader.entities.Method;
 import org.benf.cfr.reader.state.TypeUsageInformation;
 import org.benf.cfr.reader.util.getopt.Options;
 import org.benf.cfr.reader.util.output.IllegalIdentifierDump;
-import org.benf.cfr.reader.util.output.StreamDumper;
+import org.benf.cfr.reader.util.output.MethodErrorCollector;
+import org.benf.cfr.reader.util.output.StringStreamDumper;
 
-public class StringDumper extends StreamDumper implements Closeable {
+public class StringDumper extends StringStreamDumper implements Closeable {
 
-	private StringWriter sw = new StringWriter();
-
-	public StringDumper(TypeUsageInformation typeUsageInformation, Options options,
-			IllegalIdentifierDump illegalIdentifierDump) {
-		super(typeUsageInformation, options, illegalIdentifierDump);
+	public StringDumper(MethodErrorCollector methodErrorCollector, StringBuilder sb,
+			TypeUsageInformation typeUsageInformation, Options options, IllegalIdentifierDump illegalIdentifierDump) {
+		super(methodErrorCollector, sb, typeUsageInformation, options, illegalIdentifierDump);
 	}
 
-	@Override
-	public void addSummaryError(Method paramMethod, String paramString) {
-
-	}
-
-	@Override
-	public void close() {
-		try {
-			sw.close();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@Override
-	protected void write(String source) {
-		sw.write(source);
-	}
-
-	@Override
-	public String toString() {
-		return sw.toString();
-	}
 }

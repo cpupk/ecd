@@ -36,6 +36,7 @@ import org.eclipse.jdt.internal.ui.javaeditor.InternalClassFileEditorInput;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Region;
@@ -73,6 +74,7 @@ import org.eclipse.ui.texteditor.FindNextAction;
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.GotoLineAction;
 import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
+import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
@@ -447,16 +449,20 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor {
 	}
 
 	private void handleMarkLink() {
-		final int index = this.getDocumentProvider().getDocument(getEditorInput()).get().indexOf("://"); //$NON-NLS-1$
-		if (index != -1) {
-			Display.getDefault().asyncExec(new Runnable() {
+		IDocumentProvider documentProvider = this.getDocumentProvider();
+		if (documentProvider != null) {
+			IDocument doc = documentProvider.getDocument(getEditorInput());
+			final int index = doc.get().indexOf("://"); //$NON-NLS-1$
+			if (index != -1) {
+				Display.getDefault().asyncExec(new Runnable() {
 
-				@Override
-				public void run() {
-					updateMatchAnnonation();
-					handleMarkLink(index);
-				}
-			});
+					@Override
+					public void run() {
+						updateMatchAnnonation();
+						handleMarkLink(index);
+					}
+				});
+			}
 		}
 	}
 

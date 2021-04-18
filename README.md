@@ -85,6 +85,11 @@ Used libraries:
 
 ## Changelog
 
+* Version 3.2.1
+  * Updated Embedded Decompilers
+    * CFR to version 0.15.1 (JDK 14 support)
+    * Procyon to version 0.5.36
+
 * Version 3.2.0
   * Updated Embedded Decompilers
     * JD-Core to version 1.1.3 (JDK 12 support)

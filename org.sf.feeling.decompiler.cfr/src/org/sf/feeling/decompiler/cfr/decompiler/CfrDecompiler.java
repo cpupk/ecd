@@ -14,17 +14,22 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.benf.cfr.reader.api.ClassFileSource;
+import org.apache.commons.lang3.time.StopWatch;
+import org.benf.cfr.reader.apiunreleased.ClassFileSource2;
 import org.benf.cfr.reader.bytecode.analysis.parse.utils.Pair;
 import org.benf.cfr.reader.entities.ClassFile;
+import org.benf.cfr.reader.entities.Method;
 import org.benf.cfr.reader.state.ClassFileSourceImpl;
 import org.benf.cfr.reader.state.DCCommonState;
-import org.benf.cfr.reader.state.TypeUsageCollector;
+import org.benf.cfr.reader.state.TypeUsageCollectingDumper;
+import org.benf.cfr.reader.state.TypeUsageInformation;
 import org.benf.cfr.reader.util.CannotLoadClassException;
 import org.benf.cfr.reader.util.getopt.GetOptParser;
 import org.benf.cfr.reader.util.getopt.Options;
 import org.benf.cfr.reader.util.getopt.OptionsImpl;
 import org.benf.cfr.reader.util.output.IllegalIdentifierDump;
+import org.benf.cfr.reader.util.output.MethodErrorCollector;
+import org.benf.cfr.reader.util.output.StringStreamDumper;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.cfr.CfrDecompilerPlugin;
 import org.sf.feeling.decompiler.editor.IDecompiler;
@@ -35,7 +40,7 @@ import org.sf.feeling.decompiler.util.UnicodeUtil;
 public class CfrDecompiler implements IDecompiler {
 
 	private String source = ""; //$NON-NLS-1$
-	private long time, start;
+	private long time;
 	private String log = ""; //$NON-NLS-1$
 
 	/**
@@ -45,7 +50,8 @@ public class CfrDecompiler implements IDecompiler {
 	 */
 	@Override
 	public void decompile(String root, String packege, String className) {
-		start = System.currentTimeMillis();
+		StopWatch stopWatch = new StopWatch();
+		stopWatch.start();
 		log = ""; //$NON-NLS-1$
 		source = ""; //$NON-NLS-1$
 		File workingDir = new File(root + "/" + packege); //$NON-NLS-1$
@@ -58,31 +64,43 @@ public class CfrDecompiler implements IDecompiler {
 			Pair<List<String>, Options> options = getOptParser.parse(new String[] { classPathStr },
 					OptionsImpl.getFactory());
 			Options namedOptions = options.getSecond();
-			ClassFileSource classFileSource = new ClassFileSourceImpl(namedOptions);
+			ClassFileSource2 classFileSource = new ClassFileSourceImpl(namedOptions);
 			DCCommonState dcCommonState = new DCCommonState(namedOptions, classFileSource);
 
 			IllegalIdentifierDump illegalIdentifierDump = IllegalIdentifierDump.Factory.get(namedOptions);
 
-			ClassFile c = dcCommonState.getClassFileMaybePath(classPathStr);
-			dcCommonState.configureWith(c);
+			ClassFile classFile = dcCommonState.getClassFileMaybePath(classPathStr);
+			dcCommonState.configureWith(classFile);
 			try {
-				c = dcCommonState.getClassFile(c.getClassType());
+				classFile = dcCommonState.getClassFile(classFile.getClassType());
 			} catch (CannotLoadClassException e) {
+				e.printStackTrace();
 			}
 			if (namedOptions.getOption(OptionsImpl.DECOMPILE_INNER_CLASSES).booleanValue()) {
-				c.loadInnerClasses(dcCommonState);
+				classFile.loadInnerClasses(dcCommonState);
 			}
+			TypeUsageCollectingDumper typeUsageCollectingDumper = new TypeUsageCollectingDumper(namedOptions,
+					classFile);
 
-			c.analyseTop(dcCommonState);
+			classFile.analyseTop(dcCommonState, typeUsageCollectingDumper);
 
-			TypeUsageCollector collectingDumper = new TypeUsageCollector(c);
-			c.collectTypeUsages(collectingDumper);
+			TypeUsageInformation typeUsageInfo = typeUsageCollectingDumper.getRealTypeUsageInformation();
 
-			try (StringDumper dumper = new StringDumper(collectingDumper.getTypeUsageInformation(), namedOptions,
-					illegalIdentifierDump)) {
-				c.dump(dumper);
-				source = UnicodeUtil.decode(dumper.toString().trim());
-			}
+			MethodErrorCollector methodErrorCollector = new MethodErrorCollector() {
+
+				@Override
+				public void addSummaryError(Method paramMethod, String paramString) {
+					System.err.println("addSummaryError: " + paramMethod + " " + paramString);
+					// TODO: log errors?
+				}
+
+			};
+
+			StringBuilder stringBuilder = new StringBuilder(4096);
+			StringStreamDumper dumper = new StringStreamDumper(methodErrorCollector, stringBuilder, typeUsageInfo,
+					namedOptions, illegalIdentifierDump);
+			classFile.dump(dumper);
+			source = UnicodeUtil.decode(stringBuilder.toString().trim());
 
 			Pattern wp = Pattern.compile("/\\*.+?\\*/", Pattern.DOTALL); //$NON-NLS-1$
 			Matcher m = wp.matcher(source);
@@ -93,8 +111,9 @@ public class CfrDecompiler implements IDecompiler {
 				group = group.replace("/*", ""); //$NON-NLS-1$ //$NON-NLS-2$
 				group = group.replace("*/", ""); //$NON-NLS-1$ //$NON-NLS-2$
 				group = group.replace("*", ""); //$NON-NLS-1$ //$NON-NLS-2$
-				if (log.length() > 0)
+				if (log.length() > 0) {
 					log += "\n"; //$NON-NLS-1$
+				}
 				log += group;
 
 				source = source.replace(m.group(), "").trim(); //$NON-NLS-1$
@@ -104,7 +123,7 @@ public class CfrDecompiler implements IDecompiler {
 			JavaDecompilerPlugin.logError(e, e.getMessage());
 		}
 
-		time = System.currentTimeMillis() - start;
+		time = stopWatch.getTime();
 	}
 
 	/**
@@ -116,15 +135,16 @@ public class CfrDecompiler implements IDecompiler {
 	 */
 	@Override
 	public void decompileFromArchive(String archivePath, String packege, String className) {
-		start = System.currentTimeMillis();
-		File workingDir = new File(
-				JavaDecompilerPlugin.getDefault().getPreferenceStore().getString(JavaDecompilerPlugin.TEMP_DIR) + "/" //$NON-NLS-1$
-						+ System.currentTimeMillis());
-
+		StopWatch stopWatch = new StopWatch();
+		stopWatch.start();
+		String tempDir = JavaDecompilerPlugin.getDefault().getPreferenceStore()
+				.getString(JavaDecompilerPlugin.TEMP_DIR);
+		File workingDir = new File(tempDir + "/ecd_cfr" + System.currentTimeMillis()); //$NON-NLS-1$
 		try {
 			workingDir.mkdirs();
 			JarClassExtractor.extract(archivePath, packege, className, true, workingDir.getAbsolutePath());
 			decompile(workingDir.getAbsolutePath(), "", className); //$NON-NLS-1$
+			time = stopWatch.getTime();
 		} catch (Exception e) {
 			JavaDecompilerPlugin.logError(e, e.getMessage());
 			return;
