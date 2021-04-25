@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry exported="true" kind="lib" path="lib/cfr-0.151.jar" sourcepath="C:/Users/JP/AppData/Local/Temp/.org.sf.feeling.decompiler1618402840835/source/cfr-0.151-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/cfr-0.151.jar" />
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
 		<attributes>
 			<attribute name="module" value="true"/>

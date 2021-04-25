@@ -89,9 +89,8 @@ public class CfrDecompiler implements IDecompiler {
 			MethodErrorCollector methodErrorCollector = new MethodErrorCollector() {
 
 				@Override
-				public void addSummaryError(Method paramMethod, String paramString) {
-					System.err.println("addSummaryError: " + paramMethod + " " + paramString);
-					// TODO: log errors?
+				public void addSummaryError(Method paramMethod, String msg) {
+					log += String.format("\n%s: %s", paramMethod.toString(), msg);
 				}
 
 			};
@@ -139,7 +138,7 @@ public class CfrDecompiler implements IDecompiler {
 		stopWatch.start();
 		String tempDir = JavaDecompilerPlugin.getDefault().getPreferenceStore()
 				.getString(JavaDecompilerPlugin.TEMP_DIR);
-		File workingDir = new File(tempDir + "/ecd_cfr" + System.currentTimeMillis()); //$NON-NLS-1$
+		File workingDir = new File(tempDir + "/ecd_cfr_" + System.currentTimeMillis()); //$NON-NLS-1$
 		try {
 			workingDir.mkdirs();
 			JarClassExtractor.extract(archivePath, packege, className, true, workingDir.getAbsolutePath());

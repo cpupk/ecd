@@ -746,39 +746,34 @@ public class DecompilerOutputUtil {
 		}
 	}
 
+	private static final int JAVA_VERSION_MAX = 16;
+
 	private static String level = null;
 
 	public static String getMaxDecompileLevel() {
-		if (level == null) {
-			if (ReflectionUtils.getDeclaredField(JavaCore.class, "VERSION_1_8") != null) //$NON-NLS-1$
-			{
-				level = (String) ReflectionUtils.getFieldValue(JavaCore.class, "VERSION_1_8"); //$NON-NLS-1$
-			} else if (ReflectionUtils.getDeclaredField(JavaCore.class, "VERSION_1_7") != null) //$NON-NLS-1$
-			{
-				level = (String) ReflectionUtils.getFieldValue(JavaCore.class, "VERSION_1_7"); //$NON-NLS-1$
-			} else if (ReflectionUtils.getDeclaredField(JavaCore.class, "VERSION_1_6") != null) //$NON-NLS-1$
-			{
-				level = (String) ReflectionUtils.getFieldValue(JavaCore.class, "VERSION_1_6"); //$NON-NLS-1$
-			} else if (ReflectionUtils.getDeclaredField(JavaCore.class, "VERSION_1_5") != null) //$NON-NLS-1$
-			{
-				level = (String) ReflectionUtils.getFieldValue(JavaCore.class, "VERSION_1_5"); //$NON-NLS-1$
-			} else if (ReflectionUtils.getDeclaredField(JavaCore.class, "VERSION_1_4") != null) //$NON-NLS-1$
-			{
-				level = (String) ReflectionUtils.getFieldValue(JavaCore.class, "VERSION_1_4"); //$NON-NLS-1$
-			} else if (ReflectionUtils.getDeclaredField(JavaCore.class, "VERSION_1_3") != null) //$NON-NLS-1$
-			{
-				level = (String) ReflectionUtils.getFieldValue(JavaCore.class, "VERSION_1_3"); //$NON-NLS-1$
-			} else if (ReflectionUtils.getDeclaredField(JavaCore.class, "VERSION_1_2") != null) //$NON-NLS-1$
-			{
-				level = (String) ReflectionUtils.getFieldValue(JavaCore.class, "VERSION_1_2"); //$NON-NLS-1$
-			} else if (ReflectionUtils.getDeclaredField(JavaCore.class, "VERSION_1_1") != null) //$NON-NLS-1$
-			{
-				level = (String) ReflectionUtils.getFieldValue(JavaCore.class, "VERSION_1_1"); //$NON-NLS-1$
-			} else {
-				level = "1.8"; //$NON-NLS-1$
+		if (level != null) {
+			return level;
+		}
+
+		String versionFieldName9 = "VERSION_%d"; //$NON-NLS-1$
+		String versionFieldName = "VERSION_1_%d"; //$NON-NLS-1$
+
+		for (int v = JAVA_VERSION_MAX; v >= 9; v--) {
+			String fieldName = String.format(versionFieldName9, v);
+			if (ReflectionUtils.getDeclaredField(JavaCore.class, fieldName) != null) {
+				level = (String) ReflectionUtils.getFieldValue(JavaCore.class, fieldName);
+				return level;
+			}
+		}
+		for (int v = 8; v >= 1; v--) {
+			String fieldName = String.format(versionFieldName, v);
+			if (ReflectionUtils.getDeclaredField(JavaCore.class, fieldName) != null) {
+				level = (String) ReflectionUtils.getFieldValue(JavaCore.class, fieldName);
+				return level;
 			}
 		}
 
+		level = "1.8"; //$NON-NLS-1$
 		return level;
 	}
 
