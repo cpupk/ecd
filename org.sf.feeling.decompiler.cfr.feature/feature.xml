@@ -25,7 +25,6 @@
 
    <requires>
       <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.sf.feeling.decompiler"/>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.jface"/>
       <import plugin="org.eclipse.jface.text"/>
@@ -40,6 +39,8 @@
       <import plugin="org.eclipse.core.expressions"/>
       <import plugin="org.eclipse.ui.navigator"/>
       <import plugin="org.eclipse.core.filesystem"/>
+      <import plugin="org.sf.feeling.decompiler" version="3.2.2" match="greaterOrEqual"/>
+      <import plugin="org.apache.commons.lang3"/>
    </requires>
 
    <plugin

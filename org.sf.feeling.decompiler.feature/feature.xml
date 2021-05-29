@@ -24,33 +24,26 @@
    </url>
 
    <requires>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.jface"/>
       <import plugin="org.eclipse.jface.text"/>
       <import plugin="org.eclipse.ui.editors"/>
-      <import plugin="org.eclipse.ui.workbench"/>
       <import plugin="org.eclipse.ui.workbench.texteditor"/>
-      <import plugin="org.eclipse.jdt.core"/>
       <import plugin="org.eclipse.jdt.ui"/>
-      <import plugin="org.eclipse.jdt.debug"/>
       <import plugin="org.eclipse.jdt.debug.ui"/>
       <import plugin="org.eclipse.debug.ui"/>
       <import plugin="org.eclipse.jdt.launching"/>
-      <import plugin="org.eclipse.core.expressions"/>
       <import plugin="org.eclipse.ui.navigator"/>
       <import plugin="org.eclipse.ui.views"/>
       <import plugin="org.eclipse.search"/>
-      <import plugin="org.eclipse.core.filesystem"/>
       <import plugin="org.eclipse.help.base"/>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="org.sf.feeling.decompiler"/>
-      <import plugin="javax.inject"/>
-      <import plugin="javax.annotation"/>
-      <import plugin="org.eclipse.core.databinding"/>
-      <import plugin="org.eclipse.jface.databinding"/>
-      <import plugin="org.eclipse.core.databinding.beans"/>
-      <import plugin="org.apache.ant"/>
+      <import plugin="org.eclipse.core.runtime" version="3.14.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.resources" version="3.13.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.workbench" version="3.111.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jdt.core" version="3.14.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jdt.debug" version="3.11.100" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.expressions" version="3.6.100" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.filesystem" version="1.7.100" match="greaterOrEqual"/>
+      <import plugin="org.apache.commons.codec" version="1.9.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
