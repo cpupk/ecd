@@ -53,13 +53,13 @@ public class JreSourceCodeFinder extends AbstractSourceCodeFinder {
 			String linkText = null;
 			if (version.startsWith("1.7.0")) //$NON-NLS-1$
 			{
-				lookup = "http://hg.openjdk.java.net/jdk7u/jdk7u/jdk/tags"; //$NON-NLS-1$
+				lookup = "https://hg.openjdk.java.net/jdk7u/jdk7u/jdk/tags"; //$NON-NLS-1$
 				String u = "u" + version.substring(6); //$NON-NLS-1$
 				linkText = "jdk7" + u + "-"; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			if (version.startsWith("1.8.0")) //$NON-NLS-1$
 			{
-				lookup = "http://hg.openjdk.java.net/jdk8u/jdk8u/jdk/tags"; //$NON-NLS-1$
+				lookup = "https://hg.openjdk.java.net/jdk8u/jdk8u/jdk/tags"; //$NON-NLS-1$
 				String u = "u" + version.substring(6); //$NON-NLS-1$
 				linkText = "jdk8" + u + "-"; //$NON-NLS-1$ //$NON-NLS-2$
 			}

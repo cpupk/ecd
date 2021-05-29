@@ -139,7 +139,7 @@ public class ArtifactorySourceCodeFinder extends AbstractSourceCodeFinder implem
 	protected Set<GAV> findArtifactsUsingArtifactory(String g, String a, String v, String c, String sha1,
 			boolean getLink) throws Exception {
 		// https://repository.cloudera.com/artifactory/api/search/checksum?sha1=2bf96b7aa8b611c177d329452af1dc933e14501c
-		// {"results":[{"uri":"http://repository.cloudera.com/artifactory/api/storage/repo1-cache/commons-cli/commons-cli/1.2/commons-cli-1.2.jar"}]}
+		// {"results":[{"uri":"https://repository.cloudera.com/artifactory/api/storage/repo1-cache/commons-cli/commons-cli/1.2/commons-cli-1.2.jar"}]}
 		// GET
 		// /api/search/gavc?g=org.acme&a=artifact*&v=1.0&c=sources&repos=libs-release-local
 
@@ -168,7 +168,7 @@ public class ArtifactorySourceCodeFinder extends AbstractSourceCodeFinder implem
 			{
 				JsonObject result = elem.asObject();
 				String uri = result.getString("uri", ""); //$NON-NLS-1$ //$NON-NLS-2$
-				// http://repository.cloudera.com/artifactory/api/storage/repo1-cache/commons-cli/commons-cli/1.2/commons-cli-1.2.jar
+				// https://repository.cloudera.com/artifactory/api/storage/repo1-cache/commons-cli/commons-cli/1.2/commons-cli-1.2.jar
 				String regex = "/api/storage/[^/]+/(.+)$"; //$NON-NLS-1$
 				Pattern pattern = Pattern.compile(regex);
 				Matcher matcher = pattern.matcher(uri);

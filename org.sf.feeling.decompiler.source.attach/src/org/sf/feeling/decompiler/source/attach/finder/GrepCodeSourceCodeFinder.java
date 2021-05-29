@@ -20,6 +20,7 @@ import org.sf.feeling.decompiler.source.attach.utils.UrlDownloader;
 import org.sf.feeling.decompiler.util.HashUtils;
 import org.sf.feeling.decompiler.util.Logger;
 
+// grepcode.com service is no longer available
 public class GrepCodeSourceCodeFinder extends AbstractSourceCodeFinder {
 
 	protected boolean canceled = false;
@@ -33,7 +34,7 @@ public class GrepCodeSourceCodeFinder extends AbstractSourceCodeFinder {
 	public void find(String binFile, List<SourceFileResult> results) {
 		try {
 			String md5 = HashUtils.md5Hash(new File(binFile));
-			String srcUrl = "http://grepcode.com/snapshot/" + md5 + "?rel=file&kind=source&n=0"; //$NON-NLS-1$ //$NON-NLS-2$
+			String srcUrl = "https://grepcode.com/snapshot/" + md5 + "?rel=file&kind=source&n=0"; //$NON-NLS-1$ //$NON-NLS-2$
 
 			String[] sourceFiles = SourceBindingUtil.getSourceFileByDownloadUrl(srcUrl);
 			if (sourceFiles != null && sourceFiles[0] != null && new File(sourceFiles[0]).exists()) {

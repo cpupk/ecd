@@ -37,7 +37,7 @@ public class SourceCodeFinderFacade implements SourceCodeFinder {
 			new ArtifactorySourceCodeFinder("https://repository.cloudera.com/artifactory/webapp/home.html"), //$NON-NLS-1$
 			new ArtifactorySourceCodeFinder("https://repo.spring.io/webapp/home.html"), //$NON-NLS-1$
 
-			new EclipsePluginSourceByFTPSearchv3Finder(),
+			// new EclipsePluginSourceByFTPSearchv3Finder(),
 			new EclipsePluginSourceByUrlPatternFinder("https://www.mmnt.ru/int/get?st={0}"), //$NON-NLS-1$
 
 			new EclipseSourceReferencesSourceCodeFinder(), new JreSourceCodeFinder() };

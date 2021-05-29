@@ -17,10 +17,11 @@ import java.util.regex.Pattern;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.html.HTMLDocument;
 
+// FTP search no longer exists
 public class EclipsePluginSourceByFTPSearchv3Finder extends EclipsePluginSourceByUrlPatternFinder {
 
 	public EclipsePluginSourceByFTPSearchv3Finder() {
-		super("http://www.search-ftp.com/lsftp.ashx?s={0}"); //$NON-NLS-1$
+		super("https://www.search-ftp.com/lsftp.ashx?s={0}"); //$NON-NLS-1$
 	}
 
 	@Override
@@ -34,7 +35,7 @@ public class EclipsePluginSourceByFTPSearchv3Finder extends EclipsePluginSourceB
 		Matcher matcher = pattern.matcher(html);
 		if (matcher.find()) {
 			String content = matcher.group();
-			content = "http://www.search-ftp.com" //$NON-NLS-1$
+			content = "https://www.search-ftp.com" //$NON-NLS-1$
 					+ content.substring(content.indexOf("\"") + 1, content.lastIndexOf("\"")); //$NON-NLS-1$ //$NON-NLS-2$
 			html = getString(new URL(content));
 		}

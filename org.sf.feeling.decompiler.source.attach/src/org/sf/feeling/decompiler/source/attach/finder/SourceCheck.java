@@ -73,7 +73,7 @@ public class SourceCheck {
 		data = String.valueOf(data) + "&src_md5=" + src_md5; //$NON-NLS-1$
 		data = String.valueOf(data) + "&src_sha1=" + src_sha1; //$NON-NLS-1$
 		data = String.valueOf(data) + "&src_urls=" + URLEncoder.encode(src_urls, "UTF-8"); //$NON-NLS-1$ //$NON-NLS-2$
-		final URL url2 = new URL("http://javasourceattacher2.appspot.com/rest/libraries"); //$NON-NLS-1$
+		final URL url2 = new URL("https://javasourceattacher2.appspot.com/rest/libraries"); //$NON-NLS-1$
 		final HttpURLConnection conn = (HttpURLConnection) url2.openConnection();
 		conn.setConnectTimeout(5000);
 		conn.setReadTimeout(5000);

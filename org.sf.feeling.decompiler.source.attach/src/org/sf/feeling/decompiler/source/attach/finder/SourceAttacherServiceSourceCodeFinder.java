@@ -28,7 +28,7 @@ import com.eclipsesource.json.JsonObject;
 
 public class SourceAttacherServiceSourceCodeFinder extends AbstractSourceCodeFinder implements SourceCodeFinder {
 
-	public static final String SERVICE = "http://javasourceattacher2.appspot.com"; //$NON-NLS-1$
+	public static final String SERVICE = "https://javasourceattacher2.appspot.com/"; //$NON-NLS-1$
 	private boolean canceled = false;
 
 	@Override
@@ -53,7 +53,7 @@ public class SourceAttacherServiceSourceCodeFinder extends AbstractSourceCodeFin
 			URLConnection conn = null;
 			try {
 				String md5 = HashUtils.md5Hash(bin);
-				String serviceUrl = "http://javasourceattacher2.appspot.com/rest/libraries?md5=" + md5; //$NON-NLS-1$
+				String serviceUrl = "https://javasourceattacher2.appspot.com/rest/libraries?md5=" + md5; //$NON-NLS-1$
 				conn = new URL(serviceUrl).openConnection();
 				conn.setConnectTimeout(5000);
 				conn.setReadTimeout(5000);

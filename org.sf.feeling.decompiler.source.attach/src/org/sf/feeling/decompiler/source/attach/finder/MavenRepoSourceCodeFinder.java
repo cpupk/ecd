@@ -119,7 +119,7 @@ public class MavenRepoSourceCodeFinder extends AbstractSourceCodeFinder implemen
 					+ gav.getG() + "\" AND a:\"" //$NON-NLS-1$
 					+ gav.getA() + "\" AND v:\"" //$NON-NLS-1$
 					+ gav.getV() + "\" AND l:\"sources\""; //$NON-NLS-1$
-			String url = "http://search.maven.org/solrsearch/select?q=" //$NON-NLS-1$
+			String url = "https://search.maven.org/solrsearch/select?q=" //$NON-NLS-1$
 					+ URLEncoder.encode(qVal, "UTF-8") //$NON-NLS-1$
 					+ "&rows=20&wt=json"; //$NON-NLS-1$
 			String json = IOUtils.toString(new URL(url).openStream());
@@ -137,7 +137,7 @@ public class MavenRepoSourceCodeFinder extends AbstractSourceCodeFinder implemen
 				if (array.toString().contains("-sources.jar")) //$NON-NLS-1$
 				{
 					String path = g.replace('.', '/') + '/' + a + '/' + v + '/' + a + '-' + v + "-sources.jar"; //$NON-NLS-1$
-					path = "http://search.maven.org/remotecontent?filepath=" + path; //$NON-NLS-1$
+					path = "https://search.maven.org/remotecontent?filepath=" + path; //$NON-NLS-1$
 					results.put(gav, path);
 				}
 			}
@@ -148,7 +148,7 @@ public class MavenRepoSourceCodeFinder extends AbstractSourceCodeFinder implemen
 
 	private Collection<GAV> findArtifactsUsingMavenCentral(String sha1) throws Exception {
 		Set<GAV> results = new HashSet<GAV>();
-		String json = IOUtils.toString(new URL("http://search.maven.org/solrsearch/select?q=" //$NON-NLS-1$
+		String json = IOUtils.toString(new URL("https://search.maven.org/solrsearch/select?q=" //$NON-NLS-1$
 				+ URLEncoder.encode("1:\"" + sha1 + "\"", "UTF-8") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				+ "&rows=20&wt=json").openStream()); //$NON-NLS-1$
 		JsonObject jsonObject = Json.parse(json).asObject();
