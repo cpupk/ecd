@@ -87,6 +87,7 @@ Used libraries:
 
 * Version 3.2.2
   * Fixed some inconsistencies regarding version numbers and the update site
+  * Upgraded some service URL to HTTPS
 
 * Version 3.2.1
   * Updated Embedded Decompilers
