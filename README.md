@@ -85,6 +85,9 @@ Used libraries:
 
 ## Changelog
 
+* Version 3.2.2
+  * Fixed some inconsistencies regarding version numbers and the update site
+
 * Version 3.2.1
   * Updated Embedded Decompilers
     * CFR to version 0.15.1 (JDK 14 support)

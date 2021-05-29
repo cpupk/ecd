@@ -4,7 +4,7 @@
 
 	<groupId>com.github.ecd-plugin</groupId>
 	<artifactId>com.github.ecd-plugin.ecd</artifactId>
-	<version>3.2.1-SNAPSHOT</version>
+	<version>3.2.2</version>
 	<packaging>pom</packaging>
 
 	<name>com.github.ecd-plugin.ecd</name>
@@ -112,9 +112,9 @@
 
 	<repositories>
 		<repository>
-			<id>eclipse-oxygen</id>
+			<id>eclipse-photon</id>
 			<layout>p2</layout>
-			<url>http://download.eclipse.org/releases/oxygen</url>
+			<url>http://download.eclipse.org/releases/photon/</url>
 		</repository>
 	</repositories>
 
