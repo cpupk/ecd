@@ -10,8 +10,7 @@ import org.sf.feeling.decompiler.jad.JadDecompilerPlugin;
 import org.sf.feeling.decompiler.jad.actions.DecompileWithJadAction;
 import org.sf.feeling.decompiler.jad.i18n.Messages;
 
-public class JadDecompilerDescriptor implements IDecompilerDescriptor
-{
+public class JadDecompilerDescriptor implements IDecompilerDescriptor {
 
 	private JadDecompiler decompiler = null;
 
@@ -20,61 +19,51 @@ public class JadDecompilerDescriptor implements IDecompilerDescriptor
 	private Action decompileAction = null;
 
 	@Override
-	public String getDecompilerType( )
-	{
+	public String getDecompilerType() {
 		return JadDecompilerPlugin.decompilerType;
 	}
 
 	@Override
-	public String getDecompilerPreferenceLabel( )
-	{
-		return Messages.getString( "JadDecompilerDescriptor.PreferenceLabel" ); //$NON-NLS-1$
+	public String getDecompilerPreferenceLabel() {
+		return Messages.getString("JadDecompilerDescriptor.PreferenceLabel"); //$NON-NLS-1$
 	}
 
 	@Override
-	public IDecompiler getDecompiler( )
-	{
-		if ( decompiler == null )
-			decompiler = new JadDecompiler( );
+	public IDecompiler getDecompiler() {
+		if (decompiler == null)
+			decompiler = new JadDecompiler();
 		return decompiler;
 	}
 
 	@Override
-	public BaseDecompilerSourceMapper getDecompilerSourceMapper( )
-	{
-		if ( sourceMapper == null )
-		{
-			sourceMapper = new JadSourceMapper( );
+	public BaseDecompilerSourceMapper getDecompilerSourceMapper() {
+		if (sourceMapper == null) {
+			sourceMapper = new JadSourceMapper();
 		}
 		return sourceMapper;
 	}
 
 	@Override
-	public Action getDecompileAction( )
-	{
-		if ( decompileAction == null )
-		{
-			decompileAction = new DecompileWithJadAction( );
+	public Action getDecompileAction() {
+		if (decompileAction == null) {
+			decompileAction = new DecompileWithJadAction();
 		}
 		return decompileAction;
 	}
 
 	@Override
-	public boolean isEnabled( )
-	{
+	public boolean isEnabled() {
 		return true;
 	}
 
 	@Override
-	public boolean isDefault( )
-	{
+	public boolean isDefault() {
 		return false;
 	}
 
 	@Override
-	public ImageDescriptor getDecompilerIcon( )
-	{
-		return JadDecompilerPlugin.getImageDescriptor( "icons/jad_16.gif" ); //$NON-NLS-1$ ;
+	public ImageDescriptor getDecompilerIcon() {
+		return JadDecompilerPlugin.getImageDescriptor("icons/jad_16.gif"); //$NON-NLS-1$ ;
 	}
 
 }

@@ -1,0 +1,142 @@
+# Audit results
+
+## Binary File Verification
+
+### Dr. Garbage Tools
+
+_Primary Source: https://sourceforge.net/projects/drgarbagetools/files/eclipse/4.4/stable/plugins/_ -> com.drgarbage.asm_5.0.3.201408050542.jar contains both files
+
+* `./org.sf.feeling.decompiler/lib/com.drgarbage.asm.util_5.0.3.jar`
+  * SHA-256: 06096adf6144ee613a9cc6d55325f6b1f04b03c52ca1841e9b3d7ae9dcadd2f2
+  * Equal to the file of the same name in https://downloads.sourceforge.net/project/drgarbagetools/eclipse/4.4/stable/plugins/com.drgarbage.asm_5.0.3.201408050542.jar
+* `./org.sf.feeling.decompiler/lib/com.drgarbage.asm_5.0.3.jar`
+  * SHA-256: d14546c965fea4a8fef3f7c267788d9748058957b84ae11a9fb22d5e386921d1
+  * Equal to the file of the same name in https://downloads.sourceforge.net/project/drgarbagetools/eclipse/4.4/stable/plugins/com.drgarbage.asm_5.0.3.201408050542.jar
+
+### ASM - org.ow2.asm
+
+_Primary Source: https://mvnrepository.com/artifact/org.ow2.asm/asm_ 
+
+* `./org.sf.feeling.decompiler/lib/asm-9.1.jar`
+  * SHA-256: cda4de455fab48ff0bcb7c48b4639447d4de859a7afc30a094a986f0936beba2
+  * https://repo1.maven.org/maven2/org/ow2/asm/asm/9.1/asm-9.1.jar
+
+### Apache commons
+
+_Primary Source: https://commons.apache.org/downloads/index.html_
+
+* `./org.sf.feeling.decompiler.source.attach/lib/commons-compress-1.3.jar`
+  * SHA-256: 56291a5427f6c0abc0b34fbf9bfafa0c21b60d503ece95c38741424d76e2aa04
+  * Equal to http://central.maven.org/maven2/org/apache/commons/commons-compress/1.3/commons-compress-1.3.jar
+
+### Fernflower
+_Primary Source: https://github.com/JetBrains/intellij-community/tree/master/plugins/java-decompiler/engine_
+_Build Source: https://github.com/MinecraftForge/FernFlower with builds at http://files.minecraftforge.net/maven/net/minecraftforge/fernflower/_
+* `./org.sf.feeling.decompiler/lib/fernflower-352.jar`
+  * SHA-256: 799e1e968613abdb74a61bebb08c49132cde5c6eb8d8e5c80a768bfb57a44785
+  * Version from http://files.minecraftforge.net/maven/net/minecraftforge/fernflower/352/fernflower-352.jar
+
+### Minimal JSON
+_Primary Source: https://github.com/ralfstx/minimal-json_
+
+* `./org.sf.feeling.decompiler/lib/json.jar`
+  * SHA-256: e1d280900c78f18ae2e00c14e7410a77ba19cf084154b386532846aa6dc81721
+  * Version from http://central.maven.org/maven2/com/eclipsesource/minimal-json/minimal-json/0.9.4/minimal-json-0.9.4.jar
+
+### JSOUP
+_Primary Source: http://jsoup.org/_
+
+* `./org.sf.feeling.decompiler/lib/jsoup.jar`
+  * SHA-256: fec4c4a7bb210e2d382ddef6ef9d86e8431aa6d7d3113d88132435483e4aa65e
+  * Version from http://central.maven.org/maven2/org/jsoup/jsoup/1.9.2/jsoup-1.9.2.jar
+
+### CFR
+_Primary Source: http://www.benf.org/other/cfr/_
+
+* `./org.sf.feeling.decompiler.cfr/lib/cfr-0.151.jar`
+  * SHA-256: 316E9015B9AF2953FCFF4FE86BF3BBA705F32E7CD25BD6E535C698DE8A25E837
+  * Equal to https://www.benf.org/other/cfr/cfr-0.151.jar
+
+### Procyon
+_Primary Source: https://repo1.maven.org/maven2/org/bitbucket/mstrobel/_
+
+* `./org.sf.feeling.decompiler.procyon/lib/procyon-core-0.5.36.jar`
+  * SHA-256: 5123b7db09bea2176fd9ec09e3cab05c728e4f3151fc47dabb0b5d7c8e964896
+  * Version from https://repo1.maven.org/maven2/org/bitbucket/mstrobel/procyon-core/0.5.36/procyon-core-0.5.36.jar
+
+* `./org.sf.feeling.decompiler.procyon/lib/procyon-compilertools-0.5.36.jar`
+  * SHA-256: 9f737863b5b577746d7594b45187870bf8184ddb3657ac71817ddc950cf6bff5
+  * Version from https://repo1.maven.org/maven2/org/bitbucket/mstrobel/procyon-compilertools/0.5.36/procyon-compilertools-0.5.36.jar
+
+### Netbeans CVSClient
+_Primary Source: https://versioncontrol.netbeans.org/javacvs/library/_
+* `./org.sf.feeling.decompiler.source.attach/lib/cvsclient-20060125.jar`
+
+### Maven SCM
+_Primary Source: https://maven.apache.org/scm/_
+* `./org.sf.feeling.decompiler.source.attach/lib/maven-scm-api-1.9.4.jar`
+* `./org.sf.feeling.decompiler.source.attach/lib/maven-scm-provider-accurev-1.9.4.jar`
+* `./org.sf.feeling.decompiler.source.attach/lib/maven-scm-provider-bazaar-1.9.4.jar`
+* `./org.sf.feeling.decompiler.source.attach/lib/maven-scm-provider-clearcase-1.9.4.jar`
+* `./org.sf.feeling.decompiler.source.attach/lib/maven-scm-provider-cvs-commons-1.9.4.jar`
+* `./org.sf.feeling.decompiler.source.attach/lib/maven-scm-provider-cvsexe-1.9.4.jar`
+* `./org.sf.feeling.decompiler.source.attach/lib/maven-scm-provider-cvsjava-1.9.4.jar`
+* `./org.sf.feeling.decompiler.source.attach/lib/maven-scm-provider-git-commons-1.9.4.jar`
+* `./org.sf.feeling.decompiler.source.attach/lib/maven-scm-provider-gitexe-1.9.4.jar`
+* `./org.sf.feeling.decompiler.source.attach/lib/maven-scm-provider-hg-1.9.4.jar`
+* `./org.sf.feeling.decompiler.source.attach/lib/maven-scm-provider-integrity-1.9.4.jar`
+* `./org.sf.feeling.decompiler.source.attach/lib/maven-scm-provider-jazz-1.9.4.jar`
+* `./org.sf.feeling.decompiler.source.attach/lib/maven-scm-provider-local-1.9.4.jar`
+* `./org.sf.feeling.decompiler.source.attach/lib/maven-scm-provider-perforce-1.9.4.jar`
+* `./org.sf.feeling.decompiler.source.attach/lib/maven-scm-provider-starteam-1.9.4.jar`
+* `./org.sf.feeling.decompiler.source.attach/lib/maven-scm-provider-svn-commons-1.9.4.jar`
+* `./org.sf.feeling.decompiler.source.attach/lib/maven-scm-provider-svnexe-1.9.4.jar`
+* `./org.sf.feeling.decompiler.source.attach/lib/maven-scm-provider-synergy-1.9.4.jar`
+* `./org.sf.feeling.decompiler.source.attach/lib/maven-scm-provider-tfs-1.9.4.jar`
+* `./org.sf.feeling.decompiler.source.attach/lib/maven-scm-provider-vss-1.9.4.jar`
+
+### Nexus
+
+https://repo1.maven.org/maven2/org/sonatype/nexus/plugins/nexus-indexer-lucene-model/2.14.20-02/nexus-indexer-lucene-model-2.14.20-02.jar
+* `./org.sf.feeling.decompiler.source.attach/lib/nexus-indexer-lucene-model-2.14.20-02.jar`
+  * SHA-256: 74465BC0D1BBECEF4173522CFBAA3D07E4F5EEC6CF16E2E25268182D1350CB7A
+  * https://repo1.maven.org/maven2/org/sonatype/nexus/plugins/nexus-indexer-lucene-model/2.14.20-02/nexus-indexer-lucene-model-2.14.20-02.jar
+* `./org.sf.feeling.decompiler.source.attach/lib/nexus-restlet1x-model-2.9.2-01.jar`
+
+### Plexus Utils
+Primary Source: _https://github.com/codehaus-plexus/plexus-utils_
+* `./org.sf.feeling.decompiler.source.attach/lib/plexus-utils-3.0.15.jar`
+  * SHA-256: D0BE76C5CE910134A7E07FD2AA48D9B677800AB0E95873F314B445C6F177C973
+
+### JAD
+_Primary Source: http://www.javadecompilers.com/jad_
+
+* `./org.sf.feeling.decompiler.jad/src/native/jad/linux/jad`
+  * SHA-256: 805527efac5b4f1d3982f20a8533142326cc397df1b2cf6012c12df91d4794f5
+* `./org.sf.feeling.decompiler.jad/src/native/jad/macos/jad`
+  * SHA-256: f88436c49ed025f62f87754eba0b0190568d1efa5a38199f427f7ade4f5d037e
+* `./org.sf.feeling.decompiler.jad/src/native/jad/win32/jad.exe`
+  * SHA-256: c5f43828592c7a47261b6baf89f13455423f9c528ed1b01e7148ba2475ed6126
+
+## JD-Core
+_Primary Source: https://github.com/java-decompiler/jd-core/releases_
+
+* `./org.sf.feeling.decompiler.jd/lib/jd-core-1.1.3.jar`
+  * SHA-256: 33F60FF75C77DC08905E767694A38F7B6AB792BD2E5831F41E2B56354BB806FB
+
+## JAXB
+_Primary Source: https://repo1.maven.org/maven2/_
+
+* `org.sf.feeling.decompiler.source.attach/lib/activation-1.1.1.jar`
+  * SHA-256: ae475120e9fcd99b4b00b38329bd61cdc5eb754eee03fe66c01f50e137724f99
+  * https://repo1.maven.org/maven2/javax/activation/activation/1.1.1/activation-1.1.1.jar
+* `org.sf.feeling.decompiler.source.attach/lib/jaxb-api-2.3.1.jar`
+  * SHA-256: 88b955a0df57880a26a74708bc34f74dcaf8ebf4e78843a28b50eae945732b06
+  * https://repo1.maven.org/maven2/javax/xml/bind/jaxb-api/2.3.1/jaxb-api-2.3.1.jar
+* `org.sf.feeling.decompiler.source.attach/lib/jaxb-impl-2.3.3.jar`
+  * SHA-256: e5178d0c7948247f75a13c689bf36f4d5d4910a121f712aa3b20ae94377069d8
+  * https://repo1.maven.org/maven2/com/sun/xml/bind/jaxb-impl/2.3.3/jaxb-impl-2.3.3.jar
+* `org.sf.feeling.decompiler.source.attach/lib/jaxb-runtime-2.3.3.jar`
+  * SHA-256: 3fcbf9247b08303ecaef2b8b91b47e220b6eced843e02837a5379d011c2c623d
+  * https://repo1.maven.org/maven2/org/glassfish/jaxb/jaxb-runtime/2.3.3/jaxb-runtime-2.3.3.jar
+

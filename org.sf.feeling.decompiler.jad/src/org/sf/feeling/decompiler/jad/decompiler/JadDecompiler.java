@@ -1,12 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2017 Chen Chao(cnfree2000@hotmail.com).
+ * Copyright (c) 2017 Chen Chao and other ECD project contributors.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *  Chen Chao  - initial API and implementation
+ * https://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
 package org.sf.feeling.decompiler.jad.decompiler;
@@ -20,6 +17,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.time.StopWatch;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.editor.IDecompiler;
@@ -33,8 +31,7 @@ import org.sf.feeling.decompiler.util.UnicodeUtil;
  * This implementation of <code>IDecompiler</code> uses Jad as the underlying
  * decompler.
  */
-public class JadDecompiler implements IDecompiler
-{
+public class JadDecompiler implements IDecompiler {
 
 	public static final String OPTION_ANNOTATE = "-a"; // format //$NON-NLS-1$
 	public static final String OPTION_ANNOTATE_FQ = "-af"; // format //$NON-NLS-1$
@@ -87,37 +84,14 @@ public class JadDecompiler implements IDecompiler
 
 	public static final String USE_TAB = "use tab"; //$NON-NLS-1$
 
-	public static final String[] TOGGLE_OPTION = {
-			OPTION_ANNOTATE,
-			OPTION_ANNOTATE_FQ,
-			OPTION_BRACES,
-			OPTION_CLEAR,
-			OPTION_DEAD,
-			OPTION_DISASSEMBLER,
-			OPTION_FULLNAMES,
-			OPTION_FIELDSFIRST,
-			OPTION_DEFINITS,
-			OPTION_LNC,
-			OPTION_SPLITSTR_NL,
-			OPTION_NOCONV,
-			OPTION_NOCAST,
-			OPTION_NOCLASS,
-			OPTION_NOCODE,
-			OPTION_NOCTOR,
-			OPTION_NODOS,
-			OPTION_NOFLDIS,
-			OPTION_NOINNER,
-			OPTION_NOLVT,
-			OPTION_NONLB,
+	public static final String[] TOGGLE_OPTION = { OPTION_ANNOTATE, OPTION_ANNOTATE_FQ, OPTION_BRACES, OPTION_CLEAR,
+			OPTION_DEAD, OPTION_DISASSEMBLER, OPTION_FULLNAMES, OPTION_FIELDSFIRST, OPTION_DEFINITS, OPTION_LNC,
+			OPTION_SPLITSTR_NL, OPTION_NOCONV, OPTION_NOCAST, OPTION_NOCLASS, OPTION_NOCODE, OPTION_NOCTOR,
+			OPTION_NODOS, OPTION_NOFLDIS, OPTION_NOINNER, OPTION_NOLVT, OPTION_NONLB,
 			/* OPTION_OVERWRITE, */
 			/* OPTION_SENDSTDOUT, */
 			/* OPTION_RESTORE, */
-			OPTION_SAFE,
-			OPTION_SPACE,
-			OPTION_STAT,
-			OPTION_INDENT_TAB,
-			OPTION_VERBOSE,
-			OPTION_ANSI,
+			OPTION_SAFE, OPTION_SPACE, OPTION_STAT, OPTION_INDENT_TAB, OPTION_VERBOSE, OPTION_ANSI,
 			/* OPTION_REDSTDERR */
 	};
 
@@ -129,88 +103,74 @@ public class JadDecompiler implements IDecompiler
 
 	public static final String[] VALUE_OPTION_INT = {
 			/* OPTION_INDENT_SPACE, */
-			OPTION_SPLITSTR_MAX, OPTION_LRADIX, OPTION_PI, OPTION_PV, OPTION_IRADIX,
-	};
+			OPTION_SPLITSTR_MAX, OPTION_LRADIX, OPTION_PI, OPTION_PV, OPTION_IRADIX, };
 
 	private String source = "/* ERROR? */"; //$NON-NLS-1$
 	private StringBuffer log;
-	private List excList = new ArrayList( );
-	private long time, start;
+	private List<Exception> excList = new ArrayList<>();
+	private long time;
 
-	private String[] buildCmdLine( String classFileName )
-	{
-		ArrayList cmdLine = new ArrayList( );
-		IPreferenceStore settings = JavaDecompilerPlugin.getDefault( ).getPreferenceStore( );
+	private String[] buildCmdLine(String classFileName) {
+		ArrayList<String> cmdLine = new ArrayList<>();
+		IPreferenceStore settings = JavaDecompilerPlugin.getDefault().getPreferenceStore();
 
 		// command and special options
-		cmdLine.add( settings.getString( JadDecompilerPlugin.CMD ) );
-		cmdLine.add( OPTION_SENDSTDOUT );
+		cmdLine.add(settings.getString(JadDecompilerPlugin.CMD));
+		cmdLine.add(OPTION_SENDSTDOUT);
 
-		String indent = settings.getString( OPTION_INDENT_SPACE );
-		if ( indent.equals( USE_TAB ) )
-			cmdLine.add( OPTION_INDENT_TAB );
-		else
-		{
-			try
-			{
-				Integer.parseInt( indent );
-				cmdLine.add( OPTION_INDENT_SPACE + indent );
-			}
-			catch ( Exception e )
-			{
+		String indent = settings.getString(OPTION_INDENT_SPACE);
+		if (indent.equals(USE_TAB))
+			cmdLine.add(OPTION_INDENT_TAB);
+		else {
+			try {
+				Integer.parseInt(indent);
+				cmdLine.add(OPTION_INDENT_SPACE + indent);
+			} catch (Exception e) {
 			}
 		}
 
 		// toggles
-		for ( int i = 0; i < TOGGLE_OPTION.length; i++ )
-		{
-			if ( settings.getBoolean( TOGGLE_OPTION[i] ) )
-			{
-				if ( OPTION_LNC.equals( TOGGLE_OPTION[i] ) )
-				{
+		for (int i = 0; i < TOGGLE_OPTION.length; i++) {
+			if (settings.getBoolean(TOGGLE_OPTION[i])) {
+				if (OPTION_LNC.equals(TOGGLE_OPTION[i])) {
 					// cmdLine.add( "-lnc" ); //$NON-NLS-1$
-				}
-				else
-					cmdLine.add( TOGGLE_OPTION[i] );
+				} else
+					cmdLine.add(TOGGLE_OPTION[i]);
 			}
 		}
 
-		if ( ClassUtil.isDebug( ) )
-		{
-			cmdLine.add( "-lnc" ); //$NON-NLS-1$
+		if (ClassUtil.isDebug()) {
+			cmdLine.add("-lnc"); //$NON-NLS-1$
 		}
 
 		// integers, 0 means disabled
 		int iValue;
-		for ( int i = 0; i < VALUE_OPTION_INT.length; i++ )
-		{
-			iValue = settings.getInt( VALUE_OPTION_INT[i] );
-			if ( iValue > 0 )
-				cmdLine.add( VALUE_OPTION_INT[i] + iValue );
+		for (int i = 0; i < VALUE_OPTION_INT.length; i++) {
+			iValue = settings.getInt(VALUE_OPTION_INT[i]);
+			if (iValue > 0)
+				cmdLine.add(VALUE_OPTION_INT[i] + iValue);
 		}
 
 		// strings, "" means disabled
 		String sValue;
-		for ( int i = 0; i < VALUE_OPTION_STRING.length; i++ )
-		{
-			sValue = settings.getString( VALUE_OPTION_STRING[i] );
-			if ( sValue != null && sValue.length( ) > 0 )
-				cmdLine.add( VALUE_OPTION_STRING[i] + " " + sValue ); //$NON-NLS-1$
+		for (int i = 0; i < VALUE_OPTION_STRING.length; i++) {
+			sValue = settings.getString(VALUE_OPTION_STRING[i]);
+			if (sValue != null && sValue.length() > 0)
+				cmdLine.add(VALUE_OPTION_STRING[i] + " " + sValue); //$NON-NLS-1$
 
 		}
 
-		cmdLine.add( classFileName );
+		cmdLine.add(classFileName);
 		// debugCmdLine(cmdLine);
-		return (String[]) cmdLine.toArray( new String[cmdLine.size( )] );
+		return cmdLine.toArray(new String[cmdLine.size()]);
 
 	}
 
-	void debugCmdLine( List segments )
-	{
-		StringBuffer cmdline = new StringBuffer( );
-		for ( int i = 0; i < segments.size( ); i++ )
-			cmdline.append( segments.get( i ) ).append( " " ); //$NON-NLS-1$
-		System.err.println( "-> " + cmdline.toString( ) ); //$NON-NLS-1$
+	void debugCmdLine(List<String> segments) {
+		StringBuffer cmdline = new StringBuffer();
+		for (int i = 0; i < segments.size(); i++)
+			cmdline.append(segments.get(i)).append(" "); //$NON-NLS-1$
+		System.err.println("-> " + cmdline.toString()); //$NON-NLS-1$
 	}
 
 	/**
@@ -220,112 +180,96 @@ public class JadDecompiler implements IDecompiler
 	 * @see IDecompiler#decompile(String, String, String)
 	 */
 	@Override
-	public void decompile( String root, String packege, String className )
-	{
-		log = new StringBuffer( );
+	public void decompile(String root, String packege, String className) {
+		log = new StringBuffer();
 		source = ""; //$NON-NLS-1$
-		File workingDir = new File( root + "/" + packege ); //$NON-NLS-1$
-		ByteArrayOutputStream bos = new ByteArrayOutputStream( );
-		ByteArrayOutputStream errors = new ByteArrayOutputStream( );
-		PrintWriter errorsP = new PrintWriter( new OutputStreamWriter( errors ) );
+		File workingDir = new File(root + "/" + packege); //$NON-NLS-1$
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		ByteArrayOutputStream errors = new ByteArrayOutputStream();
+		PrintWriter errorsP = new PrintWriter(new OutputStreamWriter(errors));
 		// errorsP.println("\n\n\n/***** DECOMPILE LOG *****\n");
 		int status = 0;
 
-		try
-		{
-			start = System.currentTimeMillis( );
-			errorsP.println( "\tJad reported messages/errors:" ); //$NON-NLS-1$
-			Process p = Runtime.getRuntime( ).exec( buildCmdLine( className ), new String[]{}, workingDir );
-			StreamRedirectThread outRedirect = new StreamRedirectThread( "output_reader", //$NON-NLS-1$
-					p.getInputStream( ),
-					bos );
-			StreamRedirectThread errRedirect = new StreamRedirectThread( "error_reader", //$NON-NLS-1$
-					p.getErrorStream( ),
-					errors );
-			outRedirect.start( );
-			errRedirect.start( );
-			status = p.waitFor( ); // wait for jad to finish
-			outRedirect.join( ); // wait until output stream content is fully
+		StopWatch stopWatch = new StopWatch();
+		stopWatch.start();
+		try {
+
+			errorsP.println("\tJad reported messages/errors:"); //$NON-NLS-1$
+			Process p = Runtime.getRuntime().exec(buildCmdLine(className), new String[] {}, workingDir);
+			StreamRedirectThread outRedirect = new StreamRedirectThread("output_reader", //$NON-NLS-1$
+					p.getInputStream(), bos);
+			StreamRedirectThread errRedirect = new StreamRedirectThread("error_reader", //$NON-NLS-1$
+					p.getErrorStream(), errors);
+			outRedirect.start();
+			errRedirect.start();
+			status = p.waitFor(); // wait for jad to finish
+			outRedirect.join(); // wait until output stream content is fully
 			// copied
-			errRedirect.join( ); // wait until error stream content is fully
+			errRedirect.join(); // wait until error stream content is fully
 			// copied
-			if ( outRedirect.getException( ) != null )
-				excList.add( outRedirect.getException( ) );
-			if ( errRedirect.getException( ) != null )
-				excList.add( errRedirect.getException( ) );
-		}
-		catch ( Exception e )
-		{
-			excList.add( e );
-		}
-		finally
-		{
-			try
-			{
-				bos.flush( );
-				bos.close( );
-				errorsP.println( "\tExit status: " + status ); //$NON-NLS-1$
+			if (outRedirect.getException() != null)
+				excList.add(outRedirect.getException());
+			if (errRedirect.getException() != null)
+				excList.add(errRedirect.getException());
+		} catch (Exception e) {
+			excList.add(e);
+		} finally {
+			try {
+				bos.flush();
+				bos.close();
+				errorsP.println("\tExit status: " + status); //$NON-NLS-1$
 				// errorsP.print(" *************************/");
-				errors.flush( );
-				errorsP.close( );
+				errors.flush();
+				errorsP.close();
+			} catch (Exception e) {
+				excList.add(e); // will never get here...
 			}
-			catch ( Exception e )
-			{
-				excList.add( e ); // will never get here...
-			}
-			time = System.currentTimeMillis( ) - start;
+			time = stopWatch.getTime();
 		}
 
-		source = UnicodeUtil.decode( bos.toString( ) );
+		source = UnicodeUtil.decode(bos.toString());
 
-		log = new StringBuffer( errors.toString( ) );
+		log = new StringBuffer(errors.toString());
 		// logExceptions();
 		// result = new DecompiledClassFile(classFile, source.toString());
 	}
 
 	/**
 	 * Jad doesn't support decompilation from archives. This methods extracts
-	 * request class file from the specified archive into temp directory and
-	 * then calls <code>decompile</code>.
+	 * request class file from the specified archive into temp directory and then
+	 * calls <code>decompile</code>.
 	 * 
 	 * @see IDecompiler#decompileFromArchive(String, String, String)
 	 */
 	@Override
-	public void decompileFromArchive( String archivePath, String packege, String className )
-	{
-		start = System.currentTimeMillis( );
+	public void decompileFromArchive(String archivePath, String packege, String className) {
+		StopWatch stopWatch = new StopWatch();
+		stopWatch.start();
 		File workingDir = new File(
-				JavaDecompilerPlugin.getDefault( ).getPreferenceStore( ).getString( JavaDecompilerPlugin.TEMP_DIR )
-						+ "/" //$NON-NLS-1$
-						+ System.currentTimeMillis( ) );
+				JavaDecompilerPlugin.getDefault().getPreferenceStore().getString(JavaDecompilerPlugin.TEMP_DIR) + "/" //$NON-NLS-1$
+						+ System.currentTimeMillis());
 
-		try
-		{
-			workingDir.mkdirs( );
-			JarClassExtractor.extract( archivePath, packege, className, true, workingDir.getAbsolutePath( ) );
-			decompile( workingDir.getAbsolutePath( ), "", className ); //$NON-NLS-1$
-		}
-		catch ( Exception e )
-		{
-			excList.add( e );
+		try {
+			workingDir.mkdirs();
+			JarClassExtractor.extract(archivePath, packege, className, true, workingDir.getAbsolutePath());
+			decompile(workingDir.getAbsolutePath(), "", className); //$NON-NLS-1$
+			time = stopWatch.getTime();
+		} catch (Exception e) {
+			excList.add(e);
 			// logExceptions();
 			return;
-		}
-		finally
-		{
-			FileUtil.deltree( workingDir );
+		} finally {
+			FileUtil.deltree(workingDir);
 		}
 	}
 
 	@Override
-	public long getDecompilationTime( )
-	{
+	public long getDecompilationTime() {
 		return time;
 	}
 
 	@Override
-	public List getExceptions( )
-	{
+	public List<Exception> getExceptions() {
 		return excList;
 	}
 
@@ -333,9 +277,8 @@ public class JadDecompiler implements IDecompiler
 	 * @see IDecompiler#getLog()
 	 */
 	@Override
-	public String getLog( )
-	{
-		return log == null ? "" : log.toString( ); //$NON-NLS-1$
+	public String getLog() {
+		return log == null ? "" : log.toString(); //$NON-NLS-1$
 	}
 
 	// private void logExceptions()
@@ -361,90 +304,75 @@ public class JadDecompiler implements IDecompiler
 	 * @see IDecompiler#getSource()
 	 */
 	@Override
-	public String getSource( )
-	{
+	public String getSource() {
 		return source;
 	}
 
 	@Override
-	public String getDecompilerType( )
-	{
+	public String getDecompilerType() {
 		return JadDecompilerPlugin.decompilerType;
 	}
 
 	@Override
-	public String removeComment( String source )
-	{
+	public String removeComment(String source) {
 
-		String[] spilts = source.replaceAll( "\r\n", "\n" ).split( "\n" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		StringBuffer buffer = new StringBuffer( );
-		for ( int i = 0; i < spilts.length; i++ )
-		{
-			if ( i > 0 && i < 5 )
+		String[] spilts = source.replaceAll("\r\n", "\n").split("\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		StringBuffer buffer = new StringBuffer();
+		for (int i = 0; i < spilts.length; i++) {
+			if (i > 0 && i < 5)
 				continue;
 			String string = spilts[i];
-			Pattern pattern = Pattern.compile( "\\s*/\\*\\s*\\S*\\*/", //$NON-NLS-1$
-					Pattern.CASE_INSENSITIVE );
-			Matcher matcher = pattern.matcher( string );
-			if ( matcher.find( ) )
-			{
-				if ( matcher.start( ) == 0 )
-				{
-					buffer.append( string ).append( "\r\n" ); //$NON-NLS-1$
+			Pattern pattern = Pattern.compile("\\s*/\\*\\s*\\S*\\*/", //$NON-NLS-1$
+					Pattern.CASE_INSENSITIVE);
+			Matcher matcher = pattern.matcher(string);
+			if (matcher.find()) {
+				if (matcher.start() == 0) {
+					buffer.append(string).append("\r\n"); //$NON-NLS-1$
 					continue;
 				}
 			}
 
 			boolean refer = false;
 
-			pattern = Pattern.compile( "\\s*// Referenced", //$NON-NLS-1$
-					Pattern.CASE_INSENSITIVE );
-			matcher = pattern.matcher( string );
-			if ( matcher.find( ) )
-			{
+			pattern = Pattern.compile("\\s*// Referenced", //$NON-NLS-1$
+					Pattern.CASE_INSENSITIVE);
+			matcher = pattern.matcher(string);
+			if (matcher.find()) {
 				refer = true;
 
-				while ( true )
-				{
+				while (true) {
 					i++;
-					if ( spilts[i].trim( ).startsWith( "//" ) ) //$NON-NLS-1$
+					if (spilts[i].trim().startsWith("//")) //$NON-NLS-1$
 					{
 						continue;
-					}
-					else if ( i >= spilts.length )
-					{
+					} else if (i >= spilts.length) {
 						break;
-					}
-					else
-					{
+					} else {
 						i--;
 						break;
 					}
 				}
 			}
 
-			if ( !refer )
-				buffer.append( string + "\r\n" ); //$NON-NLS-1$
+			if (!refer)
+				buffer.append(string + "\r\n"); //$NON-NLS-1$
 		}
-		return buffer.toString( );
+		return buffer.toString();
 
 	}
 
 	@Override
-	public boolean supportLevel( int level )
-	{
+	public boolean supportLevel(int level) {
 		return level < 8;
 	}
 
 	@Override
-	public boolean supportDebugLevel( int level )
-	{
+	public boolean supportDebugLevel(int level) {
 		return level < 8;
 	}
 
 	@Override
-	public boolean supportDebug( )
-	{
+	public boolean supportDebug() {
 		return true;
 	}
 }

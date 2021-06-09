@@ -1,12 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2017 Chen Chao(cnfree2000@hotmail.com).
+ * Copyright (c) 2017 Chen Chao and other ECD project contributors.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *  Chen Chao  - initial API and implementation
+ * https://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
 package org.sf.feeling.decompiler.actions;
@@ -19,51 +16,43 @@ import org.sf.feeling.decompiler.editor.JavaDecompilerClassFileEditor;
 import org.sf.feeling.decompiler.i18n.Messages;
 import org.sf.feeling.decompiler.util.UIUtil;
 
-public class ByteCodeAction extends Action implements IUpdate
-{
+public class ByteCodeAction extends Action implements IUpdate {
 
 	public static final String ID = "ByteCode"; //$NON-NLS-1$
 
-	public ByteCodeAction( )
-	{
-		super( Messages.getString( "JavaDecompilerActionBarContributor.Action.ByteCode" ), AS_CHECK_BOX ); //$NON-NLS-1$
+	public ByteCodeAction() {
+		super(Messages.getString("JavaDecompilerActionBarContributor.Action.ByteCode"), AS_CHECK_BOX); //$NON-NLS-1$
 	}
 
 	@Override
-	public void run( )
-	{
-		JavaDecompilerPlugin.getDefault( ).setSourceMode( JavaDecompilerPlugin.BYTE_CODE_MODE );
-		setChecked( true );
-		final JavaDecompilerClassFileEditor editor = UIUtil.getActiveEditor( );
-		if ( editor != null )
-		{
-			editor.showSource( );
-			editor.notifyPropertiesChange( );
-			Display.getDefault( ).asyncExec( new Runnable( ) {
+	public void run() {
+		JavaDecompilerPlugin.getDefault().setSourceMode(JavaDecompilerPlugin.BYTE_CODE_MODE);
+		setChecked(true);
+		final JavaDecompilerClassFileEditor editor = UIUtil.getActiveEditor();
+		if (editor != null) {
+			editor.showSource();
+			editor.notifyPropertiesChange();
+			Display.getDefault().asyncExec(new Runnable() {
 
-				public void run( )
-				{
-					editor.setFocus( );
+				public void run() {
+					editor.setFocus();
 				}
-			} );
+			});
 		}
 	}
 
 	@Override
-	public boolean isEnabled( )
-	{
-		JavaDecompilerClassFileEditor editor = UIUtil.getActiveEditor( );
+	public boolean isEnabled() {
+		JavaDecompilerClassFileEditor editor = UIUtil.getActiveEditor();
 		return editor != null;
 	}
 
-	public boolean isChecked( )
-	{
-		return JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.BYTE_CODE_MODE;
+	public boolean isChecked() {
+		return JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.BYTE_CODE_MODE;
 	}
 
 	@Override
-	public void update( )
-	{
-		setChecked( isChecked( ) );
+	public void update() {
+		setChecked(isChecked());
 	}
 }

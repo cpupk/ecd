@@ -1,12 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2017 Chen Chao(cnfree2000@hotmail.com).
+ * Copyright (c) 2017 Chen Chao and other ECD project contributors.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *  Chen Chao  - initial API and implementation
+ * https://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
 package org.sf.feeling.decompiler.source.attach.handler;
@@ -29,102 +26,81 @@ import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.menus.ExtensionContributionFactory;
 import org.eclipse.ui.menus.IContributionRoot;
 import org.eclipse.ui.services.IServiceLocator;
-import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.source.attach.utils.SourceAttachUtil;
 
-@SuppressWarnings({
-		"rawtypes", "unchecked"
-})
-public class AttachSourceContributionFactory extends ExtensionContributionFactory
-{
+@SuppressWarnings({ "rawtypes", "unchecked" })
+public class AttachSourceContributionFactory extends ExtensionContributionFactory {
 
 	@Override
-	public void createContributionItems( IServiceLocator serviceLocator, IContributionRoot additions )
-	{
-		if ( !JavaDecompilerPlugin.getDefault( ).isEnableExtension( ) )
-		{
-			return;
-		}
-
-		final ISelectionService selService = (ISelectionService)serviceLocator.getService( ISelectionService.class );
-		final List selectedJars = getSelectedElements( selService, IPackageFragmentRoot.class );
-		boolean attachRoot = ( selectedJars.size( ) == 1 );
-		if ( attachRoot )
-		{
-			additions.addContributionItem( new ActionContributionItem( new AttachSourceAction( selectedJars ) ),
-					new Expression( ) {
+	public void createContributionItems(IServiceLocator serviceLocator, IContributionRoot additions) {
+		final ISelectionService selService = (ISelectionService) serviceLocator.getService(ISelectionService.class);
+		final List selectedJars = getSelectedElements(selService, IPackageFragmentRoot.class);
+		boolean attachRoot = (selectedJars.size() == 1);
+		if (attachRoot) {
+			additions.addContributionItem(new ActionContributionItem(new AttachSourceAction(selectedJars)),
+					new Expression() {
 
 						@Override
-						public EvaluationResult evaluate( IEvaluationContext context ) throws CoreException
-						{
-							boolean menuVisible = SourceAttachUtil.needDownloadSource( selectedJars );
+						public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
+							boolean menuVisible = SourceAttachUtil.needDownloadSource(selectedJars);
 
-							if ( menuVisible )
+							if (menuVisible)
 								return EvaluationResult.TRUE;
 
 							return EvaluationResult.FALSE;
 						}
-					} );
+					});
 			return;
 		}
 
-		if ( selectedJars.size( ) > 1 )
+		if (selectedJars.size() > 1)
 			return;
 
-		final List selectedPackages = getSelectedElements( selService, IPackageFragment.class );
-		final List selectedClasses = getSelectedElements( selService, IClassFile.class );
-		selectedClasses.addAll( selectedPackages );
-		boolean attachClasses = ( !selectedClasses.isEmpty( ) );
-		if ( attachClasses )
-		{
-			additions.addContributionItem( new ActionContributionItem( new AttachSourceAction( selectedClasses ) ),
-					new Expression( ) {
+		final List selectedPackages = getSelectedElements(selService, IPackageFragment.class);
+		final List selectedClasses = getSelectedElements(selService, IClassFile.class);
+		selectedClasses.addAll(selectedPackages);
+		boolean attachClasses = (!selectedClasses.isEmpty());
+		if (attachClasses) {
+			additions.addContributionItem(new ActionContributionItem(new AttachSourceAction(selectedClasses)),
+					new Expression() {
 
 						@Override
-						public EvaluationResult evaluate( IEvaluationContext context ) throws CoreException
-						{
-							boolean menuVisible = SourceAttachUtil.needDownloadSource( selectedClasses );
+						public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
+							boolean menuVisible = SourceAttachUtil.needDownloadSource(selectedClasses);
 
-							if ( menuVisible )
+							if (menuVisible)
 								return EvaluationResult.TRUE;
 
 							return EvaluationResult.FALSE;
 						}
-					} );
+					});
 			return;
 		}
 
 	}
 
-	
+	private List getSelectedElements(ISelectionService selService, Class eleClass) {
 
-	private List getSelectedElements( ISelectionService selService, Class eleClass )
-	{
+		Iterator selections = getSelections(selService);
+		List elements = new ArrayList();
 
-		Iterator selections = getSelections( selService );
-		List elements = new ArrayList( );
+		while ((selections != null) && selections.hasNext()) {
+			Object select = selections.next();
 
-		while ( ( selections != null ) && selections.hasNext( ) )
-		{
-			Object select = selections.next( );
-
-			if ( eleClass.isInstance( select ) )
-				elements.add( select );
+			if (eleClass.isInstance(select))
+				elements.add(select);
 		}
 
 		return elements;
 	}
 
-	private Iterator getSelections( ISelectionService selService )
-	{
-		ISelection selection = selService.getSelection( );
+	private Iterator getSelections(ISelectionService selService) {
+		ISelection selection = selService.getSelection();
 
-		if ( selection != null )
-		{
-			if ( selection instanceof IStructuredSelection )
-			{
+		if (selection != null) {
+			if (selection instanceof IStructuredSelection) {
 				IStructuredSelection structuredSelection = (IStructuredSelection) selection;
-				return structuredSelection.iterator( );
+				return structuredSelection.iterator();
 			}
 		}
 
