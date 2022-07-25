@@ -47,8 +47,9 @@ public class FernFlowerDecompiler implements IDecompiler {
 	 */
 	@Override
 	public void decompile(String root, String packege, final String className) {
-		if (root == null || packege == null || className == null)
+		if (root == null || packege == null || className == null) {
 			return;
+		}
 
 		start = System.currentTimeMillis();
 		log = ""; //$NON-NLS-1$
@@ -58,7 +59,7 @@ public class FernFlowerDecompiler implements IDecompiler {
 
 		File workingDir = new File(root + "/" + packege); //$NON-NLS-1$
 
-		final Map<String, Object> mapOptions = new HashMap<String, Object>();
+		final Map<String, Object> mapOptions = new HashMap<>();
 
 		mapOptions.put(IFernflowerPreferences.REMOVE_SYNTHETIC, "1"); //$NON-NLS-1$
 		mapOptions.put(IFernflowerPreferences.DECOMPILE_GENERIC_SIGNATURES, "1"); //$NON-NLS-1$
@@ -85,21 +86,29 @@ public class FernFlowerDecompiler implements IDecompiler {
 			}
 
 		}
+
+		String classNameFilterTmp = className.toLowerCase();
+		if (classNameFilterTmp.endsWith(".class")) {
+			classNameFilterTmp = classNameFilterTmp.substring(0, classNameFilterTmp.length() - 6);
+		}
+		final String classNameFilter = classNameFilterTmp;
+
 		ConsoleDecompiler decompiler = new EmbeddedConsoleDecompiler();
 
 		File[] files = workingDir.listFiles(new FilenameFilter() {
 
 			@Override
 			public boolean accept(File dir, String name) {
-				if (name.toLowerCase().indexOf(className.toLowerCase()) != -1)
+				name = name.toLowerCase();
+				if (name.startsWith(classNameFilter) && name.endsWith(".class")) {
 					return true;
+				}
 				return false;
 			}
 		});
-		if (files != null) {
-			for (int j = 0; j < files.length; j++) {
-				decompiler.addSource(files[j]);
-			}
+
+		for (File f : files) {
+			decompiler.addSource(f);
 		}
 
 		decompiler.decompileContext();
