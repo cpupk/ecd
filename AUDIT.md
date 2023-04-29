@@ -51,7 +51,8 @@ _Primary Source: http://jsoup.org/_
   * Version from http://central.maven.org/maven2/org/jsoup/jsoup/1.9.2/jsoup-1.9.2.jar
 
 ### CFR
-_Primary Source: http://www.benf.org/other/cfr/_
+_Project homepage: http://www.benf.org/other/cfr/_
+_Primary Source: https://repo1.maven.org/maven2/org/benf/cfr/_
 
 * `./org.sf.feeling.decompiler.cfr/lib/cfr-0.151.jar`
   * SHA-256: 316E9015B9AF2953FCFF4FE86BF3BBA705F32E7CD25BD6E535C698DE8A25E837
@@ -107,16 +108,6 @@ https://repo1.maven.org/maven2/org/sonatype/nexus/plugins/nexus-indexer-lucene-m
 Primary Source: _https://github.com/codehaus-plexus/plexus-utils_
 * `./org.sf.feeling.decompiler.source.attach/lib/plexus-utils-3.0.15.jar`
   * SHA-256: D0BE76C5CE910134A7E07FD2AA48D9B677800AB0E95873F314B445C6F177C973
-
-### JAD
-_Primary Source: http://www.javadecompilers.com/jad_
-
-* `./org.sf.feeling.decompiler.jad/src/native/jad/linux/jad`
-  * SHA-256: 805527efac5b4f1d3982f20a8533142326cc397df1b2cf6012c12df91d4794f5
-* `./org.sf.feeling.decompiler.jad/src/native/jad/macos/jad`
-  * SHA-256: f88436c49ed025f62f87754eba0b0190568d1efa5a38199f427f7ade4f5d037e
-* `./org.sf.feeling.decompiler.jad/src/native/jad/win32/jad.exe`
-  * SHA-256: c5f43828592c7a47261b6baf89f13455423f9c528ed1b01e7148ba2475ed6126
 
 ## JD-Core
 _Primary Source: https://github.com/java-decompiler/jd-core/releases_
