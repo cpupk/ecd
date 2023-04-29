@@ -14,11 +14,10 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.time.StopWatch;
-import org.jetbrains.java.decompiler.struct.StructClass;
-import org.jetbrains.java.decompiler.struct.lazy.LazyLoader;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.editor.IDecompiler;
 import org.sf.feeling.decompiler.jd.JDCoreDecompilerPlugin;
+import org.sf.feeling.decompiler.util.ClassUtil;
 import org.sf.feeling.decompiler.util.FileUtil;
 import org.sf.feeling.decompiler.util.UIUtil;
 
@@ -59,10 +58,8 @@ public class JDCoreDecompiler implements IDecompiler {
 		try {
 			if (classPackage.length() == 0) {
 				File classFile = new File(root, className);
-				StructClass structClass = new StructClass(Files.readAllBytes(classFile.toPath()), true,
-						new LazyLoader(null));
-				structClass.releaseResources();
-				classPackage = structClass.qualifiedName.replace("/" //$NON-NLS-1$
+				String qualifiedName = ClassUtil.getClassQualifiedName(Files.readAllBytes(classFile.toPath()));
+				classPackage = qualifiedName.replace("/" //$NON-NLS-1$
 						+ className.replaceAll("(?i)\\.class", ""), ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 
