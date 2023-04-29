@@ -126,7 +126,7 @@ public class CfrDecompiler implements IDecompiler {
 	}
 
 	/**
-	 * Jad doesn't support decompilation from archives. This methods extracts
+	 * Cfr doesn't support decompilation from archives. This methods extracts
 	 * request class file from the specified archive into temp directory and then
 	 * calls <code>decompile</code>.
 	 * 

@@ -11,6 +11,7 @@ package org.sf.feeling.decompiler;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -154,8 +155,8 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 		store.setDefault(USE_ECLIPSE_SORTER, false);
 		store.setDefault(PREF_DISPLAY_METADATA, false);
 		store.setDefault(DEFAULT_EDITOR, true);
-		store.setDefault(ATTACH_SOURCE, true);
-		store.setDefault(EXPORT_ENCODING, "UTF-8"); //$NON-NLS-1$
+		store.setDefault(ATTACH_SOURCE, false);
+		store.setDefault(EXPORT_ENCODING, StandardCharsets.UTF_8.name());
 
 		PreferenceConverter.setDefault(store, BYTECODE_MNEMONIC, new RGB(0, 0, 0));
 		store.setDefault(BYTECODE_MNEMONIC_BOLD, true);

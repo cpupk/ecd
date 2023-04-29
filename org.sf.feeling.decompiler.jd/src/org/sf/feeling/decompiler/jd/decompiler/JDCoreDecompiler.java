@@ -9,6 +9,7 @@
 package org.sf.feeling.decompiler.jd.decompiler;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.util.Collections;
 import java.util.List;
 
@@ -57,7 +58,8 @@ public class JDCoreDecompiler implements IDecompiler {
 
 		try {
 			if (classPackage.length() == 0) {
-				StructClass structClass = new StructClass(FileUtil.getBytes(new File(root, className)), true,
+				File classFile = new File(root, className);
+				StructClass structClass = new StructClass(Files.readAllBytes(classFile.toPath()), true,
 						new LazyLoader(null));
 				structClass.releaseResources();
 				classPackage = structClass.qualifiedName.replace("/" //$NON-NLS-1$

@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
@@ -43,7 +44,7 @@ public class FileUtil {
 			} catch (Exception e) {
 			}
 			if (encoding == null || encoding.trim().length() == 0) {
-				encoding = "UTF-8"; //$NON-NLS-1$
+				encoding = StandardCharsets.UTF_8.name();
 			}
 			try (PrintWriter out = new PrintWriter(new OutputStreamWriter(new FileOutputStream(file), encoding))) {
 				out.print(string);
@@ -72,15 +73,17 @@ public class FileUtil {
 				}
 				fouts.flush();
 			}
-			if (close)
+			if (close) {
 				bis.close();
+			}
 		} catch (IOException e) {
 			Logger.getLogger(FileUtil.class.getName()).log(Level.WARNING, "Write binaray file failed.", //$NON-NLS-1$
 					e);
 			if (close) {
 				try {
-					if (bis != null)
+					if (bis != null) {
 						bis.close();
+					}
 				} catch (IOException f) {
 					Logger.getLogger(FileUtil.class.getName()).log(Level.WARNING, "Close input stream failed.", //$NON-NLS-1$
 							f);
@@ -294,34 +297,34 @@ public class FileUtil {
 			if (monitor != null) {
 				monitor.subTask(path);
 			}
-			byte[] bt = new byte[512];
+			byte[] bt = new byte[4096];
 			ZipEntry ze = new ZipEntry(path);
 			ze.setSize(file.length());
 			zos.putNextEntry(ze);
-			BufferedInputStream fis = new BufferedInputStream(new FileInputStream(file));
-			int i = 0;
-			while ((i = fis.read(bt)) != -1) {
-				zos.write(bt, 0, i);
+			try (BufferedInputStream fis = new BufferedInputStream(new FileInputStream(file))) {
+				int i = 0;
+				while ((i = fis.read(bt)) != -1) {
+					zos.write(bt, 0, i);
+				}
 			}
-			fis.close();
 		}
 	}
 
 	public static void zipFile(File file, String zipFile) throws Exception {
-		ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipFile));
-		ZipEntry ze = null;
-		byte[] buf = new byte[1024];
-		int readLen = 0;
-		ze = new ZipEntry(file.getName());
-		ze.setSize(file.length());
-		ze.setTime(file.lastModified());
-		zos.putNextEntry(ze);
-		InputStream is = new BufferedInputStream(new FileInputStream(file));
-		while ((readLen = is.read(buf, 0, 1024)) != -1) {
-			zos.write(buf, 0, readLen);
+		try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipFile))) {
+			ZipEntry ze = null;
+			byte[] buf = new byte[4096];
+			int readLen = 0;
+			ze = new ZipEntry(file.getName());
+			ze.setSize(file.length());
+			ze.setTime(file.lastModified());
+			zos.putNextEntry(ze);
+			try (InputStream is = new BufferedInputStream(new FileInputStream(file))) {
+				while ((readLen = is.read(buf)) != -1) {
+					zos.write(buf, 0, readLen);
+				}
+			}
 		}
-		is.close();
-		zos.close();
 	}
 
 	public static interface Filter {
@@ -332,29 +335,29 @@ public class FileUtil {
 	public static void filterZipFile(String filePath, Filter filter) throws Exception {
 		if (isZipFile(filePath) && filter != null) {
 			File file = new File(filePath);
-			ZipFile zipFile = new ZipFile(file);
-			ZipInputStream zis = new ZipInputStream(new FileInputStream(file));
-			ZipEntry entry = null;
-			InputStream input = null;
+			File tmpFile;
+			try (ZipFile zipFile = new ZipFile(file)) {
+				try (ZipInputStream zis = new ZipInputStream(new FileInputStream(file))) {
+					ZipEntry entry = null;
+					InputStream input = null;
 
-			File tmpFile = new File(file + ".tmp"); //$NON-NLS-1$
-			ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(tmpFile));
-			zos.setLevel(1);
-			while ((entry = zis.getNextEntry()) != null) {
-				if (filter.accept(entry.getName())) {
-					input = zipFile.getInputStream(entry);
-					ZipEntry ze = new ZipEntry(entry.getName());
-					ze.setSize(entry.getSize());
-					ze.setTime(entry.getTime());
-					zos.putNextEntry(ze);
-					IOUtils.copy(zis, zos);
-					input.close();
+					tmpFile = new File(file + ".tmp"); //$NON-NLS-1$
+					try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(tmpFile))) {
+						zos.setLevel(1);
+						while ((entry = zis.getNextEntry()) != null) {
+							if (filter.accept(entry.getName())) {
+								input = zipFile.getInputStream(entry);
+								ZipEntry ze = new ZipEntry(entry.getName());
+								ze.setSize(entry.getSize());
+								ze.setTime(entry.getTime());
+								zos.putNextEntry(ze);
+								IOUtils.copy(zis, zos);
+								input.close();
+							}
+						}
+					}
 				}
 			}
-			zis.close();
-			zos.close();
-			zipFile.close();
-
 			file.delete();
 			tmpFile.renameTo(file);
 		}
@@ -368,26 +371,27 @@ public class FileUtil {
 			files = dir.listFiles();
 		}
 		if (files != null) {
-			ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipFile));
-			ZipEntry ze = null;
-			byte[] buf = new byte[1024];
-			int readLen = 0;
-			for (int i = 0; i < files.length; i++) {
-				File file = files[i];
-				if (file.isDirectory())
-					continue;
-				ze = new ZipEntry((classPackage.length() > 0 ? (classPackage + "/") //$NON-NLS-1$
-						: "") + file.getName()); //$NON-NLS-1$
-				ze.setSize(file.length());
-				ze.setTime(file.lastModified());
-				zos.putNextEntry(ze);
-				InputStream is = new BufferedInputStream(new FileInputStream(file));
-				while ((readLen = is.read(buf, 0, 1024)) != -1) {
-					zos.write(buf, 0, readLen);
+			try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipFile))) {
+				ZipEntry ze = null;
+				byte[] buf = new byte[4096];
+				int readLen = 0;
+				for (int i = 0; i < files.length; i++) {
+					File file = files[i];
+					if (file.isDirectory()) {
+						continue;
+					}
+					ze = new ZipEntry((classPackage.length() > 0 ? (classPackage + "/") //$NON-NLS-1$
+							: "") + file.getName()); //$NON-NLS-1$
+					ze.setSize(file.length());
+					ze.setTime(file.lastModified());
+					zos.putNextEntry(ze);
+					try (InputStream is = new BufferedInputStream(new FileInputStream(file))) {
+						while ((readLen = is.read(buf)) != -1) {
+							zos.write(buf, 0, readLen);
+						}
+					}
 				}
-				is.close();
 			}
-			zos.close();
 		}
 	}
 
@@ -428,49 +432,6 @@ public class FileUtil {
 			byte[] bytes = out.toByteArray();
 			String content = new String(bytes, enconding);
 			return content.trim();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	public static String getContent(InputStream is) {
-		if (is == null)
-			return null;
-
-		try (InputStream in = is; ByteArrayOutputStream out = new ByteArrayOutputStream(4096)) {
-			byte[] tmp = new byte[4096];
-			while (true) {
-				int r = in.read(tmp);
-				if (r == -1)
-					break;
-				out.write(tmp, 0, r);
-			}
-			byte[] bytes = out.toByteArray();
-			String content = new String(bytes);
-			return content.trim();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	public static byte[] getBytes(File file) {
-		if (file == null || !file.exists())
-			return null;
-
-		try (ByteArrayOutputStream out = new ByteArrayOutputStream(4096)) {
-			byte[] tmp = new byte[4096];
-			try (InputStream is = new BufferedInputStream(new FileInputStream(file))) {
-				while (true) {
-					int r = is.read(tmp);
-					if (r == -1)
-						break;
-					out.write(tmp, 0, r);
-				}
-				byte[] bytes = out.toByteArray();
-				return bytes;
-			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
