@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.ecd-plugin</groupId>
 	<artifactId>com.github.ecd-plugin.ecd</artifactId>
-	<version>3.2.2</version>
+	<version>3.3.0</version>
 	<packaging>pom</packaging>
 	<name>com.github.ecd-plugin.ecd</name>
 	<url>https://github.com/ecd-plugin/ecd</url>
@@ -19,10 +19,8 @@
 		<module>org.sf.feeling.decompiler.jd.feature</module>
 		<module>org.sf.feeling.decompiler.procyon</module>
 		<module>org.sf.feeling.decompiler.procyon.feature</module>
-        <!--
 		<module>org.sf.feeling.decompiler.quiltflower</module>
 		<module>org.sf.feeling.decompiler.quiltflower.feature</module>
-        -->
 		<module>org.sf.feeling.decompiler.source.attach</module>
 		<module>org.sf.feeling.decompiler.source.feature</module>
 		<module>../update/</module>
