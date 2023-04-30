@@ -9,6 +9,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<tycho.version>3.0.4</tycho.version>
+		<signing.disabled>true</signing.disabled>
 	</properties>
 	<modules>
 		<module>org.sf.feeling.decompiler</module>
@@ -83,7 +84,7 @@
 							<ws>gtk</ws>
 							<arch>x86_64</arch>
 						</environment>
-						<!-- MacOSX (32bit and 64bit) -->
+						<!-- MacOSX (Intel 32bit/64bit and ARM64) -->
 						<environment>
 							<os>macosx</os>
 							<ws>cocoa</ws>
@@ -94,13 +95,35 @@
 							<ws>cocoa</ws>
 							<arch>x86_64</arch>
 						</environment>
-                        <!--<environment>
-                            <os>macosx</os>
-                            <ws>cocoa</ws>
-                            <arch>arm64</arch>
-                        </environment>-->
+						<environment>
+							<os>macosx</os>
+							<ws>cocoa</ws>
+							<arch>arm64</arch>
+						</environment>
 					</environments>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jarsigner-plugin</artifactId>
+				<version>3.0.0</version>
+				<configuration>
+					<keystore>${signing.keystore}</keystore>
+					<alias>ecd</alias>
+					<storepass>${signing.password}</storepass>
+					<keypass>${signing.password}</keypass>
+				</configuration>
+				<executions>
+					<execution>
+						<id>sign</id>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+						<configuration>
+							<skip>${signing.disabled}</skip>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
