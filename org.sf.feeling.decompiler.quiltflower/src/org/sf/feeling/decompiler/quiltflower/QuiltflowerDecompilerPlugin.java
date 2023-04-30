@@ -20,6 +20,8 @@ public class QuiltflowerDecompilerPlugin extends AbstractUIPlugin implements IPr
 
 	public static final String decompilerType = "Quiltflower"; //$NON-NLS-1$
 
+	public static final String decompilerVersion = "1.9"; //$NON-NLS-1$
+
 	private static QuiltflowerDecompilerPlugin plugin;
 
 	private IPreferenceStore preferenceStore;
