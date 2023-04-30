@@ -69,13 +69,15 @@ _Primary Source: https://repo1.maven.org/maven2/org/benf/cfr/_
 ### Procyon
 _Primary Source: https://repo1.maven.org/maven2/org/bitbucket/mstrobel/_
 
-* `./org.sf.feeling.decompiler.procyon/lib/procyon-core-0.5.36.jar`
-  * SHA-256: 5123b7db09bea2176fd9ec09e3cab05c728e4f3151fc47dabb0b5d7c8e964896
-  * Version from https://repo1.maven.org/maven2/org/bitbucket/mstrobel/procyon-core/0.5.36/procyon-core-0.5.36.jar
+* `./org.sf.feeling.decompiler.procyon/lib/procyon-core-0.6.0.jar`
+  * SHA-256: e52096fde7ce4c84db7a943298ae6cad4ea9e33824fe6ccb99c308a7ad7e594c
+  * Version from https://repo1.maven.org/maven2/org/bitbucket/mstrobel/procyon-core/0.6.0/procyon-core-0.6.0.jar
+  * Signed with GPG key 0x63A44F0EBD06601F
 
-* `./org.sf.feeling.decompiler.procyon/lib/procyon-compilertools-0.5.36.jar`
-  * SHA-256: 9f737863b5b577746d7594b45187870bf8184ddb3657ac71817ddc950cf6bff5
-  * Version from https://repo1.maven.org/maven2/org/bitbucket/mstrobel/procyon-compilertools/0.5.36/procyon-compilertools-0.5.36.jar
+* `./org.sf.feeling.decompiler.procyon/lib/procyon-compilertools-0.6.0.jar`
+  * SHA-256: 5b5b40d4bae758a823210c5c1513f2027bd7fe2e9421cd2b004c5d91b0676956
+  * Version from https://repo1.maven.org/maven2/org/bitbucket/mstrobel/procyon-compilertools/0.6.0/procyon-compilertools-0.6.0.jar
+  * Signed with GPG key 0x63A44F0EBD06601F
 
 ### Netbeans CVSClient
 _Primary Source: https://versioncontrol.netbeans.org/javacvs/library/_

@@ -87,6 +87,9 @@ Used libraries:
 * Version ? (unreleased)
   * Removed Jad decompiler (decompiler was released 2001)
   * Quiltflower plugin and feature added
+  * Updated Embedded Decompilers
+    * CFR to version 0.152 (JDK 14 support)
+    * Procyon to version 0.6.0
 
 * Version 3.2.2
   * Fixed some inconsistencies regarding version numbers and the update site
