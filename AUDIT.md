@@ -37,10 +37,11 @@ _Build Source: https://github.com/MinecraftForge/FernFlower with builds at http:
   * Version from http://files.minecraftforge.net/maven/net/minecraftforge/fernflower/352/fernflower-352.jar
 
 ### Quiltflower
-_Primary Source: https://github.com/QuiltMC/quiltflower/releases
-_Build Source: https://github.com/QuiltMC/quiltflower
+_Primary Source: https://github.com/QuiltMC/quiltflower/releases_
+_Build Source: https://github.com/QuiltMC/quiltflower_
 * `./org.sf.feeling.decompiler.quiltflower/lib/quiltflower-1.9.0.jar`
   * SHA-256: 21923293ada63ffc663cba26126fa108a65bb2019a5112b2adb987f05f4cbd1b
+  * version from: https://github.com/QuiltMC/quiltflower/releases/download/1.9.0/quiltflower-1.9.0.jar
 
 ### Minimal JSON
 _Primary Source: https://github.com/ralfstx/minimal-json_
@@ -57,12 +58,13 @@ _Primary Source: http://jsoup.org/_
   * Version from http://central.maven.org/maven2/org/jsoup/jsoup/1.9.2/jsoup-1.9.2.jar
 
 ### CFR
-_Project homepage: http://www.benf.org/other/cfr/_
+_Project homepage: https://www.benf.org/other/cfr/_
 _Primary Source: https://repo1.maven.org/maven2/org/benf/cfr/_
 
-* `./org.sf.feeling.decompiler.cfr/lib/cfr-0.151.jar`
-  * SHA-256: 316E9015B9AF2953FCFF4FE86BF3BBA705F32E7CD25BD6E535C698DE8A25E837
-  * Equal to https://www.benf.org/other/cfr/cfr-0.151.jar
+* `./org.sf.feeling.decompiler.cfr/lib/cfr-0.152.jar`
+  * SHA-256: f686e8f3ded377d7bc87d216a90e9e9512df4156e75b06c655a16648ae8765b2
+  * Equal to https://repo1.maven.org/maven2/org/benf/cfr/0.152/cfr-0.152.jar
+  * Signed with GPG key 0x01066A5BDD7A425BDE0BB3ED101B4F4D25952FC7
 
 ### Procyon
 _Primary Source: https://repo1.maven.org/maven2/org/bitbucket/mstrobel/_
