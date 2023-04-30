@@ -36,6 +36,12 @@ _Build Source: https://github.com/MinecraftForge/FernFlower with builds at http:
   * SHA-256: 799e1e968613abdb74a61bebb08c49132cde5c6eb8d8e5c80a768bfb57a44785
   * Version from http://files.minecraftforge.net/maven/net/minecraftforge/fernflower/352/fernflower-352.jar
 
+### Quiltflower
+_Primary Source: https://github.com/QuiltMC/quiltflower/releases
+_Build Source: https://github.com/QuiltMC/quiltflower
+* `./org.sf.feeling.decompiler.quiltflower/lib/quiltflower-1.9.0.jar`
+  * SHA-256: 21923293ada63ffc663cba26126fa108a65bb2019a5112b2adb987f05f4cbd1b
+
 ### Minimal JSON
 _Primary Source: https://github.com/ralfstx/minimal-json_
 
