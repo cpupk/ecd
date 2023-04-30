@@ -8,6 +8,7 @@
 	<url>https://github.com/ecd-plugin/ecd</url>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<tycho.version>3.0.4</tycho.version>
 	</properties>
 	<modules>
 		<module>org.sf.feeling.decompiler</module>
@@ -18,6 +19,10 @@
 		<module>org.sf.feeling.decompiler.jd.feature</module>
 		<module>org.sf.feeling.decompiler.procyon</module>
 		<module>org.sf.feeling.decompiler.procyon.feature</module>
+        <!--
+		<module>org.sf.feeling.decompiler.quiltflower</module>
+		<module>org.sf.feeling.decompiler.quiltflower.feature</module>
+        -->
 		<module>org.sf.feeling.decompiler.source.attach</module>
 		<module>org.sf.feeling.decompiler.source.feature</module>
 		<module>../update/</module>
@@ -28,14 +33,14 @@
 				<plugin>
 					<groupId>org.eclipse.tycho</groupId>
 					<artifactId>tycho-p2-director-plugin</artifactId>
-					<version>2.2.0</version>
+					<version>${tycho.version}</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.10.1</version>
+				<version>3.11.0</version>
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
@@ -44,18 +49,18 @@
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-compiler-plugin</artifactId>
-				<version>2.7.0</version>
+				<version>${tycho.version}</version>
 			</plugin>
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-maven-plugin</artifactId>
-				<version>2.7.0</version>
+				<version>${tycho.version}</version>
 				<extensions>true</extensions>
 			</plugin>
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>target-platform-configuration</artifactId>
-				<version>2.7.0</version>
+				<version>${tycho.version}</version>
 				<configuration>
 					<environments>
 						<!-- Windows (32bit and 64bit) -->
@@ -105,7 +110,7 @@
 		<repository>
 			<id>eclipse-photon</id>
 			<layout>p2</layout>
-			<url>http://download.eclipse.org/releases/photon/</url>
+			<url>https://download.eclipse.org/releases/photon/</url>
 		</repository>
 	</repositories>
 </project>
