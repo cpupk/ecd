@@ -60,6 +60,7 @@ Since version 3.3.0 ECD is signed by a self-signed 4096 bit RSA key:
 * Subject: `CN=ECD Software Distribution,OU=ECD,O=ECD`
 * SHA-1 fingerprint: 2D DB EE 7E 07 32 EB 0D 7C F2 FF C6 68 A0 C4 B8 B9 58 40 29
 * SHA-256 fingerprint: 8A 68 55 D3 91 B7 6F 95 DA D1 1E DF 1C 38 8D 38 F1 8A 0C A2 97 E5 12 85 DD 5B 05 9C C3 21 1B D4
+* Certificate file: [ecd.cer](ecd.cer)
 
 ## Licenses
 
