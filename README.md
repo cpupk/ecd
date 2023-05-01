@@ -36,11 +36,13 @@ _If you have currently the "Eclipse" Class Decompiler installed, it is recommend
 
 ## How to build from source?
 
+  Requiremnent: JDK 11 or newer (make sure `JAVA_HOME` environment variable points to an appropriate JDK)
+
   If you want to test the latest features of this plugin, you have to build it from source. For this, proceed as following:
 
   1. `git clone https://github.com/ecd-plugin/ecd`
-  1. `git clone --depth 1 https://github.com/ecd-plugin/update` next to this project
-  1. Run `mvn clean package`
+  2. `git clone --depth 1 https://github.com/ecd-plugin/update` next to this project
+  3. Run `mvn clean package`
 
   If you want to use Eclipse and help developing, continue like this:
 
@@ -50,6 +52,14 @@ _If you have currently the "Eclipse" Class Decompiler installed, it is recommend
   5. Open the file _site.xml_ within the project
   6. Press "Build All"
   7. Copy the jar files generated in the _build/features_ and _build/plugins_ folder of the project into the correspondent folders of your normal Eclipse installation.
+
+## Plugin Signature
+
+Since version 3.3.0 ECD is signed by a self-signed 4096 bit RSA key:
+
+* Subject: `CN=ECD Software Distribution,OU=ECD,O=ECD`
+* SHA-1 fingerprint: 2D DB EE 7E 07 32 EB 0D 7C F2 FF C6 68 A0 C4 B8 B9 58 40 29
+* SHA-256 fingerprint: 8A 68 55 D3 91 B7 6F 95 DA D1 1E DF 1C 38 8D 38 F1 8A 0C A2 97 E5 12 85 DD 5B 05 9C C3 21 1B D4
 
 ## Licenses
 
@@ -85,6 +95,7 @@ Used libraries:
 
 ## Changelog
 * Version ? (unreleased)
+  * ECD releases are now signed with a self-signed certificate
   * Removed Jad decompiler (decompiler was released 2001)
   * Quiltflower plugin and feature added
   * Updated Embedded Decompilers
