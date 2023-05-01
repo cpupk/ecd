@@ -41,7 +41,7 @@ _If you have currently the "Eclipse" Class Decompiler installed, it is recommend
   If you want to test the latest features of this plugin, you have to build it from source. For this, proceed as following:
 
   1. `git clone https://github.com/ecd-plugin/ecd`
-  2. `git clone --depth 1 https://github.com/ecd-plugin/update` next to this project
+  2. Run `cd ecd`
   3. Run `mvn clean package`
 
   If you want to use Eclipse and help developing, continue like this:
