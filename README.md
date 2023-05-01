@@ -94,7 +94,7 @@ Used libraries:
 * Jan Peter Stotz
 
 ## Changelog
-* Version ? (unreleased)
+* Version 3.3.0
   * ECD releases are now signed with a self-signed certificate
   * Removed Jad decompiler (decompiler was released 2001)
   * Quiltflower plugin and feature added
