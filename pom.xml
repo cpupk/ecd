@@ -8,7 +8,7 @@
 	<url>https://github.com/ecd-plugin/ecd</url>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<tycho.version>3.0.4</tycho.version>
+		<tycho.version>2.7.5</tycho.version>
 		<signing.disabled>true</signing.disabled>
 	</properties>
 	<modules>
@@ -112,6 +112,8 @@
 					<alias>ecd</alias>
 					<storepass>${signing.password}</storepass>
 					<keypass>${signing.password}</keypass>
+					<verbose>true</verbose>
+					<certs>true</certs>
 				</configuration>
 				<executions>
 					<execution>
