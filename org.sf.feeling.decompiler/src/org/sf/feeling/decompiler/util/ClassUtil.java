@@ -18,6 +18,7 @@ import java.util.Collection;
 
 import org.jetbrains.java.decompiler.struct.StructClass;
 import org.jetbrains.java.decompiler.struct.lazy.LazyLoader;
+import org.jetbrains.java.decompiler.util.DataInputFullStream;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.editor.IDecompiler;
 import org.sf.feeling.decompiler.editor.IDecompilerDescriptor;
@@ -105,7 +106,10 @@ public class ClassUtil {
 	 * Uses FernFlower library to read the class and extract it's qualified name
 	 */
 	public static String getClassQualifiedName(byte[] classData) throws IOException {
-		StructClass structClass = new StructClass(classData, true, new LazyLoader(null));
+		StructClass structClass;
+		try (DataInputFullStream in = new DataInputFullStream(classData)) {
+			structClass = StructClass.create(in, true, new LazyLoader(null));
+		}
 		structClass.releaseResources();
 		return structClass.qualifiedName;
 	}

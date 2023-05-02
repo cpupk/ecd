@@ -9,6 +9,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<tycho.version>2.7.5</tycho.version>
+        <maven.dependency.plugin.version>3.5.0</maven.dependency.plugin.version>
 		<signing.disabled>true</signing.disabled>
 	</properties>
 	<modules>
@@ -134,6 +135,10 @@
 			<id>eclipse-photon</id>
 			<layout>p2</layout>
 			<url>https://download.eclipse.org/releases/photon/</url>
+		</repository>
+		<repository>
+			<id>intellij</id>
+			<url>https://www.jetbrains.com/intellij-repository/releases/</url>
 		</repository>
 	</repositories>
 </project>
