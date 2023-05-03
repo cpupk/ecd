@@ -8,8 +8,6 @@
 
 package org.sf.feeling.decompiler.fernflower;
 
-import java.util.Collection;
-
 import org.eclipse.core.runtime.Path;
 import org.sf.feeling.decompiler.editor.BaseDecompilerSourceMapper;
 
@@ -21,22 +19,13 @@ public class FernFlowerSourceMapper extends BaseDecompilerSourceMapper {
 	}
 
 	@Override
-	protected void printDecompileReport(StringBuffer source, String fileLocation, Collection<Exception> exceptions,
-			long decompilationTime) {
-		String location = "\tDecompiled from: " //$NON-NLS-1$
-				+ fileLocation;
-		source.append("\n\n/*"); //$NON-NLS-1$
-		source.append("\n\tDECOMPILATION REPORT\n\n"); //$NON-NLS-1$
-		source.append(location).append("\n"); //$NON-NLS-1$
-		source.append("\tTotal time: ") //$NON-NLS-1$
-				.append(decompilationTime).append(" ms\n"); //$NON-NLS-1$
-		source.append("\t" //$NON-NLS-1$
-				+ origionalDecompiler.getLog().replaceAll("\t", "") //$NON-NLS-1$ //$NON-NLS-2$
-						.replaceAll("\n\\s*", "\n\t")); //$NON-NLS-1$ //$NON-NLS-2$
-		exceptions.addAll(origionalDecompiler.getExceptions());
-		logExceptions(exceptions, source);
-		source.append("\n\tDecompiled with FernFlower."); //$NON-NLS-1$
-		source.append("\n*/"); //$NON-NLS-1$
+	protected String getDecompilerName() {
+		return FernFlowerDecompiler.decompilerType;
+	}
+
+	@Override
+	protected String getDecompilerVersion() {
+		return FernFlowerDecompiler.decompilerVersion;
 	}
 
 }

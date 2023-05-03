@@ -97,8 +97,9 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper 
 		}
 
 		if (info == null) {
-			if (always)
+			if (always) {
 				return null;
+			}
 			return attachedSource;
 		}
 
@@ -157,11 +158,11 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper 
 
 		usedDecompiler = decompile(null, type, exceptions, root, className);
 
-		if (usedDecompiler == null || usedDecompiler.getSource() == null || usedDecompiler.getSource().length() == 0) {
+		if (noDecompiledSourceCodeAvailable(usedDecompiler)) {
 			if (usedDecompiler == null || !DecompilerType.FernFlower.equals(usedDecompiler.getDecompilerType())) {
+				Logger.info(this.getClass().getSimpleName() + ": fallback to FernFlower decompiler");
 				usedDecompiler = decompile(new FernFlowerDecompiler(), type, exceptions, root, className);
-				if (usedDecompiler == null || usedDecompiler.getSource() == null
-						|| usedDecompiler.getSource().length() == 0) {
+				if (noDecompiledSourceCodeAvailable(usedDecompiler)) {
 					return null;
 				}
 			}
@@ -178,8 +179,9 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper 
 		boolean align = prefs.getBoolean(JavaDecompilerPlugin.ALIGN);
 		if ((showLineNumber && align) || UIUtil.isDebugPerspective()
 				|| JavaDecompilerPlugin.getDefault().isDebugMode()) {
-			if (showReport)
+			if (showReport) {
 				code = usedDecompiler.removeComment(code);
+			}
 			DecompilerOutputUtil decompilerOutputUtil = new DecompilerOutputUtil(usedDecompiler.getDecompilerType(),
 					code);
 			code = decompilerOutputUtil.realign();
@@ -218,6 +220,10 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper 
 
 		updateSourceRanges(type, sourceAsCharArray);
 		return sourceAsCharArray;
+	}
+
+	private boolean noDecompiledSourceCodeAvailable(IDecompiler decompiler) {
+		return usedDecompiler == null || usedDecompiler.getSource() == null || usedDecompiler.getSource().isEmpty();
 	}
 
 	private void updateSourceRanges(IType type, char[] attachedSource) {
@@ -338,8 +344,9 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper 
 		boolean align = prefs.getBoolean(JavaDecompilerPlugin.ALIGN);
 		if ((showLineNumber && align) || UIUtil.isDebugPerspective()
 				|| JavaDecompilerPlugin.getDefault().isDebugMode()) {
-			if (showReport)
+			if (showReport) {
 				code = currentDecompiler.removeComment(code);
+			}
 			DecompilerOutputUtil decompilerOutputUtil = new DecompilerOutputUtil(currentDecompiler.getDecompilerType(),
 					code);
 			code = decompilerOutputUtil.realign();
@@ -383,6 +390,35 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper 
 		}
 	}
 
-	protected abstract void printDecompileReport(StringBuffer source, String location, Collection<Exception> exceptions,
-			long decompilationTime);
+	protected abstract String getDecompilerName();
+
+	protected abstract String getDecompilerVersion();
+
+	protected void printDecompileReport(StringBuffer source, String fileLocation, Collection<Exception> exceptions,
+			long decompilationTime) {
+		String logMsg = origionalDecompiler.getLog().replaceAll("\t", "") //$NON-NLS-1$ //$NON-NLS-2$
+				.replaceAll("\n\\s*", "\n\t"); //$NON-NLS-1$ //$NON-NLS-2$
+		source.append("\n\n/*"); //$NON-NLS-1$
+		source.append("\n\tDECOMPILATION REPORT\n"); //$NON-NLS-1$
+		source.append("\n\tDecompiled from: "); //$NON-NLS-1$
+		source.append(fileLocation);
+		source.append("\n\tTotal time: "); //$NON-NLS-1$
+		source.append(decompilationTime);
+		source.append(" ms\n\t"); //$NON-NLS-1$
+		source.append(logMsg);
+		exceptions.addAll(origionalDecompiler.getExceptions());
+		logExceptions(exceptions, source);
+		String decompiler = getDecompilerName();
+		String ver = getDecompilerVersion();
+		if (decompiler != null) {
+			source.append("\n\tDecompiled with "); //$NON-NLS-1$
+			source.append(decompiler);
+			if (ver != null) {
+				source.append(" version "); //$NON-NLS-1$
+				source.append(ver);
+			}
+			source.append(".\n"); //$NON-NLS-1$
+		}
+		source.append("*/"); //$NON-NLS-1$
+	}
 }

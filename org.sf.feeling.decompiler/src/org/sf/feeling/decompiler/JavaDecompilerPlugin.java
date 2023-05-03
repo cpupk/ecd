@@ -135,8 +135,9 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 			Logger.debug(e);
 		}
 		ImageDescriptor actionIcon = null;
-		if (url != null)
+		if (url != null) {
 			actionIcon = ImageDescriptor.createFromURL(url);
+		}
 		return actionIcon;
 	}
 

@@ -24,7 +24,6 @@ import org.jetbrains.java.decompiler.main.decompiler.PrintStreamLogger;
 import org.jetbrains.java.decompiler.main.extern.IFernflowerLogger;
 import org.jetbrains.java.decompiler.main.extern.IFernflowerPreferences;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
-import org.sf.feeling.decompiler.editor.DecompilerType;
 import org.sf.feeling.decompiler.editor.IDecompiler;
 import org.sf.feeling.decompiler.util.ClassUtil;
 import org.sf.feeling.decompiler.util.FileUtil;
@@ -32,6 +31,9 @@ import org.sf.feeling.decompiler.util.JarClassExtractor;
 import org.sf.feeling.decompiler.util.UnicodeUtil;
 
 public class FernFlowerDecompiler implements IDecompiler {
+
+	public static final String decompilerType = "FernFlower"; //$NON-NLS-1$ \r\n"
+	public static final String decompilerVersion = "231.8770.65"; //$NON-NLS-1$ \r\n"
 
 	private String source = ""; // $NON-NLS-1$ //$NON-NLS-1$
 	private long time, start;
@@ -75,8 +77,9 @@ public class FernFlowerDecompiler implements IDecompiler {
 		final File tmpDir = new File(System.getProperty("java.io.tmpdir"), //$NON-NLS-1$
 				String.valueOf(System.currentTimeMillis()));
 
-		if (!tmpDir.exists())
+		if (!tmpDir.exists()) {
 			tmpDir.mkdirs();
+		}
 
 		// Work around protected constructor
 		class EmbeddedConsoleDecompiler extends ConsoleDecompiler {
@@ -130,8 +133,9 @@ public class FernFlowerDecompiler implements IDecompiler {
 			group = group.replace("/*", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			group = group.replace("*/", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			group = group.replace("*", ""); //$NON-NLS-1$ //$NON-NLS-2$
-			if (log.length() > 0)
+			if (log.length() > 0) {
 				log += "\n"; //$NON-NLS-1$
+			}
 			log += group;
 
 			source = source.replace(m.group(), ""); //$NON-NLS-1$
@@ -197,7 +201,7 @@ public class FernFlowerDecompiler implements IDecompiler {
 
 	@Override
 	public String getDecompilerType() {
-		return DecompilerType.FernFlower;
+		return decompilerType;
 	}
 
 	@Override

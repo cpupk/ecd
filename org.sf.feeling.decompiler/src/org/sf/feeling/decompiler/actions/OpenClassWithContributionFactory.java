@@ -9,8 +9,10 @@
 package org.sf.feeling.decompiler.actions;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.TreeSet;
 
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
@@ -64,14 +66,14 @@ public class OpenClassWithContributionFactory extends ExtensionContributionFacto
 
 		@Override
 		public String getText() {
-			if (DecompilerType.FernFlower.equals(decompilerType))
+			if (DecompilerType.FernFlower.equals(decompilerType)) {
 				return Messages.getString("JavaDecompilerActionBarContributor.Action.DecompileWithFernFlower"); //$NON-NLS-1$
-			else {
+			} else {
 				IDecompilerDescriptor decompilerDescriptor = JavaDecompilerPlugin.getDefault()
 						.getDecompilerDescriptor(decompilerType);
-				if (decompilerDescriptor != null)
+				if (decompilerDescriptor != null) {
 					return decompilerDescriptor.getDecompileAction().getText();
-
+				}
 			}
 			return classEditor.getLabel();
 		}
@@ -80,19 +82,22 @@ public class OpenClassWithContributionFactory extends ExtensionContributionFacto
 		public ImageDescriptor getImageDescriptor() {
 			if (DecompilerType.FernFlower.equals(decompilerType)) {
 				return JavaDecompilerPlugin.getImageDescriptor("icons/fernflower_16.png"); //$NON-NLS-1$
-			} else
+			} else {
 				return JavaDecompilerPlugin.getDefault().getDecompilerDescriptor(decompilerType).getDecompilerIcon();
+			}
 		}
 
 		@Override
 		public void run() {
 			// Get UI refs
 			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-			if (window == null)
+			if (window == null) {
 				return;
+			}
 			IWorkbenchPage page = window.getActivePage();
-			if (page == null)
+			if (page == null) {
 				return;
+			}
 
 			// Load each IClassFile into the selected editor
 			for (int i = 0; i < classes.size(); i++) {
@@ -141,8 +146,9 @@ public class OpenClassWithContributionFactory extends ExtensionContributionFacto
 
 				// Get the current selections and return if nothing is selected
 				Iterator<Object> selections = getSelections(selService);
-				if (selections == null)
+				if (selections == null) {
 					return new IContributionItem[0];
+				}
 
 				final List<Object> classes = getSelectedElements(selService, IClassFile.class);
 
@@ -152,23 +158,12 @@ public class OpenClassWithContributionFactory extends ExtensionContributionFacto
 				if (classes.size() == 1) {
 					IEditorDescriptor editor = registry.findEditor(JavaDecompilerPlugin.EDITOR_ID);
 
-					boolean isAddFernFlower = false;
+					TreeSet<String> decompilerTypes = new TreeSet<>();
+					Collections.addAll(decompilerTypes, DecompilerType.getDecompilerTypes());
+					decompilerTypes.add(DecompilerType.FernFlower); // make sure FernFlower is always present
 
-					for (int i = 0; i < DecompilerType.getDecompilerTypes().length; i++) {
-						if (DecompilerType.getDecompilerTypes()[i].compareToIgnoreCase(DecompilerType.FernFlower) > 0
-								&& !isAddFernFlower) {
-							list.add(new ActionContributionItem(
-									new OpenClassesAction(editor, classes, DecompilerType.FernFlower)));
-							isAddFernFlower = true;
-						}
-
-						list.add(new ActionContributionItem(
-								new OpenClassesAction(editor, classes, DecompilerType.getDecompilerTypes()[i])));
-					}
-
-					if (!isAddFernFlower) {
-						list.add(new ActionContributionItem(
-								new OpenClassesAction(editor, classes, DecompilerType.FernFlower)));
+					for (String decompilerType : decompilerTypes) {
+						list.add(new ActionContributionItem(new OpenClassesAction(editor, classes, decompilerType)));
 					}
 				}
 
@@ -194,9 +189,9 @@ public class OpenClassWithContributionFactory extends ExtensionContributionFacto
 				public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
 					boolean menuVisible = isMenuVisible(selService);
 
-					if (menuVisible)
+					if (menuVisible) {
 						return EvaluationResult.TRUE;
-
+					}
 					return EvaluationResult.FALSE;
 				}
 			});
@@ -243,8 +238,9 @@ public class OpenClassWithContributionFactory extends ExtensionContributionFacto
 		while ((selections != null) && selections.hasNext()) {
 			Object select = selections.next();
 
-			if (eleClass.isInstance(select))
+			if (eleClass.isInstance(select)) {
 				elements.add(select);
+			}
 		}
 
 		return elements;

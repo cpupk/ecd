@@ -107,15 +107,14 @@ public class SubMenuCreator implements IMenuCreator {
 
 			boolean isAddFernFlower = false;
 
-			for (int i = 0; i < DecompilerType.getDecompilerTypes().length; i++) {
-				if (DecompilerType.getDecompilerTypes()[i].compareToIgnoreCase(DecompilerType.FernFlower) > 0
-						&& !isAddFernFlower) {
+			for (String decompilerType : DecompilerType.getDecompilerTypes()) {
+				if (decompilerType.compareToIgnoreCase(DecompilerType.FernFlower) > 0 && !isAddFernFlower) {
 					dropDownMenuMgr.add(new DecompileWithFernFlowerAction());
 					isAddFernFlower = true;
 				}
 
-				dropDownMenuMgr.add(JavaDecompilerPlugin.getDefault()
-						.getDecompilerDescriptor(DecompilerType.getDecompilerTypes()[i]).getDecompileAction());
+				dropDownMenuMgr.add(
+						JavaDecompilerPlugin.getDefault().getDecompilerDescriptor(decompilerType).getDecompileAction());
 			}
 
 			if (!isAddFernFlower) {

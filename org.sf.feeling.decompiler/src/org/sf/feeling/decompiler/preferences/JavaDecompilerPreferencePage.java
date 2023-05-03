@@ -98,9 +98,9 @@ public class JavaDecompilerPreferencePage extends FieldEditorPreferencePage impl
 
 		boolean isAddFernFlower = false;
 
-		for (int i = 0; i < DecompilerType.getDecompilerTypes().length; i++) {
-			IDecompilerDescriptor descriptor = JavaDecompilerPlugin.getDefault()
-					.getDecompilerDescriptor(DecompilerType.getDecompilerTypes()[i]);
+		JavaDecompilerPlugin javaDecompilerPlugin = JavaDecompilerPlugin.getDefault();
+		for (String decompilerType : DecompilerType.getDecompilerTypes()) {
+			IDecompilerDescriptor descriptor = javaDecompilerPlugin.getDecompilerDescriptor(decompilerType);
 			String label = descriptor.getDecompilerPreferenceLabel().trim();
 			if (label.compareToIgnoreCase(fernLabel) > 0 && !isAddFernFlower) {
 				defaultDecompiler.addItem(DecompilerType.FernFlower, fernLabel, DecompilerType.FernFlower);

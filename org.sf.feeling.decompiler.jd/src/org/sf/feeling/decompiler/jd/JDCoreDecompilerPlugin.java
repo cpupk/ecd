@@ -11,6 +11,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
+import org.sf.feeling.decompiler.jd.decompiler.JDCoreSourceMapper;
 
 public class JDCoreDecompilerPlugin extends AbstractUIPlugin implements IPropertyChangeListener {
 
@@ -19,6 +20,8 @@ public class JDCoreDecompilerPlugin extends AbstractUIPlugin implements IPropert
 	public static final String CMD = "org.sf.feeling.decompiler.jd.cmd"; //$NON-NLS-1$
 
 	public static final String decompilerType = "JD-Core"; //$NON-NLS-1$
+
+	public static final String decompilerVersion = JDCoreSourceMapper.getVersion();
 
 	private static JDCoreDecompilerPlugin plugin;
 
