@@ -7,7 +7,7 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="lib/procyon-compilertools-0.6.0.jar"/>
-	<classpathentry kind="lib" path="lib/procyon-core-0.6.0.jar"/>
+	<classpathentry kind="lib" path="lib/procyon-compilertools.jar"/>
+	<classpathentry kind="lib" path="lib/procyon-core.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
