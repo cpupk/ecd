@@ -25,16 +25,16 @@ _Primary Source: https://mvnrepository.com/artifact/org.ow2.asm/asm_
 
 _Primary Source: https://commons.apache.org/downloads/index.html_
 
-* `./org.sf.feeling.decompiler.source.attach/lib/commons-compress-1.3.jar`
-  * SHA-256: 56291a5427f6c0abc0b34fbf9bfafa0c21b60d503ece95c38741424d76e2aa04
-  * Equal to http://central.maven.org/maven2/org/apache/commons/commons-compress/1.3/commons-compress-1.3.jar
+* `./org.sf.feeling.decompiler.source.attach/lib/commons-compress.jar`
+  * Not included in ECD repository, downloaded automatically via Maven
+  * SHA-256: c267f17160e9ef662b4d78b7f29dca7c82b15c5cff2cb6a9865ef4ab3dd5b787
+  * Equal to https://repo1.maven.org/maven2/org/apache/commons/commons-compress/1.23.0/commons-compress-1.23.0.jar
 
 ### Fernflower
-_Primary Source: https://github.com/JetBrains/intellij-community/tree/master/plugins/java-decompiler/engine_
-_Build Source: https://github.com/MinecraftForge/FernFlower with builds at http://files.minecraftforge.net/maven/net/minecraftforge/fernflower/_
-* `./org.sf.feeling.decompiler/lib/fernflower-352.jar`
-  * SHA-256: 799e1e968613abdb74a61bebb08c49132cde5c6eb8d8e5c80a768bfb57a44785
-  * Version from http://files.minecraftforge.net/maven/net/minecraftforge/fernflower/352/fernflower-352.jar
+* `./org.sf.feeling.decompiler/lib/fernflower.jar`
+  * Not included in ECD repository, downloaded automatically via Maven
+  * SHA-256: a5dec2a76e546ad62bb0538c361ffe9e496ed2cd77eba6921da69527c3a19d0b
+  * Version from https://www.jetbrains.com/intellij-repository/releases/com/jetbrains/intellij/java/java-decompiler-engine/231.8770.65/java-decompiler-engine-231.8770.65.jar
 
 ### Quiltflower
 _Primary Source: https://github.com/QuiltMC/quiltflower/releases_
@@ -55,6 +55,7 @@ _Project homepage: https://www.benf.org/other/cfr/_
 _Primary Source: https://repo1.maven.org/maven2/org/benf/cfr/_
 
 * `./org.sf.feeling.decompiler.cfr/lib/cfr-0.152.jar`
+  * Not included in ECD repository, downloaded automatically via Maven
   * SHA-256: f686e8f3ded377d7bc87d216a90e9e9512df4156e75b06c655a16648ae8765b2
   * Equal to https://repo1.maven.org/maven2/org/benf/cfr/0.152/cfr-0.152.jar
   * Signed with GPG key 0x01066A5BDD7A425BDE0BB3ED101B4F4D25952FC7
@@ -62,15 +63,15 @@ _Primary Source: https://repo1.maven.org/maven2/org/benf/cfr/_
 ### Procyon
 _Primary Source: https://repo1.maven.org/maven2/org/bitbucket/mstrobel/_
 
-* `./org.sf.feeling.decompiler.procyon/lib/procyon-core-0.6.0.jar`
+* `./org.sf.feeling.decompiler.procyon/lib/procyon-core.jar`
+  * Not included in ECD repository, downloaded automatically via Maven
   * SHA-256: e52096fde7ce4c84db7a943298ae6cad4ea9e33824fe6ccb99c308a7ad7e594c
   * Version from https://repo1.maven.org/maven2/org/bitbucket/mstrobel/procyon-core/0.6.0/procyon-core-0.6.0.jar
-  * Signed with GPG key 0x63A44F0EBD06601F
 
-* `./org.sf.feeling.decompiler.procyon/lib/procyon-compilertools-0.6.0.jar`
+* `./org.sf.feeling.decompiler.procyon/lib/procyon-compilertools.jar`
+  * Not included in ECD repository, downloaded automatically via Maven
   * SHA-256: 5b5b40d4bae758a823210c5c1513f2027bd7fe2e9421cd2b004c5d91b0676956
   * Version from https://repo1.maven.org/maven2/org/bitbucket/mstrobel/procyon-compilertools/0.6.0/procyon-compilertools-0.6.0.jar
-  * Signed with GPG key 0x63A44F0EBD06601F
 
 ### Netbeans CVSClient
 _Primary Source: https://versioncontrol.netbeans.org/javacvs/library/_
