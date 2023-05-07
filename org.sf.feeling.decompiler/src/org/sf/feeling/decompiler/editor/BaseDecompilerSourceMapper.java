@@ -10,6 +10,7 @@ package org.sf.feeling.decompiler.editor;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collection;
@@ -69,7 +70,7 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper 
 	@Override
 	public char[] findSource(IType type, IBinaryType info) {
 		IPreferenceStore prefs = JavaDecompilerPlugin.getDefault().getPreferenceStore();
-		boolean always = prefs.getBoolean(JavaDecompilerPlugin.IGNORE_EXISTING);
+		boolean ignoreExistingSource = prefs.getBoolean(JavaDecompilerPlugin.IGNORE_EXISTING);
 
 		Collection<Exception> exceptions = new LinkedList<>();
 		IPackageFragment pkgFrag = type.getPackageFragment();
@@ -78,7 +79,7 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper 
 		JavaDecompilerPlugin.getDefault().syncLibrarySource(root);
 		char[] attachedSource = null;
 
-		if (UIUtil.requestFromJavadocHover() && !fromInput(type) && always) {
+		if (UIUtil.requestFromJavadocHover() && !fromInput(type) && ignoreExistingSource) {
 			sourceRanges.remove(type);
 			attachedSource = originalSourceMapper.get(root).findSource(type, info);
 			return attachedSource;
@@ -87,7 +88,7 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper 
 		if (originalSourceMapper.containsKey(root)) {
 			attachedSource = originalSourceMapper.get(root).findSource(type, info);
 
-			if (attachedSource != null && !always) {
+			if (attachedSource != null && !ignoreExistingSource) {
 				updateSourceRanges(type, attachedSource);
 				isAttachedSource = true;
 				mapSourceSwitch(type, attachedSource, true);
@@ -97,7 +98,7 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper 
 		}
 
 		if (info == null) {
-			if (always) {
+			if (ignoreExistingSource) {
 				return null;
 			}
 			return attachedSource;
@@ -115,7 +116,8 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper 
 					originalSourceMapper.put(root, sourceMapper);
 				}
 
-				if (sourceMapper != null && !always && !(sourceMapper instanceof DecompilerSourceMapper)) {
+				if (sourceMapper != null && !ignoreExistingSource
+						&& !(sourceMapper instanceof DecompilerSourceMapper)) {
 					attachedSource = sourceMapper.findSource(type, info);
 					if (attachedSource != null) {
 						updateSourceRanges(type, attachedSource);
@@ -145,9 +147,9 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper 
 		String fullName = new String(info.getFileName());
 		int classNameIndex = fullName.lastIndexOf(className);
 		if (classNameIndex < 0) {
-			JavaDecompilerPlugin.logError(null,
-					"Unable to find className \"" + className + "\" in fullName \"" + fullName + "\""); //$NON-NLS-1$
-			return null;
+			String msg = String.format("Unable to find className \"%s\" in fullName \"%s\"", className, fullName); //$NON-NLS-1$
+			JavaDecompilerPlugin.logError(null, msg);
+			return messageWithExceptionsAsSourceCode(msg, exceptions);
 		}
 		className = fullName.substring(classNameIndex);
 
@@ -160,10 +162,14 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper 
 
 		if (noDecompiledSourceCodeAvailable(usedDecompiler)) {
 			if (usedDecompiler == null || !DecompilerType.FernFlower.equals(usedDecompiler.getDecompilerType())) {
-				Logger.info(this.getClass().getSimpleName() + ": fallback to FernFlower decompiler");
+				String msg = String.format("Failed to decompile using %s, fallback to FernFlower decompiler",
+						getDecompilerName());
+				exceptions.add(new RuntimeException(msg));
 				usedDecompiler = decompile(new FernFlowerDecompiler(), type, exceptions, root, className);
 				if (noDecompiledSourceCodeAvailable(usedDecompiler)) {
-					return null;
+					String msg2 = String.format("Failed to decompile using %s and FernFlower decompiler",
+							getDecompilerName());
+					return messageWithExceptionsAsSourceCode(msg2, exceptions);
 				}
 			}
 		}
@@ -226,6 +232,19 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper 
 		return usedDecompiler == null || usedDecompiler.getSource() == null || usedDecompiler.getSource().isEmpty();
 	}
 
+	private char[] messageWithExceptionsAsSourceCode(String message, Collection<Exception> exceptions) {
+		StringBuffer source = new StringBuffer(1024);
+		source.append("/*"); //$NON-NLS-1$
+		source.append(message.replaceAll("\\/\\*", "\\*"));
+		if (exceptions != null && !exceptions.isEmpty()) {
+			source.append("\n\n");
+			logExceptions(exceptions, source);
+		}
+		source.append("*/"); //$NON-NLS-1$
+
+		return source.toString().toCharArray();
+	}
+
 	private void updateSourceRanges(IType type, char[] attachedSource) {
 		if (type.getParent() instanceof ClassFile) {
 			try {
@@ -265,9 +284,8 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper 
 				classLocation += archivePath;
 
 				if (result == null) {
-					try {
-						result = ClassUtil.checkAvailableDecompiler(origionalDecompiler,
-								new ByteArrayInputStream(type.getClassFile().getBytes()));
+					try (InputStream in = new ByteArrayInputStream(type.getClassFile().getBytes())) {
+						result = ClassUtil.checkAvailableDecompiler(origionalDecompiler, in);
 					} catch (JavaModelException e) {
 						result = origionalDecompiler;
 					}
@@ -301,6 +319,7 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper 
 					exceptions.add(e);
 				}
 			}
+			throw new RuntimeException("test");
 		} catch (Exception e) {
 			exceptions.add(e);
 		}
@@ -330,8 +349,9 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper 
 			JavaDecompilerPlugin.getDefault().displayLineNumber(displayNumber);
 		}
 
-		if (currentDecompiler.getSource() == null || currentDecompiler.getSource().length() == 0)
+		if (currentDecompiler.getSource() == null || currentDecompiler.getSource().length() == 0) {
 			return null;
+		}
 
 		String code = currentDecompiler.getSource();
 
@@ -373,8 +393,9 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper 
 	protected void logExceptions(Collection<Exception> exceptions, StringBuffer buffer) {
 		if (!exceptions.isEmpty()) {
 			buffer.append("\n\tCaught exceptions:"); //$NON-NLS-1$
-			if (exceptions == null || exceptions.isEmpty())
+			if (exceptions == null || exceptions.isEmpty()) {
 				return; // nothing to do
+			}
 			buffer.append("\n"); //$NON-NLS-1$
 			StringWriter stackTraces = new StringWriter();
 			try (PrintWriter stackTracesP = new PrintWriter(stackTraces)) {

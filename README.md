@@ -9,6 +9,10 @@ Enhanced Class Decompiler is a plug-in for the Eclipse platform. It integrates J
 ## Why is this plug-in "enhanced"?
 This is an ad-free fork of the Eclipse Decompiler Plugin. So we enhanced it by removing all code which might compromise your privacy or security (to the best of our knowledge).
 
+## Supported Eclipse Versions
+
+Enhanced Class Decompiler requires at least Eclipse 4.8 (Photon) or newer.
+
 ## How to install Enhanced Class Decompiler?
 
 Drag and Drop installation: [![Drag to your running Eclipse workspace.](https://marketplace.eclipse.org/sites/all/themes/solstice/public/images/marketplace/btn-install.png)](https://marketplace.eclipse.org/marketplace-client-intro?mpc_install=3644319 "Drag to your running Eclipse workspace.")

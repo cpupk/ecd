@@ -8,7 +8,11 @@
 
 package org.sf.feeling.decompiler.util;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -87,10 +91,12 @@ public class DecompilerOutputUtil {
 
 	public String realign() {
 		// Handle special cases
-		if (input.length() == 0)
-			return input;
-		if (input == null)
+		if (input == null) {
 			return null;
+		}
+		if (input.isEmpty()) {
+			return input;
+		}
 
 		// Compute the string offset of every source line
 		fillOutputList();
@@ -121,8 +127,9 @@ public class DecompilerOutputUtil {
 		int firstTypeLine = Integer.MAX_VALUE;
 		int lastTypeLine = Integer.MIN_VALUE;
 		for (int i = 0; i < types.size(); i++) {
-			if (!(types.get(i) instanceof AbstractTypeDeclaration))
+			if (!(types.get(i) instanceof AbstractTypeDeclaration)) {
 				continue;
+			}
 			AbstractTypeDeclaration type = (AbstractTypeDeclaration) types.get(i);
 
 			// Recursively process the types within this type
@@ -130,11 +137,13 @@ public class DecompilerOutputUtil {
 
 			// Update firstTypeLine/lastTypeLine
 			int numLine = unit.getLineNumber(type.getStartPosition());
-			if (numLine < firstTypeLine)
+			if (numLine < firstTypeLine) {
 				firstTypeLine = numLine;
+			}
 			numLine = unit.getLineNumber(type.getStartPosition() + type.getLength() - 1);
-			if (numLine > lastTypeLine)
+			if (numLine > lastTypeLine) {
 				lastTypeLine = numLine;
+			}
 		}
 
 		// Special case - no source items to handle so just return our input
@@ -144,19 +153,21 @@ public class DecompilerOutputUtil {
 		}
 
 		// Add all the source lines above the first type
-		if (firstTypeLine != Integer.MAX_VALUE)
+		if (firstTypeLine != Integer.MAX_VALUE) {
 			addBelow(firstTypeLine - 1, 0, 0);
+		}
 
 		// Add all the source lines below the last type
-		if (lastTypeLine != Integer.MIN_VALUE)
+		if (lastTypeLine != Integer.MIN_VALUE) {
 			addBelow(inputLines.size() - 2, lastTypeLine, javaSrcLines.size() - 1);
+		}
 
 		// Create aligned source
 		return toString();
 	}
 
 	public static boolean isEmpty(String str) {
-		return str == null || str.length() == 0;
+		return str == null || str.isEmpty();
 	}
 
 	public static String replace(String text, String searchString, String replacement) {
@@ -635,21 +646,26 @@ public class DecompilerOutputUtil {
 			// Get the output line number
 			InputLine inputLine = inputLines.get(inputLineNo);
 			int numLineJavaSrc = inputLine.outputLineNum;
-			if (numLineJavaSrc == -1)
+			if (numLineJavaSrc == -1) {
 				numLineJavaSrc = inputLine.calculatedNumLineJavaSrc;
+			}
 
 			if (numLineJavaSrc != -1) {
 				// Update the type begin/end output line numbers
-				if (beginTypeLine > numLineJavaSrc)
+				if (beginTypeLine > numLineJavaSrc) {
 					beginTypeLine = numLineJavaSrc;
-				if (endTypeLine < numLineJavaSrc)
+				}
+				if (endTypeLine < numLineJavaSrc) {
 					endTypeLine = numLineJavaSrc;
+				}
 
 				// Update the type first/last method input line numbers
-				if (firstMethodLine > inputLineNo)
+				if (firstMethodLine > inputLineNo) {
 					firstMethodLine = inputLineNo;
-				if (lastMethodLine < inputLineNo)
+				}
+				if (lastMethodLine < inputLineNo) {
 					lastMethodLine = inputLineNo;
+				}
 			}
 		}
 
@@ -678,9 +694,9 @@ public class DecompilerOutputUtil {
 
 					// If this declaration is on a new line add it to the
 					// bodyDeclarations
-					if (inputBeginLine != lastInputLineNo)
+					if (inputBeginLine != lastInputLineNo) {
 						bodyDeclarations.add(enumDeclObj);
-
+					}
 					lastInputLineNo = inputBeginLine;
 				}
 			}
@@ -728,8 +744,9 @@ public class DecompilerOutputUtil {
 			}
 		}
 
-		if (lastInputLine != -1 && lastInputLine < inputEndLine)
+		if (lastInputLine != -1 && lastInputLine < inputEndLine) {
 			addBelow(inputEndLine, lastInputLine, maxLine);
+		}
 	}
 
 	private void processElements(AbstractTypeDeclaration rootType) {
@@ -746,57 +763,61 @@ public class DecompilerOutputUtil {
 		}
 	}
 
-	private static final int JAVA_VERSION_MAX = 16;
-
 	private static String level = null;
 
+	/**
+	 * @return the maximum Java version supported by the current Eclipse JDT version
+	 */
 	public static String getMaxDecompileLevel() {
 		if (level != null) {
 			return level;
 		}
 
-		String versionFieldName9 = "VERSION_%d"; //$NON-NLS-1$
-		String versionFieldName = "VERSION_1_%d"; //$NON-NLS-1$
-
-		for (int v = JAVA_VERSION_MAX; v >= 9; v--) {
-			String fieldName = String.format(versionFieldName9, v);
-			if (ReflectionUtils.getDeclaredField(JavaCore.class, fieldName) != null) {
-				level = (String) ReflectionUtils.getFieldValue(JavaCore.class, fieldName);
-				return level;
+		// filter oot all versions that are not a simple integers e.g. "9" "10" ...
+		Pattern p = Pattern.compile("^\\d+$");
+		List<String> allVersions = new LinkedList<>(JavaCore.getAllVersions());
+		Iterator<String> it = allVersions.iterator();
+		while (it.hasNext()) {
+			String v = it.next();
+			if (!p.matcher(v).matches()) {
+				it.remove();
 			}
 		}
-		for (int v = 8; v >= 1; v--) {
-			String fieldName = String.format(versionFieldName, v);
-			if (ReflectionUtils.getDeclaredField(JavaCore.class, fieldName) != null) {
-				level = (String) ReflectionUtils.getFieldValue(JavaCore.class, fieldName);
-				return level;
-			}
+		if (allVersions.isEmpty()) {
+			level = "1.8"; //$NON-NLS-1$
+			return level;
 		}
 
-		level = "1.8"; //$NON-NLS-1$
+		List<Integer> allVersionsInt = new ArrayList<>();
+		for (String v : allVersions) {
+			allVersionsInt.add(Integer.parseInt(v));
+		}
+		level = Integer.toString(Collections.max(allVersionsInt));
 		return level;
 	}
 
 	private static int jslLevel = -1;
 
 	public static int getMaxJSLLevel() {
-		if (jslLevel == -1) {
-			if (ReflectionUtils.getDeclaredField(AST.class, "JLS8") != null) //$NON-NLS-1$
-			{
-				jslLevel = (Integer) ReflectionUtils.getFieldValue(AST.class, "JLS8"); //$NON-NLS-1$
-			} else if (ReflectionUtils.getDeclaredField(AST.class, "JLS4") != null) //$NON-NLS-1$
-			{
-				jslLevel = (Integer) ReflectionUtils.getFieldValue(AST.class, "JLS4"); //$NON-NLS-1$
-			} else if (ReflectionUtils.getDeclaredField(AST.class, "JLS3") != null) //$NON-NLS-1$
-			{
-				jslLevel = (Integer) ReflectionUtils.getFieldValue(AST.class, "JLS3"); //$NON-NLS-1$
-			} else if (ReflectionUtils.getDeclaredField(AST.class, "JLS2") != null) //$NON-NLS-1$
-			{
-				jslLevel = (Integer) ReflectionUtils.getFieldValue(AST.class, "JLS2"); //$NON-NLS-1$
-			} else {
-				jslLevel = 3;
+		if (jslLevel != -1) {
+			return jslLevel;
+		}
+		Pattern p = Pattern.compile("^JLS\\d+$");
+		int maxFieldValue = 8; // Java 8 is supported by all Eclipse versions ECD targets
+		for (Field f : AST.class.getFields()) {
+			if (f.getType() != int.class || !p.matcher(f.getName()).matches()) {
+				continue;
+			}
+			try {
+				int value = f.getInt(AST.class);
+				if (value > maxFieldValue) {
+					maxFieldValue = value;
+				}
+			} catch (Exception e) {
+
 			}
 		}
+		jslLevel = maxFieldValue;
 		return jslLevel;
 	}
 }
