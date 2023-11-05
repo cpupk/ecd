@@ -319,7 +319,6 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper 
 					exceptions.add(e);
 				}
 			}
-			throw new RuntimeException("test");
 		} catch (Exception e) {
 			exceptions.add(e);
 		}

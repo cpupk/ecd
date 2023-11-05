@@ -185,13 +185,12 @@ public class ArtifactorySourceCodeFinder extends AbstractSourceCodeFinder implem
 					gav.setA(gavInArray[gavInArray.length - 3]);
 					gav.setV(gavInArray[gavInArray.length - 2]);
 
-					if (getLink)
+					if (getLink) {
 						gav.setArtifactLink(uri);
+					}
 					results.add(gav);
 				}
-
 			}
-
 		} catch (Throwable e) {
 			Logger.debug(e);
 		}
