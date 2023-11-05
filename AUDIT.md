@@ -33,8 +33,8 @@ _Primary Source: https://commons.apache.org/downloads/index.html_
 ### Fernflower
 * `./org.sf.feeling.decompiler/lib/fernflower.jar`
   * Not included in ECD repository, downloaded automatically via Maven
-  * SHA-256: a5dec2a76e546ad62bb0538c361ffe9e496ed2cd77eba6921da69527c3a19d0b
-  * Version from https://www.jetbrains.com/intellij-repository/releases/com/jetbrains/intellij/java/java-decompiler-engine/231.8770.65/java-decompiler-engine-231.8770.65.jar
+  * SHA-256: 97b3579a221a3edf9651fca278257307441cb6dfdcfe1a1c6579f11002ff5d27
+  * Version from https://www.jetbrains.com/intellij-repository/releases/com/jetbrains/intellij/java/java-decompiler-engine/232.10203.10/java-decompiler-engine-232.10203.10.jar
 
 ### Quiltflower
 _Primary Source: https://github.com/QuiltMC/quiltflower/releases_

@@ -100,7 +100,7 @@ Used libraries:
 ## Changelog
 * Version 3.4.0
   * Updated Embedded Decompilers
-    * Fernflower updated to 231.8770.65
+    * Fernflower updated to 232.10203.10
      
 * Version 3.3.0
   * ECD releases are now signed with a self-signed certificate

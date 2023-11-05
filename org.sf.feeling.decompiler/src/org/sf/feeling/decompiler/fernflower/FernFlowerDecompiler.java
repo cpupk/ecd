@@ -33,7 +33,7 @@ import org.sf.feeling.decompiler.util.UnicodeUtil;
 public class FernFlowerDecompiler implements IDecompiler {
 
 	public static final String decompilerType = "FernFlower"; //$NON-NLS-1$ \r\n"
-	public static final String decompilerVersion = "231.8770.65"; //$NON-NLS-1$ \r\n"
+	public static final String decompilerVersion = "232.10203.10"; //$NON-NLS-1$ \r\n"
 
 	private String source = ""; // $NON-NLS-1$ //$NON-NLS-1$
 	private long time, start;

@@ -28,9 +28,11 @@
 						<configuration>
 							<artifactItems>
 								<item>
+									<!-- https://mvnrepository.com/artifact/com.jetbrains.intellij.java/java-decompiler-engine  -->
+									<!-- On update: adapt version constant in FernFlowerDecompiler.java -->
 									<groupId>com.jetbrains.intellij.java</groupId>
 									<artifactId>java-decompiler-engine</artifactId>
-									<version>231.8770.65</version>
+									<version>232.10203.10</version>
 									<destFileName>fernflower.jar</destFileName>
 								</item>
 							</artifactItems>
