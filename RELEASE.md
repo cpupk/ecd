@@ -1,3 +1,7 @@
+# Update versio in pom.xml files
+
+    update-version.sh <new version number>
+
 # Creating an unsigned release
 
     mvn clean package 
