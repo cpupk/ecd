@@ -40,8 +40,9 @@ _Primary Source: https://commons.apache.org/downloads/index.html_
 _Primary Source: https://github.com/Vineflower/vineflower/releases_
 _Build Source: https://github.com/Vineflower/vineflower_
 * `./org.sf.feeling.decompiler.vineflower/lib/vineflower.jar`
+  * Not included in ECD repository, downloaded automatically via Maven
   * SHA-256: 2e563300af223b04772195709539fba69237e61eba14090ee3a44e2992c41cdb
-  * version from: https://github.com/Vineflower/vineflower/releases/download/1.9.3/vineflower-1.9.3.jar
+  * version from: https://repo1.maven.org/maven2/org/vineflower/vineflower/1.9.3/vineflower-1.9.3.jar
 
 ### Minimal JSON
 _Primary Source: https://github.com/ralfstx/minimal-json_
