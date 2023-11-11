@@ -13,7 +13,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.sf.feeling.decompiler.actions.BaseDecompilerHandler;
 import org.sf.feeling.decompiler.vineflower.VineflowerDecompilerPlugin;
 
-public class DecompileWithVineflowerCoreHandler extends BaseDecompilerHandler {
+public class DecompileWithVineflowerHandler extends BaseDecompilerHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {

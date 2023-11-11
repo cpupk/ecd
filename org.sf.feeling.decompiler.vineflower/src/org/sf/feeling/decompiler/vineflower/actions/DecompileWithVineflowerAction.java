@@ -14,9 +14,9 @@ import org.sf.feeling.decompiler.vineflower.VineflowerDecompilerPlugin;
 import org.sf.feeling.decompiler.vineflower.i18n.Messages;
 import org.sf.feeling.decompiler.util.UIUtil;
 
-public class DecompileWithVineflowerCoreAction extends Action {
+public class DecompileWithVineflowerAction extends Action {
 
-	public DecompileWithVineflowerCoreAction() {
+	public DecompileWithVineflowerAction() {
 		super(Messages.getString("JavaDecompilerActionBarContributor.Action.DecompileWithVineflower")); //$NON-NLS-1$
 		this.setImageDescriptor(VineflowerDecompilerPlugin.getImageDescriptor("icons/vineflower_16.png")); //$NON-NLS-1$
 	}
@@ -24,7 +24,7 @@ public class DecompileWithVineflowerCoreAction extends Action {
 	@Override
 	public void run() {
 		try {
-			new DecompileWithVineflowerCoreHandler().execute(null);
+			new DecompileWithVineflowerHandler().execute(null);
 		} catch (ExecutionException e) {
 		}
 	}

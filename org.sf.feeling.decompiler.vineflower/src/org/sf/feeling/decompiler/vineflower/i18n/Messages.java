@@ -16,7 +16,6 @@ public class Messages {
 	}
 
 	public static String getString(String key) {
-
 		try {
 			String result = RESOURCE_BUNDLE.getString(key);
 			result = new String(result.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);

@@ -4,7 +4,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.sf.feeling.decompiler.editor.*;
 import org.sf.feeling.decompiler.vineflower.VineflowerDecompilerPlugin;
-import org.sf.feeling.decompiler.vineflower.actions.DecompileWithVineflowerCoreAction;
+import org.sf.feeling.decompiler.vineflower.actions.DecompileWithVineflowerAction;
 import org.sf.feeling.decompiler.vineflower.i18n.Messages;
 
 public class VineflowerDecompilerDescriptor implements IDecompilerDescriptor {
@@ -42,7 +42,7 @@ public class VineflowerDecompilerDescriptor implements IDecompilerDescriptor {
 	@Override
 	public Action getDecompileAction() {
 		if (decompileAction == null) {
-			decompileAction = new DecompileWithVineflowerCoreAction();
+			decompileAction = new DecompileWithVineflowerAction();
 		}
 		return decompileAction;
 	}
