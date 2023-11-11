@@ -1,28 +1,24 @@
+/*******************************************************************************
+ * Copyright (c) 2017 Chen Chao and other ECD project contributors.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 
 package org.sf.feeling.decompiler.vineflower.i18n;
 
-import java.nio.charset.StandardCharsets;
-import java.text.MessageFormat;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import org.sf.feeling.decompiler.i18n.EcdResouceBundle;
 
 public class Messages {
 
-	private static final String BUNDLE_NAME = "org.sf.feeling.decompiler.vineflower.i18n.messages"; //$NON-NLS-1$
-
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
+	private static final EcdResouceBundle RESOURCE_BUNDLE = new EcdResouceBundle(Messages.class);
 
 	private Messages() {
 	}
 
 	public static String getString(String key) {
-		try {
-			String result = RESOURCE_BUNDLE.getString(key);
-			result = new String(result.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
-			return result;
-		} catch (MissingResourceException e) {
-			return '!' + key + '!';
-		}
+		return RESOURCE_BUNDLE.getString(key);
 	}
 
 	/**
@@ -32,6 +28,7 @@ public class Messages {
 	 * @return translated value string
 	 */
 	public static String getFormattedString(String key, Object[] arguments) {
-		return MessageFormat.format(getString(key), arguments);
+		return RESOURCE_BUNDLE.getFormattedString(key, arguments);
 	}
+
 }
