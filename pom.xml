@@ -21,8 +21,8 @@
 		<module>org.sf.feeling.decompiler.jd.feature</module>
 		<module>org.sf.feeling.decompiler.procyon</module>
 		<module>org.sf.feeling.decompiler.procyon.feature</module>
-		<module>org.sf.feeling.decompiler.quiltflower</module>
-		<module>org.sf.feeling.decompiler.quiltflower.feature</module>
+		<module>org.sf.feeling.decompiler.vineflower</module>
+		<module>org.sf.feeling.decompiler.vineflower.feature</module>
 		<module>org.sf.feeling.decompiler.source.attach</module>
 		<module>org.sf.feeling.decompiler.source.feature</module>
 		<module>update_site</module>

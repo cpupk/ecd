@@ -36,12 +36,13 @@ _Primary Source: https://commons.apache.org/downloads/index.html_
   * SHA-256: 97b3579a221a3edf9651fca278257307441cb6dfdcfe1a1c6579f11002ff5d27
   * Version from https://www.jetbrains.com/intellij-repository/releases/com/jetbrains/intellij/java/java-decompiler-engine/232.10203.10/java-decompiler-engine-232.10203.10.jar
 
-### Quiltflower
-_Primary Source: https://github.com/QuiltMC/quiltflower/releases_
-_Build Source: https://github.com/QuiltMC/quiltflower_
-* `./org.sf.feeling.decompiler.quiltflower/lib/quiltflower-1.9.0.jar`
-  * SHA-256: 21923293ada63ffc663cba26126fa108a65bb2019a5112b2adb987f05f4cbd1b
-  * version from: https://github.com/QuiltMC/quiltflower/releases/download/1.9.0/quiltflower-1.9.0.jar
+### Vineflower
+_Primary Source: https://github.com/Vineflower/vineflower/releases_
+_Build Source: https://github.com/Vineflower/vineflower_
+* `./org.sf.feeling.decompiler.vineflower/lib/vineflower.jar`
+  * Not included in ECD repository, downloaded automatically via Maven
+  * SHA-256: 2e563300af223b04772195709539fba69237e61eba14090ee3a44e2992c41cdb
+  * version from: https://repo1.maven.org/maven2/org/vineflower/vineflower/1.9.3/vineflower-1.9.3.jar
 
 ### Minimal JSON
 _Primary Source: https://github.com/ralfstx/minimal-json_
