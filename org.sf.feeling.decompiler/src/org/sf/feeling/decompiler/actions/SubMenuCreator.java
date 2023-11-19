@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.editor.DecompilerType;
+import org.sf.feeling.decompiler.editor.IDecompilerDescriptor;
 import org.sf.feeling.decompiler.util.UIUtil;
 
 public class SubMenuCreator implements IMenuCreator {
@@ -48,25 +49,16 @@ public class SubMenuCreator implements IMenuCreator {
 	private void fillMenu(final Menu menu) {
 		final MenuManager menuMgr = new MenuManager();
 
-		boolean isAddFernFlower = false;
+		String[] decompilerTypeArray = DecompilerType.getDecompilerTypes();
 
-		for (int i = 0; i < DecompilerType.getDecompilerTypes().length; i++) {
-			if (DecompilerType.getDecompilerTypes()[i].compareToIgnoreCase(DecompilerType.FernFlower) > 0
-					&& !isAddFernFlower) {
-				menuMgr.add(new DecompileWithFernFlowerAction());
-				isAddFernFlower = true;
-			}
-			menuMgr.add(JavaDecompilerPlugin.getDefault()
-					.getDecompilerDescriptor(DecompilerType.getDecompilerTypes()[i]).getDecompileAction());
-		}
-
-		if (!isAddFernFlower) {
-			menuMgr.add(new DecompileWithFernFlowerAction());
+		for (String decompilerType : decompilerTypeArray) {
+			IDecompilerDescriptor decompilerDescriptor = JavaDecompilerPlugin.getDefault()
+					.getDecompilerDescriptor(decompilerType);
+			menuMgr.add(decompilerDescriptor.getDecompileAction());
 		}
 
 		IContributionItem[] items = menuMgr.getItems();
-		for (int i = 0; i < items.length; i++) {
-			IContributionItem item = items[i];
+		for (IContributionItem item : items) {
 			IContributionItem newItem = item;
 			if (item instanceof ActionContributionItem) {
 				newItem = new ActionContributionItem(((ActionContributionItem) item).getAction());
@@ -89,7 +81,7 @@ public class SubMenuCreator implements IMenuCreator {
 		}
 	}
 
-	class PreferenceActionContributionItem extends ActionContributionItem {
+	private static class PreferenceActionContributionItem extends ActionContributionItem {
 
 		public PreferenceActionContributionItem(IAction action) {
 			super(action);
@@ -105,20 +97,9 @@ public class SubMenuCreator implements IMenuCreator {
 		if (dropDownMenuMgr == null) {
 			dropDownMenuMgr = new MenuManager();
 
-			boolean isAddFernFlower = false;
-
 			for (String decompilerType : DecompilerType.getDecompilerTypes()) {
-				if (decompilerType.compareToIgnoreCase(DecompilerType.FernFlower) > 0 && !isAddFernFlower) {
-					dropDownMenuMgr.add(new DecompileWithFernFlowerAction());
-					isAddFernFlower = true;
-				}
-
 				dropDownMenuMgr.add(
 						JavaDecompilerPlugin.getDefault().getDecompilerDescriptor(decompilerType).getDecompileAction());
-			}
-
-			if (!isAddFernFlower) {
-				dropDownMenuMgr.add(new DecompileWithFernFlowerAction());
 			}
 
 			dropDownMenuMgr.add(new Separator());

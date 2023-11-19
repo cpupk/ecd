@@ -28,7 +28,7 @@ public interface IDecompiler {
 	 * @param packege   file path like package name
 	 * @param className file name of the class file
 	 */
-	public void decompile(String root, String packege, String className);
+	void decompile(String root, String packege, String className);
 
 	/**
 	 * Decompiles a class file located in archive.
@@ -37,12 +37,12 @@ public interface IDecompiler {
 	 * @param packege     file path like package name
 	 * @param className   file name of the class file
 	 */
-	public void decompileFromArchive(String archivePath, String packege, String className);
+	void decompileFromArchive(String archivePath, String packege, String className);
 
 	/**
 	 * @return time taken by decompilation
 	 */
-	public long getDecompilationTime();
+	long getDecompilationTime();
 
 	/**
 	 * If any exceptions occurred during decompilation they should be included into
@@ -51,25 +51,24 @@ public interface IDecompiler {
 	 * @return non-<code>null</code> value which is a list containing
 	 *         <code>java.lang.Exception</code>'s
 	 */
-	public List<Exception> getExceptions();
+	List<Exception> getExceptions();
 
 	/**
 	 * @return decompilation log specific to physical decompiler
 	 */
-	public String getLog();
+	String getLog();
 
 	/**
 	 * @return Class file source which is the result of decompilation.
 	 */
-	public String getSource();
+	String getSource();
 
-	public String getDecompilerType();
+	String getDecompilerType();
 
-	public String removeComment(String source);
+	String removeComment(String source);
 
-	public boolean supportDebugLevel(int level);
+	boolean supportDebugLevel(int level);
 
-	public boolean supportLevel(int level);
+	boolean supportLevel(int level);
 
-	public boolean supportDebug();
 }

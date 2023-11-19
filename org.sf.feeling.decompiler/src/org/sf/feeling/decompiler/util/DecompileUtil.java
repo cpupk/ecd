@@ -25,7 +25,6 @@ import org.eclipse.jdt.internal.core.ClassFile;
 import org.eclipse.jdt.internal.core.SourceMapper;
 import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.sf.feeling.decompiler.editor.DecompilerSourceMapper;
-import org.sf.feeling.decompiler.editor.DecompilerType;
 import org.sf.feeling.decompiler.editor.SourceMapperFactory;
 
 public class DecompileUtil {
@@ -39,10 +38,6 @@ public class DecompileUtil {
 		if (origSrc == null || always || !reuseBuf || force) {
 			DecompilerSourceMapper sourceMapper = SourceMapperFactory.getSourceMapper(decompilerType);
 			char[] src = sourceMapper.findSource(cf.getType());
-
-			if (src == null && !DecompilerType.FernFlower.equals(decompilerType)) {
-				src = SourceMapperFactory.getSourceMapper(DecompilerType.FernFlower).findSource(cf.getType());
-			}
 			if (src == null) {
 				return origSrc;
 			} else

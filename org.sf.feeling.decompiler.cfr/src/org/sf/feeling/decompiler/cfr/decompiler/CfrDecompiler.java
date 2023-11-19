@@ -195,11 +195,7 @@ public class CfrDecompiler implements IDecompiler {
 
 	@Override
 	public boolean supportDebugLevel(int level) {
-		return false;
+		return false; // CFR is not usable when debugging?
 	}
 
-	@Override
-	public boolean supportDebug() {
-		return false;
-	}
 }

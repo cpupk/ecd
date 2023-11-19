@@ -57,8 +57,8 @@ public class ProcyonDecompilerDescriptor implements IDecompilerDescriptor {
 	}
 
 	@Override
-	public boolean isDefault() {
-		return false;
+	public int getDefaultPriority() {
+		return 2;
 	}
 
 	@Override

@@ -34,7 +34,6 @@ import org.eclipse.jdt.internal.core.SourceMapper;
 import org.eclipse.jdt.internal.ui.javaeditor.IClassFileEditorInput;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
-import org.sf.feeling.decompiler.fernflower.FernFlowerDecompiler;
 import org.sf.feeling.decompiler.util.ClassUtil;
 import org.sf.feeling.decompiler.util.DecompileUtil;
 import org.sf.feeling.decompiler.util.DecompilerOutputUtil;
@@ -161,16 +160,10 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper 
 		usedDecompiler = decompile(null, type, exceptions, root, className);
 
 		if (noDecompiledSourceCodeAvailable(usedDecompiler)) {
-			if (usedDecompiler == null || !DecompilerType.FernFlower.equals(usedDecompiler.getDecompilerType())) {
-				String msg = String.format("Failed to decompile using %s, fallback to FernFlower decompiler",
-						getDecompilerName());
+			if (usedDecompiler == null) {
+				String msg = String.format("Failed to decompile using %s", getDecompilerName());
 				exceptions.add(new RuntimeException(msg));
-				usedDecompiler = decompile(new FernFlowerDecompiler(), type, exceptions, root, className);
-				if (noDecompiledSourceCodeAvailable(usedDecompiler)) {
-					String msg2 = String.format("Failed to decompile using %s and FernFlower decompiler",
-							getDecompilerName());
-					return messageWithExceptionsAsSourceCode(msg2, exceptions);
-				}
+				return messageWithExceptionsAsSourceCode(msg, exceptions);
 			}
 		}
 

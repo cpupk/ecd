@@ -169,8 +169,9 @@ public class DisassemblerConfiguration extends TextSourceViewerConfiguration {
 	 * @since 3.0
 	 */
 	public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer) {
-		if (fDocumentPartitioning != null)
+		if (fDocumentPartitioning != null) {
 			return fDocumentPartitioning;
+		}
 		return super.getConfiguredDocumentPartitioning(sourceViewer);
 	}
 
@@ -560,7 +561,6 @@ public class DisassemblerConfiguration extends TextSourceViewerConfiguration {
 			IDocument document = fTextEditor.getDocumentProvider().getDocument(fTextEditor.getEditorInput());
 
 			int destOffset, destLength, elementIndex, elementLength;
-			;
 
 			try {
 				destOffset = document.getLineOffset(field.getBytecodeDocumentLine());

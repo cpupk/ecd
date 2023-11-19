@@ -36,8 +36,9 @@ public class DecompilerAdapterInvocationHandler implements InvocationHandler {
 					List allResult = new ArrayList();
 					for (Iterator iter = adapters.iterator(); iter.hasNext();) {
 						Object result = method.invoke(iter.next(), args);
-						if (result != null)
+						if (result != null) {
 							allResult.addAll(Arrays.asList((Object[]) result));
+						}
 					}
 					Object a = java.lang.reflect.Array.newInstance(returnType.getComponentType(), allResult.size());
 					return allResult.toArray((Object[]) a);
@@ -52,8 +53,9 @@ public class DecompilerAdapterInvocationHandler implements InvocationHandler {
 					boolean returnValue = false;
 					for (Iterator iter = adapters.iterator(); iter.hasNext();) {
 						Boolean result = (Boolean) method.invoke(iter.next(), args);
-						if (returnValue != result.booleanValue())
+						if (returnValue != result.booleanValue()) {
 							returnValue = returnValue ^ result.booleanValue();
+						}
 					}
 					return Boolean.valueOf(returnValue);
 				} else if (returnType == Void.TYPE) {

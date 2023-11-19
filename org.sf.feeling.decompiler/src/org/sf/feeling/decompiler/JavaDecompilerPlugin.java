@@ -13,6 +13,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -31,11 +32,11 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
-import org.sf.feeling.decompiler.editor.DecompilerType;
 import org.sf.feeling.decompiler.editor.IDecompilerDescriptor;
 import org.sf.feeling.decompiler.editor.JavaDecompilerBufferManager;
 import org.sf.feeling.decompiler.extension.DecompilerAdapterManager;
 import org.sf.feeling.decompiler.source.attach.IAttachSourceHandler;
+import org.sf.feeling.decompiler.util.DefaultDecompilerDescriptorComparator;
 import org.sf.feeling.decompiler.util.FileUtil;
 import org.sf.feeling.decompiler.util.Logger;
 import org.sf.feeling.decompiler.util.SortMemberUtil;
@@ -176,17 +177,14 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 		store.setDefault(CLASS_FILE_ATTR_SHOW_MAXS, false);
 	}
 
-	private void setDefaultDecompiler(IPreferenceStore store) {
-		Object[] decompilerAdapters = DecompilerAdapterManager.getAdapters(this, IDecompilerDescriptor.class);
+	private void initializeDecompilerDescriptorMap(IPreferenceStore store) {
+		List<IDecompilerDescriptor> decompilerAdapters = DecompilerAdapterManager.getAdapterList(this,
+				IDecompilerDescriptor.class);
 
 		if (decompilerAdapters != null) {
-			for (int i = 0; i < decompilerAdapters.length; i++) {
-				Object adapter = decompilerAdapters[i];
-				if (adapter instanceof IDecompilerDescriptor) {
-					IDecompilerDescriptor descriptor = (IDecompilerDescriptor) adapter;
-					if (descriptor.isEnabled()) {
-						decompilerDescriptorMap.put(descriptor.getDecompilerType(), descriptor);
-					}
+			for (IDecompilerDescriptor descriptor : decompilerAdapters) {
+				if (descriptor.isEnabled()) {
+					decompilerDescriptorMap.put(descriptor.getDecompilerType(), descriptor);
 				}
 			}
 		}
@@ -194,14 +192,16 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty().equals(IGNORE_EXISTING))
+		if (event.getProperty().equals(IGNORE_EXISTING)) {
 			JavaDecompilerBufferManager.closeDecompilerBuffers(false);
+		}
 	}
 
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		setDefaultDecompiler(getPreferenceStore());
+		initializeDecompilerDescriptorMap(getPreferenceStore());
+		initializeDefaultDecompilerType();
 		getPreferenceStore().addPropertyChangeListener(this);
 		SortMemberUtil.deleteDecompilerProject();
 		Display.getDefault().asyncExec(new SetupRunnable());
@@ -213,15 +213,31 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 			preferenceStore = super.getPreferenceStore();
 
 			String decompilerType = preferenceStore.getString(DECOMPILER_TYPE);
-			if (!DecompilerType.FernFlower.equals(decompilerType)) {
-				IDecompilerDescriptor descriptor = getDecompilerDescriptor(decompilerType);
-				if (descriptor == null) {
-					preferenceStore.setDefault(DECOMPILER_TYPE, getDefalutDecompilerType());
+			IDecompilerDescriptor descriptor = getDecompilerDescriptor(decompilerType);
+			if (descriptor == null) {
+				String defaultDecompiler = getDefaultDecompilerType();
+				if (defaultDecompiler != null) {
+					preferenceStore.setDefault(DECOMPILER_TYPE, defaultDecompiler);
 				}
 			}
-
 		}
 		return preferenceStore;
+	}
+
+	public void initializeDefaultDecompilerType() {
+		String decompilerType = preferenceStore.getString(DECOMPILER_TYPE);
+		IDecompilerDescriptor descriptor = getDecompilerDescriptor(decompilerType);
+		if (descriptor != null) {
+			return;
+		}
+		Collection<IDecompilerDescriptor> descriptorColl = JavaDecompilerPlugin.getDefault()
+				.getDecompilerDescriptorMap().values();
+		if (!descriptorColl.isEmpty()) {
+			String defaultDecompiler = getDefaultDecompilerType();
+			if (defaultDecompiler != null) {
+				preferenceStore.setDefault(DECOMPILER_TYPE, defaultDecompiler);
+			}
+		}
 	}
 
 	@Override
@@ -264,13 +280,13 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 		return false;
 	}
 
-	private Set<String> librarys = new ConcurrentSkipListSet<String>();
+	private final Set<String> libraries = new ConcurrentSkipListSet<>();
 
 	public void attachSource(IPackageFragmentRoot library, boolean force) {
 		Object attachSourceAdapter = DecompilerAdapterManager.getAdapter(this, IAttachSourceHandler.class);
 		if (attachSourceAdapter instanceof IAttachSourceHandler) {
-			if (!librarys.contains(library.getPath().toOSString()) || force) {
-				librarys.add(library.getPath().toOSString());
+			if (!libraries.contains(library.getPath().toOSString()) || force) {
+				libraries.add(library.getPath().toOSString());
 				((IAttachSourceHandler) attachSourceAdapter).execute(library, force);
 			}
 		}
@@ -279,17 +295,16 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 	public void syncLibrarySource(IPackageFragmentRoot library) {
 		try {
 			if (library.getPath() != null && library.getSourceAttachmentPath() != null
-					&& !librarys.contains(library.getPath().toOSString())) {
+					&& !libraries.contains(library.getPath().toOSString())) {
 				final IPreferenceStore prefs = JavaDecompilerPlugin.getDefault().getPreferenceStore();
 				if (prefs.getBoolean(JavaDecompilerPlugin.DEFAULT_EDITOR)) {
 					final Object attachSourceAdapter = DecompilerAdapterManager
 							.getAdapter(JavaDecompilerPlugin.getDefault(), IAttachSourceHandler.class);
 					if (attachSourceAdapter instanceof IAttachSourceHandler) {
-						librarys.add(library.getPath().toOSString());
+						libraries.add(library.getPath().toOSString());
 						if (!((IAttachSourceHandler) attachSourceAdapter).syncAttachSource(library)) {
-							librarys.remove(library.getPath().toOSString());
+							libraries.remove(library.getPath().toOSString());
 						}
-						;
 					}
 				}
 			}
@@ -306,17 +321,15 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 		return getPreferenceStore().getBoolean(ATTACH_SOURCE);
 	}
 
-	public String getDefalutDecompilerType() {
-		Collection<IDecompilerDescriptor> descriptors = JavaDecompilerPlugin.getDefault().getDecompilerDescriptorMap()
-				.values();
-		if (descriptors != null) {
-			for (IDecompilerDescriptor iDecompilerDescriptor : descriptors) {
-				if (iDecompilerDescriptor.isDefault()) {
-					return iDecompilerDescriptor.getDecompilerType();
-				}
-			}
+	public String getDefaultDecompilerType() {
+		Collection<IDecompilerDescriptor> descriptorColl = JavaDecompilerPlugin.getDefault()
+				.getDecompilerDescriptorMap().values();
+		if (!descriptorColl.isEmpty()) {
+			IDecompilerDescriptor defaultDecompilerDescr = descriptorColl.stream()
+					.sorted(new DefaultDecompilerDescriptorComparator()).findFirst().get();
+			return defaultDecompilerDescr.getDecompilerType();
 		}
-		return DecompilerType.FernFlower;
+		return null;
 	}
 
 	public boolean isDebugMode() {

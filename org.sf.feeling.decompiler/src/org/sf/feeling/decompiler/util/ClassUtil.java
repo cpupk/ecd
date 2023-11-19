@@ -15,6 +15,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.jetbrains.java.decompiler.struct.StructClass;
 import org.jetbrains.java.decompiler.struct.lazy.LazyLoader;
@@ -22,7 +24,6 @@ import org.jetbrains.java.decompiler.util.DataInputFullStream;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.editor.IDecompiler;
 import org.sf.feeling.decompiler.editor.IDecompilerDescriptor;
-import org.sf.feeling.decompiler.fernflower.FernFlowerDecompiler;
 
 public class ClassUtil {
 
@@ -39,7 +40,7 @@ public class ClassUtil {
 		int classLevel = getLevel(is);
 
 		boolean debug = isDebug();
-		IDecompiler defaultDecompiler = getDefaultDecompiler(classLevel, debug);
+		IDecompiler defaultDecompiler = getDebugDecompiler(classLevel, debug);
 
 		if (decompiler.supportLevel(classLevel)) {
 			if (debug) {
@@ -114,25 +115,21 @@ public class ClassUtil {
 		return structClass.qualifiedName;
 	}
 
-	public static IDecompiler getDefaultDecompiler(int level, boolean debug) {
+	public static IDecompiler getDebugDecompiler(int level, boolean debug) {
 		Collection<IDecompilerDescriptor> descriptors = JavaDecompilerPlugin.getDefault().getDecompilerDescriptorMap()
 				.values();
 		if (descriptors != null) {
-			for (IDecompilerDescriptor iDecompilerDescriptor : descriptors) {
-				if (iDecompilerDescriptor.isDefault()) {
-					IDecompiler decompiler = iDecompilerDescriptor.getDecompiler();
-					if (debug) {
-						if (decompiler.supportDebug() && decompiler.supportDebugLevel(level)) {
-							return decompiler;
-						}
-					} else {
-						if (decompiler.supportLevel(level)) {
-							return decompiler;
-						}
-					}
-				}
+			Stream<IDecompilerDescriptor> stream = descriptors.stream();
+			if (debug) {
+				stream = stream.filter(d -> d.getDecompiler().supportDebugLevel(level));
 			}
+			Optional<IDecompilerDescriptor> defaultDecompiler = stream
+					.sorted(new DefaultDecompilerDescriptorComparator()).findFirst();
+			if (defaultDecompiler.isEmpty()) {
+				return null;
+			}
+			return defaultDecompiler.get().getDecompiler();
 		}
-		return new FernFlowerDecompiler();
+		return null;
 	}
 }

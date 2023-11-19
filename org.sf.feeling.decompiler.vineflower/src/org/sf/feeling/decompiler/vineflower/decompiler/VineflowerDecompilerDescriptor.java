@@ -2,7 +2,9 @@ package org.sf.feeling.decompiler.vineflower.decompiler;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.sf.feeling.decompiler.editor.*;
+import org.sf.feeling.decompiler.editor.BaseDecompilerSourceMapper;
+import org.sf.feeling.decompiler.editor.IDecompiler;
+import org.sf.feeling.decompiler.editor.IDecompilerDescriptor;
 import org.sf.feeling.decompiler.vineflower.VineflowerDecompilerPlugin;
 import org.sf.feeling.decompiler.vineflower.actions.DecompileWithVineflowerAction;
 import org.sf.feeling.decompiler.vineflower.i18n.Messages;
@@ -53,8 +55,8 @@ public class VineflowerDecompilerDescriptor implements IDecompilerDescriptor {
 	}
 
 	@Override
-	public boolean isDefault() {
-		return false;
+	public int getDefaultPriority() {
+		return 10;
 	}
 
 	@Override

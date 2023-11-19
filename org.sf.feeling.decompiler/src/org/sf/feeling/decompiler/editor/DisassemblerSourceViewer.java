@@ -146,8 +146,9 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 		ReflectionUtils.invokeMethod(this, "initializeSourceViewer", new Class[] { //$NON-NLS-1$
 				IEditorInput.class }, new Object[] { getEditorInput() });
 
-		if (fSourceViewerDecorationSupport != null)
+		if (fSourceViewerDecorationSupport != null) {
 			fSourceViewerDecorationSupport.install(getPreferenceStore());
+		}
 
 		StyledText styledText = fSourceViewer.getTextWidget();
 		styledText.addMouseListener(getCursorListener());
@@ -191,15 +192,17 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 		updateDocument(provider, fSourceViewer);
 
 		IVerticalRuler ruler = getVerticalRuler();
-		if (ruler instanceof CompositeRuler)
+		if (ruler instanceof CompositeRuler) {
 			updateContributedRulerColumns((CompositeRuler) ruler);
+		}
 
 		IColumnSupport columnSupport = (IColumnSupport) getAdapter(IColumnSupport.class);
 
 		RulerColumnDescriptor lineNumberColumnDescriptor = RulerColumnRegistry.getDefault()
 				.getColumnDescriptor(LineNumberColumn.ID);
-		if (lineNumberColumnDescriptor != null)
+		if (lineNumberColumnDescriptor != null) {
 			columnSupport.setColumnVisible(lineNumberColumnDescriptor, isLineNumberRulerVisible());
+		}
 
 		IPropertyChangeListener fFontPropertyChangeListener = (IPropertyChangeListener) ReflectionUtils
 				.getFieldValue(this, "fFontPropertyChangeListener"); //$NON-NLS-1$
@@ -259,8 +262,9 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 		@Override
 		public void addSelectionChangedListener(ISelectionChangedListener listener) {
 			super.addSelectionChangedListener(listener);
-			if (getSourceViewer() != null)
+			if (getSourceViewer() != null) {
 				fSelectionListeners.add(listener);
+			}
 		}
 
 		/*
@@ -268,8 +272,9 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 		 */
 		@Override
 		public ISelection getSelection() {
-			if (fInvalidSelection != null)
+			if (fInvalidSelection != null) {
 				return fInvalidSelection;
+			}
 			return super.getSelection();
 		}
 
@@ -280,8 +285,9 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 		@Override
 		public void removeSelectionChangedListener(ISelectionChangedListener listener) {
 			super.removeSelectionChangedListener(listener);
-			if (getSourceViewer() != null)
+			if (getSourceViewer() != null) {
 				fSelectionListeners.remove(listener);
+			}
 		}
 
 		/*
@@ -319,8 +325,10 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 		@Override
 		public void addPostSelectionChangedListener(ISelectionChangedListener listener) {
 			super.addPostSelectionChangedListener(listener);
-			if (getSourceViewer() != null && getSourceViewer().getSelectionProvider() instanceof IPostSelectionProvider)
+			if (getSourceViewer() != null
+					&& getSourceViewer().getSelectionProvider() instanceof IPostSelectionProvider) {
 				fPostSelectionListeners.add(listener);
+			}
 		}
 
 		/*
@@ -331,8 +339,9 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 		@Override
 		public void removePostSelectionChangedListener(ISelectionChangedListener listener) {
 			super.removePostSelectionChangedListener(listener);
-			if (getSourceViewer() != null)
+			if (getSourceViewer() != null) {
 				fPostSelectionListeners.remove(listener);
+			}
 		}
 
 		/*
@@ -496,11 +505,13 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 		if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.DISASSEMBLER_MODE
 				&& disassemblerText != null && !disassemblerText.isDisposed() && disassemblerRootElement != null) {
 			if (!force) {
-				if (UIUtil.requestFromDisassemblerSelection())
+				if (UIUtil.requestFromDisassemblerSelection()) {
 					return;
+				}
 
-				if (!UIUtil.requestFromLinkToSelection())
+				if (!UIUtil.requestFromLinkToSelection()) {
 					return;
+				}
 			}
 
 			if (selectedElement instanceof IMethod || selectedElement instanceof IField
@@ -689,8 +700,7 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 				}
 			} else {
 				IJavaElement[] children = element.getChildren();
-				for (int i = 0; i < children.length; i++) {
-					IJavaElement child = children[i];
+				for (IJavaElement child : children) {
 					if (child instanceof OutlineElement) {
 						OutlineElement result = searchElement((OutlineElement) child, reference);
 						if (result != null) {

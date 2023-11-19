@@ -186,8 +186,9 @@ public class UIUtil {
 		while ((selections != null) && selections.hasNext()) {
 			Object select = selections.next();
 
-			if (eleClass.isInstance(select))
+			if (eleClass.isInstance(select)) {
 				elements.add(select);
+			}
 		}
 
 		return elements;

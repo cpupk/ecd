@@ -9,23 +9,14 @@
 package org.sf.feeling.decompiler.editor;
 
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
-import org.sf.feeling.decompiler.fernflower.FernFlowerSourceMapper;
 
 public class SourceMapperFactory {
 
-	private static DecompilerSourceMapper fernFlowerSourceMapper;
-
 	public static DecompilerSourceMapper getSourceMapper(String decompiler) {
 
-		if (DecompilerType.FernFlower.equals(decompiler)) {
-			if (fernFlowerSourceMapper == null) {
-				fernFlowerSourceMapper = new FernFlowerSourceMapper();
-			}
-			return fernFlowerSourceMapper;
-		} else {
-			IDecompilerDescriptor descriptor = JavaDecompilerPlugin.getDefault().getDecompilerDescriptor(decompiler);
-			if (descriptor != null)
-				return descriptor.getDecompilerSourceMapper();
+		IDecompilerDescriptor descriptor = JavaDecompilerPlugin.getDefault().getDecompilerDescriptor(decompiler);
+		if (descriptor != null) {
+			return descriptor.getDecompilerSourceMapper();
 		}
 		return null;
 	}

@@ -94,23 +94,11 @@ public class JavaDecompilerPreferencePage extends FieldEditorPreferencePage impl
 			}
 		};
 
-		String fernLabel = Messages.getString("JavaDecompilerPreferencePage.Decompiler.FernFlower"); //$NON-NLS-1$
-
-		boolean isAddFernFlower = false;
-
 		JavaDecompilerPlugin javaDecompilerPlugin = JavaDecompilerPlugin.getDefault();
 		for (String decompilerType : DecompilerType.getDecompilerTypes()) {
 			IDecompilerDescriptor descriptor = javaDecompilerPlugin.getDecompilerDescriptor(decompilerType);
 			String label = descriptor.getDecompilerPreferenceLabel().trim();
-			if (label.compareToIgnoreCase(fernLabel) > 0 && !isAddFernFlower) {
-				defaultDecompiler.addItem(DecompilerType.FernFlower, fernLabel, DecompilerType.FernFlower);
-				isAddFernFlower = true;
-			}
 			defaultDecompiler.addItem(descriptor.getDecompilerType(), label, descriptor.getDecompilerType());
-		}
-
-		if (!isAddFernFlower) {
-			defaultDecompiler.addItem(DecompilerType.FernFlower, fernLabel, DecompilerType.FernFlower);
 		}
 
 		addField(defaultDecompiler);

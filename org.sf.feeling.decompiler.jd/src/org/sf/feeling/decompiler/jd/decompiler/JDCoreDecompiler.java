@@ -164,8 +164,4 @@ public class JDCoreDecompiler implements IDecompiler {
 		return true;
 	}
 
-	@Override
-	public boolean supportDebug() {
-		return true;
-	}
 }

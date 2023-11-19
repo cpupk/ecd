@@ -58,8 +58,8 @@ public class CfrDecompilerDescriptor implements IDecompilerDescriptor {
 	}
 
 	@Override
-	public boolean isDefault() {
-		return false;
+	public int getDefaultPriority() {
+		return 0;
 	}
 
 	@Override

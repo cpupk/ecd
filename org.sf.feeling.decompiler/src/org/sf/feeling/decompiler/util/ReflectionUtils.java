@@ -46,8 +46,9 @@ public class ReflectionUtils {
 	}
 
 	public static Object invokeMethod(Object object, String methodName, Class[] parameterTypes, Object[] parameters) {
-		if (object == null || methodName == null)
+		if (object == null || methodName == null) {
 			return null;
+		}
 
 		Method method = getDeclaredMethod(object, methodName, parameterTypes);
 		return invokeMethod(method, object, parameters);

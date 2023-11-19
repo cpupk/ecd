@@ -12,38 +12,5 @@
 
 	<artifactId>org.sf.feeling.decompiler</artifactId>
 	<packaging>eclipse-plugin</packaging>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>${maven.dependency.plugin.version}</version>
-				<executions>
-					<execution>
-						<id>copy-libraries</id>
-						<phase>validate</phase>
-						<goals>
-							<goal>copy</goal>
-						</goals>
-						<configuration>
-							<artifactItems>
-								<item>
-									<!-- https://mvnrepository.com/artifact/com.jetbrains.intellij.java/java-decompiler-engine  -->
-									<!-- On update: adapt version constant in FernFlowerDecompiler.java -->
-									<groupId>com.jetbrains.intellij.java</groupId>
-									<artifactId>java-decompiler-engine</artifactId>
-									<version>232.10203.10</version>
-									<destFileName>fernflower.jar</destFileName>
-								</item>
-							</artifactItems>
-							<outputDirectory>lib</outputDirectory>
-							<overWriteReleases>true</overWriteReleases>
-							<overWriteSnapshots>true</overWriteSnapshots>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
 </project>
 

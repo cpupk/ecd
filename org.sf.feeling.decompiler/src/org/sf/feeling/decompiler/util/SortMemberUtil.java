@@ -43,9 +43,9 @@ public class SortMemberUtil {
 	public static String sortMember(String packageName, String className, String code) {
 
 		IPackageFragmentRoot sourceRootFragment = getDecompilerSourceFolder();
-		if (sourceRootFragment == null)
+		if (sourceRootFragment == null) {
 			return code;
-
+		}
 		try {
 			if (!sourceRootFragment.getJavaProject().isOpen()) {
 				sourceRootFragment.getJavaProject().open(null);
@@ -87,12 +87,11 @@ public class SortMemberUtil {
 			String content = iCompilationUnit.getSource();
 			iCompilationUnit.delete(true, null);
 			iCompilationUnit.destroy();
-			if (content != null)
+			if (content != null) {
 				code = content;
+			}
 			packageFragment.getJavaProject().close();
-		} catch (IOException e) {
-			JavaDecompilerPlugin.logError(e, ""); //$NON-NLS-1$
-		} catch (CoreException e) {
+		} catch (IOException | CoreException e) {
 			JavaDecompilerPlugin.logError(e, ""); //$NON-NLS-1$
 		}
 		return code;
@@ -113,8 +112,9 @@ public class SortMemberUtil {
 	public static IPackageFragmentRoot getDecompilerSourceFolder() {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IProject project = root.getProject(".decompiler"); //$NON-NLS-1$
-		if (project == null)
+		if (project == null) {
 			return null;
+		}
 		if (!project.exists()) {
 			try {
 				project.create(null);
@@ -131,8 +131,9 @@ public class SortMemberUtil {
 				return null;
 			}
 
-			if (!project.isOpen())
+			if (!project.isOpen()) {
 				return null;
+			}
 		} else if (!project.isOpen()) {
 			try {
 				project.open(null);
@@ -142,8 +143,9 @@ public class SortMemberUtil {
 			}
 		}
 
-		if (decompilerSourceFolder != null)
+		if (decompilerSourceFolder != null) {
 			return decompilerSourceFolder;
+		}
 
 		IJavaProject javaProject = JavaCore.create(project);
 

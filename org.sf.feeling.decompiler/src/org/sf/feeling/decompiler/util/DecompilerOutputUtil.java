@@ -31,7 +31,6 @@ import org.eclipse.jdt.core.dom.Initializer;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
-import org.sf.feeling.decompiler.editor.DecompilerType;
 
 public class DecompilerOutputUtil {
 
@@ -45,7 +44,7 @@ public class DecompilerOutputUtil {
 	/**
 	 * Input split into lines
 	 */
-	private final List<InputLine> inputLines = new ArrayList<InputLine>();
+	private final List<InputLine> inputLines = new ArrayList<>();
 
 	/**
 	 * Parsed input
@@ -55,7 +54,7 @@ public class DecompilerOutputUtil {
 	/**
 	 * Output lines
 	 */
-	private final List<JavaSrcLine> javaSrcLines = new ArrayList<JavaSrcLine>();
+	private final List<JavaSrcLine> javaSrcLines = new ArrayList<>();
 
 	public final static String line_separator = System.getProperty("line.separator", //$NON-NLS-1$
 			"\r\n"); //$NON-NLS-1$
@@ -76,7 +75,7 @@ public class DecompilerOutputUtil {
 
 	private class JavaSrcLine {
 
-		List<Integer> inputLines = new ArrayList<Integer>();
+		List<Integer> inputLines = new ArrayList<>();
 
 		@Override
 		public String toString() {
@@ -289,9 +288,8 @@ public class DecompilerOutputUtil {
 	}
 
 	private List<Integer> getBeforeLines(JavaSrcLine javaSrcLine) {
-		List<Integer> lineNumbers = new ArrayList<Integer>();
-		for (int i = 0; i < javaSrcLine.inputLines.size(); i++) {
-			int num = javaSrcLine.inputLines.get(i);
+		List<Integer> lineNumbers = new ArrayList<>();
+		for (int num : javaSrcLine.inputLines) {
 			InputLine line = inputLines.get(num);
 			if (line != null && line.outputLineNum != -1) {
 				break;
@@ -303,24 +301,27 @@ public class DecompilerOutputUtil {
 	}
 
 	private int getOutputLineNumber(JavaSrcLine javaSrcLine) {
-		for (int i = 0; i < javaSrcLine.inputLines.size(); i++) {
-			int numLine = javaSrcLine.inputLines.get(i);
+		for (int numLine : javaSrcLine.inputLines) {
 			InputLine inputLine = inputLines.get(numLine);
-			if (inputLine != null && inputLine.outputLineNum != -1)
+			if (inputLine != null && inputLine.outputLineNum != -1) {
 				return inputLine.outputLineNum;
+			}
 		}
 		return -1;
 	}
 
 	private int getLeftPosition(String string, int index) {
-		if (string == null || string.length() < index)
+		if (string == null || string.length() < index) {
 			return -1;
+		}
 
 		for (int j = index - 1; j >= 0; j--) {
-			if (j < 0)
+			if (j < 0) {
 				break;
-			if (string.charAt(j) == '\n')
+			}
+			if (string.charAt(j) == '\n') {
 				return index - j;
+			}
 		}
 		return -1;
 	}
@@ -356,10 +357,11 @@ public class DecompilerOutputUtil {
 		while (lineStart < input.length()) {
 			// Compute line end
 			lineEnd = input.indexOf('\n', lineEnd);
-			if (lineEnd == -1)
+			if (lineEnd == -1) {
 				lineEnd = input.length();
-			else
+			} else {
 				lineEnd++;
+			}
 
 			// Build OutputLine object
 			InputLine outputLine = new InputLine();
@@ -373,9 +375,6 @@ public class DecompilerOutputUtil {
 
 	public static int parseJavaLineNumber(String decompilerType, String line) {
 		String regex = "/\\*\\s*\\d+\\s*\\*/"; //$NON-NLS-1$
-		if (DecompilerType.FernFlower.equals(decompilerType)) {
-			regex = "//\\s+\\d+"; //$NON-NLS-1$
-		}
 		Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
 		Matcher matcher = pattern.matcher(line.trim());
 		if (matcher.find()) {
@@ -403,28 +402,26 @@ public class DecompilerOutputUtil {
 
 	private String removeJavaLineNumber(String line, boolean generageEmptyString, int leftTrimSpace) {
 		String regex = "/\\*\\s*\\d+\\s*\\*/"; //$NON-NLS-1$
-		if (DecompilerType.FernFlower.equals(decompilerType)) {
-			regex = "//\\s+\\d+(\\s*\\d*)*"; //$NON-NLS-1$
-		}
+//		if (DecompilerType.FernFlower.equals(decompilerType)) {
+//			regex = "//\\s+\\d+(\\s*\\d*)*"; //$NON-NLS-1$
+//		}
 		Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
 		Matcher matcher = pattern.matcher(line.trim());
 
 		if (matcher.find()) {
 			line = line.replace(matcher.group(), ""); //$NON-NLS-1$
-			if (!DecompilerType.FernFlower.equals(decompilerType) && generageEmptyString) {
+			if (generageEmptyString) {
 				line = generageEmptyString(matcher.group().length()) + line;
 			}
 		}
-		if (!DecompilerType.FernFlower.equals(decompilerType)) {
-			regex = "/\\*\\s+\\*/"; //$NON-NLS-1$
-			pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
-			matcher = pattern.matcher(line);
+		regex = "/\\*\\s+\\*/"; //$NON-NLS-1$
+		pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+		matcher = pattern.matcher(line);
 
-			if (matcher.find()) {
-				line = line.replace(matcher.group(), ""); //$NON-NLS-1$
-				if (generageEmptyString) {
-					line = generageEmptyString(matcher.group().length()) + line;
-				}
+		if (matcher.find()) {
+			line = line.replace(matcher.group(), ""); //$NON-NLS-1$
+			if (generageEmptyString) {
+				line = generageEmptyString(matcher.group().length()) + line;
 			}
 		}
 		if (leftTrimSpace > 0 && line.startsWith(generageEmptyString(leftTrimSpace))) {
@@ -460,8 +457,9 @@ public class DecompilerOutputUtil {
 	}
 
 	private void addAbove(int inputBeginLineNo, int inputLineNo, int outputLineNo) {
-		if (outputLineNo == 1)
+		if (outputLineNo == 1) {
 			return;
+		}
 
 		int offset = 1;
 		/*

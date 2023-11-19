@@ -18,7 +18,6 @@ import org.eclipse.jdt.internal.compiler.env.IBinaryType;
 import org.eclipse.jdt.internal.core.BufferManager;
 import org.eclipse.jdt.internal.core.ClassFile;
 import org.eclipse.jdt.internal.core.SourceMapper;
-import org.sf.feeling.decompiler.util.DecompileUtil;
 import org.sf.feeling.decompiler.util.SourceMapperUtil;
 
 public class ClassFileSourceMap {
@@ -36,14 +35,16 @@ public class ClassFileSourceMap {
 	private static void mapSource(JavaDecompilerBufferManager bufferManager, ClassFile cf, SourceMapper mapper,
 			IBinaryType info, IClassFile bufferOwner, char[] markedSrc) {
 		char[] contents = mapper.findSource(cf.getType(), info);
-		if (Arrays.equals(markedSrc, contents))
+		if (Arrays.equals(markedSrc, contents)) {
 			return;
+		}
 		contents = markedSrc;
 		if (contents != null) {
 			// create buffer
 			IBuffer buffer = BufferManager.createBuffer(bufferOwner);
-			if (buffer == null)
+			if (buffer == null) {
 				return;
+			}
 			JavaDecompilerBufferManager bufManager = bufferManager;
 			bufManager.addBuffer(buffer);
 
@@ -62,8 +63,9 @@ public class ClassFileSourceMap {
 		} else {
 			// create buffer
 			IBuffer buffer = BufferManager.createNullBuffer(bufferOwner);
-			if (buffer == null)
+			if (buffer == null) {
 				return;
+			}
 			JavaDecompilerBufferManager bufManager = bufferManager;
 			bufManager.addBuffer(buffer);
 

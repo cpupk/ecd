@@ -222,9 +222,4 @@ public class VineflowerDecompiler implements IDecompiler {
 		return true;
 	}
 
-	@Override
-	public boolean supportDebug() {
-		return true;
-	}
-
 }

@@ -9,11 +9,8 @@
 package org.sf.feeling.decompiler.editor;
 
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
-import org.sf.feeling.decompiler.fernflower.FernFlowerDecompiler;
 
 public class DecompilerType {
-
-	public static final String FernFlower = FernFlowerDecompiler.decompilerType;
 
 	private static String[] decompilerTypes = null;
 

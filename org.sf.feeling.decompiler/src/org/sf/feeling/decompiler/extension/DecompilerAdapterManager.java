@@ -11,13 +11,10 @@ package org.sf.feeling.decompiler.extension;
 import java.lang.reflect.Proxy;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -40,7 +37,7 @@ public class DecompilerAdapterManager {
 
 	protected static final Logger logger = Logger.getLogger(DecompilerAdapterManager.class.getName());
 
-	private static Map adaptersMap = new HashMap() {
+	private static final Map<Class<?>, Set<?>> ADAPTERS_MAP = new HashMap() {
 
 		private static final long serialVersionUID = 534728316184090251L;
 
@@ -56,6 +53,7 @@ public class DecompilerAdapterManager {
 			}
 			return obj;
 		}
+
 	};
 
 	static {
@@ -63,39 +61,38 @@ public class DecompilerAdapterManager {
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IExtensionPoint extensionPoint = registry.getExtensionPoint(ADAPTERS_EXTENSION_ID);
 		if (extensionPoint != null) {
-			IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
-			for (int j = 0; j < elements.length; j++) {
-				String adaptableClassName = elements[j].getAttribute("class"); //$NON-NLS-1$
+			IConfigurationElement[] elementArr = extensionPoint.getConfigurationElements();
+			for (IConfigurationElement element : elementArr) {
+				String adaptableClassName = element.getAttribute("class"); //$NON-NLS-1$
 				Class adaptableType = null;
 
-				IConfigurationElement[] adapters = elements[j].getChildren("adapter"); //$NON-NLS-1$
-				for (int k = 0; k < adapters.length; k++) {
+				IConfigurationElement[] adaptersConfigArr = element.getChildren("adapter"); //$NON-NLS-1$
+				for (IConfigurationElement adapterConfig : adaptersConfigArr) {
 					String adapterClassName = null;
 					Class adapterType = null;
 
 					try {
 						DecompilerAdapter adapter = new DecompilerAdapter();
-						adapter.setId(adapters[k].getAttribute("id")); //$NON-NLS-1$
+						adapter.setId(adapterConfig.getAttribute("id")); //$NON-NLS-1$
 
 						adapter.setSingleton(!"false".equals( //$NON-NLS-1$
-								adapters[k].getAttribute("singleton"))); //$NON-NLS-1$
+								adapterConfig.getAttribute("singleton"))); //$NON-NLS-1$
 
-						if (adapters[k].getAttribute("class") != null //$NON-NLS-1$
-								&& !adapters[k].getAttribute("class") //$NON-NLS-1$
+						if (adapterConfig.getAttribute("class") != null //$NON-NLS-1$
+								&& !adapterConfig.getAttribute("class") //$NON-NLS-1$
 										.equals("")) //$NON-NLS-1$
 						{
-							adapter.setAdapterInstance(adapters[k].createExecutableExtension("class")); //$NON-NLS-1$
+							adapter.setAdapterInstance(adapterConfig.createExecutableExtension("class")); //$NON-NLS-1$
 
 							if (!adapter.isSingleton()) {
-								// cache the config element to create new
-								// instance
-								adapter.setAdapterConfig(adapters[k]);
+								// cache the config element to create new instance
+								adapter.setAdapterConfig(adapterConfig);
 							}
-						} else if (adapters[k].getAttribute("factory") != null //$NON-NLS-1$
-								&& !adapters[k].getAttribute("factory") //$NON-NLS-1$
+						} else if (adapterConfig.getAttribute("factory") != null //$NON-NLS-1$
+								&& !adapterConfig.getAttribute("factory") //$NON-NLS-1$
 										.equals("")) //$NON-NLS-1$
 						{
-							adapter.setFactory((IAdapterFactory) adapters[k].createExecutableExtension("factory")); //$NON-NLS-1$
+							adapter.setFactory((IAdapterFactory) adapterConfig.createExecutableExtension("factory")); //$NON-NLS-1$
 						}
 
 						if (adaptableType == null) {
@@ -105,36 +102,37 @@ public class DecompilerAdapterManager {
 
 						adapter.setAdaptableType(adaptableType);
 
-						adapterClassName = adapters[k].getAttribute("type"); //$NON-NLS-1$
+						adapterClassName = adapterConfig.getAttribute("type"); //$NON-NLS-1$
 
 						adapterType = classForName(adapterClassName, adapter.getAdapterInstance(),
 								adapter.getFactory());
 
 						adapter.setAdapterType(adapterType);
 
-						if (adapters[k].getAttribute("priority") != null //$NON-NLS-1$
-								&& !adapters[k].getAttribute("priority") //$NON-NLS-1$
+						if (adapterConfig.getAttribute("priority") != null //$NON-NLS-1$
+								&& !adapterConfig.getAttribute("priority") //$NON-NLS-1$
 										.equals("")) //$NON-NLS-1$
 						{
 							try {
-								adapter.setPriority(Integer.parseInt(adapters[k].getAttribute("priority"))); //$NON-NLS-1$
+								adapter.setPriority(Integer.parseInt(adapterConfig.getAttribute("priority"))); //$NON-NLS-1$
 							} catch (NumberFormatException e) {
 							}
 						}
 
-						if (adapters[k].getAttribute("overwrite") != null //$NON-NLS-1$
-								&& !adapters[k].getAttribute("overwrite") //$NON-NLS-1$
+						if (adapterConfig.getAttribute("overwrite") != null //$NON-NLS-1$
+								&& !adapterConfig.getAttribute("overwrite") //$NON-NLS-1$
 										.equals("")) //$NON-NLS-1$
 						{
-							adapter.setOverwrite(adapters[k].getAttribute("overwrite") //$NON-NLS-1$
+							adapter.setOverwrite(adapterConfig.getAttribute("overwrite") //$NON-NLS-1$
 									.split(";")); //$NON-NLS-1$
 						}
-						adapter.setIncludeWorkbenchContribute("true".equals(adapters[k].getAttribute( //$NON-NLS-1$
+						adapter.setIncludeWorkbenchContribute("true".equals(adapterConfig.getAttribute( //$NON-NLS-1$
 								"includeWorkbenchContribute"))); //$NON-NLS-1$
 
-						IConfigurationElement[] enablements = adapters[k].getChildren("enablement"); //$NON-NLS-1$
-						if (enablements != null && enablements.length > 0)
+						IConfigurationElement[] enablements = adapterConfig.getChildren("enablement"); //$NON-NLS-1$
+						if (enablements != null && enablements.length > 0) {
 							adapter.setExpression(ExpressionConverter.getDefault().perform(enablements[0]));
+						}
 						registerAdapter(adaptableType, adapter);
 					} catch (ClassNotFoundException ce) {
 						if (adaptableType == null) {
@@ -174,11 +172,11 @@ public class DecompilerAdapterManager {
 				// it is possible that the default bundle classloader is unaware
 				// of this class, but the adaptor factory can load it in some
 				// other way. See bug 200068.
-				Class[] adapterList = adapterFacotry.getAdapterList();
-				if (adapterList != null && adapterList.length > 0) {
-					for (int i = 0; i < adapterList.length; i++) {
-						if (className.equals(adapterList[i].getName())) {
-							clazz = adapterList[i];
+				Class<?>[] adapterClassArr = adapterFacotry.getAdapterList();
+				if (adapterClassArr != null) {
+					for (Class<?> adapterClass : adapterClassArr) {
+						if (className.equals(adapterClass.getName())) {
+							clazz = adapterClass;
 							break;
 						}
 					}
@@ -194,8 +192,8 @@ public class DecompilerAdapterManager {
 	}
 
 	public static void registerAdapter(Class adaptableType, DecompilerAdapter adapter) {
-		synchronized (adaptersMap) {
-			Set adapterSet = (Set) adaptersMap.get(adaptableType);
+		synchronized (ADAPTERS_MAP) {
+			Set adapterSet = ADAPTERS_MAP.get(adaptableType);
 			adapterSet.add(adapter);
 			// if ( adapterSet.add( adapter ) )
 			// System.out.println( "Register adapter for "
@@ -210,140 +208,64 @@ public class DecompilerAdapterManager {
 		}
 	}
 
-	public static Object[] getAdapters(Object adaptableObject, Class adatperType) {
-		List adapterObjects = getAdapterList(adaptableObject, adatperType);
-
-		return (adapterObjects != null && adapterObjects.size() > 0)
-				? adapterObjects.toArray(new Object[adapterObjects.size()])
-				: null;
-	}
-
-	public static Object getAdapter(Object adaptableObject, Class adatperType) {
-		List adapterObjects = getAdapterList(adaptableObject, adatperType);
-		if (adapterObjects == null || adapterObjects.size() == 0)
+	public static Object getAdapter(Object adaptableObject, Class adapterType) {
+		List<?> adapterObjects = getAdapterList(adaptableObject, adapterType);
+		if (adapterObjects == null || adapterObjects.size() == 0) {
 			return null;
-		else if (adapterObjects.size() == 1)
+		}
+		if (adapterObjects.size() == 1) {
 			return adapterObjects.get(0);
-		else
-			return Proxy.newProxyInstance(adatperType.getClassLoader(), new Class[] { adatperType },
-					new DecompilerAdapterInvocationHandler(adapterObjects));
+		}
+		return Proxy.newProxyInstance(adapterType.getClassLoader(), new Class[] { adapterType },
+				new DecompilerAdapterInvocationHandler(adapterObjects));
 	}
 
-	private static List getAdapterList(Object adaptableObject, Class adatperType) {
-		Set adapters = getAdapters(adaptableObject);
-		if (adapters == null)
+	public static <T> List<T> getAdapterList(Object adaptableObject, Class<T> adapterType) {
+		Set<DecompilerAdapter> adapters = getAdaptersInternal(adaptableObject);
+		if (adapters == null) {
 			return null;
+		}
 
-		List adapterObjects = new ArrayList();
-		l: for (Iterator iter = adapters.iterator(); iter.hasNext();) {
-			DecompilerAdapter adapter = (DecompilerAdapter) iter.next();
+		List<T> adapterObjects = new ArrayList<>(adapters.size());
+		for (DecompilerAdapter adapter : adapters) {
 			if (adapter.getExpression() != null) {
 				EvaluationContext context = new EvaluationContext(null, adaptableObject);
 				context.setAllowPluginActivation(true);
 				try {
-					if (adapter.getExpression().evaluate(context) != EvaluationResult.TRUE)
-						continue l;
+					if (adapter.getExpression().evaluate(context) != EvaluationResult.TRUE) {
+						continue;
+					}
 				} catch (CoreException e) {
 				}
 			}
 			Object obj = adapter.getAdater(adaptableObject);
-			if (obj != null && adatperType.isAssignableFrom(obj.getClass())) {
-				adapterObjects.add(obj);
+			if (obj != null && adapterType.isAssignableFrom(obj.getClass())) {
+				adapterObjects.add((T) obj);
 			}
 		}
 
 		return adapterObjects;
 	}
 
-	private static Set getAdapters(Object adaptableObject) {
-		Set keys = adaptersMap.keySet();
+	private static Set<DecompilerAdapter> getAdaptersInternal(Object adaptableObject) {
+		Set<Class<?>> keys = ADAPTERS_MAP.keySet();
 		ElementAdapterSet adapters = null;
-		for (Iterator iter = keys.iterator(); iter.hasNext();) {
-			Class clazz = (Class) iter.next();
+		for (Class<?> clazz : keys) {
 			// adaptable is the instance of the key class or its subclass.
 			if (clazz.isAssignableFrom(adaptableObject.getClass())) {
 				if (adapters == null) {
 					adapters = new ElementAdapterSet();
 				}
-				Set set = (Set) adaptersMap.get(clazz);
-				for (Iterator iterator = set.iterator(); iterator.hasNext();) {
-					adapters.add(iterator.next());
+				Set<?> set = ADAPTERS_MAP.get(clazz);
+				for (Object obj : set) {
+					adapters.add((DecompilerAdapter) obj);
 				}
 			}
 		}
-		if (adapters != null)
-			adapters.reset();
+		if (adapters != null) {
+			adapters.removeOverwrittenAdapters();
+		}
 		return adapters;
 	}
 
-}
-
-/**
- * ElementAdapterSet
- */
-class ElementAdapterSet extends TreeSet {
-
-	private static final long serialVersionUID = -3451274084543012212L;
-
-	private static Comparator comparator = new Comparator() {
-
-		@Override
-		public int compare(Object o1, Object o2) {
-			if (o1 instanceof DecompilerAdapter && o2 instanceof DecompilerAdapter) {
-				DecompilerAdapter adapter1 = (DecompilerAdapter) o1;
-				DecompilerAdapter adapter2 = (DecompilerAdapter) o2;
-				if (adapter1.equals(adapter2))
-					return 0;
-				int value = adapter1.getPriority() - adapter2.getPriority();
-				return value == 0 ? 1 : value;
-			}
-			return 0;
-		}
-	};
-
-	private List overwriteList;
-
-	private boolean isReset;
-
-	/**
-	 * A TreeSet sorted by ElementAdapter.getPriority( ).
-	 */
-	public ElementAdapterSet() {
-		super(comparator);
-	}
-
-	@Override
-	public boolean add(Object o) {
-		if (o instanceof DecompilerAdapter) {
-			// cached overwrited adapters
-			DecompilerAdapter adapter = (DecompilerAdapter) o;
-			String[] overwriteIds = adapter.getOverwrite();
-			if (overwriteIds != null && overwriteIds.length > 0) {
-				if (this.overwriteList == null) {
-					this.overwriteList = new ArrayList();
-				}
-				for (int i = 0; i < overwriteIds.length; i++) {
-					this.overwriteList.add(overwriteIds[i]);
-				}
-			}
-			return super.add(o);
-		}
-		return false;
-	}
-
-	/**
-	 * remove overwrited adapters.
-	 */
-	public void reset() {
-		if (!isReset && this.overwriteList != null) {
-			for (Iterator iterator = this.iterator(); iterator.hasNext();) {
-				DecompilerAdapter adapter = (DecompilerAdapter) iterator.next();
-				if (this.overwriteList.contains(adapter.getId())) {
-					iterator.remove();
-					DecompilerAdapterManager.logger.log(Level.FINE, "<" + adapter.getId() + "> is overwritten."); //$NON-NLS-1$ //$NON-NLS-2$
-				}
-			}
-			this.isReset = true;
-		}
-	}
 }

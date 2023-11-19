@@ -18,7 +18,6 @@ package org.sf.feeling.decompiler.editor;
 
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -150,14 +149,11 @@ public class DisassemblerDocumentProvider extends FileDocumentProvider {
 	 */
 	protected void setDocumentContent(IDocument document, InputStream contentStream, String encoding)
 			throws CoreException {
-		DataInputStream in = null;
-		try {
-			/* buffer only if necessary */
-			if (contentStream instanceof BufferedInputStream) {
-				in = new DataInputStream(contentStream);
-			} else {
-				in = new DataInputStream(new BufferedInputStream(contentStream));
-			}
+		/* buffer only if necessary */
+		if (!(contentStream instanceof BufferedInputStream)) {
+			contentStream = new BufferedInputStream(contentStream);
+		}
+		try (DataInputStream in = new DataInputStream(contentStream)) {
 			ClassFileOutlineElement outlineElement = new ClassFileOutlineElement();
 			ClassFileDocument doc = new ClassFileDocument(outlineElement);
 			outlineElement.setClassFileDocument(doc);
@@ -173,13 +169,6 @@ public class DisassemblerDocumentProvider extends FileDocumentProvider {
 
 		} catch (Exception e) {
 			Logger.debug(e);
-		} finally {
-			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException e) {
-				}
-			}
 		}
 
 		/* fire update document events */

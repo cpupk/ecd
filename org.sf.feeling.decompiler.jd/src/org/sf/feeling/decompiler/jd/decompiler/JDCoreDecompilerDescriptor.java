@@ -59,8 +59,8 @@ public class JDCoreDecompilerDescriptor implements IDecompilerDescriptor {
 	}
 
 	@Override
-	public boolean isDefault() {
-		return true;
+	public int getDefaultPriority() {
+		return 0;
 	}
 
 	@Override

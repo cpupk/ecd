@@ -142,29 +142,26 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor {
 
 	private boolean doOpenBuffer(IEditorInput input, String type, boolean force, boolean reuseBuf, boolean always)
 			throws JavaModelException {
-		if (UIUtil.isDebugPerspective() || JavaDecompilerPlugin.getDefault().isDebugMode())
+		if (UIUtil.isDebugPerspective() || JavaDecompilerPlugin.getDefault().isDebugMode()) {
 			reuseBuf = false;
+		}
 
 		if (input instanceof IClassFileEditorInput) {
 
 			boolean opened = false;
 			IClassFile cf = ((IClassFileEditorInput) input).getClassFile();
 
-			decompilerType = type;
+			this.decompilerType = type;
 			String origSrc = cf.getSource();
 			if (origSrc == null || (origSrc != null && always) || (origSrc != null && !always && !reuseBuf)
 					|| debugOptionChange(origSrc) || force) {
 				DecompilerSourceMapper sourceMapper = SourceMapperFactory.getSourceMapper(decompilerType);
 				char[] src = sourceMapper == null ? null : sourceMapper.findSource(cf.getType());
 				if (src == null) {
-					if (DecompilerType.FernFlower.equals(decompilerType)) {
-						src = SourceMapperFactory.getSourceMapper(DecompilerType.FernFlower).findSource(cf.getType());
-					} else {
-						IDecompilerDescriptor decompilerDescriptor = JavaDecompilerPlugin.getDefault()
-								.getDecompilerDescriptor(decompilerType);
-						if (decompilerDescriptor != null) {
-							src = decompilerDescriptor.getDecompilerSourceMapper().findSource(cf.getType());
-						}
+					IDecompilerDescriptor decompilerDescriptor = JavaDecompilerPlugin.getDefault()
+							.getDecompilerDescriptor(decompilerType);
+					if (decompilerDescriptor != null) {
+						src = decompilerDescriptor.getDecompilerSourceMapper().findSource(cf.getType());
 					}
 				}
 				if (src == null) {
@@ -188,9 +185,9 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor {
 	}
 
 	public void clearSelection() {
-		if (getSourceViewer() != null && getSourceViewer().getTextWidget() != null
-				&& !getSourceViewer().getTextWidget().isDisposed()) {
-			getSourceViewer().getTextWidget().setSelectionRange(0, 0);
+		ISourceViewer sv = getSourceViewer();
+		if (sv != null && sv.getTextWidget() != null && !sv.getTextWidget().isDisposed()) {
+			sv.getTextWidget().setSelectionRange(0, 0);
 		}
 	}
 
@@ -224,8 +221,9 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor {
 	public void setHighlightRange(int offset, int length, boolean moveCursor) {
 		super.setHighlightRange(offset, length, moveCursor);
 
-		if (selectionChange)
+		if (selectionChange) {
 			return;
+		}
 
 		IClassFileEditorInput classFileEditorInput = (IClassFileEditorInput) getEditorInput();
 		final IClassFile file = classFileEditorInput.getClassFile();
@@ -268,8 +266,9 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor {
 	}
 
 	public static boolean isDebug(String source) {
-		if (source == null)
+		if (source == null) {
 			return false;
+		}
 		Pattern pattern = Pattern.compile("/\\*\\s*\\d+\\s*\\*/"); //$NON-NLS-1$
 		Matcher matcher = pattern.matcher(source);
 		return matcher.find() || source.indexOf(DecompilerOutputUtil.NO_LINE_NUMBER) != -1;
@@ -328,10 +327,13 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor {
 
 			if (source != null) {
 				String packageName = DecompileUtil.getPackageName(source);
-				String classFullName = packageName == null ? storeInput.getName()
-						: packageName + "." //$NON-NLS-1$
-								+ storeInput.getName().replaceAll("(?i)\\.class", //$NON-NLS-1$
-										""); //$NON-NLS-1$
+				String classFullName;
+				if (packageName == null) {
+					classFullName = storeInput.getName();
+				} else {
+					classFullName = packageName + "." //$NON-NLS-1$
+							+ storeInput.getName().replaceAll("(?i)\\.class", ""); //$NON-NLS-1$ $NON-NLS-2$
+				}
 
 				File file = new File(System.getProperty("java.io.tmpdir"), //$NON-NLS-1$
 						storeInput.getName().replaceAll("(?i)\\.class", //$NON-NLS-1$
@@ -414,10 +416,11 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor {
 							classFile.delete();
 							return;
 						} catch (IOException e1) {
-							JavaDecompilerPlugin.logError(e, ""); //$NON-NLS-1$
+							JavaDecompilerPlugin.logError(e1, ""); //$NON-NLS-1$
 						} finally {
-							if (classFile != null && classFile.exists())
+							if (classFile != null && classFile.exists()) {
 								classFile.delete();
+							}
 						}
 					}
 				}
@@ -484,8 +487,9 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor {
 
 	private void handleMarkLink(final int index) {
 		ISourceViewer sourceViewer = getSourceViewer();
-		if (sourceViewer == null)
+		if (sourceViewer == null) {
 			return;
+		}
 
 		final StyledText text = sourceViewer.getTextWidget();
 		if (text.isDisposed()) {
@@ -503,8 +507,9 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor {
 				final HyperlinkManager fHyperlinkManager = (HyperlinkManager) ReflectionUtils
 						.getFieldValue(sourceViewer, "fHyperlinkManager"); //$NON-NLS-1$
 
-				if (fHyperlinkPresenter == null || fHyperlinkManager == null)
+				if (fHyperlinkPresenter == null || fHyperlinkManager == null) {
 					continue;
+				}
 
 				fHyperlinkPresenter.showHyperlinks(links);
 
@@ -568,8 +573,9 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor {
 					public void mouseUp(MouseEvent e) {
 
 						int offset = getCaretModelOffset(text);
-						if (offset == -1)
+						if (offset == -1) {
 							return;
+						}
 						for (int j = 0; j < links.length; j++) {
 							int linkOffset = links[j].getHyperlinkRegion().getOffset();
 							int linkLength = links[j].getHyperlinkRegion().getLength();
@@ -617,15 +623,18 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor {
 				"getWindowAnnotationManager", //$NON-NLS-1$
 				new Class[] { IWorkbenchWindow.class },
 				new Object[] { PlatformUI.getWorkbench().getActiveWorkbenchWindow() });
-		if (mgr == null)
+		if (mgr == null) {
 			return;
+		}
 		Map<IEditorPart, EditorAnnotationManager> fAnnotationManagers = (Map<IEditorPart, EditorAnnotationManager>) ReflectionUtils
 				.getFieldValue(mgr, "fAnnotationManagers"); //$NON-NLS-1$
-		if (fAnnotationManagers == null)
+		if (fAnnotationManagers == null) {
 			return;
+		}
 		EditorAnnotationManager amgr = fAnnotationManagers.get(JavaDecompilerClassFileEditor.this);
-		if (amgr == null)
+		if (amgr == null) {
 			return;
+		}
 		ReflectionUtils.invokeMethod(amgr, "removeAllAnnotations", //$NON-NLS-1$
 				new Class[0], new Object[0]);
 	}
@@ -867,8 +876,9 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor {
 	}
 
 	protected void showSource(IClassFileEditorInput classFileEditorInput) {
-		if (currentSourceMode == JavaDecompilerPlugin.getDefault().getSourceMode())
+		if (currentSourceMode == JavaDecompilerPlugin.getDefault().getSourceMode()) {
 			return;
+		}
 
 		try {
 			StackLayout fStackLayout = (StackLayout) ReflectionUtils.getFieldValue(this, "fStackLayout"); //$NON-NLS-1$

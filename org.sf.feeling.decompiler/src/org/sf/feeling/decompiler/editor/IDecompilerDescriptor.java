@@ -25,7 +25,12 @@ public interface IDecompilerDescriptor {
 
 	boolean isEnabled();
 
-	boolean isDefault();
+	/**
+	 * Allows to specify a priority which is used when no default decompiler is set.
+	 * 
+	 * @return
+	 */
+	int getDefaultPriority();
 
 	ImageDescriptor getDecompilerIcon();
 }

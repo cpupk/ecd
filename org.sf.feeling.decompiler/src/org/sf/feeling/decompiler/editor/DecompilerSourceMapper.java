@@ -133,12 +133,13 @@ public abstract class DecompilerSourceMapper extends SourceMapper {
 		IResource resource;
 
 		try {
-			if ((resource = root.getUnderlyingResource()) != null)
+			if ((resource = root.getUnderlyingResource()) != null) {
 				// jar in workspace
 				archivePath = resource.getLocation().toOSString();
-			else
+			} else {
 				// external jar
 				archivePath = root.getPath().toOSString();
+			}
 		} catch (JavaModelException e) {
 			throw new RuntimeException("Unexpected Java model exception: " //$NON-NLS-1$
 					+ e.toString());

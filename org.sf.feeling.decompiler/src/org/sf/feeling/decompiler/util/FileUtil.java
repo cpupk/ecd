@@ -440,8 +440,9 @@ public class FileUtil {
 
 	public static void writeToFile(File file, String string, String encoding) {
 		try {
-			if (!file.getParentFile().exists())
+			if (!file.getParentFile().exists()) {
 				file.getParentFile().mkdirs();
+			}
 			try (PrintWriter out = new PrintWriter(new OutputStreamWriter(new FileOutputStream(file), encoding))) {
 				out.print(string);
 			}

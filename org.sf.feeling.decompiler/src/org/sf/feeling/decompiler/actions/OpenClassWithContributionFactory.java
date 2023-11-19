@@ -66,25 +66,17 @@ public class OpenClassWithContributionFactory extends ExtensionContributionFacto
 
 		@Override
 		public String getText() {
-			if (DecompilerType.FernFlower.equals(decompilerType)) {
-				return Messages.getString("JavaDecompilerActionBarContributor.Action.DecompileWithFernFlower"); //$NON-NLS-1$
-			} else {
-				IDecompilerDescriptor decompilerDescriptor = JavaDecompilerPlugin.getDefault()
-						.getDecompilerDescriptor(decompilerType);
-				if (decompilerDescriptor != null) {
-					return decompilerDescriptor.getDecompileAction().getText();
-				}
+			IDecompilerDescriptor decompilerDescriptor = JavaDecompilerPlugin.getDefault()
+					.getDecompilerDescriptor(decompilerType);
+			if (decompilerDescriptor != null) {
+				return decompilerDescriptor.getDecompileAction().getText();
 			}
 			return classEditor.getLabel();
 		}
 
 		@Override
 		public ImageDescriptor getImageDescriptor() {
-			if (DecompilerType.FernFlower.equals(decompilerType)) {
-				return JavaDecompilerPlugin.getImageDescriptor("icons/fernflower_16.png"); //$NON-NLS-1$
-			} else {
-				return JavaDecompilerPlugin.getDefault().getDecompilerDescriptor(decompilerType).getDecompilerIcon();
-			}
+			return JavaDecompilerPlugin.getDefault().getDecompilerDescriptor(decompilerType).getDecompilerIcon();
 		}
 
 		@Override
@@ -150,7 +142,7 @@ public class OpenClassWithContributionFactory extends ExtensionContributionFacto
 					return new IContributionItem[0];
 				}
 
-				final List<Object> classes = getSelectedElements(selService, IClassFile.class);
+				List<IClassFile> classes = getSelectedElements(selService, IClassFile.class);
 
 				// List of menu items
 				List<ActionContributionItem> list = new ArrayList<>();
@@ -160,7 +152,6 @@ public class OpenClassWithContributionFactory extends ExtensionContributionFacto
 
 					TreeSet<String> decompilerTypes = new TreeSet<>();
 					Collections.addAll(decompilerTypes, DecompilerType.getDecompilerTypes());
-					decompilerTypes.add(DecompilerType.FernFlower); // make sure FernFlower is always present
 
 					for (String decompilerType : decompilerTypes) {
 						list.add(new ActionContributionItem(new OpenClassesAction(editor, classes, decompilerType)));
@@ -230,16 +221,16 @@ public class OpenClassWithContributionFactory extends ExtensionContributionFacto
 		return false;
 	}
 
-	private List getSelectedElements(ISelectionService selService, Class eleClass) {
+	private <T> List<T> getSelectedElements(ISelectionService selService, Class<T> eleClass) {
 
 		Iterator selections = getSelections(selService);
-		List elements = new ArrayList();
+		List<T> elements = new ArrayList<>();
 
 		while ((selections != null) && selections.hasNext()) {
 			Object select = selections.next();
 
 			if (eleClass.isInstance(select)) {
-				elements.add(select);
+				elements.add((T) select);
 			}
 		}
 
