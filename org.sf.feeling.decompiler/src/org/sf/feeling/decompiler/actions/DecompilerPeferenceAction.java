@@ -1,12 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2017 Chen Chao(cnfree2000@hotmail.com).
+ * Copyright (c) 2017 Chen Chao and other ECD project contributors.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *  Chen Chao  - initial API and implementation
+ * https://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
 package org.sf.feeling.decompiler.actions;
@@ -19,54 +16,37 @@ import org.sf.feeling.decompiler.editor.JavaDecompilerClassFileEditor;
 import org.sf.feeling.decompiler.i18n.Messages;
 import org.sf.feeling.decompiler.util.UIUtil;
 
-public class DecompilerPeferenceAction extends Action
-{
+public class DecompilerPeferenceAction extends Action {
 
-	public DecompilerPeferenceAction( )
-	{
-		super( Messages.getString( "JavaDecompilerActionBarContributor.Action.Preferences" ) ); //$NON-NLS-1$
+	public DecompilerPeferenceAction() {
+		super(Messages.getString("JavaDecompilerActionBarContributor.Action.Preferences")); //$NON-NLS-1$
 	}
 
 	@Override
-	public void run( )
-	{
-		JavaDecompilerClassFileEditor editor = UIUtil.getActiveDecompilerEditor( );
+	public void run() {
+		JavaDecompilerClassFileEditor editor = UIUtil.getActiveDecompilerEditor();
 
 		String showId = "org.sf.feeling.decompiler.Main"; //$NON-NLS-1$
-		if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.SOURCE_MODE )
-		{
+		if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.SOURCE_MODE) {
 			showId = "org.sf.feeling.decompiler.Main"; //$NON-NLS-1$
-		}
-		else if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.DISASSEMBLER_MODE )
-		{
+		} else if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.DISASSEMBLER_MODE) {
 			showId = "org.sf.feeling.decompiler.Disassembler"; //$NON-NLS-1$
-		}
-		else if ( JavaDecompilerPlugin.getDefault( ).getSourceMode( ) == JavaDecompilerPlugin.BYTE_CODE_MODE )
-		{
+		} else if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.BYTE_CODE_MODE) {
 			showId = "org.eclipse.ui.preferencePages.ColorsAndFonts"; //$NON-NLS-1$
 		}
 
-		if ( editor != null )
-		{
-			PreferencesUtil.createPreferenceDialogOn( Display.getDefault( ).getActiveShell( ),
-					showId, // $NON-NLS-1$
-					editor.collectContextMenuPreferencePages( ),
-					null ).open( );
-		}
-		else
-		{
-			PreferencesUtil.createPreferenceDialogOn( Display.getDefault( ).getActiveShell( ),
-					showId, // $NON-NLS-1$
-					new String[]{
-							showId // $NON-NLS-1$
-					},
-					null ).open( );
+		if (editor != null) {
+			PreferencesUtil.createPreferenceDialogOn(Display.getDefault().getActiveShell(), showId, // $NON-NLS-1$
+					editor.collectContextMenuPreferencePages(), null).open();
+		} else {
+			PreferencesUtil.createPreferenceDialogOn(Display.getDefault().getActiveShell(), showId, // $NON-NLS-1$
+					new String[] { showId // $NON-NLS-1$
+					}, null).open();
 		}
 	}
 
 	@Override
-	public boolean isEnabled( )
-	{
+	public boolean isEnabled() {
 		return true;
 	}
 }

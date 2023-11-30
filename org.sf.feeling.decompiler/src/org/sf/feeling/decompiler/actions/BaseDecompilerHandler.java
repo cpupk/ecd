@@ -1,12 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2017 Chen Chao(cnfree2000@hotmail.com).
+ * Copyright (c) 2017 Chen Chao and other ECD project contributors.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *  Chen Chao  - initial API and implementation
+ * https://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
 package org.sf.feeling.decompiler.actions;
@@ -21,35 +18,25 @@ import org.sf.feeling.decompiler.actions.OpenClassWithContributionFactory.OpenCl
 import org.sf.feeling.decompiler.editor.JavaDecompilerClassFileEditor;
 import org.sf.feeling.decompiler.util.UIUtil;
 
-public class BaseDecompilerHandler extends DecompileHandler
-{
+public class BaseDecompilerHandler extends DecompileHandler {
 
-	protected Object handleDecompile( String decompilerType )
-	{
-		final List classes = UIUtil.getActiveSelection( );
-		if ( classes != null && !classes.isEmpty( ) )
-		{
-			IEditorRegistry registry = PlatformUI.getWorkbench( ).getEditorRegistry( );
-			IEditorDescriptor editorDescriptor = registry.findEditor( JavaDecompilerPlugin.EDITOR_ID );
-			if ( editorDescriptor == null )
-			{
-				JavaDecompilerClassFileEditor editor = UIUtil.getActiveEditor( );
-				if ( editor != null )
-				{
-					if ( editor != null )
-						editor.doSetInput( decompilerType, true );
+	protected Object handleDecompile(String decompilerType) {
+		final List classes = UIUtil.getActiveSelection();
+		if (classes != null && !classes.isEmpty()) {
+			IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
+			IEditorDescriptor editorDescriptor = registry.findEditor(JavaDecompilerPlugin.EDITOR_ID);
+			if (editorDescriptor == null) {
+				JavaDecompilerClassFileEditor editor = UIUtil.getActiveEditor();
+				if (editor != null) {
+					editor.doSetInput(decompilerType, true);
 				}
+			} else {
+				new OpenClassesAction(editorDescriptor, classes, decompilerType).run();
 			}
-			else
-				new OpenClassesAction( editorDescriptor, classes, decompilerType ).run( );
-		}
-		else
-		{
-			JavaDecompilerClassFileEditor editor = UIUtil.getActiveEditor( );
-			if ( editor != null )
-			{
-				if ( editor != null )
-					editor.doSetInput( decompilerType, true );
+		} else {
+			JavaDecompilerClassFileEditor editor = UIUtil.getActiveEditor();
+			if (editor != null) {
+				editor.doSetInput(decompilerType, true);
 			}
 		}
 		return null;

@@ -1,91 +1,143 @@
-/*******************************************************************************
- * Copyright (c) 2017 Chen Chao(cnfree2000@hotmail.com).
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *  Chen Chao  - initial API and implementation
- *******************************************************************************/
+/*
+ * Copyright (c) 2008-2015 Emmanuel Dupuy
+ * This program is made available under the terms of the GPLv3 License.
+ */
 
 package jd.ide.eclipse.editors;
 
-import java.io.IOException;
-import java.net.URL;
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.TreeMap;
 
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.jd.core.v1.ClassFileToJavaSourceDecompiler;
+import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.editor.BaseDecompilerSourceMapper;
-import org.sf.feeling.decompiler.util.UIUtil;
+import org.sf.feeling.decompiler.jd.decompiler.JDCorePrinter;
+import org.sf.feeling.decompiler.jd.decompiler.JDCoreZipLoader;
+import org.sf.feeling.decompiler.jd.decompiler.JDCoreZipLoader.EntriesCache;
 
-public abstract class JDSourceMapper extends BaseDecompilerSourceMapper
-{
+/**
+ * JDSourceMapper
+ * 
+ * @project Java Decompiler Eclipse Plugin
+ * @version 0.1.5
+ * @see org.eclipse.jdt.internal.core.SourceMapper
+ */
+public abstract class JDSourceMapper extends BaseDecompilerSourceMapper {
 
-	protected final static String JAR_SUFFIX = ".jar"; //$NON-NLS-1$
-	protected final static String ZIP_SUFFIX = ".zip"; //$NON-NLS-1$
-	protected final static String JAVA_CLASS_SUFFIX = ".class"; //$NON-NLS-1$
-	protected final static String JAVA_SOURCE_SUFFIX = ".java"; //$NON-NLS-1$
-	protected final static int JAVA_SOURCE_SUFFIX_LENGTH = 5;
-	protected static boolean loaded = false;
+	private final static String JAVA_CLASS_SUFFIX = ".class";
+	private final static String JAVA_SOURCE_SUFFIX = ".java";
+	private final static int JAVA_SOURCE_SUFFIX_LENGTH = 5;
 
-	public JDSourceMapper( IPath sourcePath, String rootPath )
-	{
-		super( sourcePath, rootPath );
+	private static EntriesCache entriesCache = null;
+
+	private File basePath;
+
+	public JDSourceMapper(File basePath, IPath sourcePath, String sourceRootPath, Map<String, String> options) {
+		super(sourcePath, sourceRootPath, options);
+		this.basePath = basePath;
 	}
 
-	public native String decompile( String baseName, String qualifiedName );
+	@Override
+	public char[] findSource(String javaSourcePath) {
+		char[] source = null;
 
-	protected void loadLibrary( ) throws IOException
-	{
-		if ( loaded == false )
-		{
-			System.load( getLibraryPath( ) );
-			loaded = true;
+		// Search source file
+		if (this.rootPaths == null) {
+			source = super.findSource(javaSourcePath);
+		} else {
+			Iterator<String> iterator = this.rootPaths.iterator();
+			while (iterator.hasNext() && (source == null)) {
+				String sourcesRootPath = iterator.next();
+				source = super.findSource(sourcesRootPath + IPath.SEPARATOR + javaSourcePath);
+			}
+		}
+
+		if ((source == null) && javaSourcePath.endsWith(JAVA_SOURCE_SUFFIX)) {
+			String classPath = javaSourcePath.substring(0, javaSourcePath.length() - JAVA_SOURCE_SUFFIX_LENGTH)
+					+ JAVA_CLASS_SUFFIX;
+
+			// Decompile class file
+			try {
+				File decompilePath = this.basePath.getAbsoluteFile();
+				if (decompilePath.isFile()) {
+					String result = decompile(decompilePath.toString(), classPath);
+					if (result != null) {
+						source = result.toCharArray();
+					}
+				} else {
+					JavaDecompilerPlugin.getDefault().getLog()
+							.log(new Status(Status.ERROR, JavaDecompilerPlugin.PLUGIN_ID, 0,
+									"Unable to decompile: " + decompilePath + " is not a valid file.", null));
+				}
+			} catch (Exception e) {
+				JavaDecompilerPlugin.getDefault().getLog()
+						.log(new Status(Status.ERROR, JavaDecompilerPlugin.PLUGIN_ID, 0, e.getMessage(), e));
+			}
+		}
+
+		return source;
+	}
+
+	/**
+	 * @param basePath          Path to the root of the classpath, either a path to
+	 *                          a directory or a path to a jar file.
+	 * @param internalClassName internal name of the class.
+	 * @return Decompiled class text.
+	 * @throws Exception
+	 */
+	public String decompile(String basePath, String classPath) throws Exception {
+		// Load preferences
+		IPreferenceStore store = JavaDecompilerPlugin.getDefault().getPreferenceStore();
+
+		boolean realignmentLineNumber = store.getBoolean(JavaDecompilerPlugin.ALIGN);
+		boolean unicodeEscape = false; // currently unused :
+										// store.getBoolean(JavaDecompilerPlugin.PREF_ESCAPE_UNICODE_CHARACTERS);
+		boolean showLineNumbers = store.getBoolean(JavaDecompilerPlugin.PREF_DISPLAY_LINE_NUMBERS);
+		// boolean showMetadata =
+		// store.getBoolean(JavaDecompilerPlugin.PREF_DISPLAY_METADATA);
+
+		Map<String, Object> configuration = new TreeMap<>();
+		configuration.put("realignLineNumbers", realignmentLineNumber);
+
+		if (classPath.endsWith(JAVA_CLASS_SUFFIX)) {
+			classPath = classPath.substring(0, classPath.length() - 6);
+		}
+
+		Path jarPath = Paths.get(basePath);
+
+		EntriesCache cache = null;
+		if (entriesCache != null && entriesCache.isForTheSameFile(jarPath)) {
+			// The saved cache is for the same file and the file has not changed
+			// => we can just re-use it
+			cache = entriesCache;
+		}
+
+		try (JDCoreZipLoader loader = new JDCoreZipLoader(jarPath, cache)) {
+			JDCorePrinter printer = new JDCorePrinter(unicodeEscape, showLineNumbers);
+
+			ClassFileToJavaSourceDecompiler decompiler = new ClassFileToJavaSourceDecompiler();
+			decompiler.decompile(loader, printer, classPath, configuration);
+
+			// Save the cache so we don't have to re-load the class names
+			// in case we decompile another class from the same JAR file
+			entriesCache = loader.getEntriesCache();
+
+			return printer.toString();
 		}
 	}
 
-	protected String getLibraryPath( ) throws IOException
-	{
-		URL pluginUrl = null;
-		if ( Platform.OS_WIN32.equalsIgnoreCase( Platform.getOS( ) ) )
-		{
-			if ( Platform.ARCH_X86_64.equalsIgnoreCase( Platform.getOSArch( ) ) )
-			{
-				pluginUrl = this.getClass( ).getResource( "/native/jd-core/win32/x86_64/jd-eclipse.dll" ); //$NON-NLS-1$
-			}
-			else
-			{
-				pluginUrl = this.getClass( ).getResource( "/native/jd-core/win32/x86/jd-eclipse.dll" ); //$NON-NLS-1$
-			}
-		}
-		else if ( Platform.OS_LINUX.equalsIgnoreCase( Platform.getOS( ) ) )
-		{
-			if ( Platform.ARCH_X86_64.equalsIgnoreCase( Platform.getOSArch( ) ) )
-			{
-				pluginUrl = this.getClass( ).getResource( "/native/jd-core/linux/x86_64/libjd-eclipse.so" ); //$NON-NLS-1$
-			}
-			else
-			{
-				pluginUrl = this.getClass( ).getResource( "/native/jd-core/linux/x86/libjd-eclipse.so" ); //$NON-NLS-1$
-			}
-		}
-		else if ( Platform.OS_MACOSX.equalsIgnoreCase( Platform.getOS( ) ) )
-		{
-			if ( Platform.ARCH_X86_64.equalsIgnoreCase( Platform.getOSArch( ) ) )
-			{
-				pluginUrl = this.getClass( ).getResource( "/native/jd-core/macosx/x86_64/libjd-eclipse.jnilib" ); //$NON-NLS-1$
-			}
-			else
-			{
-				pluginUrl = this.getClass( ).getResource( "/native/jd-core/macosx/x86/libjd-eclipse.jnilib" ); //$NON-NLS-1$
-			}
-		}
-		String path = FileLocator.toFileURL( pluginUrl ).getFile( );
-		if ( UIUtil.isWin32( ) && path != null && ( path.length( ) > 0 ) && ( path.charAt( 0 ) == '/' ) )
-			path = path.substring( 1 );
-
-		return path;
+	/**
+	 * @return version of JD-Core
+	 * @since JD-Core 1.1.3
+	 */
+	public static String getVersion() {
+		return "1.1.3";
 	}
 }

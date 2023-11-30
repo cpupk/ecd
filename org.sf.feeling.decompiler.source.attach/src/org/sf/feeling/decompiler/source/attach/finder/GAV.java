@@ -1,77 +1,68 @@
 /*******************************************************************************
- * Copyright (c) 2017 Chen Chao(cnfree2000@hotmail.com).
+ * Copyright (c) 2017 Chen Chao and other ECD project contributors.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *  Chen Chao  - initial API and implementation
+ * https://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
 package org.sf.feeling.decompiler.source.attach.finder;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-public class GAV
-{
+public class GAV {
 
 	private String g;
 	private String a;
 	private String v;
 	private String artifactLink;
 
-	public String getG( )
-	{
+	public String getG() {
 		return g;
 	}
 
-	public void setG( String g )
-	{
+	public void setG(String g) {
 		this.g = g;
 	}
 
-	public String getA( )
-	{
+	public String getA() {
 		return a;
 	}
 
-	public void setA( String a )
-	{
+	public void setA(String a) {
 		this.a = a;
 	}
 
-	public String getV( )
-	{
+	public String getV() {
 		return v;
 	}
 
-	public void setV( String v )
-	{
+	public void setV(String v) {
 		this.v = v;
 	}
 
-	public String getArtifactLink( )
-	{
+	public String getArtifactLink() {
 		return artifactLink;
 	}
 
-	public void setArtifactLink( String artifactLink )
-	{
+	public void setArtifactLink(String artifactLink) {
 		this.artifactLink = artifactLink;
 	}
 
 	@Override
-	public boolean equals( Object obj )
-	{
-		return EqualsBuilder.reflectionEquals( this, obj );
+	public boolean equals(Object obj) {
+		return EqualsBuilder.reflectionEquals(this, obj);
 	}
 
 	@Override
-	public int hashCode( )
-	{
-		return HashCodeBuilder.reflectionHashCode( this );
+	public int hashCode() {
+		return HashCodeBuilder.reflectionHashCode(this);
+	}
+
+	@Override
+	public String toString() {
+		return "GAV [g=" + g + ", a=" + a + ", v=" + v + ", artifactLink=" + artifactLink + "]";
 	}
 
 }

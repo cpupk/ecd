@@ -1,20 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2017 Chen Chao(cnfree2000@hotmail.com).
+ * Copyright (c) 2017 Chen Chao and other ECD project contributors.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *  Chen Chao  - initial API and implementation
+ * https://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
 package org.sf.feeling.decompiler.source.attach.finder;
 
 import java.io.File;
 
-public class SourceFileResult
-{
+public class SourceFileResult {
 
 	private String binFile;
 	private String source;
@@ -23,9 +19,8 @@ public class SourceFileResult
 	private SourceCodeFinder finder;
 	private String tempSource;
 
-	public SourceFileResult( SourceCodeFinder finder, String binFile, String source, String suggestedSourceFileName,
-			int accuracy )
-	{
+	public SourceFileResult(SourceCodeFinder finder, String binFile, String source, String suggestedSourceFileName,
+			int accuracy) {
 		this.finder = finder;
 		this.binFile = binFile;
 		this.source = source;
@@ -33,90 +28,71 @@ public class SourceFileResult
 		this.accuracy = accuracy;
 	}
 
-	public SourceFileResult( SourceCodeFinder finder, String binFile, File sourceFile, File tempFile, int accuracy )
-	{
+	public SourceFileResult(SourceCodeFinder finder, String binFile, File sourceFile, File tempFile, int accuracy) {
 		this.finder = finder;
 		this.binFile = binFile;
-		this.source = sourceFile.getAbsolutePath( );
-		this.suggestedSourceFileName = sourceFile.getName( );
+		this.source = sourceFile.getAbsolutePath();
+		this.suggestedSourceFileName = sourceFile.getName();
 		this.accuracy = accuracy;
-		this.tempSource = tempFile.getAbsolutePath( );
+		this.tempSource = tempFile.getAbsolutePath();
 	}
 
 	@Override
-	public String toString( )
-	{
+	public String toString() {
 		String s = "SourceFileResult[source = " //$NON-NLS-1$
-				+ this.source
-				+ " ; suggestedSourceFileName = " //$NON-NLS-1$
-				+ this.suggestedSourceFileName
-				+ " ; accuracy = " //$NON-NLS-1$
-				+ this.accuracy
-				+ " ; binFile = " //$NON-NLS-1$
-				+ this.binFile
-				+ " ; finder = " //$NON-NLS-1$
-				+ this.finder
-				+ "]"; //$NON-NLS-1$
+				+ this.source + " ; suggestedSourceFileName = " //$NON-NLS-1$
+				+ this.suggestedSourceFileName + " ; accuracy = " //$NON-NLS-1$
+				+ this.accuracy + " ; binFile = " //$NON-NLS-1$
+				+ this.binFile + " ; finder = " //$NON-NLS-1$
+				+ this.finder + "]"; //$NON-NLS-1$
 		return s;
 	}
 
-	public String getBinFile( )
-	{
+	public String getBinFile() {
 		return this.binFile;
 	}
 
-	public void setBinFile( String binFile )
-	{
+	public void setBinFile(String binFile) {
 		this.binFile = binFile;
 	}
 
-	public String getSource( )
-	{
+	public String getSource() {
 		return this.source;
 	}
 
-	public void setSource( String source )
-	{
+	public void setSource(String source) {
 		this.source = source;
 	}
 
-	public String getSuggestedSourceFileName( )
-	{
+	public String getSuggestedSourceFileName() {
 		return this.suggestedSourceFileName;
 	}
 
-	public void setSuggestedSourceFileName( String suggestedSourceFileName )
-	{
+	public void setSuggestedSourceFileName(String suggestedSourceFileName) {
 		this.suggestedSourceFileName = suggestedSourceFileName;
 	}
 
-	public int getAccuracy( )
-	{
+	public int getAccuracy() {
 		return this.accuracy;
 	}
 
-	public void setAccuracy( int accuracy )
-	{
+	public void setAccuracy(int accuracy) {
 		this.accuracy = accuracy;
 	}
 
-	public SourceCodeFinder getFinder( )
-	{
+	public SourceCodeFinder getFinder() {
 		return finder;
 	}
 
-	public void setFinder( SourceCodeFinder finder )
-	{
+	public void setFinder(SourceCodeFinder finder) {
 		this.finder = finder;
 	}
 
-	public String getTempSource( )
-	{
+	public String getTempSource() {
 		return tempSource;
 	}
 
-	public void setTempSource( String tempSource )
-	{
+	public void setTempSource(String tempSource) {
 		this.tempSource = tempSource;
 	}
 }

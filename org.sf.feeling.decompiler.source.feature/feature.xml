@@ -2,7 +2,7 @@
 <feature
       id="org.sf.feeling.decompiler.source"
       label="%featureName"
-      version="2.10.0.qualifier"
+      version="3.4.0"
       provider-name="%providerName">
 
    <description url="%aboutURL">
@@ -18,51 +18,31 @@
    </license>
 
    <url>
-      <update label="Eclipse Class Decompiler Updates" url="http://www.cpupk.com/decompiler/update"/>
-      <discovery label="%updateSiteName" url="http://www.cpupk.com/decompiler/update"/>
+      <update label="Enhanced Class Decompiler Updates" url="https://ecd-plugin.github.io/update"/>
+      <discovery label="%updateSiteName" url="https://ecd-plugin.github.io/update"/>
    </url>
 
    <requires>
-      <import feature="org.sf.feeling.decompiler" version="2.10.0.qualifier"/>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.core.expressions"/>
+      <import plugin="org.eclipse.jdt.core"/>
+      <import plugin="org.eclipse.jdt.ui"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.core.databinding"/>
+      <import plugin="org.eclipse.jface.databinding"/>
+      <import plugin="org.eclipse.core.databinding.beans"/>
+      <import plugin="org.sf.feeling.decompiler" version="3.2.2" match="greaterOrEqual"/>
+      <import plugin="org.apache.ant"/>
+      <import plugin="org.apache.commons.io" version="2.2.0" match="greaterOrEqual"/>
+      <import plugin="org.apache.commons.lang3" version="3.1.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
-         id="org.sf.feeling.decompiler.source"
+         id="org.sf.feeling.decompiler.source.attach"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.sf.feeling.decompiler.jd.source"
-         os="linux,macosx,win32"
-         arch="x86,x86_64"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.sf.feeling.decompiler.jad.source"
-         os="linux,macosx,win32"
-         arch="x86,x86_64"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.sf.feeling.decompiler.cfr.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.sf.feeling.decompiler.procyon.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
+         version="3.4.0"
          unpack="false"/>
 
 </feature>

@@ -1,0 +1,47 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.github.ecd-plugin</groupId>
+		<artifactId>com.github.ecd-plugin.ecd</artifactId>
+		<version>3.4.0</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+	<artifactId>org.sf.feeling.decompiler.vineflower</artifactId>
+	<packaging>eclipse-plugin</packaging>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>${maven.dependency.plugin.version}</version>
+				<executions>
+					<execution>
+						<id>copy-libraries</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<item>
+									<!-- https://mvnrepository.com/artifact/org.vineflower/vineflower -->
+									<!-- On update: adapt version constant in VineFlowerDecompiler.java -->
+									<groupId>org.vineflower</groupId>
+									<artifactId>vineflower</artifactId>
+									<version>1.9.3</version>
+									<destFileName>vineflower.jar</destFileName>
+								</item>
+							</artifactItems>
+							<outputDirectory>lib</outputDirectory>
+							<overWriteReleases>true</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

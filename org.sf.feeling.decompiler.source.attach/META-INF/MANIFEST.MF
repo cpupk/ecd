@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Eclipse Class Decompiler Source Attach
+Bundle-Name: Enhanced Class Decompiler Source Attach
 Bundle-SymbolicName: org.sf.feeling.decompiler.source.attach;singleton:=true
-Bundle-Version: 2.10.0.qualifier
+Bundle-Version: 3.4.0
 Bundle-Activator: org.sf.feeling.decompiler.source.attach.SourceAttachPlugin
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
@@ -14,17 +14,17 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.databinding,
  org.eclipse.jface.databinding,
  org.eclipse.core.databinding.beans,
- org.sf.feeling.decompiler,
+ org.sf.feeling.decompiler;bundle-version="3.2.2",
  org.apache.ant,
  org.eclipse.jgit;resolution:=optional,
  com.jcraft.jsch;resolution:=optional,
- org.eclipse.m2e.jdt;resolution:=optional
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+ org.eclipse.m2e.jdt;resolution:=optional,
+ org.apache.commons.io;bundle-version="2.2.0",
+ org.apache.commons.lang3;bundle-version="3.1.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
-Bundle-Vendor: Chen Chao
-Bundle-ClassPath: lib/commons-lang-2.6.jar,
- lib/commons-io-2.2.jar,
- lib/commons-compress-1.3.jar,
+Bundle-Vendor: ECD Project Team
+Bundle-ClassPath: lib/commons-compress.jar,
  lib/cvsclient-20060125.jar,
  lib/maven-scm-api-1.9.4.jar,
  lib/maven-scm-provider-accurev-1.9.4.jar,
@@ -47,8 +47,13 @@ Bundle-ClassPath: lib/commons-lang-2.6.jar,
  lib/maven-scm-provider-tfs-1.9.4.jar,
  lib/maven-scm-provider-vss-1.9.4.jar,
  lib/plexus-utils-3.0.15.jar,
- lib/nexus-indexer-lucene-model-2.9.2-01.jar,
+ lib/nexus-indexer-lucene-model-2.14.20-02.jar,
  lib/nexus-restlet1x-model-2.9.2-01.jar,
+ lib/maven-scm-provider-jgit-1.9.4.jar,
+ lib/jaxb-api-2.3.1.jar,
+ lib/jaxb-impl-2.3.3.jar,
+ lib/jaxb-runtime-2.3.3.jar,
+ lib/activation-1.1.1.jar,
  .
 Export-Package: org.sf.feeling.decompiler.source.attach,
  org.sf.feeling.decompiler.source.attach.attacher,

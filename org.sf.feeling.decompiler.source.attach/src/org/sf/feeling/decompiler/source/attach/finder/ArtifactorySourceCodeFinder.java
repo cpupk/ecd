@@ -1,12 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2017 Chen Chao(cnfree2000@hotmail.com).
+ * Copyright (c) 2017 Chen Chao and other ECD project contributors.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *  Chen Chao  - initial API and implementation
+ * https://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
 package org.sf.feeling.decompiler.source.attach.finder;
@@ -36,133 +33,102 @@ import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
 
-public class ArtifactorySourceCodeFinder extends AbstractSourceCodeFinder implements SourceCodeFinder
-{
+public class ArtifactorySourceCodeFinder extends AbstractSourceCodeFinder implements SourceCodeFinder {
 
 	protected boolean canceled = false;
 	private String serviceUrl;
 
-	public ArtifactorySourceCodeFinder( String serviceUrl )
-	{
+	public ArtifactorySourceCodeFinder(String serviceUrl) {
 		this.serviceUrl = serviceUrl;
 	}
 
 	@Override
-	public String toString( )
-	{
-		return this.getClass( ) + "; serviceUrl=" + serviceUrl; //$NON-NLS-1$
+	public String toString() {
+		return this.getClass() + "; serviceUrl=" + serviceUrl; //$NON-NLS-1$
 	}
 
 	@Override
-	public void cancel( )
-	{
+	public void cancel() {
 		this.canceled = true;
 	}
 
 	@Override
-	public void find( String binFile, List<SourceFileResult> results )
-	{
-		Collection<GAV> gavs = new HashSet<GAV>( );
-		try
-		{
-			String sha1 = HashUtils.sha1Hash( new File( binFile ) );
-			gavs.addAll( findArtifactsUsingArtifactory( null, null, null, null, sha1, false ) );
-		}
-		catch ( Throwable e )
-		{
-			Logger.debug( e );
+	public void find(String binFile, List<SourceFileResult> results) {
+		Collection<GAV> gavs = new HashSet<GAV>();
+		try {
+			String sha1 = HashUtils.sha1Hash(new File(binFile));
+			gavs.addAll(findArtifactsUsingArtifactory(null, null, null, null, sha1, false));
+		} catch (Throwable e) {
+			Logger.debug(e);
 		}
 
-		if ( canceled )
+		if (canceled)
 			return;
 
-		if ( gavs.isEmpty( ) )
-		{
-			try
-			{
-				gavs.addAll( findGAVFromFile( binFile ) );
-			}
-			catch ( Throwable e )
-			{
-				Logger.debug( e );
+		if (gavs.isEmpty()) {
+			try {
+				gavs.addAll(findGAVFromFile(binFile));
+			} catch (Throwable e) {
+				Logger.debug(e);
 			}
 		}
 
-		if ( canceled )
+		if (canceled)
 			return;
 
-		Map<GAV, String> sourcesUrls = new HashMap<GAV, String>( );
-		try
-		{
-			sourcesUrls.putAll( findSourcesUsingArtifactory( gavs ) );
-		}
-		catch ( Throwable e )
-		{
-			Logger.debug( e );
+		Map<GAV, String> sourcesUrls = new HashMap<GAV, String>();
+		try {
+			sourcesUrls.putAll(findSourcesUsingArtifactory(gavs));
+		} catch (Throwable e) {
+			Logger.debug(e);
 		}
 
-		for ( Map.Entry<GAV, String> entry : sourcesUrls.entrySet( ) )
-		{
-			try
-			{
-				String[] sourceFiles = SourceBindingUtil.getSourceFileByDownloadUrl( entry.getValue( ) );
-				if ( sourceFiles != null && sourceFiles[0] != null && new File( sourceFiles[0] ).exists( ) )
-				{
-					File sourceFile = new File( sourceFiles[0] );
-					File tempFile = new File( sourceFiles[1] );
-					SourceFileResult result = new SourceFileResult( this, binFile, sourceFile, tempFile, 100 );
-					results.add( result );
+		for (Map.Entry<GAV, String> entry : sourcesUrls.entrySet()) {
+			try {
+				String[] sourceFiles = SourceBindingUtil.getSourceFileByDownloadUrl(entry.getValue());
+				if (sourceFiles != null && sourceFiles[0] != null && new File(sourceFiles[0]).exists()) {
+					File sourceFile = new File(sourceFiles[0]);
+					File tempFile = new File(sourceFiles[1]);
+					SourceFileResult result = new SourceFileResult(this, binFile, sourceFile, tempFile, 100);
+					results.add(result);
 					return;
 				}
-			}
-			catch ( Throwable e )
-			{
-				Logger.debug( e );
+			} catch (Throwable e) {
+				Logger.debug(e);
 			}
 		}
 
-		for ( Map.Entry<GAV, String> entry : sourcesUrls.entrySet( ) )
-		{
-			String name = entry.getKey( ).getA( ) + '-' + entry.getKey( ).getV( ) + "-sources.jar"; //$NON-NLS-1$
-			try
-			{
-				String result = new UrlDownloader( ).download( entry.getValue( ) );
-				if ( result != null
-						&& new File( result ).exists( )
-						&& SourceAttachUtil.isSourceCodeFor( result, binFile ) )
-				{
-					setDownloadUrl( entry.getValue( ) );
-					SourceFileResult object = new SourceFileResult( this, binFile, result, name, 100 );
-					Logger.debug( this.toString( ) + " FOUND: " + object, null ); //$NON-NLS-1$
-					results.add( object );
+		for (Map.Entry<GAV, String> entry : sourcesUrls.entrySet()) {
+			String name = entry.getKey().getA() + '-' + entry.getKey().getV() + "-sources.jar"; //$NON-NLS-1$
+			try {
+				String result = new UrlDownloader().download(entry.getValue());
+				if (result != null && new File(result).exists() && SourceAttachUtil.isSourceCodeFor(result, binFile)) {
+					setDownloadUrl(entry.getValue());
+					SourceFileResult object = new SourceFileResult(this, binFile, result, name, 100);
+					Logger.debug(this.toString() + " FOUND: " + object, null); //$NON-NLS-1$
+					results.add(object);
 				}
-			}
-			catch ( Throwable e )
-			{
-				Logger.debug( e );
+			} catch (Throwable e) {
+				Logger.debug(e);
 			}
 		}
 	}
 
-	protected Map<GAV, String> findSourcesUsingArtifactory( Collection<GAV> gavs ) throws Exception
-	{
-		Map<GAV, String> results = new HashMap<GAV, String>( );
-		for ( GAV gav : gavs )
-		{
-			if ( canceled )
+	protected Map<GAV, String> findSourcesUsingArtifactory(Collection<GAV> gavs) throws Exception {
+		Map<GAV, String> results = new HashMap<GAV, String>();
+		for (GAV gav : gavs) {
+			if (canceled)
 				return results;
-			Set<GAV> gavs2 = findArtifactsUsingArtifactory( gav
-					.getG( ), gav.getA( ), gav.getV( ), "sources", null, true ); //$NON-NLS-1$
-			for ( GAV gav2 : gavs2 )
-			{
-				if ( gav2.getArtifactLink( ).endsWith( "-sources.jar" ) //$NON-NLS-1$
-						|| gav2.getArtifactLink( ).endsWith( "-sources.zip" ) ) //$NON-NLS-1$
+			Set<GAV> gavs2 = findArtifactsUsingArtifactory(gav.getG(), gav.getA(), gav.getV(), "sources", null, true); //$NON-NLS-1$
+			for (GAV gav2 : gavs2) {
+				if (gav2.getArtifactLink().endsWith("-sources.jar") //$NON-NLS-1$
+						|| gav2.getArtifactLink().endsWith("-sources.zip")) //$NON-NLS-1$
 				{
-					String uri = gav2.getArtifactLink( );
-					File file = new File( new UrlDownloader( ).download( uri ) );
-					String json = FileUtils.readFileToString( file );
-					JsonObject resp = Json.parse( json ).asObject( );
-					results.put( gav, resp.getString( "downloadUri", "" ) ); //$NON-NLS-1$ //$NON-NLS-2$
+					String uri = gav2.getArtifactLink();
+					File file = new File(new UrlDownloader().download(uri));
+					String json = FileUtils.readFileToString(file, "UTF-8");
+					JsonObject resp = Json.parse(json).asObject();
+					results.put(gav, resp.getString("downloadUri", "")); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 		}
@@ -170,83 +136,73 @@ public class ArtifactorySourceCodeFinder extends AbstractSourceCodeFinder implem
 		return results;
 	}
 
-	protected Set<GAV> findArtifactsUsingArtifactory( String g, String a, String v, String c, String sha1,
-			boolean getLink ) throws Exception
-	{
+	protected Set<GAV> findArtifactsUsingArtifactory(String g, String a, String v, String c, String sha1,
+			boolean getLink) throws Exception {
 		// https://repository.cloudera.com/artifactory/api/search/checksum?sha1=2bf96b7aa8b611c177d329452af1dc933e14501c
-		// {"results":[{"uri":"http://repository.cloudera.com/artifactory/api/storage/repo1-cache/commons-cli/commons-cli/1.2/commons-cli-1.2.jar"}]}
+		// {"results":[{"uri":"https://repository.cloudera.com/artifactory/api/storage/repo1-cache/commons-cli/commons-cli/1.2/commons-cli-1.2.jar"}]}
 		// GET
 		// /api/search/gavc?g=org.acme&a=artifact*&v=1.0&c=sources&repos=libs-release-local
 
-		Set<GAV> results = new HashSet<GAV>( );
-		String apiUrl = getArtifactApiUrl( );
+		Set<GAV> results = new HashSet<>();
+		String apiUrl = getArtifactApiUrl();
 
 		String url;
-		if ( sha1 != null )
-		{
+		if (sha1 != null) {
 			url = apiUrl + "search/checksum?sha1=" + sha1; //$NON-NLS-1$
-		}
-		else
-		{
-			url = apiUrl + "search/gavc?g=" + g + "&a=" + a + "&v=" + v + ( c != null ? "&c=" + c : "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		} else {
+			url = apiUrl + "search/gavc?g=" + g + "&a=" + a + "&v=" + v + (c != null ? "&c=" + c : ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		}
 
-		URLConnection connection = new URL( url ).openConnection( );
-		connection.setConnectTimeout( 5000 );
-		connection.setReadTimeout( 5000 );
-		connection.connect( );
-		try
-		{
-			InputStream is = connection.getInputStream( );
-			String json = IOUtils.toString( is );
-			IOUtils.closeQuietly( is );
-
-			JsonObject resp = Json.parse( json ).asObject( );
-			for ( JsonValue elem : resp.get( "results" ).asArray( ) ) //$NON-NLS-1$
-			{
-				JsonObject result = elem.asObject( );
-				String uri = result.getString( "uri", "" ); //$NON-NLS-1$ //$NON-NLS-2$
-				// http://repository.cloudera.com/artifactory/api/storage/repo1-cache/commons-cli/commons-cli/1.2/commons-cli-1.2.jar
-				String regex = "/api/storage/[^/]+/(.+)$"; //$NON-NLS-1$
-				Pattern pattern = Pattern.compile( regex );
-				Matcher matcher = pattern.matcher( uri );
-				if ( matcher.find( ) )
-				{
-					String[] gavInArray = matcher.group( 1 ).split( "/" ); //$NON-NLS-1$
-
-					GAV gav = new GAV( );
-					String group = gavInArray[0];
-					for ( int i = 1; i < gavInArray.length - 3; i++ )
-					{
-						group += "." + gavInArray[i]; //$NON-NLS-1$
-					}
-					gav.setG( group );
-
-					gav.setA( gavInArray[gavInArray.length - 3] );
-					gav.setV( gavInArray[gavInArray.length - 2] );
-
-					if ( getLink )
-						gav.setArtifactLink( uri );
-					results.add( gav );
-				}
-
+		URLConnection connection = new URL(url).openConnection();
+		connection.setConnectTimeout(5000);
+		connection.setReadTimeout(5000);
+		connection.connect();
+		try {
+			String json;
+			try (InputStream is = connection.getInputStream()) {
+				json = IOUtils.toString(is, "UTF-8");
 			}
 
-		}
-		catch ( Throwable e )
-		{
-			Logger.debug( e );
+			JsonObject resp = Json.parse(json).asObject();
+			for (JsonValue elem : resp.get("results").asArray()) //$NON-NLS-1$
+			{
+				JsonObject result = elem.asObject();
+				String uri = result.getString("uri", ""); //$NON-NLS-1$ //$NON-NLS-2$
+				// https://repository.cloudera.com/artifactory/api/storage/repo1-cache/commons-cli/commons-cli/1.2/commons-cli-1.2.jar
+				String regex = "/api/storage/[^/]+/(.+)$"; //$NON-NLS-1$
+				Pattern pattern = Pattern.compile(regex);
+				Matcher matcher = pattern.matcher(uri);
+				if (matcher.find()) {
+					String[] gavInArray = matcher.group(1).split("/"); //$NON-NLS-1$
+
+					GAV gav = new GAV();
+					String group = gavInArray[0];
+					for (int i = 1; i < gavInArray.length - 3; i++) {
+						group += "." + gavInArray[i]; //$NON-NLS-1$
+					}
+					gav.setG(group);
+
+					gav.setA(gavInArray[gavInArray.length - 3]);
+					gav.setV(gavInArray[gavInArray.length - 2]);
+
+					if (getLink) {
+						gav.setArtifactLink(uri);
+					}
+					results.add(gav);
+				}
+			}
+		} catch (Throwable e) {
+			Logger.debug(e);
 		}
 
 		return results;
 	}
 
-	private String getArtifactApiUrl( )
-	{
+	private String getArtifactApiUrl() {
 		String result = null;
-		if ( serviceUrl.endsWith( "/webapp/home.html" ) ) //$NON-NLS-1$
+		if (serviceUrl.endsWith("/webapp/home.html")) //$NON-NLS-1$
 		{
-			result = serviceUrl.replace( "/webapp/home.html", "/api/" ); //$NON-NLS-1$ //$NON-NLS-2$
+			result = serviceUrl.replace("/webapp/home.html", "/api/"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return result;
 	}

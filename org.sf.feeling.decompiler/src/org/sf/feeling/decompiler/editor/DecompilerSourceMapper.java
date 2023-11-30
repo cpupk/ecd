@@ -1,12 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2017 Chen Chao(cnfree2000@hotmail.com).
+ * Copyright (c) 2017 Chen Chao and other ECD project contributors.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *  Chen Chao  - initial API and implementation
+ * https://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
 package org.sf.feeling.decompiler.editor;
@@ -37,167 +34,146 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.text.edits.TextEdit;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.util.DecompilerOutputUtil;
+import org.sf.feeling.decompiler.util.SourceMapperUtil;
 
-public abstract class DecompilerSourceMapper extends SourceMapper
-{
+public abstract class DecompilerSourceMapper extends SourceMapper {
 
-	protected static Map<IPackageFragmentRoot, SourceMapper> originalSourceMapper = new ConcurrentHashMap<IPackageFragmentRoot, SourceMapper>( );
+	protected static Map<IPackageFragmentRoot, SourceMapper> originalSourceMapper = new ConcurrentHashMap<IPackageFragmentRoot, SourceMapper>();
 
 	protected boolean isAttachedSource;
 
-	public DecompilerSourceMapper( IPath sourcePath, String rootPath, Map options )
-	{
-		super( sourcePath, rootPath, options );
+	public DecompilerSourceMapper(IPath sourcePath, String rootPath, Map options) {
+		super(sourcePath, rootPath, options);
 	}
 
-	public char[] findSource( IType type ) throws JavaModelException
-	{
-		if ( !type.isBinary( ) )
-		{
+	public char[] findSource(IType type) throws JavaModelException {
+		if (!type.isBinary()) {
 			return null;
 		}
-		BinaryType parent = (BinaryType) type.getDeclaringType( );
+		BinaryType parent = (BinaryType) type.getDeclaringType();
 		BinaryType declType = (BinaryType) type;
-		while ( parent != null )
-		{
+		while (parent != null) {
 			declType = parent;
-			parent = (BinaryType) declType.getDeclaringType( );
+			parent = (BinaryType) declType.getDeclaringType();
 		}
 		IBinaryType info = null;
 
-		info = (IBinaryType) declType.getElementInfo( );
+		info = (IBinaryType) declType.getElementInfo();
 
-		if ( info == null )
-		{
+		if (info == null) {
 			return null;
 		}
-		return findSource( type, info );
+		return findSource(type, info);
 	}
 
 	/**
-	 * @see org.eclipse.jdt.internal.core.SourceMapper#mapSource(IType, char[],
-	 *      IBinaryType)
+	 * With the time this API has changed and the original method which accepted
+	 * {@link IType} as first parameter has been superseded and replaced by the
+	 * which does accept {@link NamedParameter} as first parameter.
+	 * <p>
+	 * But we do need to support both APIs here so we will try to invoke the correct
+	 * method using reflection instead of a hard coded reference.
 	 */
-	public void mapSource( IType type, char[] contents, boolean force )
-	{
-		if ( force )
-		{
-			sourceRanges.remove( type );
+	public void mapSourceSwitch(IType type, char[] contents, boolean force) {
+		if (force) {
+			sourceRanges.remove(type);
 		}
-		super.mapSource( type, contents, null );
+
+		try {
+			SourceMapperUtil.mapSource(this, type, contents, null);
+		} catch (Exception e) {
+			// Method was found but invocation failed, this shouldn't happen.
+		}
 	}
 
 	/**
-	 * @return Does the source returned by
-	 *         {@link #findSource(IType, IBinaryType)} originate from a source
-	 *         attachment?
+	 * @return Does the source returned by {@link #findSource(IType, IBinaryType)}
+	 *         originate from a source attachment?
 	 */
-	public boolean isAttachedSource( )
-	{
+	public boolean isAttachedSource() {
 		return isAttachedSource;
 	}
 
-	protected String formatSource( String source )
-	{
+	protected String formatSource(String source) {
 		String result = null;
 
-		IPreferenceStore prefs = JavaDecompilerPlugin.getDefault( ).getPreferenceStore( );
-		boolean useFormatter = prefs.getBoolean( JavaDecompilerPlugin.USE_ECLIPSE_FORMATTER );
+		IPreferenceStore prefs = JavaDecompilerPlugin.getDefault().getPreferenceStore();
+		boolean useFormatter = prefs.getBoolean(JavaDecompilerPlugin.USE_ECLIPSE_FORMATTER);
 
-		if ( source != null && useFormatter )
-		{
-			CompilerOptions option = new CompilerOptions( );
-			Map<String, String> options = option.getMap( );
-			options.put( CompilerOptions.OPTION_Compliance, DecompilerOutputUtil.getMaxDecompileLevel( ) ); // $NON-NLS-1$
-			options.put( CompilerOptions.OPTION_Source, DecompilerOutputUtil.getMaxDecompileLevel( ) ); // $NON-NLS-1$
-			CodeFormatter formatter = ToolFactory.createCodeFormatter( options );
-			TextEdit textEdit = formatter
-					.format( CodeFormatter.K_COMPILATION_UNIT, source, 0, source.length( ), 0, null );
-			if ( textEdit != null )
-			{
-				IDocument document = new Document( source );
-				try
-				{
-					textEdit.apply( document );
+		if (source != null && useFormatter) {
+			CompilerOptions option = new CompilerOptions();
+			Map<String, String> options = option.getMap();
+			options.put(CompilerOptions.OPTION_Compliance, DecompilerOutputUtil.getMaxDecompileLevel()); // $NON-NLS-1$
+			options.put(CompilerOptions.OPTION_Source, DecompilerOutputUtil.getMaxDecompileLevel()); // $NON-NLS-1$
+			CodeFormatter formatter = ToolFactory.createCodeFormatter(options);
+			TextEdit textEdit = formatter.format(CodeFormatter.K_COMPILATION_UNIT, source, 0, source.length(), 0, null);
+			if (textEdit != null) {
+				IDocument document = new Document(source);
+				try {
+					textEdit.apply(document);
+				} catch (BadLocationException e) {
+					JavaDecompilerPlugin.log(IStatus.WARNING, e, "Unable to apply text formatting."); //$NON-NLS-1$
 				}
-				catch ( BadLocationException e )
-				{
-					JavaDecompilerPlugin.log( IStatus.WARNING, e, "Unable to apply text formatting." ); //$NON-NLS-1$
-				}
-				result = document.get( );
+				result = document.get();
 			}
 
-			if ( result == null )
-			{
-				JavaDecompilerPlugin.log( IStatus.WARNING, null, "Could not format code, it will remain unformatted." ); //$NON-NLS-1$
+			if (result == null) {
+				JavaDecompilerPlugin.log(IStatus.WARNING, null, "Could not format code, it will remain unformatted."); //$NON-NLS-1$
 				result = source;
 			}
-		}
-		else
-		{
+		} else {
 			result = source;
 		}
 
-		return result.trim( );
+		return result.trim();
 	}
 
-	protected String getArchivePath( IPackageFragmentRoot root )
-	{
+	protected String getArchivePath(IPackageFragmentRoot root) {
 		String archivePath = null;
 		IResource resource;
 
-		try
-		{
-			if ( ( resource = root.getUnderlyingResource( ) ) != null )
+		try {
+			if ((resource = root.getUnderlyingResource()) != null) {
 				// jar in workspace
-				archivePath = resource.getLocation( ).toOSString( );
-			else
+				archivePath = resource.getLocation().toOSString();
+			} else {
 				// external jar
-				archivePath = root.getPath( ).toOSString( );
-		}
-		catch ( JavaModelException e )
-		{
-			throw new RuntimeException( "Unexpected Java model exception: " //$NON-NLS-1$
-					+ e.toString( ) );
+				archivePath = root.getPath().toOSString();
+			}
+		} catch (JavaModelException e) {
+			throw new RuntimeException("Unexpected Java model exception: " //$NON-NLS-1$
+					+ e.toString());
 		}
 		return archivePath;
 	}
 
 	/**
 	 * Finds the deepest <code>IJavaElement</code> in the hierarchy of
-	 * <code>elt</elt>'s children (including <code>elt</code> itself) which has
-	 * a source range that encloses <code>position</code> according to
+	 * <code>elt</elt>'s children (including <code>elt</code> itself) which has a
+	 * source range that encloses <code>position</code> according to
 	 * <code>mapper</code>.
 	 * 
 	 * Code mostly taken from 'org.eclipse.jdt.internal.core.ClassFile'
 	 */
-	protected IJavaElement findElement( IJavaElement elt, int position )
-	{
-		ISourceRange range = getSourceRange( elt );
-		if ( range == null || position < range.getOffset( ) || range.getOffset( ) + range.getLength( ) - 1 < position )
-		{
+	protected IJavaElement findElement(IJavaElement elt, int position) {
+		ISourceRange range = getSourceRange(elt);
+		if (range == null || position < range.getOffset() || range.getOffset() + range.getLength() - 1 < position) {
 			return null;
 		}
-		if ( elt instanceof IParent )
-		{
-			try
-			{
-				IJavaElement[] children = ( (IParent) elt ).getChildren( );
-				for ( int i = 0; i < children.length; i++ )
-				{
-					IJavaElement match = findElement( children[i], position );
-					if ( match != null )
-					{
+		if (elt instanceof IParent) {
+			try {
+				IJavaElement[] children = ((IParent) elt).getChildren();
+				for (int i = 0; i < children.length; i++) {
+					IJavaElement match = findElement(children[i], position);
+					if (match != null) {
 						return match;
 					}
 				}
-			}
-			catch ( JavaModelException npe )
-			{
+			} catch (JavaModelException npe) {
 			}
 		}
 		return elt;
 	}
 
-	public abstract String decompile( String decompilerType, File file );
+	public abstract String decompile(String decompilerType, File file);
 }

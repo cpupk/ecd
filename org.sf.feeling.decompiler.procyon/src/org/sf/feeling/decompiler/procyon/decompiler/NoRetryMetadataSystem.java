@@ -1,12 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2017 Chen Chao(cnfree2000@hotmail.com).
+ * Copyright (c) 2017 Chen Chao and other ECD project contributors.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *  Chen Chao  - initial API and implementation
+ * https://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
 package org.sf.feeling.decompiler.procyon.decompiler;
@@ -18,36 +15,25 @@ import com.strobel.assembler.metadata.ITypeLoader;
 import com.strobel.assembler.metadata.MetadataSystem;
 import com.strobel.assembler.metadata.TypeDefinition;
 
-public final class NoRetryMetadataSystem extends MetadataSystem
-{
+public final class NoRetryMetadataSystem extends MetadataSystem {
 
-	private final Set<String> _failedTypes = new HashSet( );
+	private final Set<String> _failedTypes = new HashSet<>();
 
-	public NoRetryMetadataSystem( )
-	{
+	public NoRetryMetadataSystem() {
 	}
 
-	public NoRetryMetadataSystem( String classPath )
-	{
-		super( classPath );
-	}
-
-	public NoRetryMetadataSystem( ITypeLoader typeLoader )
-	{
-		super( typeLoader );
+	public NoRetryMetadataSystem(ITypeLoader typeLoader) {
+		super(typeLoader);
 	}
 
 	@Override
-	protected TypeDefinition resolveType( String descriptor, boolean mightBePrimitive )
-	{
-		if ( this._failedTypes.contains( descriptor ) )
-		{
+	protected TypeDefinition resolveType(String descriptor, boolean mightBePrimitive) {
+		if (this._failedTypes.contains(descriptor)) {
 			return null;
 		}
-		TypeDefinition result = super.resolveType( descriptor, mightBePrimitive );
-		if ( result == null )
-		{
-			this._failedTypes.add( descriptor );
+		TypeDefinition result = super.resolveType(descriptor, mightBePrimitive);
+		if (result == null) {
+			this._failedTypes.add(descriptor);
 		}
 		return result;
 	}

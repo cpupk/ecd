@@ -2,7 +2,7 @@
 <feature
       id="org.sf.feeling.decompiler.procyon"
       label="%featureName"
-      version="2.10.0.qualifier"
+      version="3.4.0"
       provider-name="%providerName"
       plugin="org.sf.feeling.decompiler.procyon">
 
@@ -19,8 +19,8 @@
    </license>
 
    <url>
-      <update label="Eclipse Class Decompiler Updates" url="http://www.cpupk.com/decompiler/update"/>
-      <discovery label="%updateSiteName" url="http://www.cpupk.com/decompiler/update"/>
+      <update label="Enhanced Class Decompiler Updates" url="https://ecd-plugin.github.io/update"/>
+      <discovery label="%updateSiteName" url="https://ecd-plugin.github.io/update"/>
    </url>
 
    <requires>
@@ -39,14 +39,15 @@
       <import plugin="org.eclipse.core.expressions"/>
       <import plugin="org.eclipse.ui.navigator"/>
       <import plugin="org.eclipse.core.filesystem"/>
-      <import plugin="org.sf.feeling.decompiler"/>
+      <import plugin="org.sf.feeling.decompiler" version="3.2.2" match="greaterOrEqual"/>
+      <import plugin="org.apache.commons.lang3" version="3.1.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
          id="org.sf.feeling.decompiler.procyon"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="3.4.0"
          unpack="false"/>
 
 </feature>
