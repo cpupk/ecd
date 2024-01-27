@@ -21,7 +21,10 @@ public class EcdResouceBundle {
 	public EcdResouceBundle(Class<?> messagesClass) {
 		ClassLoader classLoader = messagesClass.getClassLoader();
 		Locale targetLocale = Locale.getDefault();
-		String resourceBundleName = messagesClass.getPackageName() + ".messages";
+		// Java 8 workaround for messagesClass.getpackageName()
+		String messageClassName = messagesClass.getName();
+		String packageName = messageClassName.substring(0, messageClassName.lastIndexOf("."));
+		String resourceBundleName = packageName + ".messages";
 		this.resourceBundle = ResourceBundle.getBundle(resourceBundleName, targetLocale, classLoader);
 	}
 
