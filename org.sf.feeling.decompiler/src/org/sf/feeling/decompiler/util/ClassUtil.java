@@ -119,7 +119,7 @@ public class ClassUtil {
 			}
 			Optional<IDecompilerDescriptor> defaultDecompiler = stream
 					.sorted(new DefaultDecompilerDescriptorComparator()).findFirst();
-			if (defaultDecompiler.isEmpty()) {
+			if (!defaultDecompiler.isPresent()) {
 				return null;
 			}
 			return defaultDecompiler.get().getDecompiler();
