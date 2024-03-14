@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.ecd-plugin</groupId>
 	<artifactId>com.github.ecd-plugin.ecd</artifactId>
-	<version>3.4.0</version>
+	<version>3.4.1</version>
 	<packaging>pom</packaging>
 	<name>com.github.ecd-plugin.ecd</name>
 	<url>https://github.com/ecd-plugin/ecd</url>
@@ -25,8 +25,10 @@
 		<module>org.sf.feeling.decompiler.fernflower.feature</module>
 		<module>org.sf.feeling.decompiler.vineflower</module>
 		<module>org.sf.feeling.decompiler.vineflower.feature</module>
+        <!--
 		<module>org.sf.feeling.decompiler.source.attach</module>
 		<module>org.sf.feeling.decompiler.source.feature</module>
+        -->
 		<module>update_site</module>
 	</modules>
 	<build>
@@ -117,6 +119,11 @@
 					<keypass>${signing.password}</keypass>
 					<verbose>true</verbose>
 					<certs>true</certs>
+                    <arguments>
+                        <argument>-digestalg</argument><argument>SHA-256</argument>
+                        <argument>-sigalg</argument><argument>SHA256withRSA</argument>
+                        <argument>-tsadigestalg</argument><argument>SHA-256</argument>
+                    </arguments>
 				</configuration>
 				<executions>
 					<execution>

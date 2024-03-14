@@ -98,6 +98,11 @@ Used libraries:
 * Jan Peter Stotz
 
 ## Changelog
+* Version 3.4.1
+  * Moved FernFlower into own plugin/feature
+  * Quiltflower plugin and feature removed
+  * Vineflower plugin and feature added (replaces Quiltflower)
+
 * Version 3.4.0
   * Updated Embedded Decompilers
     * Fernflower updated to 232.10203.10
@@ -105,7 +110,7 @@ Used libraries:
 * Version 3.3.0
   * ECD releases are now signed with a self-signed certificate
   * Removed Jad decompiler (decompiler was released 2001)
-  * Vineflower plugin and feature added
+  * Quiltflower plugin and feature added
   * Updated Embedded Decompilers
     * CFR to version 0.152 (JDK 14 support)
     * Procyon to version 0.6.0
