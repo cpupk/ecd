@@ -9,7 +9,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<tycho.version>2.7.5</tycho.version>
-        <maven.dependency.plugin.version>3.5.0</maven.dependency.plugin.version>
+		<maven.dependency.plugin.version>3.5.0</maven.dependency.plugin.version>
 		<signing.disabled>true</signing.disabled>
 	</properties>
 	<modules>
@@ -25,10 +25,6 @@
 		<module>org.sf.feeling.decompiler.fernflower.feature</module>
 		<module>org.sf.feeling.decompiler.vineflower</module>
 		<module>org.sf.feeling.decompiler.vineflower.feature</module>
-        <!--
-		<module>org.sf.feeling.decompiler.source.attach</module>
-		<module>org.sf.feeling.decompiler.source.feature</module>
-        -->
 		<module>update_site</module>
 	</modules>
 	<build>
@@ -119,11 +115,6 @@
 					<keypass>${signing.password}</keypass>
 					<verbose>true</verbose>
 					<certs>true</certs>
-                    <arguments>
-                        <argument>-digestalg</argument><argument>SHA-256</argument>
-                        <argument>-sigalg</argument><argument>SHA256withRSA</argument>
-                        <argument>-tsadigestalg</argument><argument>SHA-256</argument>
-                    </arguments>
 				</configuration>
 				<executions>
 					<execution>

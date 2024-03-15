@@ -34,6 +34,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.text.edits.TextEdit;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.util.DecompilerOutputUtil;
+import org.sf.feeling.decompiler.util.EclipseCompatibilityHelper;
 import org.sf.feeling.decompiler.util.SourceMapperUtil;
 
 public abstract class DecompilerSourceMapper extends SourceMapper {
@@ -56,10 +57,7 @@ public abstract class DecompilerSourceMapper extends SourceMapper {
 			declType = parent;
 			parent = (BinaryType) declType.getDeclaringType();
 		}
-		IBinaryType info = null;
-
-		info = (IBinaryType) declType.getElementInfo();
-
+		IBinaryType info = EclipseCompatibilityHelper.binaryTypeGetElementInfo(declType);
 		if (info == null) {
 			return null;
 		}

@@ -66,42 +66,19 @@ Since version 3.3.0 ECD is signed by a self-signed 4096 bit RSA key:
 * SHA-256 fingerprint: 8A 68 55 D3 91 B7 6F 95 DA D1 1E DF 1C 38 8D 38 F1 8A 0C A2 97 E5 12 85 DD 5B 05 9C C3 21 1B D4
 * Certificate file: [ecd.cer](ecd.cer)
 
-## Licenses
+## Eclipse Photon to Eclipse 2021-03
 
-The main plugin and the _org.sf.feeling.decompiler.jd_ project are licensed under [GPL 3](https://www.gnu.org/licenses/gpl-3.0-standalone.html), the other feature plugins are licensed under the [Eclipse Public License v1.0](https://www.eclipse.org/legal/epl-v10.html)
+Due to a signature bug in all Eclipse versions up to (including) Eclipse 2021-03, the signed releases of Enhanced Class Decompiler (ECD) 3.4.1 and newer can no longer be used. Please download the latest unsigned repository from the [ECD releases](https://github.com/ecd-plugin/ecd/releases) and install it manually in Eclipse.
 
-Code partially based on:
-  * JD-Eclipse: Copyright Emmanuel Dupuy, [GPL 3](https://www.gnu.org/licenses/gpl-3.0-standalone.html)
-  * Java Source Attacher: Copyright Thai Ha, [Apache License V2.0](https://www.apache.org/licenses/LICENSE-2.0.html)
-
-Used libraries:
-  * Dr. Garbage Tools: Copyright (c) Dr. Garbage Ltd. & Co KG, [Apache License V2.0](https://www.apache.org/licenses/LICENSE-2.0.html)
-  * Apache commons: Copyright (c) Apache Software Foundation, [Apache License V2.0](https://www.apache.org/licenses/LICENSE-2.0.html)
-  * Fernflower: Copyright (c) JetBrains, [Apache License V2.0](https://www.apache.org/licenses/LICENSE-2.0.html)
-  * Minimal JSON: Copyright (c) 2013, 2014 EclipseSource, [MIT License](https://opensource.org/licenses/MIT)
-  * CFR: Copyright Leee Benfield, [MIT License](https://opensource.org/licenses/MIT)
-  * Procyon: Copyright Mike Strobel, [Apache License V2.0](https://www.apache.org/licenses/LICENSE-2.0.html)
-  * Netbeans CVSClient: Copyright (c) NetBeans Community, [Eclipse Public License v1.0](https://www.eclipse.org/legal/epl-v10.html) and [Apache License V2.0](https://www.apache.org/licenses/LICENSE-2.0.html)
-  * Maven SCM: Copyright (c) Apache Software Foundation, [Apache License V2.0](https://www.apache.org/licenses/LICENSE-2.0.html)
-  * Nexus Indexer: [Apache License V2.0](https://www.apache.org/licenses/LICENSE-2.0.html)
-  * Nexus Restlet1x Model: [Eclipse Public License v1.0](https://www.eclipse.org/legal/epl-v10.html)
-  * Plexus Utils: Copyright The Codehaus Foundation, [Apache License V2.0](https://www.apache.org/licenses/LICENSE-2.0.html)
-  * JD-Core: Copyright Emmanuel Dupuy, [GPL 3](https://www.gnu.org/licenses/gpl-3.0-standalone.html)
-  * Vineflower: [Apache License V2.0](https://www.apache.org/licenses/LICENSE-2.0.html)
-
-## Contributors
-
-* Chen Chao (cnfree2000@hotmail.com) - initial API and implementation
-* Robert Zenz
-* Pascal Bihler
-* Nick Lombard
-* Jan Peter Stotz
+This affects the release version published on https://ecd-plugin.github.io/update/ and also the version installable via Eclipse Marketplace as it uses this update site.
 
 ## Changelog
 * Version 3.4.1
   * Moved FernFlower into own plugin/feature
   * Quiltflower plugin and feature removed
   * Vineflower plugin and feature added (replaces Quiltflower)
+  * Removed "Source" (source.attach) plugin and feature
+  * Updated build envoironment to use Java 17
 
 * Version 3.4.0
   * Updated Embedded Decompilers
@@ -146,3 +123,34 @@ Used libraries:
   * Removed extra-header in code (Issue [upstream#2](https://github.com/cnfree/Eclipse-Class-Decompiler/issues/28))
   * Display information about class being decompiled in editor title (Issue #3)
   * Made plug-in work with Java9 BETA JDT core
+
+## Licenses
+
+The main plugin and the _org.sf.feeling.decompiler.jd_ project are licensed under [GPL 3](https://www.gnu.org/licenses/gpl-3.0-standalone.html), the other feature plugins are licensed under the [Eclipse Public License v1.0](https://www.eclipse.org/legal/epl-v10.html)
+
+Code partially based on:
+  * JD-Eclipse: Copyright Emmanuel Dupuy, [GPL 3](https://www.gnu.org/licenses/gpl-3.0-standalone.html)
+  * Java Source Attacher: Copyright Thai Ha, [Apache License V2.0](https://www.apache.org/licenses/LICENSE-2.0.html)
+
+Used libraries:
+  * Dr. Garbage Tools: Copyright (c) Dr. Garbage Ltd. & Co KG, [Apache License V2.0](https://www.apache.org/licenses/LICENSE-2.0.html)
+  * Apache commons: Copyright (c) Apache Software Foundation, [Apache License V2.0](https://www.apache.org/licenses/LICENSE-2.0.html)
+  * Fernflower: Copyright (c) JetBrains, [Apache License V2.0](https://www.apache.org/licenses/LICENSE-2.0.html)
+  * Minimal JSON: Copyright (c) 2013, 2014 EclipseSource, [MIT License](https://opensource.org/licenses/MIT)
+  * CFR: Copyright Leee Benfield, [MIT License](https://opensource.org/licenses/MIT)
+  * Procyon: Copyright Mike Strobel, [Apache License V2.0](https://www.apache.org/licenses/LICENSE-2.0.html)
+  * Netbeans CVSClient: Copyright (c) NetBeans Community, [Eclipse Public License v1.0](https://www.eclipse.org/legal/epl-v10.html) and [Apache License V2.0](https://www.apache.org/licenses/LICENSE-2.0.html)
+  * Maven SCM: Copyright (c) Apache Software Foundation, [Apache License V2.0](https://www.apache.org/licenses/LICENSE-2.0.html)
+  * Nexus Indexer: [Apache License V2.0](https://www.apache.org/licenses/LICENSE-2.0.html)
+  * Nexus Restlet1x Model: [Eclipse Public License v1.0](https://www.eclipse.org/legal/epl-v10.html)
+  * Plexus Utils: Copyright The Codehaus Foundation, [Apache License V2.0](https://www.apache.org/licenses/LICENSE-2.0.html)
+  * JD-Core: Copyright Emmanuel Dupuy, [GPL 3](https://www.gnu.org/licenses/gpl-3.0-standalone.html)
+  * Vineflower: [Apache License V2.0](https://www.apache.org/licenses/LICENSE-2.0.html)
+
+## Contributors
+
+* Chen Chao (cnfree2000@hotmail.com) - initial API and implementation
+* Robert Zenz
+* Pascal Bihler
+* Nick Lombard
+* Jan Peter Stotz

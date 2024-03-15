@@ -31,14 +31,14 @@ public class ReflectionUtils {
 	}
 
 	public static Method getDeclaredMethod(Object object, String methodName, Class[] parameterTypes) {
-		if (object == null || methodName == null)
+		if (object == null || methodName == null) {
 			return null;
+		}
 
 		for (Class clazz = object.getClass(); clazz != Object.class; clazz = clazz.getSuperclass()) {
 			try {
 				return clazz.getDeclaredMethod(methodName, parameterTypes);
 			} catch (Exception e) {
-
 			}
 		}
 

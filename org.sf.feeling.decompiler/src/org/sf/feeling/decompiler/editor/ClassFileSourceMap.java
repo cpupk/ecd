@@ -18,6 +18,7 @@ import org.eclipse.jdt.internal.compiler.env.IBinaryType;
 import org.eclipse.jdt.internal.core.BufferManager;
 import org.eclipse.jdt.internal.core.ClassFile;
 import org.eclipse.jdt.internal.core.SourceMapper;
+import org.sf.feeling.decompiler.util.EclipseCompatibilityHelper;
 import org.sf.feeling.decompiler.util.SourceMapperUtil;
 
 public class ClassFileSourceMap {
@@ -81,7 +82,7 @@ public class ClassFileSourceMap {
 		if (!type.isBinary()) {
 			return;
 		}
-		Object info = cf.getElementInfo();
+		Object info = EclipseCompatibilityHelper.javaElementGetElementInfo(cf);
 		IType enclosingType = type.getDeclaringType();
 		while (enclosingType != null) {
 			type = enclosingType;
