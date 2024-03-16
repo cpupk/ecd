@@ -17,10 +17,5 @@ if [ -z "$VERSION" ]; then
 	exit 1
 fi
 
-mvn \
-	org.eclipse.tycho:tycho-versions-plugin:3.0.4:set-version \
-	-DnewVersion="$VERSION" -Dtycho.mode=maven
-
-mvn \
-	org.eclipse.tycho:tycho-versions-plugin:3.0.4:update-eclipse-metadata \
-	-DnewVersion="$VERSION" -Dtycho.mode=maven
+mvn org.eclipse.tycho:tycho-versions-plugin:4.0.6:set-version -DnewVersion="$VERSION" -Dtycho.mode=maven
+mvn org.eclipse.tycho:tycho-versions-plugin:4.0.6:update-eclipse-metadata -DnewVersion="$VERSION" -Dtycho.mode=maven
