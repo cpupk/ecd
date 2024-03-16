@@ -40,7 +40,7 @@ _If you have currently the "Eclipse" Class Decompiler installed, it is recommend
 
 ## How to build from source?
 
-  Requiremnent: JDK 11 or newer (make sure `JAVA_HOME` environment variable points to an appropriate JDK)
+  Requiremnent: JDK 17 (make sure `JAVA_HOME` environment variable points to an JDK 17)
 
   If you want to test the latest features of this plugin, you have to build it from source. For this, proceed as following:
 

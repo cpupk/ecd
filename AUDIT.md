@@ -21,17 +21,8 @@ _Primary Source: https://mvnrepository.com/artifact/org.ow2.asm/asm_
   * SHA-256: cda4de455fab48ff0bcb7c48b4639447d4de859a7afc30a094a986f0936beba2
   * https://repo1.maven.org/maven2/org/ow2/asm/asm/9.1/asm-9.1.jar
 
-### Apache commons
-
-_Primary Source: https://commons.apache.org/downloads/index.html_
-
-* `./org.sf.feeling.decompiler.source.attach/lib/commons-compress.jar`
-  * Not included in ECD repository, downloaded automatically via Maven
-  * SHA-256: c267f17160e9ef662b4d78b7f29dca7c82b15c5cff2cb6a9865ef4ab3dd5b787
-  * Equal to https://repo1.maven.org/maven2/org/apache/commons/commons-compress/1.23.0/commons-compress-1.23.0.jar
-
 ### Fernflower
-* `./org.sf.feeling.decompiler/lib/fernflower.jar`
+* `./org.sf.feeling.decompiler.fernflower/lib/fernflower.jar`
   * Not included in ECD repository, downloaded automatically via Maven
   * SHA-256: 97b3579a221a3edf9651fca278257307441cb6dfdcfe1a1c6579f11002ff5d27
   * Version from https://www.jetbrains.com/intellij-repository/releases/com/jetbrains/intellij/java/java-decompiler-engine/232.10203.10/java-decompiler-engine-232.10203.10.jar
@@ -45,11 +36,6 @@ _Build Source: https://github.com/Vineflower/vineflower_
   * version from: https://repo1.maven.org/maven2/org/vineflower/vineflower/1.9.3/vineflower-1.9.3.jar
 
 ### Minimal JSON
-_Primary Source: https://github.com/ralfstx/minimal-json_
-
-* `./org.sf.feeling.decompiler/lib/json.jar`
-  * SHA-256: e1d280900c78f18ae2e00c14e7410a77ba19cf084154b386532846aa6dc81721
-  * Version from http://central.maven.org/maven2/com/eclipsesource/minimal-json/minimal-json/0.9.4/minimal-json-0.9.4.jar
 
 ### CFR
 _Project homepage: https://www.benf.org/other/cfr/_
