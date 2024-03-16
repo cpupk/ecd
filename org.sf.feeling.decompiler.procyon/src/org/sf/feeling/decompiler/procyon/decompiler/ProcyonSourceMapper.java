@@ -16,7 +16,7 @@ public class ProcyonSourceMapper extends BaseDecompilerSourceMapper {
 
 	public ProcyonSourceMapper() {
 		super(new Path("."), ""); //$NON-NLS-1$ //$NON-NLS-2$
-		origionalDecompiler = new ProcyonDecompiler();
+		originalDecompiler = new ProcyonDecompiler();
 	}
 
 	@Override

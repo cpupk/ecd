@@ -20,8 +20,10 @@ import java.util.stream.Stream;
 
 import org.objectweb.asm.ClassReader;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
+import org.sf.feeling.decompiler.editor.BaseDecompiler;
 import org.sf.feeling.decompiler.editor.IDecompiler;
 import org.sf.feeling.decompiler.editor.IDecompilerDescriptor;
+import org.sf.feeling.decompiler.editor.NoStackTraceException;
 
 public class ClassUtil {
 
@@ -53,16 +55,20 @@ public class ClassUtil {
 					if (JavaDecompilerPlugin.getDefault().isDebugMode()) {
 						recommendation += "Disable the debug Mode. ";
 					}
-					JavaDecompilerPlugin.logInfo("Could not use " + decompiler.getClass().getSimpleName()
+					String msg = "Could not use " + decompiler.getClass().getSimpleName()
 							+ " for decompilation since the debug view is not supported. " + recommendation
-							+ "Falling back to " + defaultDecompiler.getClass().getSimpleName() + ".");
+							+ "Falling back to " + defaultDecompiler.getClass().getSimpleName() + ".";
+					JavaDecompilerPlugin.logInfo(msg);
+					((BaseDecompiler) decompiler).addException(new NoStackTraceException(msg));
 					return defaultDecompiler;
 				}
 			}
 		} else {
-			JavaDecompilerPlugin.logInfo("Could not use " + decompiler.getClass().getSimpleName()
+			String msg = "Could not use " + decompiler.getClass().getSimpleName()
 					+ " for decompilation since the classLevel " + classLevel + " is not supported. "
-					+ "Falling back to " + defaultDecompiler.getClass().getSimpleName() + ".");
+					+ "Falling back to " + defaultDecompiler.getClass().getSimpleName() + ".";
+			JavaDecompilerPlugin.logInfo(msg);
+			((BaseDecompiler) decompiler).addException(new NoStackTraceException(msg));
 			return defaultDecompiler;
 		}
 		return decompiler;

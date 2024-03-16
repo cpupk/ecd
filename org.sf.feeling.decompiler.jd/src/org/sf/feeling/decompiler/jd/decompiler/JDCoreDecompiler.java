@@ -10,11 +10,10 @@ package org.sf.feeling.decompiler.jd.decompiler;
 
 import java.io.File;
 import java.nio.file.Files;
-import java.util.Collections;
-import java.util.List;
 
 import org.apache.commons.lang3.time.StopWatch;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
+import org.sf.feeling.decompiler.editor.BaseDecompiler;
 import org.sf.feeling.decompiler.editor.IDecompiler;
 import org.sf.feeling.decompiler.jd.JDCoreDecompilerPlugin;
 import org.sf.feeling.decompiler.util.ClassUtil;
@@ -23,7 +22,7 @@ import org.sf.feeling.decompiler.util.UIUtil;
 
 import jd.ide.eclipse.editors.JDSourceMapper;
 
-public class JDCoreDecompiler implements IDecompiler {
+public class JDCoreDecompiler extends BaseDecompiler {
 
 	private String source = ""; // $NON-NLS-1$ //$NON-NLS-1$
 	private long time;
@@ -123,11 +122,6 @@ public class JDCoreDecompiler implements IDecompiler {
 		return time;
 	}
 
-	@Override
-	public List<Exception> getExceptions() {
-		return Collections.emptyList();
-	}
-
 	/**
 	 * @see IDecompiler#getLog()
 	 */
@@ -164,4 +158,13 @@ public class JDCoreDecompiler implements IDecompiler {
 		return true;
 	}
 
+	@Override
+	public String getDecompilerName() {
+		return JDCoreDecompilerPlugin.decompilerType;
+	}
+
+	@Override
+	public String getDecompilerVersion() {
+		return JDCoreDecompilerPlugin.decompilerVersion;
+	}
 }

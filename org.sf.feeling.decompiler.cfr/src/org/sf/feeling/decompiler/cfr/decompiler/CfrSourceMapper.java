@@ -16,7 +16,7 @@ public class CfrSourceMapper extends BaseDecompilerSourceMapper {
 
 	public CfrSourceMapper() {
 		super(new Path("."), ""); //$NON-NLS-1$ //$NON-NLS-2$
-		origionalDecompiler = new CfrDecompiler();
+		originalDecompiler = new CfrDecompiler();
 	}
 
 	@Override

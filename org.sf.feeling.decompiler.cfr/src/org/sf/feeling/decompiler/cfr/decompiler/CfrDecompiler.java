@@ -9,7 +9,6 @@
 package org.sf.feeling.decompiler.cfr.decompiler;
 
 import java.io.File;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,12 +31,13 @@ import org.benf.cfr.reader.util.output.MethodErrorCollector;
 import org.benf.cfr.reader.util.output.StringStreamDumper;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.cfr.CfrDecompilerPlugin;
+import org.sf.feeling.decompiler.editor.BaseDecompiler;
 import org.sf.feeling.decompiler.editor.IDecompiler;
 import org.sf.feeling.decompiler.util.FileUtil;
 import org.sf.feeling.decompiler.util.JarClassExtractor;
 import org.sf.feeling.decompiler.util.UnicodeUtil;
 
-public class CfrDecompiler implements IDecompiler {
+public class CfrDecompiler extends BaseDecompiler {
 
 	private String source = ""; //$NON-NLS-1$
 	private long time;
@@ -65,6 +65,7 @@ public class CfrDecompiler implements IDecompiler {
 					OptionsImpl.getFactory());
 			Options namedOptions = options.getSecond();
 			ClassFileSource2 classFileSource = new ClassFileSourceImpl(namedOptions);
+			classFileSource.informAnalysisRelativePathDetail(null, null);
 			DCCommonState dcCommonState = new DCCommonState(namedOptions, classFileSource);
 
 			IllegalIdentifierDump illegalIdentifierDump = IllegalIdentifierDump.Factory.get(namedOptions);
@@ -74,7 +75,7 @@ public class CfrDecompiler implements IDecompiler {
 			try {
 				classFile = dcCommonState.getClassFile(classFile.getClassType());
 			} catch (CannotLoadClassException e) {
-				e.printStackTrace();
+				throw new RuntimeException(e);
 			}
 			if (namedOptions.getOption(OptionsImpl.DECOMPILE_INNER_CLASSES).booleanValue()) {
 				classFile.loadInnerClasses(dcCommonState);
@@ -104,8 +105,9 @@ public class CfrDecompiler implements IDecompiler {
 			Pattern wp = Pattern.compile("/\\*.+?\\*/", Pattern.DOTALL); //$NON-NLS-1$
 			Matcher m = wp.matcher(source);
 			while (m.find()) {
-				if (m.group().matches("/\\*\\s+\\d*\\s+\\*/")) //$NON-NLS-1$
+				if (m.group().matches("/\\*\\s+\\d*\\s+\\*/")) {//$NON-NLS-1$
 					continue;
+				}
 				String group = m.group();
 				group = group.replace("/*", ""); //$NON-NLS-1$ //$NON-NLS-2$
 				group = group.replace("*/", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -119,6 +121,7 @@ public class CfrDecompiler implements IDecompiler {
 			}
 
 		} catch (Exception e) {
+			exceptions.add(e);
 			JavaDecompilerPlugin.logError(e, e.getMessage());
 		}
 
@@ -145,6 +148,7 @@ public class CfrDecompiler implements IDecompiler {
 			decompile(workingDir.getAbsolutePath(), "", className); //$NON-NLS-1$
 			time = stopWatch.getTime();
 		} catch (Exception e) {
+			exceptions.add(e);
 			JavaDecompilerPlugin.logError(e, e.getMessage());
 			return;
 		} finally {
@@ -155,11 +159,6 @@ public class CfrDecompiler implements IDecompiler {
 	@Override
 	public long getDecompilationTime() {
 		return time;
-	}
-
-	@Override
-	public List<Exception> getExceptions() {
-		return Collections.emptyList();
 	}
 
 	/**
@@ -198,4 +197,13 @@ public class CfrDecompiler implements IDecompiler {
 		return false; // CFR is not usable when debugging?
 	}
 
+	@Override
+	public String getDecompilerName() {
+		return CfrDecompilerPlugin.decompilerType;
+	}
+
+	@Override
+	public String getDecompilerVersion() {
+		return CfrDecompilerPlugin.decompilerVersion;
+	}
 }

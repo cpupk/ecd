@@ -15,7 +15,7 @@ public class FernFlowerSourceMapper extends BaseDecompilerSourceMapper {
 
 	public FernFlowerSourceMapper() {
 		super(new Path("."), ""); //$NON-NLS-1$ //$NON-NLS-2$
-		origionalDecompiler = new FernFlowerDecompiler();
+		originalDecompiler = new FernFlowerDecompiler();
 	}
 
 	@Override

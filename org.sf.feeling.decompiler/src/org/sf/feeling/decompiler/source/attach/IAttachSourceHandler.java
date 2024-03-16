@@ -10,6 +10,7 @@ package org.sf.feeling.decompiler.source.attach;
 
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 
+@Deprecated
 public interface IAttachSourceHandler {
 
 	public void execute(IPackageFragmentRoot library, boolean showUI);

@@ -14,9 +14,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,6 +24,7 @@ import org.jetbrains.java.decompiler.main.decompiler.PrintStreamLogger;
 import org.jetbrains.java.decompiler.main.extern.IFernflowerLogger;
 import org.jetbrains.java.decompiler.main.extern.IFernflowerPreferences;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
+import org.sf.feeling.decompiler.editor.BaseDecompiler;
 import org.sf.feeling.decompiler.editor.IDecompiler;
 import org.sf.feeling.decompiler.util.ClassUtil;
 import org.sf.feeling.decompiler.util.FileUtil;
@@ -33,7 +32,7 @@ import org.sf.feeling.decompiler.util.JarClassExtractor;
 import org.sf.feeling.decompiler.util.UnicodeUtil;
 import org.sf.feeling.decompiler.vineflower.VineflowerDecompilerPlugin;
 
-public class VineflowerDecompiler implements IDecompiler {
+public class VineflowerDecompiler extends BaseDecompiler {
 
 	private String source = ""; // $NON-NLS-1$
 	private long time, start;
@@ -166,6 +165,7 @@ public class VineflowerDecompiler implements IDecompiler {
 			JarClassExtractor.extract(archivePath, packege, className, true, workingDir.getAbsolutePath());
 			decompile(workingDir.getAbsolutePath(), "", className); //$NON-NLS-1$
 		} catch (Exception e) {
+			exceptions.add(e);
 			JavaDecompilerPlugin.logError(e, e.getMessage());
 			return;
 		} finally {
@@ -176,11 +176,6 @@ public class VineflowerDecompiler implements IDecompiler {
 	@Override
 	public long getDecompilationTime() {
 		return time;
-	}
-
-	@Override
-	public List<Exception> getExceptions() {
-		return Collections.emptyList();
 	}
 
 	/**
@@ -222,4 +217,13 @@ public class VineflowerDecompiler implements IDecompiler {
 		return true;
 	}
 
+	@Override
+	public String getDecompilerName() {
+		return VineflowerDecompilerPlugin.decompilerType;
+	}
+
+	@Override
+	public String getDecompilerVersion() {
+		return VineflowerDecompilerPlugin.decompilerVersion;
+	}
 }

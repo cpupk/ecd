@@ -14,7 +14,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -22,6 +21,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.time.StopWatch;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
+import org.sf.feeling.decompiler.editor.BaseDecompiler;
 import org.sf.feeling.decompiler.editor.IDecompiler;
 import org.sf.feeling.decompiler.procyon.ProcyonDecompilerPlugin;
 import org.sf.feeling.decompiler.procyon.decompiler.LineNumberFormatter.LineNumberOption;
@@ -42,7 +42,7 @@ import com.strobel.decompiler.languages.Language;
 import com.strobel.decompiler.languages.LineNumberPosition;
 import com.strobel.decompiler.languages.TypeDecompilationResults;
 
-public class ProcyonDecompiler implements IDecompiler {
+public class ProcyonDecompiler extends BaseDecompiler {
 
 	private String source = ""; // $NON-NLS-1$ //$NON-NLS-1$
 	private long time;
@@ -130,6 +130,7 @@ public class ProcyonDecompiler implements IDecompiler {
 			}
 
 		} catch (IOException e) {
+			exceptions.add(e);
 			Logger.error(e);
 		}
 
@@ -177,6 +178,7 @@ public class ProcyonDecompiler implements IDecompiler {
 			decompile(workingDir.getAbsolutePath(), "", className); //$NON-NLS-1$
 			time = stopWatch.getTime();
 		} catch (Exception e) {
+			exceptions.add(e);
 			JavaDecompilerPlugin.logError(e, e.getMessage());
 			return;
 		} finally {
@@ -187,11 +189,6 @@ public class ProcyonDecompiler implements IDecompiler {
 	@Override
 	public long getDecompilationTime() {
 		return time;
-	}
-
-	@Override
-	public List<Exception> getExceptions() {
-		return Collections.emptyList();
 	}
 
 	/**
@@ -228,6 +225,16 @@ public class ProcyonDecompiler implements IDecompiler {
 	@Override
 	public boolean supportDebugLevel(int level) {
 		return true;
+	}
+
+	@Override
+	public String getDecompilerName() {
+		return ProcyonDecompilerPlugin.decompilerType;
+	}
+
+	@Override
+	public String getDecompilerVersion() {
+		return ProcyonDecompilerPlugin.decompilerVersion;
 	}
 
 }

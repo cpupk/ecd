@@ -16,7 +16,7 @@ public class VineflowerSourceMapper extends BaseDecompilerSourceMapper {
 
 	public VineflowerSourceMapper() {
 		super(new Path("."), ""); //$NON-NLS-1$ //$NON-NLS-2$
-		origionalDecompiler = new VineflowerDecompiler();
+		originalDecompiler = new VineflowerDecompiler();
 	}
 
 	@Override

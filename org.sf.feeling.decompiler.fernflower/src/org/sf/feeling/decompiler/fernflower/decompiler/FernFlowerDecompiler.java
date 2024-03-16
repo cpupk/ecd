@@ -13,8 +13,6 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.PrintStream;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,18 +23,18 @@ import org.jetbrains.java.decompiler.main.decompiler.PrintStreamLogger;
 import org.jetbrains.java.decompiler.main.extern.IFernflowerLogger;
 import org.jetbrains.java.decompiler.main.extern.IFernflowerPreferences;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
+import org.sf.feeling.decompiler.editor.BaseDecompiler;
 import org.sf.feeling.decompiler.editor.IDecompiler;
 import org.sf.feeling.decompiler.util.ClassUtil;
 import org.sf.feeling.decompiler.util.FileUtil;
 import org.sf.feeling.decompiler.util.JarClassExtractor;
 import org.sf.feeling.decompiler.util.UnicodeUtil;
 
-public class FernFlowerDecompiler implements IDecompiler {
+public class FernFlowerDecompiler extends BaseDecompiler {
 
 	public static final String decompilerType = "FernFlower"; //$NON-NLS-1$ \r\n"
 	public static final String decompilerVersion = "232.10203.10"; //$NON-NLS-1$ \r\n"
 
-	private final List<Exception> exceptions = new LinkedList<>();
 	private long time = 0;
 	private String source = ""; // $NON-NLS-1$ //$NON-NLS-1$
 	private String log = ""; //$NON-NLS-1$
@@ -182,11 +180,6 @@ public class FernFlowerDecompiler implements IDecompiler {
 		return time;
 	}
 
-	@Override
-	public List<Exception> getExceptions() {
-		return exceptions;
-	}
-
 	/**
 	 * @see IDecompiler#getLog()
 	 */
@@ -224,6 +217,16 @@ public class FernFlowerDecompiler implements IDecompiler {
 	@Override
 	public boolean supportDebugLevel(int level) {
 		return true;
+	}
+
+	@Override
+	public String getDecompilerName() {
+		return FernFlowerDecompiler.decompilerType;
+	}
+
+	@Override
+	public String getDecompilerVersion() {
+		return FernFlowerDecompiler.decompilerVersion;
 	}
 
 }

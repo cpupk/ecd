@@ -39,7 +39,7 @@ import org.sf.feeling.decompiler.util.SourceMapperUtil;
 
 public abstract class DecompilerSourceMapper extends SourceMapper {
 
-	protected static Map<IPackageFragmentRoot, SourceMapper> originalSourceMapper = new ConcurrentHashMap<IPackageFragmentRoot, SourceMapper>();
+	protected static Map<IPackageFragmentRoot, SourceMapper> originalSourceMapper = new ConcurrentHashMap<>();
 
 	protected boolean isAttachedSource;
 

@@ -45,11 +45,8 @@ import org.sf.feeling.decompiler.util.UIUtil;
 
 public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper {
 
-	protected IDecompiler origionalDecompiler;
-	private IDecompiler usedDecompiler;
-	private String classLocation;
-
 	private static Map<String, String> options = new HashMap<>();
+
 	static {
 		CompilerOptions option = new CompilerOptions();
 		options = option.getMap();
@@ -57,8 +54,11 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper 
 		options.put(CompilerOptions.OPTION_Source, DecompilerOutputUtil.getMaxDecompileLevel()); // $NON-NLS-1$
 	}
 
-	public BaseDecompilerSourceMapper(IPath sourcePath, String rootPath) {
+	protected IDecompiler originalDecompiler;
+	private IDecompiler usedDecompiler;
+	private String classLocation;
 
+	public BaseDecompilerSourceMapper(IPath sourcePath, String rootPath) {
 		this(sourcePath, rootPath, options);
 	}
 
@@ -203,7 +203,7 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper 
 			source.append(formatSource(code));
 
 			if (showReport) {
-				printDecompileReport(source, classLocation, exceptions, usedDecompiler.getDecompilationTime());
+				printDecompileReport(source, classLocation, exceptions);
 			}
 		} else {
 			source.append(code);
@@ -243,7 +243,7 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper 
 			try {
 				DecompileUtil.updateSourceRanges(((ClassFile) type.getParent()), new String(attachedSource));
 			} catch (JavaModelException e) {
-				Logger.debug(e);
+				throw new RuntimeException(e);
 			}
 		}
 	}
@@ -278,9 +278,10 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper 
 
 				if (result == null) {
 					try (InputStream in = new ByteArrayInputStream(type.getClassFile().getBytes())) {
-						result = ClassUtil.checkAvailableDecompiler(origionalDecompiler, in);
+						result = ClassUtil.checkAvailableDecompiler(originalDecompiler, in);
 					} catch (JavaModelException e) {
-						result = origionalDecompiler;
+						Logger.error(e.toString());
+						result = originalDecompiler;
 					}
 				}
 				result.decompileFromArchive(archivePath, pkg, className);
@@ -305,7 +306,7 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper 
 					}
 
 					if (result == null) {
-						result = ClassUtil.checkAvailableDecompiler(origionalDecompiler, new File(classLocation));
+						result = ClassUtil.checkAvailableDecompiler(originalDecompiler, new File(classLocation));
 					}
 					result.decompile(rootLocation, pkg, className);
 				} catch (JavaModelException e) {
@@ -332,7 +333,7 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper 
 			JavaDecompilerPlugin.getDefault().displayLineNumber(Boolean.TRUE);
 		}
 
-		IDecompiler currentDecompiler = ClassUtil.checkAvailableDecompiler(origionalDecompiler, file);
+		IDecompiler currentDecompiler = ClassUtil.checkAvailableDecompiler(originalDecompiler, file);
 
 		currentDecompiler.decompile(file.getParentFile().getAbsolutePath(), "", //$NON-NLS-1$
 				file.getName());
@@ -372,8 +373,7 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper 
 			if (showReport) {
 				Collection<Exception> exceptions = new LinkedList<>();
 				exceptions.addAll(currentDecompiler.getExceptions());
-				printDecompileReport(source, file.getAbsolutePath(), exceptions,
-						currentDecompiler.getDecompilationTime());
+				printDecompileReport(source, file.getAbsolutePath(), exceptions);
 			}
 		} else {
 			source.append(code);
@@ -383,46 +383,62 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper 
 	}
 
 	protected void logExceptions(Collection<Exception> exceptions, StringBuffer buffer) {
-		if (!exceptions.isEmpty()) {
-			buffer.append("\n\tCaught exceptions:"); //$NON-NLS-1$
-			if (exceptions == null || exceptions.isEmpty()) {
-				return; // nothing to do
-			}
-			buffer.append("\n"); //$NON-NLS-1$
-			StringWriter stackTraces = new StringWriter();
-			try (PrintWriter stackTracesP = new PrintWriter(stackTraces)) {
-
-				Iterator<Exception> i = exceptions.iterator();
-				while (i.hasNext()) {
-					i.next().printStackTrace(stackTracesP);
-					stackTracesP.println(""); //$NON-NLS-1$
-				}
-				stackTracesP.flush();
-			}
-			buffer.append(stackTraces.toString());
+		if (exceptions.isEmpty()) {
+			return;
 		}
+		buffer.append("\n\tCaught exceptions:"); //$NON-NLS-1$
+		if (exceptions == null || exceptions.isEmpty()) {
+			return; // nothing to do
+		}
+		buffer.append("\n"); //$NON-NLS-1$
+		StringWriter stackTraces = new StringWriter();
+		try (PrintWriter stackTracesP = new PrintWriter(stackTraces)) {
+
+			Iterator<Exception> i = exceptions.iterator();
+			while (i.hasNext()) {
+				Exception ex = i.next();
+				if (ex instanceof NoStackTraceException) {
+					stackTracesP.append("\t");
+					stackTracesP.println(ex.getMessage());
+					continue;
+				}
+				ex.printStackTrace(stackTracesP);
+				stackTracesP.println(""); //$NON-NLS-1$
+			}
+			stackTracesP.flush();
+		}
+		buffer.append(stackTraces.toString());
 	}
 
 	protected abstract String getDecompilerName();
 
 	protected abstract String getDecompilerVersion();
 
-	protected void printDecompileReport(StringBuffer source, String fileLocation, Collection<Exception> exceptions,
-			long decompilationTime) {
-		String logMsg = origionalDecompiler.getLog().replaceAll("\t", "") //$NON-NLS-1$ //$NON-NLS-2$
+	protected void printDecompileReport(StringBuffer source, String fileLocation, Collection<Exception> exceptions) {
+		String log = usedDecompiler.getLog();
+		String logMsg = log.replaceAll("\t", "") //$NON-NLS-1$ //$NON-NLS-2$
 				.replaceAll("\n\\s*", "\n\t"); //$NON-NLS-1$ //$NON-NLS-2$
+
 		source.append("\n\n/*"); //$NON-NLS-1$
 		source.append("\n\tDECOMPILATION REPORT\n"); //$NON-NLS-1$
+		if (usedDecompiler != originalDecompiler) {
+			source.append("\n\tWARNING: used decompiler was changed from ");
+			source.append(originalDecompiler.getDecompilerName());
+			source.append(" to ");
+			source.append(usedDecompiler.getDecompilerName());
+			logExceptions(originalDecompiler.getExceptions(), source);
+		}
+
 		source.append("\n\tDecompiled from: "); //$NON-NLS-1$
 		source.append(fileLocation);
 		source.append("\n\tTotal time: "); //$NON-NLS-1$
-		source.append(decompilationTime);
+		source.append(usedDecompiler.getDecompilationTime());
 		source.append(" ms\n\t"); //$NON-NLS-1$
 		source.append(logMsg);
-		exceptions.addAll(origionalDecompiler.getExceptions());
+		exceptions.addAll(usedDecompiler.getExceptions());
 		logExceptions(exceptions, source);
-		String decompiler = getDecompilerName();
-		String ver = getDecompilerVersion();
+		String decompiler = usedDecompiler.getDecompilerName();
+		String ver = usedDecompiler.getDecompilerVersion();
 		if (decompiler != null) {
 			source.append("\n\tDecompiled with "); //$NON-NLS-1$
 			source.append(decompiler);
@@ -434,4 +450,5 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper 
 		}
 		source.append("*/"); //$NON-NLS-1$
 	}
+
 }

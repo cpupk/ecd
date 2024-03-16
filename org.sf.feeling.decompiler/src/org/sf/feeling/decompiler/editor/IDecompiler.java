@@ -71,4 +71,8 @@ public interface IDecompiler {
 
 	boolean supportLevel(int level);
 
+	String getDecompilerName();
+
+	String getDecompilerVersion();
+
 }

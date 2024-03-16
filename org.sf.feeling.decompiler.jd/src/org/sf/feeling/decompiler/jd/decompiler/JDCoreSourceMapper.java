@@ -20,7 +20,7 @@ public class JDCoreSourceMapper extends JDSourceMapper {
 
 	public JDCoreSourceMapper() {
 		super(new File("."), new Path("."), "", Collections.<String, String>emptyMap()); //$NON-NLS-1$ //$NON-NLS-2$
-		origionalDecompiler = new JDCoreDecompiler(this);
+		originalDecompiler = new JDCoreDecompiler(this);
 	}
 
 	@Override

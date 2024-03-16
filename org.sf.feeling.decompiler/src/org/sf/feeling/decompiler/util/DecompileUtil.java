@@ -40,8 +40,8 @@ public class DecompileUtil {
 			char[] src = sourceMapper.findSource(cf.getType());
 			if (src == null) {
 				return origSrc;
-			} else
-				return new String(src);
+			}
+			return new String(src);
 		}
 
 		return origSrc;
