@@ -73,7 +73,7 @@ Due to a signature bug in all Eclipse versions up to (including) Eclipse 2021-03
 This affects the release version published on https://ecd-plugin.github.io/update/ and also the version installable via Eclipse Marketplace as it uses this update site.
 
 ## Changelog
-* Version 3.4.1
+* Version 3.5.0
   * Moved FernFlower into own plugin/feature
   * Quiltflower plugin and feature removed
   * Vineflower plugin and feature added (replaces Quiltflower)
