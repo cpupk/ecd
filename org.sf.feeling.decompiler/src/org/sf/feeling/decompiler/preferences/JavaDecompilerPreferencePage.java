@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.sf.feeling.decompiler.JavaDecompilerConstants;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.editor.DecompilerType;
 import org.sf.feeling.decompiler.editor.IDecompilerDescriptor;
@@ -79,7 +80,7 @@ public class JavaDecompilerPreferencePage extends FieldEditorPreferencePage impl
 	@Override
 	protected void createFieldEditors() {
 
-		defaultDecompiler = new StringChoiceFieldEditor(JavaDecompilerPlugin.DECOMPILER_TYPE,
+		defaultDecompiler = new StringChoiceFieldEditor(JavaDecompilerConstants.DECOMPILER_TYPE,
 				Messages.getString("JavaDecompilerPreferencePage.Label.DefaultClassDecompiler"), //$NON-NLS-1$
 				getFieldEditorParent()) {
 
@@ -109,7 +110,7 @@ public class JavaDecompilerPreferencePage extends FieldEditorPreferencePage impl
 		gd.horizontalSpan = defaultDecompiler.getNumberOfControls();
 		basicGroup.setLayoutData(gd);
 
-		BooleanFieldEditor reusebuf = new BooleanFieldEditor(JavaDecompilerPlugin.REUSE_BUFFER,
+		BooleanFieldEditor reusebuf = new BooleanFieldEditor(JavaDecompilerConstants.REUSE_BUFFER,
 				Messages.getString("JavaDecompilerPreferencePage.Label.ReuseCodeBuffer"), //$NON-NLS-1$
 				basicGroup);
 		addField(reusebuf);
@@ -118,12 +119,12 @@ public class JavaDecompilerPreferencePage extends FieldEditorPreferencePage impl
 			createAttachSourceFieldEditor(basicGroup);
 		}
 
-		BooleanFieldEditor alwaysUse = new BooleanFieldEditor(JavaDecompilerPlugin.IGNORE_EXISTING,
+		BooleanFieldEditor alwaysUse = new BooleanFieldEditor(JavaDecompilerConstants.IGNORE_EXISTING,
 				Messages.getString("JavaDecompilerPreferencePage.Label.IgnoreExistSource"), //$NON-NLS-1$
 				basicGroup);
 		addField(alwaysUse);
 
-		showReport = new CheckFieldEditor(JavaDecompilerPlugin.PREF_DISPLAY_METADATA,
+		showReport = new CheckFieldEditor(JavaDecompilerConstants.PREF_DISPLAY_METADATA,
 				Messages.getString("JavaDecompilerPreferencePage.Label.ShowDecompilerReport"), //$NON-NLS-1$
 				basicGroup);
 		addField(showReport);
@@ -138,12 +139,12 @@ public class JavaDecompilerPreferencePage extends FieldEditorPreferencePage impl
 		gd.horizontalSpan = defaultDecompiler.getNumberOfControls();
 		formatGroup.setLayoutData(gd);
 
-		eclipseFormatter = new CheckFieldEditor(JavaDecompilerPlugin.USE_ECLIPSE_FORMATTER,
+		eclipseFormatter = new CheckFieldEditor(JavaDecompilerConstants.USE_ECLIPSE_FORMATTER,
 				Messages.getString("JavaDecompilerPreferencePage.Label.UseEclipseFormat"), //$NON-NLS-1$
 				formatGroup);
 		addField(eclipseFormatter);
 
-		eclipseSorter = new CheckFieldEditor(JavaDecompilerPlugin.USE_ECLIPSE_SORTER,
+		eclipseSorter = new CheckFieldEditor(JavaDecompilerConstants.USE_ECLIPSE_SORTER,
 				Messages.getString("JavaDecompilerPreferencePage.Lable.UseEclipseSorter"), //$NON-NLS-1$
 				formatGroup);
 		addField(eclipseSorter);
@@ -158,12 +159,12 @@ public class JavaDecompilerPreferencePage extends FieldEditorPreferencePage impl
 		gd.horizontalSpan = defaultDecompiler.getNumberOfControls();
 		debugGroup.setLayoutData(gd);
 
-		optionLncEditor = new CheckFieldEditor(JavaDecompilerPlugin.PREF_DISPLAY_LINE_NUMBERS,
+		optionLncEditor = new CheckFieldEditor(JavaDecompilerConstants.PREF_DISPLAY_LINE_NUMBERS,
 				Messages.getString("JavaDecompilerPreferencePage.Label.OutputLineNumber"), //$NON-NLS-1$
 				debugGroup);
 		addField(optionLncEditor);
 
-		alignEditor = new CheckFieldEditor(JavaDecompilerPlugin.ALIGN,
+		alignEditor = new CheckFieldEditor(JavaDecompilerConstants.ALIGN,
 				Messages.getString("JavaDecompilerPreferencePage.Label.AlignCode"), //$NON-NLS-1$
 				debugGroup);
 		addField(alignEditor);
@@ -180,7 +181,7 @@ public class JavaDecompilerPreferencePage extends FieldEditorPreferencePage impl
 		gd.horizontalSpan = defaultDecompiler.getNumberOfControls();
 		startupGroup.setLayoutData(gd);
 
-		CheckFieldEditor defaultViewerEditor = new CheckFieldEditor(JavaDecompilerPlugin.DEFAULT_EDITOR,
+		CheckFieldEditor defaultViewerEditor = new CheckFieldEditor(JavaDecompilerConstants.DEFAULT_EDITOR,
 				Messages.getString("JavaDecompilerPreferencePage.Label.DefaultEditor"), //$NON-NLS-1$
 				startupGroup);
 		addField(defaultViewerEditor);
@@ -193,7 +194,7 @@ public class JavaDecompilerPreferencePage extends FieldEditorPreferencePage impl
 	}
 
 	private void createAttachSourceFieldEditor(Group group) {
-		CheckFieldEditor attachSource = new CheckFieldEditor(JavaDecompilerPlugin.ATTACH_SOURCE,
+		CheckFieldEditor attachSource = new CheckFieldEditor(JavaDecompilerConstants.ATTACH_SOURCE,
 				Messages.getString("JavaDecompilerPreferencePage.Label.Attach.Source"), //$NON-NLS-1$
 				group);
 		addField(attachSource);
@@ -206,7 +207,7 @@ public class JavaDecompilerPreferencePage extends FieldEditorPreferencePage impl
 		gd.horizontalSpan = defaultDecompiler.getNumberOfControls();
 		encodingGroup.setLayoutData(gd);
 
-		encodingEditor = new EncodingFieldEditor(JavaDecompilerPlugin.EXPORT_ENCODING, // $NON-NLS-1$
+		encodingEditor = new EncodingFieldEditor(JavaDecompilerConstants.EXPORT_ENCODING, // $NON-NLS-1$
 				"", //$NON-NLS-1$
 				null, encodingGroup);
 		addField(encodingEditor);
@@ -224,11 +225,11 @@ public class JavaDecompilerPreferencePage extends FieldEditorPreferencePage impl
 	@Override
 	protected void initialize() {
 		super.initialize();
-		boolean enabled = getPreferenceStore().getBoolean(JavaDecompilerPlugin.PREF_DISPLAY_LINE_NUMBERS);
+		boolean enabled = getPreferenceStore().getBoolean(JavaDecompilerConstants.PREF_DISPLAY_LINE_NUMBERS);
 		alignEditor.setEnabled(enabled, debugGroup);
 
 		String defaultEncoding = JavaDecompilerPlugin.getDefault().getDefaultExportEncoding();
-		String encoding = getPreferenceStore().getString(JavaDecompilerPlugin.EXPORT_ENCODING);
+		String encoding = getPreferenceStore().getString(JavaDecompilerConstants.EXPORT_ENCODING);
 		encodingEditor.setPreferenceStore(getPreferenceStore());
 		encodingEditor.load();
 

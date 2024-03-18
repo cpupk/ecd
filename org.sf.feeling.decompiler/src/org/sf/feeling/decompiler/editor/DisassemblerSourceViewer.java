@@ -69,6 +69,7 @@ import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.ui.texteditor.rulers.IColumnSupport;
 import org.eclipse.ui.texteditor.rulers.RulerColumnDescriptor;
 import org.eclipse.ui.texteditor.rulers.RulerColumnRegistry;
+import org.sf.feeling.decompiler.JavaDecompilerConstants;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.actions.ByteCodeAction;
 import org.sf.feeling.decompiler.actions.DisassemblerAction;
@@ -502,7 +503,7 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 		final StyledText disassemblerText = getSourceViewer().getTextWidget();
 		OutlineElement disassemblerRootElement = (OutlineElement) ((DisassemblerDocumentProvider) getDocumentProvider())
 				.getClassFileOutlineElement();
-		if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.DISASSEMBLER_MODE
+		if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerConstants.DISASSEMBLER_MODE
 				&& disassemblerText != null && !disassemblerText.isDisposed() && disassemblerRootElement != null) {
 			if (!force) {
 				if (UIUtil.requestFromDisassemblerSelection()) {
@@ -722,7 +723,7 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty().startsWith(JavaDecompilerPlugin.bytecodeMnemonicPreferencesPrefix)) {
+		if (event.getProperty().startsWith(JavaDecompilerConstants.bytecodeMnemonicPreferencesPrefix)) {
 			((DisassemblerConfiguration) getSourceViewerConfiguration()).adaptToPreferenceChange(event);
 			if (styleChanged == false) {
 				styleChanged = true;
@@ -734,8 +735,8 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 					}
 				});
 			}
-		} else if (event.getProperty().startsWith(JavaDecompilerPlugin.classFileAttributePreferencesPrefix)
-				|| event.getProperty().equals(JavaDecompilerPlugin.BRANCH_TARGET_ADDRESS_RENDERING)) {
+		} else if (event.getProperty().startsWith(JavaDecompilerConstants.classFileAttributePreferencesPrefix)
+				|| event.getProperty().equals(JavaDecompilerConstants.BRANCH_TARGET_ADDRESS_RENDERING)) {
 			if (docChanged == false) {
 				docChanged = true;
 				Display.getDefault().timerExec(10, new Runnable() {

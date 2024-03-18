@@ -24,7 +24,7 @@ import org.eclipse.jface.text.rules.SingleLineRule;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WhitespaceRule;
 import org.eclipse.jface.text.rules.WordRule;
-import org.sf.feeling.decompiler.JavaDecompilerPlugin;
+import org.sf.feeling.decompiler.JavaDecompilerConstants;
 
 import com.drgarbage.bytecode.ByteCodeConstants;
 import com.drgarbage.javasrc.JavaKeywords;
@@ -181,7 +181,7 @@ public final class RenderedBytecodeScanner extends AbstractJavaScanner implement
 
 	private static String[] tokenProperties = { IJavaColorConstants.JAVA_KEYWORD, IJavaColorConstants.JAVA_STRING,
 			IJavaColorConstants.JAVA_DEFAULT, IJavaColorConstants.JAVA_OPERATOR,
-			JavaDecompilerPlugin.BYTECODE_MNEMONIC };
+			JavaDecompilerConstants.BYTECODE_MNEMONIC };
 
 	/**
 	 * Creates a Java code scanner
@@ -226,7 +226,7 @@ public final class RenderedBytecodeScanner extends AbstractJavaScanner implement
 			wordRule.addWord(RENDERED_BYTECODE_KEYWORDS[i], token);
 		}
 
-		token = getToken(JavaDecompilerPlugin.BYTECODE_MNEMONIC);
+		token = getToken(JavaDecompilerConstants.BYTECODE_MNEMONIC);
 		for (int i = 0; i < ByteCodeConstants.OPCODE_MNEMONICS.length; i++) {
 			String word = ByteCodeConstants.OPCODE_MNEMONICS[i];
 			if (word != null) {

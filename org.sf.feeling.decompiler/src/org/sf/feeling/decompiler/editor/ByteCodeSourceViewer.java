@@ -68,6 +68,7 @@ import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.ui.texteditor.rulers.IColumnSupport;
 import org.eclipse.ui.texteditor.rulers.RulerColumnDescriptor;
 import org.eclipse.ui.texteditor.rulers.RulerColumnRegistry;
+import org.sf.feeling.decompiler.JavaDecompilerConstants;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.actions.ByteCodeAction;
 import org.sf.feeling.decompiler.actions.DisassemblerAction;
@@ -606,7 +607,7 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor {
 
 	public void setSelectionElement(ISourceReference selectedElement, boolean force) {
 		final StyledText byteCodeText = getSourceViewer().getTextWidget();
-		if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.BYTE_CODE_MODE
+		if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerConstants.BYTE_CODE_MODE
 				&& byteCodeText != null && !byteCodeText.isDisposed()) {
 			if (!force) {
 				if (UIUtil.requestFromDisassemblerSelection())

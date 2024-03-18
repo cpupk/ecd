@@ -33,6 +33,7 @@ import org.eclipse.jdt.internal.core.PackageFragmentRoot;
 import org.eclipse.jdt.internal.core.SourceMapper;
 import org.eclipse.jdt.internal.ui.javaeditor.IClassFileEditorInput;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.sf.feeling.decompiler.JavaDecompilerConstants;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.util.ClassUtil;
 import org.sf.feeling.decompiler.util.DecompileUtil;
@@ -69,7 +70,7 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper 
 	@Override
 	public char[] findSource(IType type, IBinaryType info) {
 		IPreferenceStore prefs = JavaDecompilerPlugin.getDefault().getPreferenceStore();
-		boolean ignoreExistingSource = prefs.getBoolean(JavaDecompilerPlugin.IGNORE_EXISTING);
+		boolean ignoreExistingSource = prefs.getBoolean(JavaDecompilerConstants.IGNORE_EXISTING);
 
 		Collection<Exception> exceptions = new LinkedList<>();
 		IPackageFragment pkgFrag = type.getPackageFragment();
@@ -169,13 +170,13 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper 
 
 		String code = usedDecompiler.getSource();
 
-		boolean showReport = prefs.getBoolean(JavaDecompilerPlugin.PREF_DISPLAY_METADATA);
+		boolean showReport = prefs.getBoolean(JavaDecompilerConstants.PREF_DISPLAY_METADATA);
 		if (!showReport) {
 			code = usedDecompiler.removeComment(code);
 		}
 
-		boolean showLineNumber = prefs.getBoolean(JavaDecompilerPlugin.PREF_DISPLAY_LINE_NUMBERS);
-		boolean align = prefs.getBoolean(JavaDecompilerPlugin.ALIGN);
+		boolean showLineNumber = prefs.getBoolean(JavaDecompilerConstants.PREF_DISPLAY_LINE_NUMBERS);
+		boolean align = prefs.getBoolean(JavaDecompilerConstants.ALIGN);
 		if ((showLineNumber && align) || UIUtil.isDebugPerspective()
 				|| JavaDecompilerPlugin.getDefault().isDebugMode()) {
 			if (showReport) {
@@ -189,7 +190,7 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper 
 		StringBuffer source = new StringBuffer();
 
 		if (!(UIUtil.isDebugPerspective() || JavaDecompilerPlugin.getDefault().isDebugMode())) {
-			boolean useSorter = prefs.getBoolean(JavaDecompilerPlugin.USE_ECLIPSE_SORTER);
+			boolean useSorter = prefs.getBoolean(JavaDecompilerConstants.USE_ECLIPSE_SORTER);
 			if (useSorter) {
 				className = new String(info.getName());
 				fullName = new String(info.getFileName());
@@ -348,13 +349,13 @@ public abstract class BaseDecompilerSourceMapper extends DecompilerSourceMapper 
 
 		String code = currentDecompiler.getSource();
 
-		boolean showReport = prefs.getBoolean(JavaDecompilerPlugin.PREF_DISPLAY_METADATA);
+		boolean showReport = prefs.getBoolean(JavaDecompilerConstants.PREF_DISPLAY_METADATA);
 		if (!showReport) {
 			code = currentDecompiler.removeComment(code);
 		}
 
-		boolean showLineNumber = prefs.getBoolean(JavaDecompilerPlugin.PREF_DISPLAY_LINE_NUMBERS);
-		boolean align = prefs.getBoolean(JavaDecompilerPlugin.ALIGN);
+		boolean showLineNumber = prefs.getBoolean(JavaDecompilerConstants.PREF_DISPLAY_LINE_NUMBERS);
+		boolean align = prefs.getBoolean(JavaDecompilerConstants.ALIGN);
 		if ((showLineNumber && align) || UIUtil.isDebugPerspective()
 				|| JavaDecompilerPlugin.getDefault().isDebugMode()) {
 			if (showReport) {

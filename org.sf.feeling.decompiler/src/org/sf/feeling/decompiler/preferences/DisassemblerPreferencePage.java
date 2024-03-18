@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.sf.feeling.decompiler.JavaDecompilerConstants;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.i18n.Messages;
 
@@ -76,36 +77,36 @@ public class DisassemblerPreferencePage extends FieldEditorPreferencePage implem
 		basicGroup.setLayoutData(gd);
 
 		BooleanFieldEditor showConstantPool = new BooleanFieldEditor(
-				JavaDecompilerPlugin.CLASS_FILE_ATTR_SHOW_CONSTANT_POOL,
+				JavaDecompilerConstants.CLASS_FILE_ATTR_SHOW_CONSTANT_POOL,
 				Messages.getString("DisassemblerPreferencePage.Label.ShowConstant"), //$NON-NLS-1$
 				basicGroup);
 
 		BooleanFieldEditor showSourceLineNumber = new BooleanFieldEditor(
-				JavaDecompilerPlugin.CLASS_FILE_ATTR_SHOW_SOURCE_LINE_NUMBERS,
+				JavaDecompilerConstants.CLASS_FILE_ATTR_SHOW_SOURCE_LINE_NUMBERS,
 				Messages.getString("DisassemblerPreferencePage.Label.ShowSourceLineNumber"), //$NON-NLS-1$
 				basicGroup);
 
 		BooleanFieldEditor showLineNumberTable = new BooleanFieldEditor(
-				JavaDecompilerPlugin.CLASS_FILE_ATTR_SHOW_LINE_NUMBER_TABLE,
+				JavaDecompilerConstants.CLASS_FILE_ATTR_SHOW_LINE_NUMBER_TABLE,
 				Messages.getString("DisassemblerPreferencePage.Label.ShowLineNumberTable"), //$NON-NLS-1$
 				basicGroup);
 
 		BooleanFieldEditor showVariableTable = new BooleanFieldEditor(
-				JavaDecompilerPlugin.CLASS_FILE_ATTR_SHOW_VARIABLE_TABLE,
+				JavaDecompilerConstants.CLASS_FILE_ATTR_SHOW_VARIABLE_TABLE,
 				Messages.getString("DisassemblerPreferencePage.Label.ShowVariableTable"), //$NON-NLS-1$
 				basicGroup);
 
 		BooleanFieldEditor showExceptionTable = new BooleanFieldEditor(
-				JavaDecompilerPlugin.CLASS_FILE_ATTR_SHOW_EXCEPTION_TABLE,
+				JavaDecompilerConstants.CLASS_FILE_ATTR_SHOW_EXCEPTION_TABLE,
 				Messages.getString("DisassemblerPreferencePage.Label.ShowExceptionTable"), //$NON-NLS-1$
 				basicGroup);
 
-		BooleanFieldEditor showMaxs = new BooleanFieldEditor(JavaDecompilerPlugin.CLASS_FILE_ATTR_SHOW_MAXS,
+		BooleanFieldEditor showMaxs = new BooleanFieldEditor(JavaDecompilerConstants.CLASS_FILE_ATTR_SHOW_MAXS,
 				Messages.getString("DisassemblerPreferencePage.Label.ShowMaxs"), //$NON-NLS-1$
 				basicGroup);
 
 		BooleanFieldEditor showTryCatch = new BooleanFieldEditor(
-				JavaDecompilerPlugin.CLASS_FILE_ATTR_RENDER_TRYCATCH_BLOCKS,
+				JavaDecompilerConstants.CLASS_FILE_ATTR_RENDER_TRYCATCH_BLOCKS,
 				Messages.getString("DisassemblerPreferencePage.Label.ShowTryCatch"), //$NON-NLS-1$
 				basicGroup);
 
@@ -121,12 +122,12 @@ public class DisassemblerPreferencePage extends FieldEditorPreferencePage implem
 		layout.marginWidth = layout.marginHeight = 5;
 		basicGroup.layout();
 
-		RadioGroupFieldEditor red = new RadioGroupFieldEditor(JavaDecompilerPlugin.BRANCH_TARGET_ADDRESS_RENDERING,
+		RadioGroupFieldEditor red = new RadioGroupFieldEditor(JavaDecompilerConstants.BRANCH_TARGET_ADDRESS_RENDERING,
 				Messages.getString("DisassemblerPreferencePage.Label.BranchTargetAddressSettings"), //$NON-NLS-1$
 				1, new String[][] { { Messages.getString("DisassemblerPreferencePage.Label.AbsoluteAddress"), //$NON-NLS-1$
-						JavaDecompilerPlugin.BRANCH_TARGET_ADDRESS_RELATIVE },
+						JavaDecompilerConstants.BRANCH_TARGET_ADDRESS_RELATIVE },
 						{ Messages.getString("DisassemblerPreferencePage.Label.RelativeAddress"), //$NON-NLS-1$
-								JavaDecompilerPlugin.BRANCH_TARGET_ADDRESS_ABSOLUTE } },
+								JavaDecompilerConstants.BRANCH_TARGET_ADDRESS_ABSOLUTE } },
 				getFieldEditorParent(), true);
 		addField(red);
 
@@ -135,24 +136,24 @@ public class DisassemblerPreferencePage extends FieldEditorPreferencePage implem
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		styleGroup.setLayoutData(gd);
 
-		ColorFieldEditor opcodeColor = new ColorFieldEditor(JavaDecompilerPlugin.BYTECODE_MNEMONIC,
+		ColorFieldEditor opcodeColor = new ColorFieldEditor(JavaDecompilerConstants.BYTECODE_MNEMONIC,
 				Messages.getString("DisassemblerPreferencePage.Label.StyleColor"), //$NON-NLS-1$
 				styleGroup);
 
-		BooleanFieldEditor opcodeFontBold = new BooleanFieldEditor(JavaDecompilerPlugin.BYTECODE_MNEMONIC_BOLD,
+		BooleanFieldEditor opcodeFontBold = new BooleanFieldEditor(JavaDecompilerConstants.BYTECODE_MNEMONIC_BOLD,
 				Messages.getString("DisassemblerPreferencePage.Label.StyleBold"), //$NON-NLS-1$
 				styleGroup);
 
-		BooleanFieldEditor opcodeFontItalic = new BooleanFieldEditor(JavaDecompilerPlugin.BYTECODE_MNEMONIC_ITALIC,
+		BooleanFieldEditor opcodeFontItalic = new BooleanFieldEditor(JavaDecompilerConstants.BYTECODE_MNEMONIC_ITALIC,
 				Messages.getString("DisassemblerPreferencePage.Label.StyleItalic"), //$NON-NLS-1$
 				styleGroup);
 
 		BooleanFieldEditor opcodeFontStrikethrough = new BooleanFieldEditor(
-				JavaDecompilerPlugin.BYTECODE_MNEMONIC_STRIKETHROUGH,
+				JavaDecompilerConstants.BYTECODE_MNEMONIC_STRIKETHROUGH,
 				Messages.getString("DisassemblerPreferencePage.Label.StyleStrikethrough"), //$NON-NLS-1$
 				styleGroup);
 
-		BooleanFieldEditor showFontUnderline = new BooleanFieldEditor(JavaDecompilerPlugin.BYTECODE_MNEMONIC_UNDERLINE,
+		BooleanFieldEditor showFontUnderline = new BooleanFieldEditor(JavaDecompilerConstants.BYTECODE_MNEMONIC_UNDERLINE,
 				Messages.getString("DisassemblerPreferencePage.Label.StyleUnderline"), //$NON-NLS-1$
 				styleGroup);
 

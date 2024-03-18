@@ -32,6 +32,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.text.edits.TextEdit;
+import org.sf.feeling.decompiler.JavaDecompilerConstants;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.util.DecompilerOutputUtil;
 import org.sf.feeling.decompiler.util.EclipseCompatibilityHelper;
@@ -96,7 +97,7 @@ public abstract class DecompilerSourceMapper extends SourceMapper {
 		String result = null;
 
 		IPreferenceStore prefs = JavaDecompilerPlugin.getDefault().getPreferenceStore();
-		boolean useFormatter = prefs.getBoolean(JavaDecompilerPlugin.USE_ECLIPSE_FORMATTER);
+		boolean useFormatter = prefs.getBoolean(JavaDecompilerConstants.USE_ECLIPSE_FORMATTER);
 
 		if (source != null && useFormatter) {
 			CompilerOptions option = new CompilerOptions();

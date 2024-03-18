@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.jd.core.v1.ClassFileToJavaSourceDecompiler;
+import org.sf.feeling.decompiler.JavaDecompilerConstants;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.editor.BaseDecompilerSourceMapper;
 import org.sf.feeling.decompiler.jd.decompiler.JDCorePrinter;
@@ -73,12 +74,12 @@ public abstract class JDSourceMapper extends BaseDecompilerSourceMapper {
 					}
 				} else {
 					JavaDecompilerPlugin.getDefault().getLog()
-							.log(new Status(Status.ERROR, JavaDecompilerPlugin.PLUGIN_ID, 0,
+							.log(new Status(Status.ERROR, JavaDecompilerConstants.PLUGIN_ID, 0,
 									"Unable to decompile: " + decompilePath + " is not a valid file.", null));
 				}
 			} catch (Exception e) {
 				JavaDecompilerPlugin.getDefault().getLog()
-						.log(new Status(Status.ERROR, JavaDecompilerPlugin.PLUGIN_ID, 0, e.getMessage(), e));
+						.log(new Status(Status.ERROR, JavaDecompilerConstants.PLUGIN_ID, 0, e.getMessage(), e));
 			}
 		}
 
@@ -96,10 +97,10 @@ public abstract class JDSourceMapper extends BaseDecompilerSourceMapper {
 		// Load preferences
 		IPreferenceStore store = JavaDecompilerPlugin.getDefault().getPreferenceStore();
 
-		boolean realignmentLineNumber = store.getBoolean(JavaDecompilerPlugin.ALIGN);
+		boolean realignmentLineNumber = store.getBoolean(JavaDecompilerConstants.ALIGN);
 		boolean unicodeEscape = false; // currently unused :
 										// store.getBoolean(JavaDecompilerPlugin.PREF_ESCAPE_UNICODE_CHARACTERS);
-		boolean showLineNumbers = store.getBoolean(JavaDecompilerPlugin.PREF_DISPLAY_LINE_NUMBERS);
+		boolean showLineNumbers = store.getBoolean(JavaDecompilerConstants.PREF_DISPLAY_LINE_NUMBERS);
 		// boolean showMetadata =
 		// store.getBoolean(JavaDecompilerPlugin.PREF_DISPLAY_METADATA);
 

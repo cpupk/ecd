@@ -11,6 +11,7 @@ package org.sf.feeling.decompiler.actions;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.texteditor.IUpdate;
+import org.sf.feeling.decompiler.JavaDecompilerConstants;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.editor.JavaDecompilerClassFileEditor;
 import org.sf.feeling.decompiler.i18n.Messages;
@@ -26,7 +27,7 @@ public class ByteCodeAction extends Action implements IUpdate {
 
 	@Override
 	public void run() {
-		JavaDecompilerPlugin.getDefault().setSourceMode(JavaDecompilerPlugin.BYTE_CODE_MODE);
+		JavaDecompilerPlugin.getDefault().setSourceMode(JavaDecompilerConstants.BYTE_CODE_MODE);
 		setChecked(true);
 		final JavaDecompilerClassFileEditor editor = UIUtil.getActiveEditor();
 		if (editor != null) {
@@ -48,7 +49,7 @@ public class ByteCodeAction extends Action implements IUpdate {
 	}
 
 	public boolean isChecked() {
-		return JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.BYTE_CODE_MODE;
+		return JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerConstants.BYTE_CODE_MODE;
 	}
 
 	@Override

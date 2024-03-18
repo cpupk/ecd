@@ -23,6 +23,7 @@ import org.jetbrains.java.decompiler.main.decompiler.ConsoleDecompiler;
 import org.jetbrains.java.decompiler.main.decompiler.PrintStreamLogger;
 import org.jetbrains.java.decompiler.main.extern.IFernflowerLogger;
 import org.jetbrains.java.decompiler.main.extern.IFernflowerPreferences;
+import org.sf.feeling.decompiler.JavaDecompilerConstants;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.editor.BaseDecompiler;
 import org.sf.feeling.decompiler.editor.IDecompiler;
@@ -157,7 +158,7 @@ public class VineflowerDecompiler extends BaseDecompiler {
 	public void decompileFromArchive(String archivePath, String packege, String className) {
 		start = System.currentTimeMillis();
 		File workingDir = new File(
-				JavaDecompilerPlugin.getDefault().getPreferenceStore().getString(JavaDecompilerPlugin.TEMP_DIR) + "/" //$NON-NLS-1$
+				JavaDecompilerPlugin.getDefault().getPreferenceStore().getString(JavaDecompilerConstants.TEMP_DIR) + "/" //$NON-NLS-1$
 						+ System.currentTimeMillis());
 
 		try {

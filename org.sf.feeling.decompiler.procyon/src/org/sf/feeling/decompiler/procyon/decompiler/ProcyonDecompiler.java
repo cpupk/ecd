@@ -20,6 +20,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.time.StopWatch;
+import org.sf.feeling.decompiler.JavaDecompilerConstants;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.editor.BaseDecompiler;
 import org.sf.feeling.decompiler.editor.IDecompiler;
@@ -169,7 +170,7 @@ public class ProcyonDecompiler extends BaseDecompiler {
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
 		File workingDir = new File(
-				JavaDecompilerPlugin.getDefault().getPreferenceStore().getString(JavaDecompilerPlugin.TEMP_DIR) + "/" //$NON-NLS-1$
+				JavaDecompilerPlugin.getDefault().getPreferenceStore().getString(JavaDecompilerConstants.TEMP_DIR) + "/" //$NON-NLS-1$
 						+ System.currentTimeMillis());
 
 		try {

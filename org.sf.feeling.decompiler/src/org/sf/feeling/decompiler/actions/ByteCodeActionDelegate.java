@@ -13,6 +13,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.actions.ActionDelegate;
+import org.sf.feeling.decompiler.JavaDecompilerConstants;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.editor.JavaDecompilerClassFileEditor;
 
@@ -24,7 +25,7 @@ public class ByteCodeActionDelegate extends ActionDelegate implements IEditorAct
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
 		if (targetEditor instanceof JavaDecompilerClassFileEditor) {
 			editor = (JavaDecompilerClassFileEditor) targetEditor;
-			action.setChecked(JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.BYTE_CODE_MODE);
+			action.setChecked(JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerConstants.BYTE_CODE_MODE);
 		}
 	}
 
@@ -35,6 +36,6 @@ public class ByteCodeActionDelegate extends ActionDelegate implements IEditorAct
 
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
-		action.setChecked(JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.BYTE_CODE_MODE);
+		action.setChecked(JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerConstants.BYTE_CODE_MODE);
 	}
 }

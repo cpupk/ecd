@@ -11,6 +11,7 @@ package org.sf.feeling.decompiler.actions;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.dialogs.PreferencesUtil;
+import org.sf.feeling.decompiler.JavaDecompilerConstants;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.editor.JavaDecompilerClassFileEditor;
 import org.sf.feeling.decompiler.i18n.Messages;
@@ -27,11 +28,11 @@ public class DecompilerPeferenceAction extends Action {
 		JavaDecompilerClassFileEditor editor = UIUtil.getActiveDecompilerEditor();
 
 		String showId = "org.sf.feeling.decompiler.Main"; //$NON-NLS-1$
-		if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.SOURCE_MODE) {
+		if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerConstants.SOURCE_MODE) {
 			showId = "org.sf.feeling.decompiler.Main"; //$NON-NLS-1$
-		} else if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.DISASSEMBLER_MODE) {
+		} else if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerConstants.DISASSEMBLER_MODE) {
 			showId = "org.sf.feeling.decompiler.Disassembler"; //$NON-NLS-1$
-		} else if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.BYTE_CODE_MODE) {
+		} else if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerConstants.BYTE_CODE_MODE) {
 			showId = "org.eclipse.ui.preferencePages.ColorsAndFonts"; //$NON-NLS-1$
 		}
 

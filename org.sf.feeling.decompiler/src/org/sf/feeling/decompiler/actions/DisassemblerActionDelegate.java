@@ -13,6 +13,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.actions.ActionDelegate;
+import org.sf.feeling.decompiler.JavaDecompilerConstants;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.editor.JavaDecompilerClassFileEditor;
 
@@ -25,7 +26,7 @@ public class DisassemblerActionDelegate extends ActionDelegate implements IEdito
 		if (targetEditor instanceof JavaDecompilerClassFileEditor) {
 			editor = (JavaDecompilerClassFileEditor) targetEditor;
 			action.setChecked(
-					JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.DISASSEMBLER_MODE);
+					JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerConstants.DISASSEMBLER_MODE);
 		}
 	}
 
@@ -36,6 +37,6 @@ public class DisassemblerActionDelegate extends ActionDelegate implements IEdito
 
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
-		action.setChecked(JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.DISASSEMBLER_MODE);
+		action.setChecked(JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerConstants.DISASSEMBLER_MODE);
 	}
 }

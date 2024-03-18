@@ -198,7 +198,7 @@ public class SetupRunnable implements Runnable {
 
 	private void checkClassFileAssociation() {
 		IPreferenceStore prefs = JavaDecompilerPlugin.getDefault().getPreferenceStore();
-		if (prefs.getBoolean(JavaDecompilerPlugin.DEFAULT_EDITOR)) {
+		if (prefs.getBoolean(JavaDecompilerConstants.DEFAULT_EDITOR)) {
 			updateClassDefaultEditor();
 
 			IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
@@ -241,7 +241,7 @@ public class SetupRunnable implements Runnable {
 				IFileEditorMapping mapping = classMappings[i];
 				for (int j = 0; j < mapping.getEditors().length; j++) {
 					IEditorDescriptor editor = mapping.getEditors()[j];
-					if (editor.getId().equals(JavaDecompilerPlugin.EDITOR_ID)) {
+					if (editor.getId().equals(JavaDecompilerConstants.EDITOR_ID)) {
 						try {
 							ReflectionUtils.invokeMethod(mapping, "setDefaultEditor", //$NON-NLS-1$
 									new Class[] { Class.forName("org.eclipse.ui.IEditorDescriptor") //$NON-NLS-1$
@@ -268,7 +268,7 @@ public class SetupRunnable implements Runnable {
 		for (int i = 0; i < classMappings.length; i++) {
 			IFileEditorMapping mapping = classMappings[i];
 			if (mapping.getDefaultEditor() != null
-					&& !mapping.getDefaultEditor().getId().equals(JavaDecompilerPlugin.EDITOR_ID)) {
+					&& !mapping.getDefaultEditor().getId().equals(JavaDecompilerConstants.EDITOR_ID)) {
 				return true;
 			}
 		}

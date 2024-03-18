@@ -15,6 +15,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
+import org.sf.feeling.decompiler.JavaDecompilerConstants;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 
 public class ByteCodeMenuItemAction implements IWorkbenchWindowPulldownDelegate, IWorkbenchWindowPulldownDelegate2 {
@@ -48,6 +49,6 @@ public class ByteCodeMenuItemAction implements IWorkbenchWindowPulldownDelegate,
 
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
-		action.setChecked(JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.BYTE_CODE_MODE);
+		action.setChecked(JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerConstants.BYTE_CODE_MODE);
 	}
 }

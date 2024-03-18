@@ -45,6 +45,7 @@ import org.eclipse.ui.navigator.CommonNavigatorManager;
 import org.eclipse.ui.navigator.IExtensionStateModel;
 import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.views.contentoutline.ContentOutline;
+import org.sf.feeling.decompiler.JavaDecompilerConstants;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.editor.JavaDecompilerClassFileEditor;
 
@@ -151,8 +152,8 @@ public class UIUtil {
 
 	public static boolean isDebug() {
 		IPreferenceStore prefs = JavaDecompilerPlugin.getDefault().getPreferenceStore();
-		boolean showLineNumber = prefs.getBoolean(JavaDecompilerPlugin.PREF_DISPLAY_LINE_NUMBERS);
-		boolean align = prefs.getBoolean(JavaDecompilerPlugin.ALIGN);
+		boolean showLineNumber = prefs.getBoolean(JavaDecompilerConstants.PREF_DISPLAY_LINE_NUMBERS);
+		boolean align = prefs.getBoolean(JavaDecompilerConstants.ALIGN);
 		boolean debug = (showLineNumber && align) || UIUtil.isDebugPerspective()
 				|| JavaDecompilerPlugin.getDefault().isDebugMode();
 		return debug;

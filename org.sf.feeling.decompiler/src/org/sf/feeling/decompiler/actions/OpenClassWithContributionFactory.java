@@ -44,6 +44,7 @@ import org.eclipse.ui.actions.CompoundContributionItem;
 import org.eclipse.ui.menus.ExtensionContributionFactory;
 import org.eclipse.ui.menus.IContributionRoot;
 import org.eclipse.ui.services.IServiceLocator;
+import org.sf.feeling.decompiler.JavaDecompilerConstants;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.editor.DecompilerType;
 import org.sf.feeling.decompiler.editor.IDecompilerDescriptor;
@@ -115,7 +116,7 @@ public class OpenClassWithContributionFactory extends ExtensionContributionFacto
 					}
 				} catch (PartInitException e) {
 					JavaDecompilerPlugin.getDefault().getLog()
-							.log(new Status(IStatus.ERROR, JavaDecompilerPlugin.PLUGIN_ID, 0, e.getMessage(), e));
+							.log(new Status(IStatus.ERROR, JavaDecompilerConstants.PLUGIN_ID, 0, e.getMessage(), e));
 				}
 			}
 		}
@@ -148,7 +149,7 @@ public class OpenClassWithContributionFactory extends ExtensionContributionFacto
 				List<ActionContributionItem> list = new ArrayList<>();
 
 				if (classes.size() == 1) {
-					IEditorDescriptor editor = registry.findEditor(JavaDecompilerPlugin.EDITOR_ID);
+					IEditorDescriptor editor = registry.findEditor(JavaDecompilerConstants.EDITOR_ID);
 
 					TreeSet<String> decompilerTypes = new TreeSet<>();
 					Collections.addAll(decompilerTypes, DecompilerType.getDecompilerTypes());

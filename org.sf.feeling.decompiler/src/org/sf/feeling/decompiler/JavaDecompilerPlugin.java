@@ -12,6 +12,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -43,48 +44,10 @@ import org.sf.feeling.decompiler.util.SortMemberUtil;
 
 public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyChangeListener {
 
-	public static final String EDITOR_ID = "org.sf.feeling.decompiler.ClassFileEditor"; //$NON-NLS-1$
-	public static final String PLUGIN_ID = "org.sf.feeling.decompiler"; //$NON-NLS-1$
-	public static final String TEMP_DIR = "org.sf.feeling.decompiler.tempd"; //$NON-NLS-1$
+	private static final String ECD_DECOMPILER_CLASS_NAME_PREFIX = "org.sf.feeling.decompiler";
 
-	public static final String REUSE_BUFFER = "org.sf.feeling.decompiler.reusebuff"; //$NON-NLS-1$
-	public static final String IGNORE_EXISTING = "org.sf.feeling.decompiler.alwaysuse"; //$NON-NLS-1$
-	public static final String USE_ECLIPSE_FORMATTER = "org.sf.feeling.decompiler.use_eclipse_formatter"; //$NON-NLS-1$
-	public static final String USE_ECLIPSE_SORTER = "org.sf.feeling.decompiler.use_eclipse_sorter"; //$NON-NLS-1$
-	public static final String DECOMPILER_TYPE = "org.sf.feeling.decompiler.type"; //$NON-NLS-1$
-	public static final String PREF_DISPLAY_LINE_NUMBERS = "jd.ide.eclipse.prefs.DisplayLineNumbers"; //$NON-NLS-1$
-	public static final String PREF_DISPLAY_METADATA = "jd.ide.eclipse.prefs.DisplayMetadata"; //$NON-NLS-1$
-	public static final String ALIGN = "jd.ide.eclipse.prefs.RealignLineNumbers"; //$NON-NLS-1$
-	public static final String DEFAULT_EDITOR = "org.sf.feeling.decompiler.default_editor"; //$NON-NLS-1$ ;
-	public static final String EXPORT_ENCODING = "org.sf.feeling.decompiler.export.encoding"; //$NON-NLS-1$ ;
-	public static final String ATTACH_SOURCE = "org.sf.feeling.decompiler.attach_source"; //$NON-NLS-1$ ;
-
-	public static final String bytecodeMnemonicPreferencesPrefix = "BYTECODEMNEMONIC_"; //$NON-NLS-1$
-	public static final String BYTECODE_MNEMONIC = bytecodeMnemonicPreferencesPrefix + "bytecodeMnemonic"; //$NON-NLS-1$
-	public static final String BYTECODE_MNEMONIC_BOLD = bytecodeMnemonicPreferencesPrefix + "bytecodeMnemonic_bold"; //$NON-NLS-1$
-	public static final String BYTECODE_MNEMONIC_ITALIC = bytecodeMnemonicPreferencesPrefix + "bytecodeMnemonic_italic"; //$NON-NLS-1$
-	public static final String BYTECODE_MNEMONIC_STRIKETHROUGH = bytecodeMnemonicPreferencesPrefix
-			+ "bytecodeMnemonic_strikethrough"; //$NON-NLS-1$
-	public static final String BYTECODE_MNEMONIC_UNDERLINE = bytecodeMnemonicPreferencesPrefix
-			+ "bytecodeMnemonic_underline"; //$NON-NLS-1$
-
-	public static final String classFileAttributePreferencesPrefix = "CLASS_FILE_ATTR_"; //$NON-NLS-1$
-	public static final String CLASS_FILE_ATTR_SHOW_CONSTANT_POOL = classFileAttributePreferencesPrefix
-			+ "show_constantPool"; //$NON-NLS-1$
-	public static final String CLASS_FILE_ATTR_SHOW_LINE_NUMBER_TABLE = classFileAttributePreferencesPrefix
-			+ "show_lineNumberTable"; //$NON-NLS-1$
-	public static final String CLASS_FILE_ATTR_SHOW_VARIABLE_TABLE = classFileAttributePreferencesPrefix
-			+ "show_localVariableTable"; //$NON-NLS-1$
-	public static final String CLASS_FILE_ATTR_SHOW_EXCEPTION_TABLE = classFileAttributePreferencesPrefix
-			+ "show_exceptionTable"; //$NON-NLS-1$
-	public static final String CLASS_FILE_ATTR_SHOW_MAXS = classFileAttributePreferencesPrefix + "show_maxs"; //$NON-NLS-1$
-	public static final String CLASS_FILE_ATTR_RENDER_TRYCATCH_BLOCKS = classFileAttributePreferencesPrefix
-			+ "render_tryCatchBlocks"; //$NON-NLS-1$
-	public static final String CLASS_FILE_ATTR_SHOW_SOURCE_LINE_NUMBERS = classFileAttributePreferencesPrefix
-			+ "render_sourceLineNumbers"; //$NON-NLS-1$
-	public static final String BRANCH_TARGET_ADDRESS_RENDERING = "BRANCH_TARGET_ADDRESS_RENDERING"; //$NON-NLS-1$
-	public static final String BRANCH_TARGET_ADDRESS_ABSOLUTE = BRANCH_TARGET_ADDRESS_RENDERING + "_ABSOLUTE"; //$NON-NLS-1$
-	public static final String BRANCH_TARGET_ADDRESS_RELATIVE = BRANCH_TARGET_ADDRESS_RENDERING + "_RELATIVE"; //$NON-NLS-1$
+	private static final List<String> ALLOWED_PLUGINS = Arrays.asList("cfr", "fernflower", "jd", "procyon",
+			"vineflower");
 
 	private static JavaDecompilerPlugin plugin;
 
@@ -92,10 +55,6 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 	private TreeMap<String, IDecompilerDescriptor> decompilerDescriptorMap = new TreeMap<>();
 
 	private boolean isDebugMode = false;
-
-	public static final int SOURCE_MODE = 0;
-	public static final int BYTE_CODE_MODE = 1;
-	public static final int DISASSEMBLER_MODE = 2;
 
 	private int sourceMode = 0;
 
@@ -116,15 +75,15 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 	}
 
 	public static void logError(Throwable t, String message) {
-		JavaDecompilerPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, PLUGIN_ID, 0, message, t));
+		JavaDecompilerPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, JavaDecompilerConstants.PLUGIN_ID, 0, message, t));
 	}
 
 	public static void logInfo(String message) {
-		JavaDecompilerPlugin.getDefault().getLog().log(new Status(IStatus.INFO, PLUGIN_ID, 0, message, null));
+		JavaDecompilerPlugin.getDefault().getLog().log(new Status(IStatus.INFO, JavaDecompilerConstants.PLUGIN_ID, 0, message, null));
 	}
 
 	public static void log(int severity, Throwable t, String message) {
-		JavaDecompilerPlugin.getDefault().getLog().log(new Status(severity, PLUGIN_ID, 0, message, t));
+		JavaDecompilerPlugin.getDefault().getLog().log(new Status(severity, JavaDecompilerConstants.PLUGIN_ID, 0, message, t));
 	}
 
 	public static ImageDescriptor getImageDescriptor(String path) {
@@ -148,33 +107,33 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 
 	@Override
 	protected void initializeDefaultPreferences(IPreferenceStore store) {
-		store.setDefault(TEMP_DIR, System.getProperty("java.io.tmpdir") //$NON-NLS-1$
+		store.setDefault(JavaDecompilerConstants.TEMP_DIR, System.getProperty("java.io.tmpdir") //$NON-NLS-1$
 				+ File.separator + ".org.sf.feeling.decompiler" //$NON-NLS-1$
 				+ System.currentTimeMillis());
-		store.setDefault(REUSE_BUFFER, true);
-		store.setDefault(IGNORE_EXISTING, false);
-		store.setDefault(USE_ECLIPSE_FORMATTER, true);
-		store.setDefault(USE_ECLIPSE_SORTER, false);
-		store.setDefault(PREF_DISPLAY_METADATA, false);
-		store.setDefault(DEFAULT_EDITOR, true);
-		store.setDefault(ATTACH_SOURCE, false);
-		store.setDefault(EXPORT_ENCODING, StandardCharsets.UTF_8.name());
+		store.setDefault(JavaDecompilerConstants.REUSE_BUFFER, true);
+		store.setDefault(JavaDecompilerConstants.IGNORE_EXISTING, false);
+		store.setDefault(JavaDecompilerConstants.USE_ECLIPSE_FORMATTER, true);
+		store.setDefault(JavaDecompilerConstants.USE_ECLIPSE_SORTER, false);
+		store.setDefault(JavaDecompilerConstants.PREF_DISPLAY_METADATA, false);
+		store.setDefault(JavaDecompilerConstants.DEFAULT_EDITOR, true);
+		store.setDefault(JavaDecompilerConstants.ATTACH_SOURCE, false);
+		store.setDefault(JavaDecompilerConstants.EXPORT_ENCODING, StandardCharsets.UTF_8.name());
 
-		PreferenceConverter.setDefault(store, BYTECODE_MNEMONIC, new RGB(0, 0, 0));
-		store.setDefault(BYTECODE_MNEMONIC_BOLD, true);
-		store.setDefault(BYTECODE_MNEMONIC_ITALIC, false);
-		store.setDefault(BYTECODE_MNEMONIC_STRIKETHROUGH, false);
-		store.setDefault(BYTECODE_MNEMONIC_UNDERLINE, false);
+		PreferenceConverter.setDefault(store, JavaDecompilerConstants.BYTECODE_MNEMONIC, new RGB(0, 0, 0));
+		store.setDefault(JavaDecompilerConstants.BYTECODE_MNEMONIC_BOLD, true);
+		store.setDefault(JavaDecompilerConstants.BYTECODE_MNEMONIC_ITALIC, false);
+		store.setDefault(JavaDecompilerConstants.BYTECODE_MNEMONIC_STRIKETHROUGH, false);
+		store.setDefault(JavaDecompilerConstants.BYTECODE_MNEMONIC_UNDERLINE, false);
 
-		store.setDefault(CLASS_FILE_ATTR_SHOW_CONSTANT_POOL, false);
-		store.setDefault(CLASS_FILE_ATTR_SHOW_LINE_NUMBER_TABLE, false);
-		store.setDefault(CLASS_FILE_ATTR_SHOW_VARIABLE_TABLE, false);
-		store.setDefault(CLASS_FILE_ATTR_SHOW_EXCEPTION_TABLE, false);
-		store.setDefault(CLASS_FILE_ATTR_SHOW_MAXS, false);
-		store.setDefault(BRANCH_TARGET_ADDRESS_RENDERING, BRANCH_TARGET_ADDRESS_RELATIVE);
-		store.setDefault(CLASS_FILE_ATTR_RENDER_TRYCATCH_BLOCKS, true);
-		store.setDefault(CLASS_FILE_ATTR_SHOW_SOURCE_LINE_NUMBERS, true);
-		store.setDefault(CLASS_FILE_ATTR_SHOW_MAXS, false);
+		store.setDefault(JavaDecompilerConstants.CLASS_FILE_ATTR_SHOW_CONSTANT_POOL, false);
+		store.setDefault(JavaDecompilerConstants.CLASS_FILE_ATTR_SHOW_LINE_NUMBER_TABLE, false);
+		store.setDefault(JavaDecompilerConstants.CLASS_FILE_ATTR_SHOW_VARIABLE_TABLE, false);
+		store.setDefault(JavaDecompilerConstants.CLASS_FILE_ATTR_SHOW_EXCEPTION_TABLE, false);
+		store.setDefault(JavaDecompilerConstants.CLASS_FILE_ATTR_SHOW_MAXS, false);
+		store.setDefault(JavaDecompilerConstants.BRANCH_TARGET_ADDRESS_RENDERING, JavaDecompilerConstants.BRANCH_TARGET_ADDRESS_RELATIVE);
+		store.setDefault(JavaDecompilerConstants.CLASS_FILE_ATTR_RENDER_TRYCATCH_BLOCKS, true);
+		store.setDefault(JavaDecompilerConstants.CLASS_FILE_ATTR_SHOW_SOURCE_LINE_NUMBERS, true);
+		store.setDefault(JavaDecompilerConstants.CLASS_FILE_ATTR_SHOW_MAXS, false);
 	}
 
 	private void initializeDecompilerDescriptorMap(IPreferenceStore store) {
@@ -182,7 +141,24 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 				IDecompilerDescriptor.class);
 
 		if (decompilerAdapters != null) {
+
 			for (IDecompilerDescriptor descriptor : decompilerAdapters) {
+				// Filter out plugins/features of outdated ECD plugins (e.g. plugins that
+				// belong to an older ECD version)
+				String className = descriptor.getClass().getName();
+				if (className.startsWith(ECD_DECOMPILER_CLASS_NAME_PREFIX)) {
+					String name = className.substring(ECD_DECOMPILER_CLASS_NAME_PREFIX.length() + 1);
+					int idx = name.indexOf('.');
+					if (idx > 0) {
+						name = name.substring(0, idx);
+						boolean allowed = (ALLOWED_PLUGINS.indexOf(name) >= 0);
+						if (!allowed) {
+							Logger.error("Disabling unknown decompiler plugin: " + className);
+							continue;
+						}
+					}
+				}
+
 				if (descriptor.isEnabled()) {
 					decompilerDescriptorMap.put(descriptor.getDecompilerType(), descriptor);
 				}
@@ -192,7 +168,7 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty().equals(IGNORE_EXISTING)) {
+		if (event.getProperty().equals(JavaDecompilerConstants.IGNORE_EXISTING)) {
 			JavaDecompilerBufferManager.closeDecompilerBuffers(false);
 		}
 	}
@@ -212,12 +188,12 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 		if (preferenceStore == null) {
 			preferenceStore = super.getPreferenceStore();
 
-			String decompilerType = preferenceStore.getString(DECOMPILER_TYPE);
+			String decompilerType = preferenceStore.getString(JavaDecompilerConstants.DECOMPILER_TYPE);
 			IDecompilerDescriptor descriptor = getDecompilerDescriptor(decompilerType);
 			if (descriptor == null) {
 				String defaultDecompiler = getDefaultDecompilerType();
 				if (defaultDecompiler != null) {
-					preferenceStore.setDefault(DECOMPILER_TYPE, defaultDecompiler);
+					preferenceStore.setDefault(JavaDecompilerConstants.DECOMPILER_TYPE, defaultDecompiler);
 				}
 			}
 		}
@@ -225,7 +201,7 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 	}
 
 	public void initializeDefaultDecompilerType() {
-		String decompilerType = preferenceStore.getString(DECOMPILER_TYPE);
+		String decompilerType = preferenceStore.getString(JavaDecompilerConstants.DECOMPILER_TYPE);
 		IDecompilerDescriptor descriptor = getDecompilerDescriptor(decompilerType);
 		if (descriptor != null) {
 			return;
@@ -235,14 +211,14 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 		if (!descriptorColl.isEmpty()) {
 			String defaultDecompiler = getDefaultDecompilerType();
 			if (defaultDecompiler != null) {
-				preferenceStore.setDefault(DECOMPILER_TYPE, defaultDecompiler);
+				preferenceStore.setDefault(JavaDecompilerConstants.DECOMPILER_TYPE, defaultDecompiler);
 			}
 		}
 	}
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		FileUtil.deltree(new File(getPreferenceStore().getString(JavaDecompilerPlugin.TEMP_DIR)));
+		FileUtil.deltree(new File(getPreferenceStore().getString(JavaDecompilerConstants.TEMP_DIR)));
 
 		super.stop(context);
 
@@ -252,23 +228,23 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 	}
 
 	public Boolean isDisplayLineNumber() {
-		return Boolean.valueOf(getPreferenceStore().getBoolean(PREF_DISPLAY_LINE_NUMBERS));
+		return Boolean.valueOf(getPreferenceStore().getBoolean(JavaDecompilerConstants.PREF_DISPLAY_LINE_NUMBERS));
 	}
 
 	public Boolean isDebug() {
-		return Boolean.valueOf(getPreferenceStore().getBoolean(ALIGN));
+		return Boolean.valueOf(getPreferenceStore().getBoolean(JavaDecompilerConstants.ALIGN));
 	}
 
 	public void displayLineNumber(Boolean display) {
-		getPreferenceStore().setValue(PREF_DISPLAY_LINE_NUMBERS, display.booleanValue());
+		getPreferenceStore().setValue(JavaDecompilerConstants.PREF_DISPLAY_LINE_NUMBERS, display.booleanValue());
 	}
 
 	public void setExportEncoding(String encoding) {
-		getPreferenceStore().setValue(EXPORT_ENCODING, encoding);
+		getPreferenceStore().setValue(JavaDecompilerConstants.EXPORT_ENCODING, encoding);
 	}
 
 	public String getExportEncoding() {
-		return getPreferenceStore().getString(EXPORT_ENCODING);
+		return getPreferenceStore().getString(JavaDecompilerConstants.EXPORT_ENCODING);
 	}
 
 	public boolean enableAttachSourceSetting() {
@@ -297,7 +273,7 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 			if (library.getPath() != null && library.getSourceAttachmentPath() != null
 					&& !libraries.contains(library.getPath().toOSString())) {
 				final IPreferenceStore prefs = JavaDecompilerPlugin.getDefault().getPreferenceStore();
-				if (prefs.getBoolean(JavaDecompilerPlugin.DEFAULT_EDITOR)) {
+				if (prefs.getBoolean(JavaDecompilerConstants.DEFAULT_EDITOR)) {
 					final Object attachSourceAdapter = DecompilerAdapterManager
 							.getAdapter(JavaDecompilerPlugin.getDefault(), IAttachSourceHandler.class);
 					if (attachSourceAdapter instanceof IAttachSourceHandler) {
@@ -318,7 +294,7 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 			return false;
 		}
 
-		return getPreferenceStore().getBoolean(ATTACH_SOURCE);
+		return getPreferenceStore().getBoolean(JavaDecompilerConstants.ATTACH_SOURCE);
 	}
 
 	public String getDefaultDecompilerType() {
@@ -349,7 +325,7 @@ public class JavaDecompilerPlugin extends AbstractUIPlugin implements IPropertyC
 	}
 
 	public String getDefaultExportEncoding() {
-		return getPreferenceStore().getDefaultString(JavaDecompilerPlugin.EXPORT_ENCODING);
+		return getPreferenceStore().getDefaultString(JavaDecompilerConstants.EXPORT_ENCODING);
 	}
 
 }

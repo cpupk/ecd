@@ -40,6 +40,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
+import org.sf.feeling.decompiler.JavaDecompilerConstants;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.i18n.Messages;
 import org.sf.feeling.decompiler.util.DecompileUtil;
@@ -66,9 +67,9 @@ public class ExportSourceAction extends Action {
 			return;
 
 		IPreferenceStore prefs = JavaDecompilerPlugin.getDefault().getPreferenceStore();
-		final String decompilerType = prefs.getString(JavaDecompilerPlugin.DECOMPILER_TYPE);
-		final boolean reuseBuf = prefs.getBoolean(JavaDecompilerPlugin.REUSE_BUFFER);
-		final boolean always = prefs.getBoolean(JavaDecompilerPlugin.IGNORE_EXISTING);
+		final String decompilerType = prefs.getString(JavaDecompilerConstants.DECOMPILER_TYPE);
+		final boolean reuseBuf = prefs.getBoolean(JavaDecompilerConstants.REUSE_BUFFER);
+		final boolean always = prefs.getBoolean(JavaDecompilerConstants.IGNORE_EXISTING);
 
 		Object firstElement = selection.get(0);
 		if (selection.size() == 1 && firstElement instanceof IClassFile) {
@@ -140,7 +141,7 @@ public class ExportSourceAction extends Action {
 					exportPackageSources(monitor, decompilerType, reuseBuf, always, projectFile, children, exceptions);
 
 					final File workingDir = new File(JavaDecompilerPlugin.getDefault().getPreferenceStore()
-							.getString(JavaDecompilerPlugin.TEMP_DIR));// $NON-NLS-1$
+							.getString(JavaDecompilerConstants.TEMP_DIR));// $NON-NLS-1$
 
 					if (workingDir != null && workingDir.exists()) {
 						try {
@@ -157,7 +158,7 @@ public class ExportSourceAction extends Action {
 						Messages.getString("ExportSourceAction.InfoDialog.Title"), //$NON-NLS-1$
 						Messages.getString("ExportSourceAction.InfoDialog.Message.Canceled")); //$NON-NLS-1$
 			} else if (!exceptions.isEmpty()) {
-				final MultiStatus status = new MultiStatus(JavaDecompilerPlugin.PLUGIN_ID, IStatus.WARNING,
+				final MultiStatus status = new MultiStatus(JavaDecompilerConstants.PLUGIN_ID, IStatus.WARNING,
 						(exceptions.size() <= 1
 								? Messages.getFormattedString("ExportSourceAction.WarningDialog.Message.Failed", //$NON-NLS-1$
 										new String[] { "" + exceptions.size() //$NON-NLS-1$
@@ -189,7 +190,7 @@ public class ExportSourceAction extends Action {
 						Messages.getString("ExportSourceAction.InfoDialog.Message.Success")); //$NON-NLS-1$
 			}
 		} catch (Exception e) {
-			IStatus status = new Status(IStatus.ERROR, JavaDecompilerPlugin.PLUGIN_ID,
+			IStatus status = new Status(IStatus.ERROR, JavaDecompilerConstants.PLUGIN_ID,
 					Messages.getString("ExportSourceAction.Status.Error.DecompileAndExport"), //$NON-NLS-1$
 					e);
 			ExceptionHandler.handle(status, Messages.getString("ExportSourceAction.ErrorDialog.Title"), //$NON-NLS-1$
@@ -204,7 +205,7 @@ public class ExportSourceAction extends Action {
 				1000000);
 
 		final File workingDir = new File(
-				JavaDecompilerPlugin.getDefault().getPreferenceStore().getString(JavaDecompilerPlugin.TEMP_DIR)
+				JavaDecompilerPlugin.getDefault().getPreferenceStore().getString(JavaDecompilerConstants.TEMP_DIR)
 						+ "/export/" //$NON-NLS-1$
 						+ System.currentTimeMillis());
 
@@ -216,7 +217,7 @@ public class ExportSourceAction extends Action {
 			try {
 				collectClasses(child, classes, monitor);
 			} catch (JavaModelException e) {
-				IStatus status = new Status(IStatus.ERROR, JavaDecompilerPlugin.PLUGIN_ID,
+				IStatus status = new Status(IStatus.ERROR, JavaDecompilerConstants.PLUGIN_ID,
 						Messages.getString("ExportSourceAction.Status.Error.CollectPackage"), //$NON-NLS-1$
 						e);
 				exceptions.add(status);
@@ -262,13 +263,13 @@ public class ExportSourceAction extends Action {
 											+ ".java"), //$NON-NLS-1$
 									result);
 						} else {
-							IStatus status = new Status(IStatus.ERROR, JavaDecompilerPlugin.PLUGIN_ID,
+							IStatus status = new Status(IStatus.ERROR, JavaDecompilerConstants.PLUGIN_ID,
 									Messages.getFormattedString("ExportSourceAction.Status.Error.DecompileFailed", //$NON-NLS-1$
 											new String[] { className }));
 							throw new CoreException(status);
 						}
 					} catch (Exception e) {
-						IStatus status = new Status(IStatus.ERROR, JavaDecompilerPlugin.PLUGIN_ID,
+						IStatus status = new Status(IStatus.ERROR, JavaDecompilerConstants.PLUGIN_ID,
 								Messages.getFormattedString("ExportSourceAction.Status.Error.DecompileFailed", //$NON-NLS-1$
 										new String[] { className }));
 						exceptions.add(status);
@@ -308,7 +309,7 @@ public class ExportSourceAction extends Action {
 				monitor.worked(20000 - total);
 			}
 		} catch (Exception e) {
-			final IStatus status = new Status(IStatus.ERROR, JavaDecompilerPlugin.PLUGIN_ID,
+			final IStatus status = new Status(IStatus.ERROR, JavaDecompilerConstants.PLUGIN_ID,
 					Messages.getString("ExportSourceAction.Status.Error.ExportFailed"), //$NON-NLS-1$
 					e);
 			exceptions.add(status);
@@ -370,7 +371,7 @@ public class ExportSourceAction extends Action {
 				if (result != null)
 					FileUtil.writeToFile(new File(projectFile), result);
 				else {
-					IStatus status = new Status(IStatus.ERROR, JavaDecompilerPlugin.PLUGIN_ID,
+					IStatus status = new Status(IStatus.ERROR, JavaDecompilerConstants.PLUGIN_ID,
 							Messages.getFormattedString("ExportSourceAction.Status.Error.DecompileFailed", //$NON-NLS-1$
 									new String[] { className }));
 					throw new CoreException(status);

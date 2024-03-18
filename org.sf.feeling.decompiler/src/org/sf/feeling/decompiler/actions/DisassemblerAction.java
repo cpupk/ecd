@@ -11,6 +11,7 @@ package org.sf.feeling.decompiler.actions;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.texteditor.IUpdate;
+import org.sf.feeling.decompiler.JavaDecompilerConstants;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.editor.JavaDecompilerClassFileEditor;
 import org.sf.feeling.decompiler.i18n.Messages;
@@ -26,7 +27,7 @@ public class DisassemblerAction extends Action implements IUpdate {
 
 	@Override
 	public void run() {
-		JavaDecompilerPlugin.getDefault().setSourceMode(JavaDecompilerPlugin.DISASSEMBLER_MODE);
+		JavaDecompilerPlugin.getDefault().setSourceMode(JavaDecompilerConstants.DISASSEMBLER_MODE);
 		setChecked(true);
 		final JavaDecompilerClassFileEditor editor = UIUtil.getActiveEditor();
 		if (editor != null) {
@@ -48,7 +49,7 @@ public class DisassemblerAction extends Action implements IUpdate {
 	}
 
 	public boolean isChecked() {
-		return JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerPlugin.DISASSEMBLER_MODE;
+		return JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerConstants.DISASSEMBLER_MODE;
 	}
 
 	public void update() {

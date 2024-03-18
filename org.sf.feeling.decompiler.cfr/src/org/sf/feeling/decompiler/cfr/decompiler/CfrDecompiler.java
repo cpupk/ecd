@@ -29,6 +29,7 @@ import org.benf.cfr.reader.util.getopt.OptionsImpl;
 import org.benf.cfr.reader.util.output.IllegalIdentifierDump;
 import org.benf.cfr.reader.util.output.MethodErrorCollector;
 import org.benf.cfr.reader.util.output.StringStreamDumper;
+import org.sf.feeling.decompiler.JavaDecompilerConstants;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.cfr.CfrDecompilerPlugin;
 import org.sf.feeling.decompiler.editor.BaseDecompiler;
@@ -140,7 +141,7 @@ public class CfrDecompiler extends BaseDecompiler {
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
 		String tempDir = JavaDecompilerPlugin.getDefault().getPreferenceStore()
-				.getString(JavaDecompilerPlugin.TEMP_DIR);
+				.getString(JavaDecompilerConstants.TEMP_DIR);
 		File workingDir = new File(tempDir + "/ecd_cfr_" + System.currentTimeMillis()); //$NON-NLS-1$
 		try {
 			workingDir.mkdirs();
@@ -194,7 +195,8 @@ public class CfrDecompiler extends BaseDecompiler {
 
 	@Override
 	public boolean supportDebugLevel(int level) {
-		return false; // CFR is not usable when debugging?
+		return false; // CFR does not seem to have an option to create code that matche sthe original
+						// line numbers
 	}
 
 	@Override

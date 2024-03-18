@@ -17,6 +17,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.PlatformUI;
+import org.sf.feeling.decompiler.JavaDecompilerConstants;
 import org.sf.feeling.decompiler.JavaDecompilerPlugin;
 import org.sf.feeling.decompiler.actions.OpenClassWithContributionFactory.OpenClassesAction;
 import org.sf.feeling.decompiler.editor.JavaDecompilerClassFileEditor;
@@ -29,9 +30,9 @@ public class DecompileHandler extends AbstractHandler {
 		final List classes = UIUtil.getActiveSelection();
 		if (classes != null && !classes.isEmpty() && PlatformUI.getWorkbench() != null) {
 			IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
-			IEditorDescriptor editor = registry.findEditor(JavaDecompilerPlugin.EDITOR_ID);
+			IEditorDescriptor editor = registry.findEditor(JavaDecompilerConstants.EDITOR_ID);
 			IPreferenceStore prefs = JavaDecompilerPlugin.getDefault().getPreferenceStore();
-			String decompilerType = prefs.getString(JavaDecompilerPlugin.DECOMPILER_TYPE);
+			String decompilerType = prefs.getString(JavaDecompilerConstants.DECOMPILER_TYPE);
 			new OpenClassesAction(editor, classes, decompilerType).run();
 		} else {
 			JavaDecompilerClassFileEditor editor = UIUtil.getActiveEditor();
