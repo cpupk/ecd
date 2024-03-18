@@ -78,7 +78,7 @@ This affects the release version published on https://ecd-plugin.github.io/updat
   * Quiltflower plugin and feature removed
   * Vineflower plugin and feature added (replaces Quiltflower)
   * Removed "Source" (source.attach) plugin and feature
-  * Updated build envoironment to use Java 17
+  * Updated build environment to use Java 17
 
 * Version 3.4.0
   * Updated Embedded Decompilers
