@@ -15,8 +15,7 @@ Enhanced Class Decompiler requires at least Eclipse 4.8 (Photon) or newer.
 
 ## How to install Enhanced Class Decompiler?
 
-Drag and Drop installation: 
-[![Drag to your running Eclipse* workspace. *Requires Eclipse Marketplace Client](https://marketplace.eclipse.org/modules/custom/eclipsefdn/eclipsefdn_marketplace/images/btn-install.svg)](/marketplace-client-intro?mpc_install=3644319"Drag to your running Eclipse* workspace. *Requires Eclipse Marketplace Client")
+Drag and Drop installation: [![Drag to your running Eclipse workspace.](https://marketplace.eclipse.org/modules/custom/eclipsefdn/eclipsefdn_marketplace/images/btn-install.svg)](https://marketplace.eclipse.org/marketplace-client-intro?mpc_install=3644319 "Drag to your running Eclipse workspace.")
 
 
 _If you have currently the "Eclipse" Class Decompiler installed, it is recommended to uninstall that plug-in first and remove the corresponding update site from your Eclipse installation._
