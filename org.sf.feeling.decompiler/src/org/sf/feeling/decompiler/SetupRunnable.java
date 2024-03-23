@@ -243,6 +243,8 @@ public class SetupRunnable implements Runnable {
 					IEditorDescriptor editor = mapping.getEditors()[j];
 					if (editor.getId().equals(JavaDecompilerConstants.EDITOR_ID)) {
 						try {
+							// org.eclipse.ui.internal.registry.FileEditorMapping.setDefaultEditor(IEditorDescriptor)
+							// Eclipse Photon: method exists
 							ReflectionUtils.invokeMethod(mapping, "setDefaultEditor", //$NON-NLS-1$
 									new Class[] { Class.forName("org.eclipse.ui.IEditorDescriptor") //$NON-NLS-1$
 									}, new Object[] { editor });
@@ -250,6 +252,7 @@ public class SetupRunnable implements Runnable {
 						}
 
 						try {
+							// Unknown - may be required on old Eclipse versions?
 							ReflectionUtils.invokeMethod(mapping, "setDefaultEditor", //$NON-NLS-1$
 									new Class[] { Class.forName("org.eclipse.ui.internal.registry.EditorDescriptor") //$NON-NLS-1$
 									}, new Object[] { editor });

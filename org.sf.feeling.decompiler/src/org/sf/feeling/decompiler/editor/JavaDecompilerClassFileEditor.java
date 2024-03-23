@@ -636,8 +636,7 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor {
 		if (amgr == null) {
 			return;
 		}
-		ReflectionUtils.invokeMethod(amgr, "removeAllAnnotations", //$NON-NLS-1$
-				new Class[0], new Object[0]);
+		ReflectionUtils.invokeMethod(amgr, "removeAllAnnotations");
 	}
 
 	@Override
@@ -670,7 +669,8 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor {
 			public void run() {
 				if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerConstants.SOURCE_MODE) {
 					((SourceViewer) JavaDecompilerClassFileEditor.this.getSourceViewer()).getTextWidget().copy();
-				} else if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerConstants.DISASSEMBLER_MODE
+				} else if (JavaDecompilerPlugin.getDefault()
+						.getSourceMode() == JavaDecompilerConstants.DISASSEMBLER_MODE
 						&& fDisassemblerSourceViewer != null && fDisassemblerSourceViewer.getTextWidget() != null) {
 					JavaDecompilerClassFileEditor.this.fDisassemblerSourceViewer.getTextWidget().copy();
 				} else if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerConstants.BYTE_CODE_MODE
@@ -689,7 +689,8 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor {
 			public void run() {
 				if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerConstants.SOURCE_MODE) {
 					((SourceViewer) JavaDecompilerClassFileEditor.this.getSourceViewer()).getTextWidget().selectAll();
-				} else if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerConstants.DISASSEMBLER_MODE
+				} else if (JavaDecompilerPlugin.getDefault()
+						.getSourceMode() == JavaDecompilerConstants.DISASSEMBLER_MODE
 						&& fDisassemblerSourceViewer != null && fDisassemblerSourceViewer.getTextWidget() != null) {
 					JavaDecompilerClassFileEditor.this.fDisassemblerSourceViewer.getTextWidget().selectAll();
 				} else if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerConstants.BYTE_CODE_MODE
@@ -711,7 +712,8 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor {
 							(IFindReplaceTarget) JavaDecompilerClassFileEditor.this
 									.getAdapter(IFindReplaceTarget.class));
 
-				} else if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerConstants.DISASSEMBLER_MODE
+				} else if (JavaDecompilerPlugin.getDefault()
+						.getSourceMode() == JavaDecompilerConstants.DISASSEMBLER_MODE
 						&& fDisassemblerSourceViewer != null) {
 					ReflectionUtils.setFieldValue(this, "fTarget", //$NON-NLS-1$
 							(IFindReplaceTarget) fDisassemblerSourceViewer.getAdapter(IFindReplaceTarget.class));
@@ -738,7 +740,8 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor {
 							(IFindReplaceTarget) JavaDecompilerClassFileEditor.this
 									.getAdapter(IFindReplaceTarget.class));
 
-				} else if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerConstants.DISASSEMBLER_MODE
+				} else if (JavaDecompilerPlugin.getDefault()
+						.getSourceMode() == JavaDecompilerConstants.DISASSEMBLER_MODE
 						&& fDisassemblerSourceViewer != null) {
 					ReflectionUtils.setFieldValue(this, "fTarget", //$NON-NLS-1$
 							(IFindReplaceTarget) fDisassemblerSourceViewer.getAdapter(IFindReplaceTarget.class));
@@ -765,7 +768,8 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor {
 							(IFindReplaceTarget) JavaDecompilerClassFileEditor.this
 									.getAdapter(IFindReplaceTarget.class));
 
-				} else if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerConstants.DISASSEMBLER_MODE
+				} else if (JavaDecompilerPlugin.getDefault()
+						.getSourceMode() == JavaDecompilerConstants.DISASSEMBLER_MODE
 						&& fDisassemblerSourceViewer != null) {
 					ReflectionUtils.setFieldValue(this, "fTarget", //$NON-NLS-1$
 							(IFindReplaceTarget) fDisassemblerSourceViewer.getAdapter(IFindReplaceTarget.class));
@@ -798,7 +802,8 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor {
 							.getSourceMode() == JavaDecompilerConstants.DISASSEMBLER_MODE
 							&& fDisassemblerSourceViewer != null) {
 						ReflectionUtils.setFieldValue(this, "fTarget", fDisassemblerSourceViewer.getAdapter(clazz)); //$NON-NLS-1$
-					} else if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerConstants.BYTE_CODE_MODE
+					} else if (JavaDecompilerPlugin.getDefault()
+							.getSourceMode() == JavaDecompilerConstants.BYTE_CODE_MODE
 							&& fByteCodeSourceViewer != null) {
 						ReflectionUtils.setFieldValue(this, "fTarget", fByteCodeSourceViewer.getAdapter(clazz)); //$NON-NLS-1$
 					}
@@ -829,7 +834,8 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor {
 							.getSourceMode() == JavaDecompilerConstants.DISASSEMBLER_MODE
 							&& fDisassemblerSourceViewer != null) {
 						ReflectionUtils.setFieldValue(this, "fTarget", fDisassemblerSourceViewer.getAdapter(clazz)); //$NON-NLS-1$
-					} else if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerConstants.BYTE_CODE_MODE
+					} else if (JavaDecompilerPlugin.getDefault()
+							.getSourceMode() == JavaDecompilerConstants.BYTE_CODE_MODE
 							&& fByteCodeSourceViewer != null) {
 						ReflectionUtils.setFieldValue(this, "fTarget", fByteCodeSourceViewer.getAdapter(clazz)); //$NON-NLS-1$
 					}
@@ -851,7 +857,8 @@ public class JavaDecompilerClassFileEditor extends ClassFileEditor {
 			protected ITextEditor getTextEditor() {
 				if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerConstants.DISASSEMBLER_MODE) {
 					return fDisassemblerSourceViewer;
-				} else if (JavaDecompilerPlugin.getDefault().getSourceMode() == JavaDecompilerConstants.BYTE_CODE_MODE) {
+				} else if (JavaDecompilerPlugin.getDefault()
+						.getSourceMode() == JavaDecompilerConstants.BYTE_CODE_MODE) {
 					return fByteCodeSourceViewer;
 				}
 				return JavaDecompilerClassFileEditor.this;

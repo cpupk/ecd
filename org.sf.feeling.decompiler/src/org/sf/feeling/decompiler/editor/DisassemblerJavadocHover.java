@@ -124,10 +124,14 @@ public class DisassemblerJavadocHover extends JavadocHover implements IJavaEdito
 					return null;
 				}
 
-				return ReflectionUtils.invokeMethod(this, "getHoverInfo", new Class[] { //$NON-NLS-1$
-						IJavaElement[].class, ITypeRoot.class, IRegion.class,
-						JavadocBrowserInformationControlInput.class },
-						new Object[] { elements, getEditorInputJavaElement(), hoverRegion, null });
+				// Method is directly accessible, no need to use reflection
+				return JavadocHover.getHoverInfo(elements, getEditorInputJavaElement(), hoverRegion, null);
+				/*
+				 * return ReflectionUtils.invokeMethod(this, "getHoverInfo", new Class[] {
+				 * //$NON-NLS-1$ IJavaElement[].class, ITypeRoot.class, IRegion.class,
+				 * JavadocBrowserInformationControlInput.class }, new Object[] { elements,
+				 * getEditorInputJavaElement(), hoverRegion, null });
+				 */
 			} else if (textViewer.getDocument() instanceof ByteCodeDocument) {
 				int offset = -1;
 				String text = textViewer.getDocument().get(hoverRegion.getOffset(), hoverRegion.getLength());

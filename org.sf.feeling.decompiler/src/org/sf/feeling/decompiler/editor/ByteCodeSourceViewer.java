@@ -132,8 +132,9 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor {
 		ReflectionUtils.invokeMethod(this, "initializeSourceViewer", new Class[] { //$NON-NLS-1$
 				IEditorInput.class }, new Object[] { getEditorInput() });
 
-		if (fSourceViewerDecorationSupport != null)
+		if (fSourceViewerDecorationSupport != null) {
 			fSourceViewerDecorationSupport.install(getPreferenceStore());
+		}
 
 		StyledText styledText = fSourceViewer.getTextWidget();
 		styledText.addMouseListener(getCursorListener());
@@ -207,9 +208,9 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor {
 
 		RulerColumnDescriptor lineNumberColumnDescriptor = RulerColumnRegistry.getDefault()
 				.getColumnDescriptor(LineNumberColumn.ID);
-		if (lineNumberColumnDescriptor != null)
+		if (lineNumberColumnDescriptor != null) {
 			columnSupport.setColumnVisible(lineNumberColumnDescriptor, isLineNumberRulerVisible());
-
+		}
 		IPropertyChangeListener fFontPropertyChangeListener = (IPropertyChangeListener) ReflectionUtils
 				.getFieldValue(this, "fFontPropertyChangeListener"); //$NON-NLS-1$
 		JFaceResources.getFontRegistry().addListener(fFontPropertyChangeListener);
@@ -239,8 +240,9 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor {
 		@Override
 		public void addSelectionChangedListener(ISelectionChangedListener listener) {
 			super.addSelectionChangedListener(listener);
-			if (getSourceViewer() != null)
+			if (getSourceViewer() != null) {
 				fSelectionListeners.add(listener);
+			}
 		}
 
 		/*
@@ -248,8 +250,9 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor {
 		 */
 		@Override
 		public ISelection getSelection() {
-			if (fInvalidSelection != null)
+			if (fInvalidSelection != null) {
 				return fInvalidSelection;
+			}
 			return super.getSelection();
 		}
 
@@ -260,8 +263,9 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor {
 		@Override
 		public void removeSelectionChangedListener(ISelectionChangedListener listener) {
 			super.removeSelectionChangedListener(listener);
-			if (getSourceViewer() != null)
+			if (getSourceViewer() != null) {
 				fSelectionListeners.remove(listener);
+			}
 		}
 
 		/*
@@ -299,8 +303,10 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor {
 		@Override
 		public void addPostSelectionChangedListener(ISelectionChangedListener listener) {
 			super.addPostSelectionChangedListener(listener);
-			if (getSourceViewer() != null && getSourceViewer().getSelectionProvider() instanceof IPostSelectionProvider)
+			if (getSourceViewer() != null
+					&& getSourceViewer().getSelectionProvider() instanceof IPostSelectionProvider) {
 				fPostSelectionListeners.add(listener);
+			}
 		}
 
 		/*
@@ -311,8 +317,9 @@ public class ByteCodeSourceViewer extends AbstractDecoratedTextEditor {
 		@Override
 		public void removePostSelectionChangedListener(ISelectionChangedListener listener) {
 			super.removePostSelectionChangedListener(listener);
-			if (getSourceViewer() != null)
+			if (getSourceViewer() != null) {
 				fPostSelectionListeners.remove(listener);
+			}
 		}
 
 		/*

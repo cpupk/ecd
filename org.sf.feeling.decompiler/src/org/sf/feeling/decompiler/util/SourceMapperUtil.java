@@ -41,6 +41,7 @@ public class SourceMapperUtil {
 	}
 
 	private static Method getMapSourceMethod(SourceMapper sourceMapper) {
+		// Available in Eclipse Photon / jdt 3.14.0
 		return ReflectionUtils.getDeclaredMethod(sourceMapper, MAP_SOURCE_METHOD_NAME,
 				new Class[] { NamedMember.class, char[].class, IBinaryType.class, IJavaElement.class });
 	}

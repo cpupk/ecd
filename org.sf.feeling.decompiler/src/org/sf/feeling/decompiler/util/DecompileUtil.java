@@ -77,8 +77,9 @@ public class DecompileUtil {
 			Object info = EclipseCompatibilityHelper.javaElementGetElementInfo(classFile);
 			IBinaryType typeInfo = info instanceof IBinaryType ? (IBinaryType) info : null;
 			SourceMapper mapper = classFile.getSourceMapper();
-			IType type = (IType) ReflectionUtils.invokeMethod(classFile, "getOuterMostEnclosingType", //$NON-NLS-1$
-					new Class[0], new Object[0]);
+			// private org.eclipse.jdt.internal.core.ClassFile.getOuterMostEnclosingType()
+			IType type = (IType) ReflectionUtils.invokeMethod(classFile, "getOuterMostEnclosingType");
+
 			HashMap sourceRange = (HashMap) ReflectionUtils.getFieldValue(mapper, "sourceRanges"); //$NON-NLS-1$
 			sourceRange.remove(type);
 			SourceMapperUtil.mapSource(mapper, type, contents.toCharArray(), typeInfo);

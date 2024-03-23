@@ -440,11 +440,14 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 
 	protected void editorContextMenuAboutToShow(IMenuManager menu) {
 		super.editorContextMenuAboutToShow(menu);
+		// private method
+		// org.eclipse.ui.texteditor.AbstractDecoratedTextEditor.getShowInMenuLabel()
 		String text = (String) ReflectionUtils.invokeMethod(this, "getShowInMenuLabel"); //$NON-NLS-1$
 		for (int i = 0; i < menu.getItems().length; i++) {
-			if (menu.getItems()[i] instanceof MenuManager) {
-				if (((MenuManager) menu.getItems()[i]).getMenuText().equals(text)) {
-					menu.remove(menu.getItems()[i]);
+			IContributionItem item = menu.getItems()[i];
+			if (item instanceof MenuManager) {
+				if (((MenuManager) item).getMenuText().equals(text)) {
+					menu.remove(item);
 				}
 			}
 		}
@@ -714,6 +717,7 @@ public class DisassemblerSourceViewer extends AbstractDecoratedTextEditor implem
 		return null;
 	}
 
+	@Override
 	protected IConfigurationElement getConfigurationElement() {
 		return (IConfigurationElement) ReflectionUtils.invokeMethod(editor, "getConfigurationElement"); //$NON-NLS-1$
 	}
