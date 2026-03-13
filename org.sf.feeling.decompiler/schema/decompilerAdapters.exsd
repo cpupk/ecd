@@ -3,7 +3,7 @@
 <schema targetNamespace="org.sf.feeling.decompiler" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="org.sf.feeling.decompiler" id="decompilerAdapters" name="Decompiler Adatpers Extension"/>
+         <meta.schema plugin="org.sf.feeling.decompiler" id="decompilerAdapters" name="Decompiler Adapters Extension"/>
       </appinfo>
       <documentation>
          [Enter description of this extension point.]

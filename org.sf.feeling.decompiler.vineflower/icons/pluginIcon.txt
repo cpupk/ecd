@@ -1,0 +1,4 @@
+Icon source:
+https://github.com/Vineflower/vineflower-site/blob/main/source/_static/favicon.ico
+
+License: Creative Commons Attribution Share Alike 4.0 International

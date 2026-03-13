@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -32,27 +32,22 @@ import com.drgarbage.asm.render.intf.IInstructionLine;
  * @version $Revision: 203 $ $Id: BytecodeDocument.java 203 2013-06-07 09:27:41Z
  *          salekseev $
  */
-public class DisassemblerDocument extends Document
-{
+public class DisassemblerDocument extends Document {
 
 	private DisassemblerDocumentProvider documentProvider;
 	private JavaDecompilerClassFileEditor editor;
 
-	
-	public JavaDecompilerClassFileEditor getEditor( )
-	{
+	public JavaDecompilerClassFileEditor getEditor() {
 		return editor;
 	}
 
-	public DisassemblerDocument( DisassemblerDocumentProvider documentProvider, JavaDecompilerClassFileEditor editor )
-	{
-		super( );
+	public DisassemblerDocument(DisassemblerDocumentProvider documentProvider, JavaDecompilerClassFileEditor editor) {
+		super();
 		this.documentProvider = documentProvider;
 		this.editor = editor;
 	}
 
-	public DisassemblerDocumentProvider getDocumentProvider( )
-	{
+	public DisassemblerDocumentProvider getDocumentProvider() {
 		return documentProvider;
 	}
 
@@ -61,46 +56,37 @@ public class DisassemblerDocument extends Document
 	 * 
 	 * @see org.eclipse.jface.text.IDocument#getLineInformation(int)
 	 */
-	public IRegion getLineInformation( int line ) throws BadLocationException
-	{
+	public IRegion getLineInformation(int line) throws BadLocationException {
 
 		/* to avoid BadLocation exception */
-		if ( line < 0 )
-		{
-			return new Region( 0, 0 );
+		if (line < 0) {
+			return new Region(0, 0);
 		}
 
-		if ( invokedFromJavaStackTraceHyperlink( 3 ) )
-		{
+		if (invokedFromJavaStackTraceHyperlink(3)) {
 			/* lookup line number table */
 
-			IClassFileDocument doc = documentProvider.getClassFileDocument( );
-			if ( doc != null )
-			{
-				IInstructionLine il = doc.findInstructionLine( line );
-				if ( il != null )
-				{
-					IRegion result = getTracker( ).getLineInformation( il.getLine( ) );
+			IClassFileDocument doc = documentProvider.getClassFileDocument();
+			if (doc != null) {
+				IInstructionLine il = doc.findInstructionLine(line);
+				if (il != null) {
+					IRegion result = getTracker().getLineInformation(il.getLine());
 					return result;
 				}
 			}
-		}
-		else
-		{
+		} else {
 			/* default handling */
-			return getTracker( ).getLineInformation( line );
+			return getTracker().getLineInformation(line);
 		}
-		return new Region( 0, 0 );
+		return new Region(0, 0);
 	}
 
-	private boolean invokedFromJavaStackTraceHyperlink( int position )
-	{
-		Thread thread = Thread.currentThread( );
+	private boolean invokedFromJavaStackTraceHyperlink(int position) {
+		Thread thread = Thread.currentThread();
 
-		StackTraceElement[] elements = thread.getStackTrace( );
-		if ( elements != null && elements.length > position )
-		{
-			return JavaStackTraceHyperlink.class.getName( ).equals( elements[position].getClassName( ) );
+		StackTraceElement[] elements = thread.getStackTrace();
+		if (elements != null && elements.length > position) {
+			return JavaStackTraceHyperlink.class.getName().equals(elements[position].getClassName());
 		}
 
 		return false;

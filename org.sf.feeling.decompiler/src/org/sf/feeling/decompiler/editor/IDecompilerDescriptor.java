@@ -1,12 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2017 Chen Chao(cnfree2000@hotmail.com).
+ * Copyright (c) 2017 Chen Chao and other ECD project contributors.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *  Chen Chao  - initial API and implementation
+ * https://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
 package org.sf.feeling.decompiler.editor;
@@ -14,22 +11,26 @@ package org.sf.feeling.decompiler.editor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 
-public interface IDecompilerDescriptor
-{
+public interface IDecompilerDescriptor {
 
-	String getDecompilerType( );
+	String getDecompilerType();
 
-	String getDecompilerPreferenceLabel( );
+	String getDecompilerPreferenceLabel();
 
-	IDecompiler getDecompiler( );
+	IDecompiler getDecompiler();
 
-	BaseDecompilerSourceMapper getDecompilerSourceMapper( );
+	BaseDecompilerSourceMapper getDecompilerSourceMapper();
 
-	Action getDecompileAction( );
+	Action getDecompileAction();
 
-	boolean isEnabled( );
+	boolean isEnabled();
 
-	boolean isDefault( );
+	/**
+	 * Allows to specify a priority which is used when no default decompiler is set.
+	 * 
+	 * @return
+	 */
+	int getDefaultPriority();
 
-	ImageDescriptor getDecompilerIcon( );
+	ImageDescriptor getDecompilerIcon();
 }

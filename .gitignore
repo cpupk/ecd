@@ -1,8 +1,4 @@
-/**/bin/**/*
-/./**/bin/**/*
-./**/bin/**/*
-**/bin/**/*
-*/bin/**/*
-bin/**/*
-/**/bin/*
-/bin/
+.project
+**/bin/
+**/target
+**/.tycho-consumer-pom.xml

@@ -1,12 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2017 Chen Chao(cnfree2000@hotmail.com).
+ * Copyright (c) 2017 Chen Chao and other ECD project contributors.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *  Chen Chao  - initial API and implementation
+ * https://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
 package org.sf.feeling.decompiler.editor;
@@ -21,65 +18,74 @@ import java.util.List;
  * a <code>IDecompiler</code> instance: root = /bar packege = com/acme className
  * = Foo.class
  */
-public interface IDecompiler
-{
+public interface IDecompiler {
 
 	/**
 	 * Decompiles a class file located in file system (not in archive)
 	 * 
-	 * @param root
-	 *            path to the directory which is root for this class package
-	 *            hierarchy
-	 * @param packege
-	 *            file path like package name
-	 * @param className
-	 *            file name of the class file
+	 * @param root      path to the directory which is root for this class package
+	 *                  hierarchy
+	 * @param packege   file path like package name
+	 * @param className file name of the class file
 	 */
-	public void decompile( String root, String packege, String className );
+	void decompile(String root, String packege, String className);
 
 	/**
 	 * Decompiles a class file located in archive.
 	 * 
-	 * @param archivePath
-	 *            path to archive that contains the class to be decompiled
-	 * @param packege
-	 *            file path like package name
-	 * @param className
-	 *            file name of the class file
+	 * @param archivePath path to archive that contains the class to be decompiled
+	 * @param packege     file path like package name
+	 * @param className   file name of the class file
 	 */
-	public void decompileFromArchive( String archivePath, String packege, String className );
+	void decompileFromArchive(String archivePath, String packege, String className);
 
 	/**
 	 * @return time taken by decompilation
 	 */
-	public long getDecompilationTime( );
+	long getDecompilationTime();
 
 	/**
-	 * If any exceptions occured during decompilation thaey should be included
-	 * into the <code>List</code> returned by this method.
+	 * If any exceptions occurred during decompilation they should be included into
+	 * the <code>List</code> returned by this method.
 	 * 
 	 * @return non-<code>null</code> value which is a list containing
 	 *         <code>java.lang.Exception</code>'s
 	 */
-	public List getExceptions( );
+	List<Exception> getExceptions();
+
+	void clearExceptions();
 
 	/**
 	 * @return decompilation log specific to physical decompiler
 	 */
-	public String getLog( );
+	String getLog();
 
 	/**
 	 * @return Class file source which is the result of decompilation.
 	 */
-	public String getSource( );
+	String getSource();
 
-	public String getDecompilerType( );
+	String getDecompilerType();
 
-	public String removeComment( String source );
+	/**
+	 * Get the way the decompiler uses for printing source code line numbers in the
+	 * decompiled source code. Required for post-formatting the source code
+	 * according to the printed line numbers to make the source code suitable for
+	 * debugging.
+	 * 
+	 * @return line number output type or <code>null</code> if reformatting is not
+	 *         needed or supported
+	 */
+	LineNumberOutputType getLineNumberOutputType();
 
-	public boolean supportDebugLevel( int level );
+	String removeComment(String source);
 
-	public boolean supportLevel( int level );
+	boolean supportDebugLevel(int level);
 
-	public boolean supportDebug( );
+	boolean supportLevel(int level);
+
+	String getDecompilerName();
+
+	String getDecompilerVersion();
+
 }
